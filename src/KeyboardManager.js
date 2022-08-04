@@ -20,9 +20,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** This class provides a simple interface for managing keyboard
+   events */
 export default class KeyboardManager {
-  /* This class provides a simple interface for managing keyboard
-     events */
   constructor(game, keybinds=[]){
     this.game = game;
     this.binds = new Map(); // [key, array of functions]
@@ -32,9 +32,10 @@ export default class KeyboardManager {
     this.pressedKeys = new Map(); // [key, array of function names]
     this.requests = new Map(); // [function name, true]
   }
+  
+  /** Add *key* to the keymap and assign function *func* to it
+      Returns: true on success, false on failure */
   bind(key, functionName){
-    // Add *key* to the keymap and assign function *func* to it
-    // Returns: true on success, false on failure
 
     let funcToBind = this.game.isFunctionRegistered(functionName);
     if (!funcToBind) {

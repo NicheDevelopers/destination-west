@@ -20,7 +20,6 @@
 */
 
 const defaultKeybinds = [
-  ['f', 'Toggle Fullscreen'],
-  ['g', 'Toggle Fullscreen']
+  ['f', 'Toggle Fullscreen']
 ];
 export default defaultKeybinds;

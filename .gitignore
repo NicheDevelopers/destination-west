@@ -1,2 +1,6 @@
 # ignore all backup files created by emacs
 *~
+
+# ignore LSP logs
+ti*.log
+tsserver.log

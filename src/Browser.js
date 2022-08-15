@@ -19,9 +19,11 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+/**
+ * Class for dealing with browser-specific methods, requests
+ */
 export default class Browser{
-  // Class for dealing with browser-specific methods, requests
-  
+    
   constructor(game){
     this.game = game;
     this.addUserFunctions();

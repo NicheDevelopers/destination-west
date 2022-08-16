@@ -23,5 +23,5 @@
 import Game from "./src/Game.js";
 import defaultKeybinds from "./src/defaultKeybinds.js";
 
-const game = new Game(document.querySelector("#game-canvas").getContext("2d"), defaultKeybinds);
+const game = new Game(defaultKeybinds);
 game.loop();

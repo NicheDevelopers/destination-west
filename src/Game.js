@@ -25,10 +25,9 @@ import KeyMan from "./KeyboardManager.js";
 
 export default class Game {
   
-  constructor(ctx, keybinds=[]){
+  constructor(keybinds=[]){
     this.userFunctionsMap = new Map();
     this.browser = new Browser(this);
-    this.ctx = ctx;
     this.testTile = new Tile("sand");
     /* Keyman has to load keybinds AFTER functions are written to
        userFunctionsMap. This means it has to be instantinated AFTER

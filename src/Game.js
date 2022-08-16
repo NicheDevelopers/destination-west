@@ -57,7 +57,7 @@ export default class Game {
   loop(){
     //console.log(this.keyman.bindsNames);
     this.browser.update.call(this.browser);
-    this.testTile.draw();
+    this.testTile.draw(32,64);
     window.requestAnimationFrame(() => this.loop());
   }
   

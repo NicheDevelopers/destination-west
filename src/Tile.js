@@ -18,35 +18,18 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import ctx from "./ctx.js";
-
-const imgInfo = new Map([
-  ['sand', {
-    src : "img/sand.png",
-    height: 32,
-    width: 32, 
-    sx: 0,    // x-offset in image grid
-    sy: 0,    // y-offset in image grid
-    
-  }]
-]);
-
+import Sprite from "./Sprite.js";
 /**
  * Class for creating tiles - the base of the game world structure
  */
 export default class Tile{
   constructor(typeName, x=0, y=0){
     this.typeName = typeName;
-    this.img = new Image();
-    // Properties hardcoded so far for testing
-    ({src: this.src, height: this.height,
-      width: this.width, sx: this.sx, sy: this.sy} = imgInfo.get(typeName));
-    this.img.src = this.src;
+    this.sprite = new Sprite(this.typeName);
     this.x = x;
     this.y = y;
   }
-  draw(){
-    ctx.drawImage(this.img, this.sx, this.sy, this.width, this.height,
-		       this.x, this.y, this.width, this.height);
+  draw(x, y){
+    this.sprite.draw(x, y);
   }
 }

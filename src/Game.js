@@ -19,15 +19,17 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+import Tile from "./Tile.js";
 import Browser from "./Browser.js";
 import KeyMan from "./KeyboardManager.js";
 
 export default class Game {
   
-  constructor(keybinds=[]){
+  constructor(ctx, keybinds=[]){
     this.userFunctionsMap = new Map();
     this.browser = new Browser(this);
-    
+    this.ctx = ctx;
+    this.testTile = new Tile(this.ctx, "sand");
     /* Keyman has to load keybinds AFTER functions are written to
        userFunctionsMap. This means it has to be instantinated AFTER
        every function provider */
@@ -56,6 +58,7 @@ export default class Game {
   loop(){
     //console.log(this.keyman.bindsNames);
     this.browser.update.call(this.browser);
+    this.testTile.draw();
     window.requestAnimationFrame(() => this.loop());
   }
   

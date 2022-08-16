@@ -26,10 +26,9 @@ import ctx from "./ctx.js";
 
 export default class Game {
   
-  constructor(ctx, keybinds=[]){
+  constructor(keybinds=[]){
     this.userFunctionsMap = new Map();
     this.browser = new Browser(this);
-    this.ctx = ctx;
     this.testTile = new Tile("sand");
     this.testAnim = new Tile("player");
     this.a = 0;

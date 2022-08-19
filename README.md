@@ -6,5 +6,5 @@ An adventure western game. Work in progress.
 
 # Play online
 
-You play Destination West anytime in your browser! Press the button below!
+You can play Destination West anytime in your browser! Press the button below!
 ### [`Play`](https://niche-devs.gitlab.io/destination-west/)

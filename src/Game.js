@@ -22,6 +22,7 @@
 import Tile from "./Tile.js";
 import Browser from "./Browser.js";
 import KeyMan from "./KeyboardManager.js";
+import ctx from "./ctx.js";
 
 export default class Game {
   
@@ -59,10 +60,15 @@ export default class Game {
   
   loop(){
     //console.log(this.keyman.bindsNames);
+    ctx.clearRect(0,0, 672, 288);
     this.browser.update.call(this.browser);
-    this.testTile.draw(32,64);
+    for (let x=0; x<21; x++){
+      for (let y=0; y<9; y++){
+	this.testTile.draw(x*32,y*32);
+      }
+    }
     this.testAnim.draw(128, 128);
-    if (!(this.a++ % 15))
+    if (!(this.a++ % 10))
     this.testAnim.sprite.next();
     window.requestAnimationFrame(() => this.loop());
   }

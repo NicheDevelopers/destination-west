@@ -30,14 +30,14 @@ const imgInfo = new Map([
     
   }],
   ["player", {
-    src: "img/example.png",
+    src: "img/player.png",
     height: 37,
     width: 50,
     defaultAnimation: "run",
     animations: new Map([
       ["run", {
-	row: 1,
-	frames: 7
+	row: 0,
+	frames: 6
       }]
     ])
   }]
@@ -79,7 +79,6 @@ export default class Sprite{
 	' not defined');
       return;
     }
-    console.log(this.frame, n, this.animation.frames);
     this.frame = (this.frame + n) % this.animation.frames;
   }
   draw(x, y){

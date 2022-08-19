@@ -43,6 +43,7 @@ export default class Game {
     document.addEventListener("keyup", (event) => {
       self.keyman.manageKeyup(event);
     });
+    this.previousTime = Date.now();
   }
   
   registerFunction(funcName, func){
@@ -58,6 +59,9 @@ export default class Game {
   }
   
   loop(){
+    this.currentTime = Date.now();
+    this.frameTime = this.currentTime - this.previousTime;
+    this.previousTime = this.currentTime;
     //console.log(this.keyman.bindsNames);
     ctx.clearRect(0,0, 672, 288);
     this.browser.update.call(this.browser);
@@ -66,9 +70,14 @@ export default class Game {
 	this.testTile.draw(x*32,y*32);
       }
     }
+    ctx.font = "16px serif";
+    ctx.fillText(`FPS: ${this.fps}`, 616, 16);
+
     this.testAnim.draw(128, 128);
-    if (!(this.a++ % 10))
-    this.testAnim.sprite.next();
+    if (!(this.a++ % 10)){
+      this.testAnim.sprite.next();
+      this.fps = (1000/this.frameTime) | 0;
+    }
     window.requestAnimationFrame(() => this.loop());
   }
   

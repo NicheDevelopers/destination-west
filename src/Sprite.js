@@ -28,6 +28,18 @@ const imgInfo = new Map([
     sx: 0,    // x-offset in image grid
     sy: 0,    // y-offset in image grid
     
+  }],
+  ["player", {
+    src: "img/example.png",
+    height: 37,
+    width: 50,
+    defaultAnimation: "run",
+    animations: new Map([
+      ["run", {
+	row: 1,
+	frames: 7
+      }]
+    ])
   }]
 ]);
 /**
@@ -36,12 +48,45 @@ const imgInfo = new Map([
 export default class Sprite{
   constructor(typeName){
     ({src: this.src, height: this.height,
-      width: this.width, sx: this.sx, sy: this.sy} = imgInfo.get(typeName));
+      width: this.width, sx: this.sx, sy: this.sy,
+      animations: this.animations,
+      defaultAnimation: this.defaultAnimation} = imgInfo.get(typeName));
     this.img = new Image();
     this.img.src = this.src;
+
+    this.frame = (this.sx)? this.sx : 0;
+    this.animation = {row: (this.sy)? this.sy : 0};
+    if (this.defaultAnimation){
+      this.changeAnimation(this.defaultAnimation);
+    }
+    
+  }
+  changeAnimation(animationName){
+    if (!this.animations.has(animationName)){
+      console.error('Sprite: Attempted to change to an animation that' +
+	` does not exist: ${animationName}`);
+      return;
+    }
+    this.animation = this.animations.get(animationName);
+    this.frame = 0;
+  }
+  reset(){
+    this.frame = 0;
+  }
+  next(n=1){
+    if (!this.animation){
+      console.error('Sprite: Attempted to cycle an animation which was' +
+	' not defined');
+      return;
+    }
+    console.log(this.frame, n, this.animation.frames);
+    this.frame = (this.frame + n) % this.animation.frames;
   }
   draw(x, y){
-    ctx.drawImage(this.img, this.sx, this.sy, this.width, this.height,
-		       x, y, this.width, this.height);
+    ctx.drawImage(this.img,
+		  this.frame * this.width,
+		  this.animation.row * this.height,
+		  this.width, this.height, x, y,
+		  this.width, this.height);
   }
 }

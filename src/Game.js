@@ -30,6 +30,8 @@ export default class Game {
     this.browser = new Browser(this);
     this.ctx = ctx;
     this.testTile = new Tile("sand");
+    this.testAnim = new Tile("player");
+    this.a = 0;
     /* Keyman has to load keybinds AFTER functions are written to
        userFunctionsMap. This means it has to be instantinated AFTER
        every function provider */
@@ -59,6 +61,9 @@ export default class Game {
     //console.log(this.keyman.bindsNames);
     this.browser.update.call(this.browser);
     this.testTile.draw(32,64);
+    this.testAnim.draw(128, 128);
+    if (!(this.a++ % 15))
+    this.testAnim.sprite.next();
     window.requestAnimationFrame(() => this.loop());
   }
   

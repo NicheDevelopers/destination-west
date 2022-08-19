@@ -71,12 +71,13 @@ export default class Game {
       }
     }
     ctx.font = "16px serif";
-    ctx.fillText(`FPS: ${this.fps}`, 616, 16);
+    ctx.fillText(`FPS: ${this.fps}`, 606, 16);
 
     this.testAnim.draw(128, 128);
     if (!(this.a++ % 10)){
       this.testAnim.sprite.next();
       this.fps = (1000/this.frameTime) | 0;
+      this.fps = ((this.fps > 99)? "" : " ") + this.fps;
     }
     window.requestAnimationFrame(() => this.loop());
   }

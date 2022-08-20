@@ -59,6 +59,7 @@ export default class Sprite{
     if (this.defaultAnimation){
       this.changeAnimation(this.defaultAnimation);
     }
+    this.awaitingNext = false;
     
   }
   changeAnimation(animationName){
@@ -72,6 +73,13 @@ export default class Sprite{
   }
   reset(){
     this.frame = 0;
+  }
+  awaitNext(waitTime, n=1){
+    if (this.awaitingNext) return;
+    this.awaitingNext = true;
+    setTimeout(() => {
+      this.awaitingNext = false;
+      this.next(n)}, waitTime);
   }
   next(n=1){
     if (!this.animation){

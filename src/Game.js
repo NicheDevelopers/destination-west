@@ -74,8 +74,8 @@ export default class Game {
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
 
     this.testAnim.draw(128, 128);
+    this.testAnim.sprite.awaitNext(130);
     if (!(this.a++ % 10)){
-      this.testAnim.sprite.next();
       this.fps = (1000/this.frameTime) | 0;
       this.fps = ((this.fps > 99)? "" : " ") + this.fps;
     }

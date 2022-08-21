@@ -42,7 +42,7 @@ const imgInfo = new Map([
   }]
 ]);
 /**
- * Creating sprites to make display and animation simple
+ * Create sprites to make display and animation simple
  */
 class Sprite{
   /*

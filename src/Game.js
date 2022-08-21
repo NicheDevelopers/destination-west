@@ -19,18 +19,20 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Tile from "./Tile.js";
+import ctx from "./ctx.js";
 import Browser from "./Browser.js";
 import KeyMan from "./KeyboardManager.js";
-import ctx from "./ctx.js";
+
+import Tile from "./Tile.js";
+import Player from "./Player.js";
 
 class Game {
-  
   constructor(keybinds=[]){
     this.userFunctionsMap = new Map();
     this.browser = new Browser(this);
     this.testTile = new Tile("sand");
-    this.testAnim = new Tile("player");
+    this.player = new Player;
+    //this.testAnim = new Tile("player");
     this.a = 0;
     /* Keyman has to load keybinds AFTER functions are written to
        userFunctionsMap. This means it has to be instantinated AFTER
@@ -72,7 +74,7 @@ class Game {
     ctx.font = "16px serif";
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
 
-    this.testAnim.draw(128, 128);
+    this.player.draw(128, 128);
     if (!(this.a++ % 10)){
       this.fps = (1000/this.frameTime) | 0;
       this.fps = ((this.fps > 99)? "" : " ") + this.fps;

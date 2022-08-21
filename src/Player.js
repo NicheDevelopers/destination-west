@@ -26,8 +26,45 @@ import Entity from "./Entity.js";
  * Class for managing the player-controlled character
  */
 class Player extends Entity{
-  constructor(x=0, y=0){
+  constructor(game, x=0, y=0){
     super("player", x, y);
+    this.game = game;
+    this.addUserFunctions();
+  }
+  addUserFunctions(){
+    this.game.registerFunction('Move Right');
+    this.game.registerFunction('Move Left');
+  }
+  update(){
+    this.previousX = this.x;
+    this.running = false;
+    this.game.manageRequest(
+      'Move Right',
+      () => {this.running = true; this.moveRight()}
+    );
+    this.game.manageRequest(
+      'Move Left',
+      () => {this.running = true; this.moveLeft()}
+    );
+    if (!this.running && this.sprite.animation.name !== "idle")
+      this.sprite.changeAnimation("idle");
+  }
+  moveRight(){
+    if (this.sprite.animation.name !== "run")
+      this.sprite.changeAnimation("run");
+    this.sprite.mirrored = false;
+    /*
+    if (this.awaitingRun) {console.log('awaiting RUN'); return;}
+    this.awaitingRun = true;
+    setTimeout(() => {this.x+=2; this.awaitingRun = false;}, 50);
+    */
+    this.x++;
+  }
+  moveLeft(){
+    if (this.sprite.animation.name !== "run")
+      this.sprite.changeAnimation("run");
+    this.sprite.mirrored = true;
+    this.x--;
   }
 }
 

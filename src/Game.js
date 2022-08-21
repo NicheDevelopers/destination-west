@@ -31,8 +31,8 @@ class Game {
     this.userFunctionsMap = new Map();
     this.browser = new Browser(this);
     this.testTile = new Tile("sand");
-    this.player = new Player;
-    //this.testAnim = new Tile("player");
+    this.player = new Player(this);
+    
     this.a = 0;
     /* Keyman has to load keybinds AFTER functions are written to
        userFunctionsMap. This means it has to be instantinated AFTER
@@ -63,9 +63,9 @@ class Game {
     this.currentTime = Date.now();
     this.frameTime = this.currentTime - this.previousTime;
     this.previousTime = this.currentTime;
-    //console.log(this.keyman.bindsNames);
     ctx.clearRect(0,0, 672, 288);
-    this.browser.update.call(this.browser);
+    this.browser.update();
+    this.player.update();
     for (let x=0; x<21; x++){
       for (let y=0; y<9; y++){
 	this.testTile.draw(x*32,y*32);
@@ -74,7 +74,7 @@ class Game {
     ctx.font = "16px serif";
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
 
-    this.player.draw(128, 128);
+    this.player.draw(128 + this.player.x, 128 + this.player.y);
     if (!(this.a++ % 10)){
       this.fps = (1000/this.frameTime) | 0;
       this.fps = ((this.fps > 99)? "" : " ") + this.fps;

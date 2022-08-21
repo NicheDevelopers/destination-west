@@ -35,12 +35,16 @@ const imgInfo = new Map([
     defaultAnimation: "idle",
     animations: new Map([
       ["idle", {
+	name: "idle",
 	row: 0,
-	frames: 3
+	frames: 3,
+	mirroredRow: 1
       }],
       ["run", {
-	row: 0,
-	frames: 6
+	name: "run",
+	row: 2,
+	frames: 6,
+	mirroredRow: 3
       }]
     ])
   }]
@@ -67,8 +71,10 @@ class Sprite{
 
     this.img.src = this.src;
 
-    if (!this.animations) return;
+    this.mirrored = false;
     
+    if (!this.animations) return;
+        
     // ANIMATION SETTINGS
 
     this.currentFrame = 0;
@@ -144,17 +150,20 @@ class Sprite{
    @param {number} y - Position y of the draw location
    */
   draw(x, y){
-    if (this.animations)
+    if (this.animations){
+      let row = (this.mirrored)? this.animation.mirroredRow : this.animation.row;
       ctx.drawImage(this.img,
 		    this.frame * this.width,
-		    this.animation.row * this.height,
+		    row * this.height,
 		    this.width, this.height, x, y,
 		    this.width, this.height);
-    ctx.drawImage(this.img,
-		  this.spriteSheetCol * this.width,
-		  this.spriteSheetRow * this.height,
-		  this.width, this.height, x, y,
-		  this.width, this.height);
+    }
+    else { ctx.drawImage(this.img,
+		    this.spriteSheetCol * this.width,
+		    this.spriteSheetRow * this.height,
+		    this.width, this.height, x, y,
+		    this.width, this.height);
+    }
   }
 }
 

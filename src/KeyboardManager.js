@@ -81,20 +81,21 @@ class KeyboardManager {
   }
   manageKeydown(event){
     let functionNames = this.bindsNames.get(event.key);
-    if (functionNames)
-      functionNames.forEach((fName) => {
-	if (this.pressedKeys.get(event.key)){
- 	  this.pressedKeys.get(event.key).push(fName);
-	  this.requests.set(fName, true);
-	  return;
-	}
-	this.pressedKeys.set(event.key, [fName]);
-	this.requests.set(fName, true);
-      });
+    if (!functionNames) return;
+    this.pressedKeys.set(event.key, []);
+    functionNames.forEach((fName) => {
+      this.pressedKeys.get(event.key).push(fName);
+      this.requests.set(fName, true);
+    });
   }
   manageKeyup(event){
-    if (this.pressedKeys.get(event.key))
-      this.pressedKeys.delete(event.key);
+    let functionNames = this.bindsNames.get(event.key);
+    if (!functionNames) return;
+    
+    functionNames.forEach((fName) => {
+      this.requests.delete(fName);
+    });
+    this.pressedKeys.set(event.key, []);
   }
   manageRequest(functionName, callback, options = {}){
     if (!this.requests.has(functionName))

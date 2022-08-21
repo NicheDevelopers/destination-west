@@ -32,8 +32,12 @@ const imgInfo = new Map([
     src: "img/player.png",
     height: 37,
     width: 50,
-    defaultAnimation: "run",
+    defaultAnimation: "idle",
     animations: new Map([
+      ["idle", {
+	row: 0,
+	frames: 3
+      }],
       ["run", {
 	row: 0,
 	frames: 6

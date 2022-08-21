@@ -22,7 +22,7 @@
 /**
  * Class for dealing with browser-specific methods, requests
  */
-export default class Browser{
+class Browser{
     
   constructor(game){
     this.game = game;
@@ -50,4 +50,4 @@ export default class Browser{
   }
 }
 
-
+export default Browser;

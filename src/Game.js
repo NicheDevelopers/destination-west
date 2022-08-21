@@ -24,7 +24,7 @@ import Browser from "./Browser.js";
 import KeyMan from "./KeyboardManager.js";
 import ctx from "./ctx.js";
 
-export default class Game {
+class Game {
   
   constructor(keybinds=[]){
     this.userFunctionsMap = new Map();
@@ -57,7 +57,6 @@ export default class Game {
   manageRequest(...args){
     this.keyman.manageRequest(...args);
   }
-  
   loop(){
     this.currentTime = Date.now();
     this.frameTime = this.currentTime - this.previousTime;
@@ -74,7 +73,6 @@ export default class Game {
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
 
     this.testAnim.draw(128, 128);
-    this.testAnim.sprite.awaitNext(130);
     if (!(this.a++ % 10)){
       this.fps = (1000/this.frameTime) | 0;
       this.fps = ((this.fps > 99)? "" : " ") + this.fps;
@@ -86,3 +84,5 @@ export default class Game {
     return "Game class functional";
   }
 }
+
+export default Game;

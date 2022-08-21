@@ -18,4 +18,8 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-export default document.querySelector("#game-canvas").getContext("2d");
+/**
+ * The canvas rendering context for the canvas #game-canvas
+ */
+const ctx = document.querySelector("#game-canvas").getContext("2d");
+export default ctx;

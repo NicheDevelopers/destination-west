@@ -20,9 +20,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-/** This class provides a simple interface for managing keyboard
+/** Provide a simple interface for managing keyboard
    events */
-export default class KeyboardManager {
+class KeyboardManager {
   constructor(game, keybinds=[]){
     this.game = game;
     this.binds = new Map(); // [key, array of functions]
@@ -105,3 +105,5 @@ export default class KeyboardManager {
     
   }
 }
+
+export default KeyboardManager;

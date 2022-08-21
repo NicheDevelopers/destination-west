@@ -24,10 +24,9 @@ const imgInfo = new Map([
   ["sand", {
     src : "img/sand.png",
     height: 32,
-    width: 32, 
-    sx: 0,    // x-offset in image grid
-    sy: 0,    // y-offset in image grid
-    
+    width: 32,
+    row: 0,
+    col: 0   
   }],
   ["player", {
     src: "img/player.png",
@@ -43,25 +42,57 @@ const imgInfo = new Map([
   }]
 ]);
 /**
- * Class for creating sprites - objects that make displaying and animating easy
+ * Creating sprites to make display and animation simple
  */
-export default class Sprite{
-  constructor(typeName){
-    ({src: this.src, height: this.height,
-      width: this.width, sx: this.sx, sy: this.sy,
-      animations: this.animations,
-      defaultAnimation: this.defaultAnimation} = imgInfo.get(typeName));
+class Sprite{
+  /*
+   * Create a sprite
+     @param {string} typeName - Name of the sprite graphic to be used
+     @param {Object} [options] - Additional options
+     @param {boolean} [options.autoAnimation=false]Toggle automatical animation
+     @param {number} [options.interval=110] - The interval to use with autoAnimation
+     @param {number} [options.framesPerInterval=1] - The number of frames to cycle through after each interval in the auto animation
+  */
+  constructor(typeName, options={}){
     this.img = new Image();
+    ({src: this.src,
+      height: this.height, width: this.width,
+      row: this.spriteSheetRow, col: this.spriteSheetCol,
+      defaultAnimation: this.defaultAnimation,
+      animations: this.animations} = imgInfo.get(typeName));
+
     this.img.src = this.src;
 
-    this.frame = (this.sx)? this.sx : 0;
-    this.animation = {row: (this.sy)? this.sy : 0};
+    if (!this.animations) return;
+    
+    // ANIMATION SETTINGS
+
+    this.currentFrame = 0;
+    this.currentAnimation = undefined;
+
+    this.intervalID = false;
+
+    this.interval = 110;
+    if (options?.interval)
+      this.interval = options.interval;
+
+    this.framesPerInterval = 1;
+    if (options?.framesPerInterval)
+      this.framesPerInterval = options.framesPerInterval;
+
+    this.autoAnimation = false;
+    if (options?.autoAnimation)
+      this.autoAnimation = true;
+
     if (this.defaultAnimation){
       this.changeAnimation(this.defaultAnimation);
     }
-    this.awaitingNext = false;
     
   }
+  /**
+   * Change the current animation
+   @param {string} animationName - The name of the animation to switch to
+   */
   changeAnimation(animationName){
     if (!this.animations.has(animationName)){
       console.error('Sprite: Attempted to change to an animation that' +
@@ -70,30 +101,57 @@ export default class Sprite{
     }
     this.animation = this.animations.get(animationName);
     this.frame = 0;
+    clearInterval(this.intervalID);
+    if (this.autoAnimation)
+      this.animate(this.interval, this.framesPerInterval);
   }
+  /**
+   * Reset the animation to frame 0
+   */
   reset(){
     this.frame = 0;
   }
-  awaitNext(waitTime, n=1){
-    if (this.awaitingNext) return;
-    this.awaitingNext = true;
-    setTimeout(() => {
-      this.awaitingNext = false;
-      this.next(n)}, waitTime);
+  /**
+   * Start animating the current animation in intervals
+   @param {number} [interval=110] - The time between intervals in miliseconds
+   @param {number} [framesPerInterval=1] - The number of frames to cycle through after each interval
+   */
+  animate(interval=110, framesPerInterval=1){
+    this.animating = true;
+    this.intervalID = setInterval(
+      () => this.next(framesPerInterval),
+      interval);
   }
-  next(n=1){
+  /**
+   * Switch the current frame of an animation
+   @param {number} [frameCount=1] - The number of frames to cycle through
+   */
+  next(frameCount=1){
     if (!this.animation){
-      console.error('Sprite: Attempted to cycle an animation which was' +
-	' not defined');
+      console.error('Sprite: Attempted to cycle an animation' +
+	' which was not defined');
       return;
     }
-    this.frame = (this.frame + n) % this.animation.frames;
+    this.frame = (this.frame + frameCount) % this.animation.frames;
   }
+  /**
+   * Draw the sprite on the #game-canvas
+   @param {number} x - Position x of the draw location
+   @param {number} y - Position y of the draw location
+   */
   draw(x, y){
+    if (this.animations)
+      ctx.drawImage(this.img,
+		    this.frame * this.width,
+		    this.animation.row * this.height,
+		    this.width, this.height, x, y,
+		    this.width, this.height);
     ctx.drawImage(this.img,
-		  this.frame * this.width,
-		  this.animation.row * this.height,
+		  this.spriteSheetCol * this.width,
+		  this.spriteSheetRow * this.height,
 		  this.width, this.height, x, y,
 		  this.width, this.height);
   }
 }
+
+export default Sprite;

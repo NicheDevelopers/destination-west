@@ -22,14 +22,21 @@ import Sprite from "./Sprite.js";
 /**
  * Class for creating tiles - the base of the game world structure
  */
-export default class Tile{
+class Tile{
   constructor(typeName, x=0, y=0){
     this.typeName = typeName;
-    this.sprite = new Sprite(this.typeName);
     this.x = x;
     this.y = y;
+
+    if (this.typeName === "player"){
+      this.sprite = new Sprite(typeName, { autoAnimation: true });
+      return;
+    }
+      this.sprite = new Sprite(typeName);
   }
   draw(x, y){
     this.sprite.draw(x, y);
   }
 }
+
+export default Tile;

@@ -19,6 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+import time from "./time.js";
 import ctx from "./ctx.js";
 import Browser from "./Browser.js";
 import KeyMan from "./KeyboardManager.js";
@@ -60,9 +61,7 @@ class Game {
     this.keyman.manageRequest(...args);
   }
   loop(){
-    this.currentTime = Date.now();
-    this.frameTime = this.currentTime - this.previousTime;
-    this.previousTime = this.currentTime;
+    time.update();
     ctx.clearRect(0,0, 672, 288);
     this.browser.update();
     this.player.update();
@@ -75,8 +74,8 @@ class Game {
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
 
     this.player.draw(128 + this.player.x, 128 + this.player.y);
-    if (!(this.a++ % 10)){
-      this.fps = (1000/this.frameTime) | 0;
+    if (!(this.a++ % 30)){
+      this.fps = time.getFPS();
       this.fps = ((this.fps > 99)? "" : " ") + this.fps;
     }
     window.requestAnimationFrame(() => this.loop());

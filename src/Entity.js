@@ -20,16 +20,20 @@
 */
 
 import Sprite from "./Sprite.js";
+import Animation from "./Animation.js";
+
 /**
  * The super class for entity classes to derive from
  @abstract
  */
 class Entity {
-  constructor(typeName, x=0, y=0){
+  constructor(typeName, x=0, y=0, speed=100){
     this.typeName = typeName;
     this.sprite = new Sprite(typeName, {autoAnimation: true});
     this.x = x;
     this.y = y;
+    this.moveRightAnimation = new Animation(this, "x", speed);
+    this.moveLeftAnimation = new Animation(this, "-x", speed);
   }
   draw(x,y){
     this.sprite.draw(x, y);

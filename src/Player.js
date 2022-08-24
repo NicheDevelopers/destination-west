@@ -21,17 +21,14 @@
 */
 
 import Entity from "./Entity.js";
-import Animation from "./Animation.js";
 
 /**
  * Class for managing the player-controlled character
  */
 class Player extends Entity{
   constructor(game, x=0, y=0){
-    super("player", x, y);
+    super("player", x, y, 120);
     this.game = game;
-    this.moveRightAnimation = new Animation(this, "x", 120);
-    this.moveLeftAnimation = new Animation(this, "-x", 120);
     this.addUserFunctions();
   }
   addUserFunctions(){
@@ -39,7 +36,6 @@ class Player extends Entity{
     this.game.registerFunction('Move Left');
   }
   update(){
-    this.previousX = this.x;
     this.running = false;
     this.game.manageRequest(
       'Move Right',

@@ -53,7 +53,7 @@ const imgInfo = new Map([
  * Create sprites to make display and animation simple
  */
 class Sprite{
-  /*
+  /**
    * Create a sprite
      @param {string} typeName - Name of the sprite graphic to be used
      @param {Object} [options] - Additional options

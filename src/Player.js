@@ -21,6 +21,7 @@
 */
 
 import Entity from "./Entity.js";
+import Animation from "./Animation.js";
 
 /**
  * Class for managing the player-controlled character
@@ -29,6 +30,8 @@ class Player extends Entity{
   constructor(game, x=0, y=0){
     super("player", x, y);
     this.game = game;
+    this.moveRightAnimation = new Animation(this, "x", 120);
+    this.moveLeftAnimation = new Animation(this, "-x", 120);
     this.addUserFunctions();
   }
   addUserFunctions(){
@@ -40,31 +43,28 @@ class Player extends Entity{
     this.running = false;
     this.game.manageRequest(
       'Move Right',
-      () => {this.running = true; this.moveRight()}
+      () => this.moveRightFunc()
     );
     this.game.manageRequest(
       'Move Left',
-      () => {this.running = true; this.moveLeft()}
+      () => this.moveLeftFunc()
     );
     if (!this.running && this.sprite.animation.name !== "idle")
       this.sprite.changeAnimation("idle");
   }
-  moveRight(){
+  moveRightFunc(){
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = false;
-    /*
-    if (this.awaitingRun) {console.log('awaiting RUN'); return;}
-    this.awaitingRun = true;
-    setTimeout(() => {this.x+=2; this.awaitingRun = false;}, 50);
-    */
-    this.x++;
+    this.running = true;
+    this.moveRightAnimation.next();
   }
-  moveLeft(){
+  moveLeftFunc(){
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = true;
-    this.x--;
+    this.running = true;
+    this.moveLeftAnimation.next();
   }
 }
 

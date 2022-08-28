@@ -29,11 +29,11 @@ class Player extends Entity{
   constructor(game, x=0, y=0){
     super("player", x, y, 120);
     this.game = game;
-    this.addUserFunctions();
+    this.addUserActions();
   }
-  addUserFunctions(){
-    this.game.registerFunction('Move Right');
-    this.game.registerFunction('Move Left');
+  addUserActions(){
+    this.game.registerAction('Move Right');
+    this.game.registerAction('Move Left');
   }
   update(){
     this.running = false;

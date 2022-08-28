@@ -20,89 +20,96 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-/** Provide a simple interface for managing keyboard
-   events */
+/**
+ * Provide a simple interface for managing keyboard events
+ */
 class KeyboardManager {
   constructor(game, keybinds=[]){
     this.game = game;
-    this.binds = new Map(); // [key, array of functions]
-    this.bindsNames = new Map(); // [key, array of function names]
+    this.actions = new Map(); // [key, array of actions]
+    
     this.load(keybinds);
-    // Requests are function names bound to the currently pressed keys
-    this.pressedKeys = new Map(); // [key, array of function names]
-    this.requests = new Map(); // [function name, true]
+    // Requests are actions bound to the currently pressed keys
+    this.requests = new Map(); // [action, true]
+    
+    // Ignored actions are meant to be ignored on key presses
+    this.ignore = new Map(); // [action, true]
   }
   
-  /** Add *key* to the keymap and assign function *func* to it
-      Returns: true on success, false on failure */
-  bind(key, functionName){
+  /**
+   * Add *key* to the keymap and assign function *func* to it
+   @returns true on success, false on failure
+  */
+  bind(key, action){
 
-    let funcToBind = this.game.isFunctionRegistered(functionName);
+    let funcToBind = this.game.isActionRegistered(action);
     if (!funcToBind) {
-      console.error(
-	`Keyboard Manager: ` +
-	`Attempted to bind a non-registered function: ${functionName}`
-      );
-      return false;
+      throw `Keyboard Manager: ` +
+	`Attempted to bind a non-registered function: ${action}`;
     }
 
-    let functionNamesArray = this.bindsNames.get(key);
-    if (functionNamesArray){ // *key* has been previously bound
-      if (functionNamesArray.indexOf(functionName) !== -1) {
-	console.error(
-	  `Keyboard Manager: ` +
-	  `Attempted to bind function \'${functionName}\' to key ` +
-	  `\'${key}\' the second time.`
-	);
-	return false;
-      }
-//?     this.bindsNames.get(key).push(functionName);
-      functionNamesArray.push(funcToBind);
-      return true;
+    if (!this.actions.get(key)) this.actions.set(key, []);
+
+    let actions = this.actions.get(key);
+
+    if (actions.indexOf(action) !== -1) {
+      throw `Keyboard Manager: ` +
+	`Attempted to bind function \'${action}\' to key ` +
+	`\'${key}\' the second time.`;
     }
-    // *key* has not been bound to anything yet
-//?    this.binds.set(key, [funcToBind]);
-    this.bindsNames.set(key, [functionName]);
+    
+    actions.push(action);
     return true;
   }
-  unbind(key){
+  unbind(key, action=false){
     // Remove *key* from the keymap.
     // Returns: true on success, false on failure
-    return this.binds.delete(key);
+    let actions = this.actions.get(key);
+    if (!actions) return false;
+
+    if (!action){
+      actions.delete(key);
+      return true;
+    }
+
+    let i = actions.indexOf(action);
+    if (i === -1) return false;
+    
+    actions[i] = actions[actions.length-1];
+    actions.pop();
+    return true;
   }
-  load(keyBindArray){
-    // Load keybinds from an array with [key, function] pairs
+  load(keybinds){
+    // Load keybinds from an array with [key, action] pairs
     // Returns: undefined
-    this.binds.clear();
-    let self = this;
-    keyBindArray.forEach((keybind) => {
-      self.bind(keybind[0], keybind[1]);
+    keybinds.forEach(keybind => {
+      this.bind(keybind[0], keybind[1]);
     });
   }
   manageKeydown(event){
-    let functionNames = this.bindsNames.get(event.key);
-    if (!functionNames) return;
-    this.pressedKeys.set(event.key, []);
-    functionNames.forEach((fName) => {
-      this.pressedKeys.get(event.key).push(fName);
-      this.requests.set(fName, true);
+    let actions = this.actions.get(event.key);
+    if (!actions) return;
+    actions.forEach(action => {
+      if (!this.ignore.has(action))
+	  this.requests.set(action, true);
     });
   }
   manageKeyup(event){
-    let functionNames = this.bindsNames.get(event.key);
-    if (!functionNames) return;
-    
-    functionNames.forEach((fName) => {
-      this.requests.delete(fName);
+    let actions = this.actions.get(event.key);
+    if (!actions) return;
+    actions.forEach(action => {
+      this.ignore.delete(action);
+      this.requests.delete(action);
     });
-    this.pressedKeys.set(event.key, []);
   }
-  manageRequest(functionName, callback, options = {}){
-    if (!this.requests.has(functionName))
+  manageRequest(action, callback, options = {}){
+    if (!this.requests.has(action))
       return;
     callback();
-    if (options?.once)
-      this.requests.delete(functionName);
+    if (options?.once){
+      this.requests.delete(action);
+      this.ignore.set(action, true);
+    }
     
   }
 }

@@ -26,11 +26,11 @@ class Browser{
     
   constructor(game){
     this.game = game;
-    this.addUserFunctions();
+    this.addUserActions();
   }
   
-  addUserFunctions(){
-    this.game.registerFunction('Toggle Fullscreen');
+  addUserActions(){
+    this.game.registerAction('Toggle Fullscreen');
   }
   
   update(){

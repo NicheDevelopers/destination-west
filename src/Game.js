@@ -49,12 +49,12 @@ class Game {
     this.previousTime = Date.now();
   }
   
-  registerFunction(funcName, func){
-    this.userFunctionsMap.set(funcName, true);
+  registerAction(action, func){
+    this.userFunctionsMap.set(action, true);
   }
   
-  isFunctionRegistered(funcName){
-    return this.userFunctionsMap.has(funcName);
+  isActionRegistered(action){
+    return this.userFunctionsMap.has(action);
   }
   
   manageRequest(...args){

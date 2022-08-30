@@ -105,12 +105,11 @@ class KeyboardManager {
   manageRequest(action, callback, options = {}){
     if (!this.requests.has(action))
       return;
-    callback();
     if (options?.once){
       this.requests.delete(action);
       this.ignore.set(action, true);
     }
-    
+    return callback();
   }
 }
 

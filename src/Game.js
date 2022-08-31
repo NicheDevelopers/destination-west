@@ -33,6 +33,7 @@ class Game {
     this.browser = new Browser(this);
     this.testTile = new Tile("sand");
     this.player = new Player(this);
+    this.testBuilding = new Tile("saloon_0");
     
     this.a = 0;
     /* Keyman has to load keybinds AFTER functions are written to
@@ -74,6 +75,9 @@ class Game {
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
 
     this.player.draw(128 + this.player.x, 128 + this.player.y);
+
+    this.testBuilding.draw(256, 32);
+    
     if (!(this.a++ % 30)){
       this.fps = time.getFPS();
       this.fps = ((this.fps > 99)? "" : " ") + this.fps;

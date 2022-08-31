@@ -47,6 +47,17 @@ const imgInfo = new Map([
 	mirroredRow: 3
       }]
     ])
+  }],
+  ["saloon_0", {
+    src: "img/saloon.png",
+    height: 96,
+    width: 96,
+    row: 0,
+    col: 0,
+    physicalWidth: 3,
+    physicalHeight: 2,
+    tileWidth: 3,
+    tileHeight: 3
   }]
 ]);
 /**

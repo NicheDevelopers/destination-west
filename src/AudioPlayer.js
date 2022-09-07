@@ -19,14 +19,42 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+// Improvised enum defining sound kind
+const SoundKind = {
+    Music: 'music',
+    MenuMusic: 'menu-music',
+    Effect: 'effect',
+    Dialogue: 'dialogue'
+}
 
+/**
+ * Helper class representing a single sound object, a wrapper over HTMLAudioElement
+ */
+class Sound {
+    constructor(src, kind) {
+	this.sound = new Audio(src);
+	this.kind = kind;
+    }
+}
 /**
  * Construct a variable mapping human-accessible and intuitive names to filenames of sound effects
  */
 function getSoundMap(){
     let m = new Map();
 
-    m.set('gunshot-revolver', 'sounds/gunshot-revolver.mp3');
+    m.set('gunshot-revolver', new Sound('sounds/gunshot-revolver.mp3', SoundKind.Effect));
+
+    return m;
+}
+
+function getVolumeMap(){
+    
+    let m = new Map();
+
+    m.set(SoundKind.Music, 1);
+    m.set(SoundKind.MenuMusic, 1);
+    m.set(SoundKind.Effect, 1);
+    m.set(SoundKind.Dialogue, 1);
 
     return m;
 }
@@ -35,28 +63,49 @@ function getSoundMap(){
  * Class for sound effect and music playback
  */
 class AudioPlayer {
-    constructor(volume) {
-	this.volume = 1;
+    constructor() {
 	this.soundMap = getSoundMap();
-    }
-
-    addSound(name, filename) {
-	if (!this.soundMap.has(name)) {
-	    this.soundMap.set(name, filename);
-	} else {
-	    console.log(`AudioPlayer: key '${name}' already exists in the soundMap, mapped value is '${this.soundMap.get(name)}'`);
-	}
+	this.volumeMap = getVolumeMap();
+	console.log("Constructed AudioPlayer");
+	this.updateVolumes();
     }
 
     play(soundName) {
-	let sound = this.soundMap.get(soundName);
-	if (typeof sound === undefined) {
-	    console.log("Sound not found");
+	this.soundMap.get(soundName).sound.play();
+    }
+
+    updateVolumes() {
+	for (const key of this.soundMap) {
+	    console.log(`key: ${key[0]}`);
+	    let sound = key[1];
+	    sound.sound.volume = this.volumeMap.get(sound.kind);
 	}
-	let a = new Audio(sound);
-	a.addEventListener("canplaythrough", (event) => {
-	    a.play();
-	});
+    }
+
+    setMusicVolume(vol) {
+	this.volumeMap.set(SoundKind.Music, vol);
+    }
+    setMenuMusicVolume(vol) {
+	this.volumeMap.set(SoundKind.MenuMusic, vol);
+    }
+    setEffectVolume(vol) {
+	this.volumeMap.set(SoundKind.Effect, vol);
+    }
+    setDialogueVolume(vol) {
+	this.volumeMap.set(SoundKind.Dialogue, vol);
+    }
+    
+    getMusicVolume() {
+	return this.volumeMap.get(SoundKind.Music)
+    }
+    getMenuMusicVolume() {
+	return this.volumeMap.get(SoundKind.MenuMusic)
+    }
+    getEffectVolume() {
+	return this.volumeMap.get(SoundKind.Effect)
+    }
+    getDialogueVolume() {
+	return this.volumeMap.get(SoundKind.Dialogue)
     }
 }
 

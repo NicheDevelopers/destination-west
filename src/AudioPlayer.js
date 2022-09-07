@@ -20,7 +20,7 @@
 */
 
 // Improvised enum defining sound kind
-const SoundKind = {
+const soundKind = {
     Music: 'music',
     MenuMusic: 'menu-music',
     Effect: 'effect',
@@ -36,13 +36,14 @@ class Sound {
 	this.kind = kind;
     }
 }
+
 /**
  * Construct a variable mapping human-accessible and intuitive names to filenames of sound effects
  */
 function getSoundMap(){
     let m = new Map();
 
-    m.set('gunshot-revolver', new Sound('sounds/gunshot-revolver.mp3', SoundKind.Effect));
+    m.set('gunshot-revolver', new Sound('sounds/gunshot-revolver.mp3', soundKind.Effect));
 
     return m;
 }
@@ -51,10 +52,10 @@ function getVolumeMap(){
     
     let m = new Map();
 
-    m.set(SoundKind.Music, 1);
-    m.set(SoundKind.MenuMusic, 1);
-    m.set(SoundKind.Effect, 1);
-    m.set(SoundKind.Dialogue, 1);
+    m.set(soundKind.Music, 1);
+    m.set(soundKind.MenuMusic, 1);
+    m.set(soundKind.Effect, 1);
+    m.set(soundKind.Dialogue, 1);
 
     return m;
 }
@@ -66,7 +67,6 @@ class AudioPlayer {
     constructor() {
 	this.soundMap = getSoundMap();
 	this.volumeMap = getVolumeMap();
-	console.log("Constructed AudioPlayer");
 	this.updateVolumes();
     }
 
@@ -76,36 +76,35 @@ class AudioPlayer {
 
     updateVolumes() {
 	for (const key of this.soundMap) {
-	    console.log(`key: ${key[0]}`);
 	    let sound = key[1];
 	    sound.sound.volume = this.volumeMap.get(sound.kind);
 	}
     }
 
     setMusicVolume(vol) {
-	this.volumeMap.set(SoundKind.Music, vol);
+	this.volumeMap.set(soundKind.Music, vol);
     }
     setMenuMusicVolume(vol) {
-	this.volumeMap.set(SoundKind.MenuMusic, vol);
+	this.volumeMap.set(soundKind.MenuMusic, vol);
     }
     setEffectVolume(vol) {
-	this.volumeMap.set(SoundKind.Effect, vol);
+	this.volumeMap.set(soundKind.Effect, vol);
     }
     setDialogueVolume(vol) {
-	this.volumeMap.set(SoundKind.Dialogue, vol);
+	this.volumeMap.set(soundKind.Dialogue, vol);
     }
     
     getMusicVolume() {
-	return this.volumeMap.get(SoundKind.Music)
+	return this.volumeMap.get(soundKind.Music)
     }
     getMenuMusicVolume() {
-	return this.volumeMap.get(SoundKind.MenuMusic)
+	return this.volumeMap.get(soundKind.MenuMusic)
     }
     getEffectVolume() {
-	return this.volumeMap.get(SoundKind.Effect)
+	return this.volumeMap.get(soundKind.Effect)
     }
     getDialogueVolume() {
-	return this.volumeMap.get(SoundKind.Dialogue)
+	return this.volumeMap.get(soundKind.Dialogue)
     }
 }
 

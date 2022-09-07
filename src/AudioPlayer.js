@@ -71,7 +71,11 @@ class AudioPlayer {
     }
 
     play(soundName) {
+	if (typeof this.soundMap.get(soundName) === undefined) {
+	    throw `Audio Player: ` + `No sound object found for name ${soundName}`;
+	}
 	this.soundMap.get(soundName).sound.play();
+	return true;
     }
 
     updateVolumes() {
@@ -82,16 +86,24 @@ class AudioPlayer {
     }
 
     setMusicVolume(vol) {
+	if (vol < 0 || vol >1) throw `Audio Player:` + `Invalid volume argument for setMusicVolume. Allowed range: <0;1>, but argument is ${vol}`;
 	this.volumeMap.set(soundKind.Music, vol);
+	return true;
     }
     setMenuMusicVolume(vol) {
+	if (vol < 0 || vol >1) throw `Audio Player:` + `Invalid volume argument for setMenuMusicVolume. Allowed range: <0;1>, but argument is ${vol}`;
 	this.volumeMap.set(soundKind.MenuMusic, vol);
+	return true;
     }
     setEffectVolume(vol) {
+	if (vol < 0 || vol >1) throw `Audio Player:` + `Invalid volume argument for setEffectVolume. Allowed range: <0;1>, but argument is ${vol}`;
 	this.volumeMap.set(soundKind.Effect, vol);
+	return true;
     }
     setDialogueVolume(vol) {
+	if (vol < 0 || vol >1) throw `Audio Player:` + `Invalid volume argument for setDialogueVolume. Allowed range: <0;1>, but argument is ${vol}>`;
 	this.volumeMap.set(soundKind.Dialogue, vol);
+	return true;
     }
     
     getMusicVolume() {

@@ -26,6 +26,7 @@ import KeyMan from "./KeyboardManager.js";
 
 import Tile from "./Tile.js";
 import Player from "./Player.js";
+import AudioPlayer from "./AudioPlayer.js";
 
 class Game {
   constructor(keybinds=[]){
@@ -33,6 +34,7 @@ class Game {
     this.browser = new Browser(this);
     this.testTile = new Tile("sand");
     this.player = new Player(this);
+    this.audioPlayer = new AudioPlayer();
     this.testBuilding = new Tile("saloon_0");
     
     this.a = 0;

@@ -59,4 +59,4 @@ function randIntInRange(min, max) {
     return (Math.random() * (max - min) + min) | 0;
 }
 
-export {randInRange, randFloatInRange};
+export {randIntInRange, randFloatInRange};

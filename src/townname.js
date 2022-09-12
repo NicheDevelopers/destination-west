@@ -9,8 +9,8 @@ function randomInt(max)
 function generate_townname()
 {
     // arrays holding parts of string to generate full name of the Town
-    const tab1=["Copper", "Wide", "Lead", "Torn", "Abandon", "Desert", "Fair", "Whisper", "Dead"];
-    const tab2=["city", "wood", "stone", "field", "peaks", "river", "point", "howl", "hill", "roost", "cliff", "george", "cross", "edge", "canyon", "tooth", "town", "alley" ,"post", "dune"];
+    const tab1=["Copper", "Wide", "Lead", "Torn", "Abandon", "Desert", "Fair", "Whisper", "Dead", "False", "Lost", "Evil", "Red", "Farm", "Windy", "Skull", "Old", "Sand", "Forsaken", "Wrath", "Grave", "Low", "Wild"];
+    const tab2=["city", "wood", "stone", "field", "peaks", "river", "point", "howl", "hill", "roost", "cliff", "george", "cross", "edge", "canyon", "tooth", "town", "alley" ,"post", "dune", "mountain", "gate", "lake", "scar", "rock"];
 
 
     // selecting part of arrays by drawing indexes

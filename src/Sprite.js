@@ -20,46 +20,8 @@
 */
 import ctx from "./ctx.js";
 
-const imgInfo = new Map([
-  ["sand", {
-    src : "img/sand.png",
-    height: 32,
-    width: 32,
-    row: 0,
-    col: 0   
-  }],
-  ["player", {
-    src: "img/player.png",
-    height: 37,
-    width: 50,
-    defaultAnimation: "idle",
-    animations: new Map([
-      ["idle", {
-	name: "idle",
-	row: 0,
-	frames: 3,
-	mirroredRow: 1
-      }],
-      ["run", {
-	name: "run",
-	row: 2,
-	frames: 6,
-	mirroredRow: 3
-      }]
-    ])
-  }],
-  ["saloon_0", {
-    src: "img/saloon.png",
-    height: 96,
-    width: 96,
-    row: 0,
-    col: 0,
-    physicalWidth: 3,
-    physicalHeight: 2,
-    tileWidth: 3,
-    tileHeight: 3
-  }]
-]);
+import imgInfo from "./static/imgInfo.js";
+
 /**
  * Create sprites to make display and animation simple
  */

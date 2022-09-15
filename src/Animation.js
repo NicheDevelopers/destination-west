@@ -19,7 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import time from "./time.js";
+import time from "./global/time.js";
 
 /**
  * Class for performing operations independent of the game loop speed

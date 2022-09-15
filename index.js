@@ -21,7 +21,7 @@
 
 "use-strict";
 import Game from "./src/Game.js";
-import defaultKeybinds from "./src/defaultKeybinds.js";
+import defaultKeybinds from "./src/global/defaultKeybinds.js";
 
 const game = new Game(defaultKeybinds);
 game.loop();

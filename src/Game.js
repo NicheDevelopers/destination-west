@@ -19,15 +19,14 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import time from "./time.js";
-import ctx from "./ctx.js";
+import time from "./global/time.js";
+import ctx from "./global/ctx.js";
 import Browser from "./Browser.js";
 import KeyMan from "./KeyboardManager.js";
 
 import Tile from "./Tile.js";
 import Player from "./Player.js";
 import AudioPlayer from "./AudioPlayer.js";
-
 class Game {
   constructor(keybinds=[]){
     this.userFunctionsMap = new Map();

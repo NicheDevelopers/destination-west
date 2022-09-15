@@ -59,10 +59,15 @@ class Game {
   isActionRegistered(action){
     return this.userFunctionsMap.has(action);
   }
+
+  isActionRequested(action){
+    return this.keyman.isActionRequested(action);
+  }
   
   manageRequest(...args){
     this.keyman.manageRequest(...args);
   }
+  
   loop(){
     time.update();
     ctx.clearRect(0,0, 672, 288);

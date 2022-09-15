@@ -102,6 +102,9 @@ class KeyboardManager {
       this.requests.delete(action);
     });
   }
+  isActionRequested(action){
+    return this.requests.has(action);
+  }
   manageRequest(action, callback, options = {}){
     if (!this.requests.has(action))
       return;

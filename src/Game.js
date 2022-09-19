@@ -72,9 +72,9 @@ class Game {
     ctx.clearRect(0,0, 672, 288);
     this.browser.update();
     this.player.update();
-    for (let x=0; x<21; x++){
-      for (let y=0; y<9; y++){
-	this.testTile.draw(x*32,y*32);
+    for (let x=0; x<42; x++){
+      for (let y=0; y<18; y++){
+	this.testTile.draw(x*16,y*16);
       }
     }
     ctx.font = "16px serif";

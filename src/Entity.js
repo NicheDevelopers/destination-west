@@ -1,8 +1,8 @@
 /*
   file: src/Entity.js
   purpose: Define the Entity super class for creating entity classes
-  author: Artur Gulik <https://gitlab.com/ArturGulik>
-  
+  authors: Artur Gulik <https://gitlab.com/ArturGulik>
+           Kamil Małecki <https://gitlab.com/gaussx>
   This file is part of 'Destination West'.
   
   'Destination West' is free software: you can redistribute it and/or modify
@@ -34,6 +34,8 @@ class Entity {
     this.y = y;
     this.moveRightAnimation = new Animation(this, "x", speed);
     this.moveLeftAnimation = new Animation(this, "-x", speed);
+    this.moveUpAnimation = new Animation(this, "-y", speed);
+    this.moveDownAnimation = new Animation(this, "y", speed);
   }
   draw(x,y){
     this.sprite.draw(x, y);

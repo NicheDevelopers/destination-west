@@ -70,6 +70,10 @@ class Animation{
       this.properties.push(property);
     });
   }
+  set speed(speed){
+    this.properties.forEach((property) => { property.speed = speed; });
+    this.methods.forEach((method) => { method.speed = speed; });
+  }
   next(){
     this.properties.forEach((property) => {
       let changesNow = calculateChangesInThisTick(property);

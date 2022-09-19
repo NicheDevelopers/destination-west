@@ -24,17 +24,21 @@
 import Entity from "./Entity.js";
 
 /**
+ * A constant representing the default player speed value
+ */
+const defaultPlayerSpeed = 100;
+/**
  * Class for managing the player-controlled character
  */
 class Player extends Entity{
   constructor(game, x=0, y=0){
-    super("player", x, y, 120);
+    super("player", x, y, defaultPlayerSpeed);
     this.game = game;
     this.states = [this.moveLeftUpFunc, this.moveUpFunc, this.moveRightUpFunc, 
                    this.moveLeftFunc, this.idleFunc, this.moveRightFunc, 
                    this.moveLeftDownFunc, this.moveDownFunc, this.moveRightDownFunc];
     this.default_direction = 4; //the default direction being staying idle, on index 4 in the state array
-    this.default_player_speed = 100;
+    this.default_player_speed = defaultPlayerSpeed;
     this.default_diagonal_offset = 0.71;
     this.addUserActions();
   }
@@ -89,7 +93,6 @@ class Player extends Entity{
     this.moveLeftAnimation.next();
   }
   idleFunc(){
-    console.log(this);
     if (this.sprite.animation.name !== "idle")
       this.sprite.changeAnimation("idle");
   }

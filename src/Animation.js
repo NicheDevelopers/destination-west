@@ -21,6 +21,13 @@
 
 import time from "./global/time.js";
 
+function calculateChangesInThisTick(element){
+  element.changeStack += (element.speed*time.delta) / 1000;
+  let changesInThisTick = (element.changeStack/element.quantum) | 0;
+  element.changeStack -= changesInThisTick;      
+  return changesInThisTick;
+}
+
 /**
  * Class for performing operations independent of the game loop speed
  */
@@ -28,27 +35,53 @@ class Animation{
   /**
    * Create an animation
    @param {Object} host - The object to animate
-   @param {string} value - The name of the property to animate. Animation is reversed if starts with '-'
-   @param {number} speed - Speed of the animation in changes per second
-   @param {number} [quantum=1] - The smallest portion the value can change by in one change
+   @param {string, Array} value - A string or an array of strings describing animations
+   @param {number, Array} speed - Speed or an array of speeds of the animation in changes per second
+   @param {number} quantums - A number or array of numbers specifying the smallest portion the value can change by
   */
-  constructor(host, value, speed, quantum=1){
-    this.h = host;
-    this.direction = true;
-    this.v = value;
-    if (value[0] === '-') {
-      this.direction = false;
-      this.v = value.substring(1);
-    }
-    this.speed = speed; //animation speed in changes per second
-    this.quantum = quantum;
-    this.x = 0;
+  constructor(host, values, speeds, options={}){
+    this.host = host;
+    values = [].concat(values??[]);
+    if (!values.length) throw "Animation: No values specified";
+    this.properties = [];
+    this.methods = [];
+    speeds = [].concat(speeds??[]);
+    let quantums = [].concat(options.quantums??[]);
+
+    values.forEach((v, i) => {
+      let property = {
+	changeStack: 0,
+	speed: speeds[i] ?? 60,
+	quantum: quantums[i] ?? 1,
+      };
+      if (v.substring(0,2) === '()'){
+	property.name = v.substring(2);
+	this.methods.push(v.substring(2));
+	return;
+      }
+      if (v[0] === '-'){
+	property.name = v.substring(1);
+	property.direction = false;
+	this.properties.push(property);
+	return;
+      }
+      property.name = v;
+      property.direction = true;
+      this.properties.push(property);
+    });
   }
   next(){
-    this.x += (this.speed*time.delta) / 1000;
-    let animatingNow = (this.x/this.quantum) | 0;
-    this.x -= animatingNow;
-    this.h[this.v] += ((this.direction)? 1 : -1) * animatingNow;
+    this.properties.forEach((property) => {
+      let changesNow = calculateChangesInThisTick(property);
+      this.host[property.name] +=
+      ((property.direction)? 1 : -1) * changesNow;
+    });
+    this.methods.forEach((method) => {
+      let changesNow = calculateChangesInThisTick(method);
+      for (let i=0; i < changesNow; ++i){
+	this.host[method.name].call(this.h);
+      }
+    });
   }
 }
 export default Animation;

@@ -1,8 +1,8 @@
 /*
   file: src/defaultKeybinds.js
   purpose: define the default keybinds array
-  author: Artur Gulik <https://gitlab.com/ArturGulik>
-  
+  authors: Artur Gulik <https://gitlab.com/ArturGulik>
+           Kamil Małecki <https://gitlab.com/gaussx>
   This file is part of 'Destination West'.
   
   'Destination West' is free software: you can redistribute it and/or modify
@@ -22,6 +22,8 @@
 const defaultKeybinds = [
   ['f', 'Toggle Fullscreen'],
   ['a', 'Move Left'],
-  ['d', 'Move Right']
+  ['d', 'Move Right'],
+  ['w', 'Move Up'],
+  ['s', 'Move Down']
 ];
 export default defaultKeybinds;

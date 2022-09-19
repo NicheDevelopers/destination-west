@@ -2,7 +2,8 @@
   file: src/Player.js
   purpose: Define the Player class for managing the player-controlled
            character
-  author: Artur Gulik <https://gitlab.com/ArturGulik>
+  authors: Artur Gulik <https://gitlab.com/ArturGulik>
+           Kamil Małecki <https://gitlab.com/gaussx>
   
   This file is part of 'Destination West'.
   
@@ -29,38 +30,99 @@ class Player extends Entity{
   constructor(game, x=0, y=0){
     super("player", x, y, 120);
     this.game = game;
+    this.states = [this.moveLeftUpFunc, this.moveUpFunc, this.moveRightUpFunc, 
+                   this.moveLeftFunc, this.idleFunc, this.moveRightFunc, 
+                   this.moveLeftDownFunc, this.moveDownFunc, this.moveRightDownFunc];
+    this.default_direction = 4; //the default direction being staying idle, on index 4 in the state array
+    this.default_player_speed = 100;
+    this.default_diagonal_offset = 0.71;
     this.addUserActions();
   }
   addUserActions(){
     this.game.registerAction('Move Right');
     this.game.registerAction('Move Left');
+    this.game.registerAction('Move Up');
+    this.game.registerAction('Move Down');
   }
   update(){
-    this.running = false;
-    this.game.manageRequest(
-      'Move Right',
-      () => this.moveRightFunc()
-    );
-    this.game.manageRequest(
-      'Move Left',
-      () => this.moveLeftFunc()
-    );
-    if (!this.running && this.sprite.animation.name !== "idle")
+    this.direction = this.default_direction;
+    if (this.game.isActionRequested('Move Right'))
+      this.direction += 1;
+    if (this.game.isActionRequested('Move Left'))
+      this.direction -= 1;
+    if (this.game.isActionRequested('Move Up'))
+      this.direction -= 3;
+    if (this.game.isActionRequested('Move Down'))
+      this.direction += 3;
+    //console.log(this.direction);
+    this.states[this.direction].call(this);
+  }
+  moveLeftUpFunc(){
+    if (this.sprite.animation.name !== "run")
+      this.sprite.changeAnimation("run");
+    this.sprite.mirrored = true;
+    this.moveLeftAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
+    this.moveUpAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
+    this.moveLeftAnimation.next();
+    this.moveUpAnimation.next();
+  }
+  moveUpFunc(){
+    if (this.sprite.animation.name !== "run")
+      this.sprite.changeAnimation("run");
+    this.moveUpAnimation.speed = this.default_player_speed;
+    this.moveUpAnimation.next();
+  }
+  moveRightUpFunc(){
+    if (this.sprite.animation.name !== "run")
+      this.sprite.changeAnimation("run");
+    this.sprite.mirrored = false;
+    this.moveRightAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
+    this.moveUpAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
+    this.moveRightAnimation.next();
+    this.moveUpAnimation.next();
+  }
+  moveLeftFunc(){
+    if (this.sprite.animation.name !== "run")
+      this.sprite.changeAnimation("run");
+    this.sprite.mirrored = true;
+    this.moveLeftAnimation.speed = this.default_player_speed;
+    this.moveLeftAnimation.next();
+  }
+  idleFunc(){
+    console.log(this);
+    if (this.sprite.animation.name !== "idle")
       this.sprite.changeAnimation("idle");
   }
   moveRightFunc(){
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = false;
-    this.running = true;
+    this.moveRightAnimation.speed = this.default_player_speed;
     this.moveRightAnimation.next();
   }
-  moveLeftFunc(){
+  moveLeftDownFunc(){
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = true;
-    this.running = true;
+    this.moveLeftAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
+    this.moveDownAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
     this.moveLeftAnimation.next();
+    this.moveDownAnimation.next();
+  }
+  moveDownFunc(){
+    if (this.sprite.animation.name !== "run")
+      this.sprite.changeAnimation("run");
+    this.moveDownAnimation.speed = this.default_player_speed;
+    this.moveDownAnimation.next();
+  }
+  moveRightDownFunc(){
+    if (this.sprite.animation.name !== "run")
+      this.sprite.changeAnimation("run");
+    this.sprite.mirrored = false;
+    this.moveRightAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
+    this.moveDownAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
+    this.moveRightAnimation.next();
+    this.moveDownAnimation.next();
   }
 }
 

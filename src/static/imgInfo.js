@@ -25,8 +25,15 @@
 const imgInfo = new Map([
   ["sand", {
     src : "img/sand.png",
-    height: 32,
-    width: 32,
+    height: 16,
+    width: 16,
+    row: 0,
+    col: 0   
+  }],
+  ["street", {
+    src : "img/street.png",
+    height: 16,
+    width: 16,
     row: 0,
     col: 0   
   }],

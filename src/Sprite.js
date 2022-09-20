@@ -36,6 +36,8 @@ class Sprite{
   */
   constructor(typeName, options={}){
     this.img = new Image();
+    this.typeName = typeName;
+    if (!imgInfo.has(typeName)) throw `Sprite: Type name is not defined: ${typeName}`;
     ({src: this.src,
       height: this.height, width: this.width,
       row: this.spriteSheetRow, col: this.spriteSheetCol,
@@ -131,7 +133,8 @@ class Sprite{
 		    this.width, this.height, x, y,
 		    this.width, this.height);
     }
-    else { ctx.drawImage(this.img,
+    else {
+      ctx.drawImage(this.img,
 		    this.spriteSheetCol * this.width,
 		    this.spriteSheetRow * this.height,
 		    this.width, this.height, x, y,

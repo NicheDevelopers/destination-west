@@ -18,15 +18,24 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import Entity from "./Entity.js";
 
+import Sprite from "./Sprite.js";
 /**
  * Class for creating tiles - the base of the game world structure
  */
-class Tile extends Entity{
+class Tile{
   constructor(typeName, x=0, y=0){
-    super(typeName, x, y);
+    this.typeName = typeName;
+    if(typeName.substring(0, 9) === 'building-')
+      this.background = new Sprite('sand');
+    this.sprite = new Sprite(typeName);
+    this.x = x;
+    this.y = y;
     this.items = [];
+  }
+  draw(x,y){
+    this.background?.draw(x,y);
+    this.sprite.draw(x, y);
   }
 }
 

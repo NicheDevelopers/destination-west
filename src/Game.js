@@ -27,6 +27,8 @@ import KeyMan from "./KeyboardManager.js";
 import Tile from "./Tile.js";
 import Player from "./Player.js";
 import AudioPlayer from "./AudioPlayer.js";
+import Town from "./Town.js";
+
 class Game {
   constructor(keybinds=[]){
     this.userFunctionsMap = new Map();
@@ -34,8 +36,10 @@ class Game {
     this.testTile = new Tile("sand");
     this.player = new Player(this);
     this.audioPlayer = new AudioPlayer();
-    this.testBuilding = new Tile("saloon_0");
-    
+
+    this.testTown = new Town('Franowo', 64, 64, 0, 0, {sheriff: 1, house: 2, saloon: 10});
+    this.testTown.createTown();
+        
     this.a = 0;
     /* Keyman has to load keybinds AFTER functions are written to
        userFunctionsMap. This means it has to be instantinated AFTER
@@ -74,7 +78,14 @@ class Game {
     this.player.update();
     for (let x=0; x<42; x++){
       for (let y=0; y<18; y++){
-	this.testTile.draw(x*16,y*16);
+	//this.testTile.draw(x*16,y*16);
+      }
+    }
+    for (let x=0; x < this.testTown.array.length; ++x){
+      for (let y=0; y < this.testTown.array[0].length; ++y){
+	let tile = this.testTown.array[x][y];
+	//if (tile.typeName !== 'sand') continue;
+	tile.draw(tile.x, tile.y);
       }
     }
     ctx.font = "16px serif";
@@ -82,8 +93,6 @@ class Game {
 
     this.player.draw(128 + this.player.x, 128 + this.player.y);
 
-    this.testBuilding.draw(256, 32);
-    
     if (!(this.a++ % 30)){
       this.fps = time.getFPS();
       this.fps = ((this.fps > 99)? "" : " ") + this.fps;

@@ -65,3 +65,4 @@ function genTownName()
     return townname;
 }
 
+export {genNpcName, genTownName};

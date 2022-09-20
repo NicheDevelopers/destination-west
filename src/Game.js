@@ -2,6 +2,7 @@
   file: src/Game.js
   purpose: define the Game class
   author: Artur Gulik <https://gitlab.com/ArturGulik>
+  author: Michał Miłek <https://gitlab.com/mmilek>
   
   This file is part of 'Destination West'.
   
@@ -28,6 +29,7 @@ import Tile from "./Tile.js";
 import Player from "./Player.js";
 import AudioPlayer from "./AudioPlayer.js";
 import Town from "./Town.js";
+import WorldMap from "./WorldMap.js";
 
 class Game {
   constructor(keybinds=[]){
@@ -36,6 +38,7 @@ class Game {
     this.testTile = new Tile("sand");
     this.player = new Player(this);
     this.audioPlayer = new AudioPlayer();
+    this.worldMap = new WorldMap(5, 0.5, 0.5, 2, 4, 672, 288);
 
     this.testTown = new Town('Franowo', 64, 64, 0, 0, {sheriff: 1, house: 2, saloon: 10});
     this.testTown.createTown();

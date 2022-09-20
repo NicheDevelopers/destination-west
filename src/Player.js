@@ -27,6 +27,12 @@ import Entity from "./Entity.js";
  * A constant representing the default player speed value
  */
 const defaultPlayerSpeed = 100;
+
+/**
+ * A constant representing the change in player's speed value while running on diagonals
+ */
+const defaultDiagonalOffset = 0.71;
+
 /**
  * Class for managing the player-controlled character
  */
@@ -38,8 +44,6 @@ class Player extends Entity{
                    this.moveLeftFunc, this.idleFunc, this.moveRightFunc, 
                    this.moveLeftDownFunc, this.moveDownFunc, this.moveRightDownFunc];
     this.default_direction = 4; //the default direction being staying idle, on index 4 in the state array
-    this.default_player_speed = defaultPlayerSpeed;
-    this.default_diagonal_offset = 0.71;
     this.addUserActions();
   }
   addUserActions(){
@@ -65,23 +69,23 @@ class Player extends Entity{
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = true;
-    this.moveLeftAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
-    this.moveUpAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
+    this.moveLeftAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
+    this.moveUpAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
     this.moveLeftAnimation.next();
     this.moveUpAnimation.next();
   }
   moveUpFunc(){
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
-    this.moveUpAnimation.speed = this.default_player_speed;
+    this.moveUpAnimation.speed = defaultPlayerSpeed;
     this.moveUpAnimation.next();
   }
   moveRightUpFunc(){
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = false;
-    this.moveRightAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
-    this.moveUpAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
+    this.moveRightAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
+    this.moveUpAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
     this.moveRightAnimation.next();
     this.moveUpAnimation.next();
   }
@@ -89,7 +93,7 @@ class Player extends Entity{
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = true;
-    this.moveLeftAnimation.speed = this.default_player_speed;
+    this.moveLeftAnimation.speed = defaultPlayerSpeed;
     this.moveLeftAnimation.next();
   }
   idleFunc(){
@@ -100,30 +104,30 @@ class Player extends Entity{
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = false;
-    this.moveRightAnimation.speed = this.default_player_speed;
+    this.moveRightAnimation.speed = defaultPlayerSpeed;
     this.moveRightAnimation.next();
   }
   moveLeftDownFunc(){
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = true;
-    this.moveLeftAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
-    this.moveDownAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
+    this.moveLeftAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
+    this.moveDownAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
     this.moveLeftAnimation.next();
     this.moveDownAnimation.next();
   }
   moveDownFunc(){
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
-    this.moveDownAnimation.speed = this.default_player_speed;
+    this.moveDownAnimation.speed = defaultPlayerSpeed;
     this.moveDownAnimation.next();
   }
   moveRightDownFunc(){
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = false;
-    this.moveRightAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
-    this.moveDownAnimation.speed = this.default_diagonal_offset * this.default_player_speed;
+    this.moveRightAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
+    this.moveDownAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
     this.moveRightAnimation.next();
     this.moveDownAnimation.next();
   }

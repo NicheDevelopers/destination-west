@@ -37,7 +37,7 @@ class Game {
     this.player = new Player(this);
     this.audioPlayer = new AudioPlayer();
     this.testBuilding = new Tile("saloon_0");
-    this.pauseMenu = new PauseMenu();
+    this.pauseMenu = new PauseMenu(this);
     
     this.a = 0;
     /* Keyman has to load keybinds AFTER functions are written to
@@ -70,6 +70,7 @@ class Game {
     ctx.clearRect(0,0, 672, 288);
     this.browser.update();
     this.player.update();
+    this.pauseMenu.update();
     for (let x=0; x<21; x++){
       for (let y=0; y<9; y++){
 	this.testTile.draw(x*32,y*32);

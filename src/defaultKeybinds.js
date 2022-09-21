@@ -22,6 +22,7 @@
 const defaultKeybinds = [
   ['f', 'Toggle Fullscreen'],
   ['a', 'Move Left'],
-  ['d', 'Move Right']
+  ['d', 'Move Right'],
+  ['Escape', 'Toggle Pause Menu']
 ];
 export default defaultKeybinds;

@@ -27,6 +27,7 @@ import KeyMan from "./KeyboardManager.js";
 import Tile from "./Tile.js";
 import Player from "./Player.js";
 import AudioPlayer from "./AudioPlayer.js";
+import PauseMenu from "./PauseMenu.js";
 
 class Game {
   constructor(keybinds=[]){
@@ -36,6 +37,7 @@ class Game {
     this.player = new Player(this);
     this.audioPlayer = new AudioPlayer();
     this.testBuilding = new Tile("saloon_0");
+    this.pauseMenu = new PauseMenu();
     
     this.a = 0;
     /* Keyman has to load keybinds AFTER functions are written to
@@ -86,7 +88,6 @@ class Game {
     }
     window.requestAnimationFrame(() => this.loop());
   }
-  
   test(){
     return "Game class functional";
   }

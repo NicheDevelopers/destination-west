@@ -52,3 +52,11 @@ canvas {
 #game-canvas {
     background: black;	
  }
+
+#pause_menu {
+    display: none;
+    position: absolute;
+    width: 672px;
+    height: 288px;
+    background-color: rgba(0,200, 100, 0.9);
+}

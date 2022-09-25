@@ -30,6 +30,7 @@ import Player from "./Player.js";
 import AudioPlayer from "./AudioPlayer.js";
 import Town from "./Town.js";
 import WorldMap from "./WorldMap.js";
+import KeyboardVisualizer from "./KeyboardVisualizer.js";
 
 class Game {
   constructor(keybinds=[]){
@@ -47,7 +48,14 @@ class Game {
     /* Keyman has to load keybinds AFTER functions are written to
        userFunctionsMap. This means it has to be instantinated AFTER
        every function provider */
+
+    // Temporal bind
+    this.registerAction('Toggle Keyboard Visualization');
+    
     this.keyman = new KeyMan(this, keybinds);
+        
+    this.keyVisualizer = new KeyboardVisualizer(this);
+    
     let self = this;
     document.addEventListener("keydown", (event) => {
       self.keyman.manageKeydown(event);
@@ -77,6 +85,7 @@ class Game {
   loop(){
     time.update();
     ctx.clearRect(0,0, 672, 288);
+    this.keyVisualizer.update();
     this.browser.update();
     this.player.update();
     for (let x=0; x<42; x++){

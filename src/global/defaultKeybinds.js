@@ -26,6 +26,7 @@ const defaultKeybinds = [
   ['d', 'Move Right'],
   ['w', 'Move Up'],
   ['s', 'Move Down'],
+  ['m', 'Toggle Map Display']
   ['l', 'Toggle Keyboard Visualization']
 ];
 export default defaultKeybinds;

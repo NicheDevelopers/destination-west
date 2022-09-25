@@ -19,11 +19,11 @@ class Town {
   }
   town1() {
     // look https://gitlab.com/niche-devs/destination-west/-/wikis/Technical-Documentation/Classes/Town/Town-Presets
-    this.array = new Array(37);
-    for (let x = 0; x < 37; ++x) {
+    this.array = new Array(42);
+    for (let x = 0; x < 42; ++x) {
       this.array[x] = new Array(20);
     }
-    this.placeStreets1();
+    this.placeStreets(preset1);
     this.placeBuildings(preset1);
     this.placeBackground('sand');
     return this.array;
@@ -33,15 +33,13 @@ class Town {
     let height = this.array[0].length;
     for (let i = 0; i < length; i++) {
       for (let j = 0; j < height; j++) {
-        if (this.array[i][j] === undefined) this.array[i][j] = new Tile(
-          background, i * 16, j * 16);
+        if (this.array[i][j] === undefined)
+	  this.array[i][j] = new Tile(background, i * 16, j * 16);
       }
     }
     return this.array;
   }
   placeBuilding(xStart, yStart, building) {
-    console.log(building.array);
-
     for (let i = 0; i < building.xTiles; i++) {
       for (let j = 0; j < building.yTiles; j++) {
 	this.array[xStart + i][yStart + j] = building.array[i][j];
@@ -51,7 +49,15 @@ class Town {
     }
   }
   
-  placeStreets1() {
+  placeStreets(preset) {
+    preset.streets.forEach((street) => {
+      for (let i = street.start.x; i < street.start.x + street.width; ++i){
+	for (let j = street.start.y; j < street.start.y + street.height; ++j){
+	  this.array[i][j] = new Tile('street', i*16, j*16);
+	}
+      }
+    });
+    /*
     for (let i = 0; i < 37; i++) {
       for (let j = 5; j < 8; j++) {
         let x = new Tile('street', i * 16, j * 16);
@@ -64,21 +70,22 @@ class Town {
         this.array[i][j] = new Tile('street', i * 16, j * 16);
       }
     }
+    */
+    /*
     for (let i = 27; i < 31; i++) this.array[i][10] =
       new Tile('street', i * 16, 10 * 16);
+    
     for (let i = 27; i < 31; i++) this.array[i][14] =
       new Tile('street', i * 16, 14 * 16);
     for (let i = 27; i < 31; i++) this.array[i][18] =
-      new Tile('street', i * 16, 18 * 16);
+    new Tile('street', i * 16, 18 * 16);
+    
     for (let i = 19; i < 25; i++) this.array[i][16] =
-      new Tile('street', i * 16, 16 * 16);
-    for (let i = 15; i < 25; i++) {
-      for (let j = 11; j < 14; j++) {
-        this.array[i][j] = new Tile('street', i * 16, j * 16);
-      }
-    }
+    new Tile('street', i * 16, 16 * 16);
+    */
   }
-  placeBuildings(buildings) {
+  placeBuildings(preset) {
+    let buildings = preset.buildings;
     // `buildings` holds an array with objects describing
     // building positions and sizes
     let numBlds = buildings.length;
@@ -140,37 +147,45 @@ class Building {
     this.createTile('rightwall', max.x, max.y);
     this.createTile('door', max.x / 2 | 0, max.y);
     for (let x = 1; x < max.x; x++) {
-      if (this.array[x][max.y] === undefined) this.createTile(
-        'wall', x, max.y);
+      if (this.array[x][max.y] !== undefined) continue;
+      if (randIntInRange(0,7) === 1) {
+	this.createTile('barrels', x, max.y);
+	continue;
+      }
+      this.createTile('wall', x, max.y);
     }
     for (let y = 1; y < max.y; y++) {
       this.createTile('leftwall', min.x, y);
       this.createTile('rightwall', max.x, y);
       for (let x = 1; x < max.x; x++) {
-        if (this.array[x][y] === undefined) {
-          if (randIntInRange(0, 3) === 1)
-	    this.createTile('window', x, y);
-          else this.createTile('wall', x, y);
-        }
+        if (this.array[x][y] !== undefined) continue;
+	let r = randIntInRange(0,6);
+        if (r === 4){
+	  this.createTile('window', x, y);
+	  continue;
+	}
+	if (r === 5){
+	  this.createTile('smallwindow', x, y);
+	  continue;
+	}
+        this.createTile('wall', x, y);
       }
     }
     this.createTile('leftroof', min.x, min.y);
     this.createTile('rightroof', max.x, min.y);
     if (max.x === 2) {
-      this.createTile('door', 1, min.y);
-      //this.createTile('higherroof', 1, min.y);
+      this.createTile('roofdecoration', 1, min.y);
       return;
     }
-    this.createTile('lefthigherroof', min.x + 1, min.y);
-    this.createTile('righthigherroof', max.x - 1, min.y);
+    this.createTile('lefthighroof', min.x + 1, min.y);
+    this.createTile('righthighroof', max.x - 1, min.y);
     if (max.x === 3) return;
     if (max.x === 4) {
-      this.createTile('door', 2, min.y);
-      //this.createTile('thehighestroof', 2, min.y);
+      this.createTile('highroof', 2, min.y);
       return;
     }
-    this.createTile('lefthighestroof', min.x + 2, min.y);
-    this.createTile('righthighestroof', max.x - 2, min.y);
+    this.createTile('lefthighroof', min.x + 2, min.y);
+    this.createTile('righthighroof', max.x - 2, min.y);
   }
 }
 export default Town;

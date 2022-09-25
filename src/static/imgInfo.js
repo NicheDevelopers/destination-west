@@ -73,15 +73,20 @@ const imgInfo = new Map([
 let newBuildingPart = (name, row, col) => ({name: name, row: row, col:col});
 let buildingParts = [
   newBuildingPart('leftwall', 1, 0),
-  newBuildingPart('wall', 1, 1),
+  newBuildingPart('smallwindow', 1, 1),
   newBuildingPart('door', 1, 2),
   newBuildingPart('window', 1, 3),
-  newBuildingPart('rightwall', 1, 4),
+  newBuildingPart('wall', 1, 4),
+  newBuildingPart('barrels', 1, 5),
+  newBuildingPart('rightwall', 1, 6),
+
   newBuildingPart('leftroof', 0, 0),
-  newBuildingPart('lefthigherroof', 0, 1),
-  newBuildingPart('righthigherroof', 0, 2),
-  newBuildingPart('roof', 0, 3),
-  newBuildingPart('rightroof', 0, 4)
+  newBuildingPart('lefthighroof', 0, 1),
+  newBuildingPart('highroof', 0, 2),
+  newBuildingPart('righthighroof', 0, 3),
+  newBuildingPart('roof', 0, 4),
+  newBuildingPart('roofdecoration', 0, 5),
+  newBuildingPart('rightroof', 0, 6)
 ];
 let buildings = ['sheriff', 'house', 'saloon'];
 

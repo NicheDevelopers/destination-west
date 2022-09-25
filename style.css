@@ -43,12 +43,14 @@ canvas {
 }
 
 #game-container{
-    width: 672px;
-    height: 288px;
+    width: 1344px;
+    height: 576px;
     margin: 0 auto;
-    transform: translateY(50%);
+    translateY(50%);
 }
 
 #game-canvas {
-    background: black;	
+    background: black;
+    transform-origin: 0 0;
+    transform: scale(2) translateY(50%);
  }

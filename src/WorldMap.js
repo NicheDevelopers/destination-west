@@ -212,8 +212,8 @@ class WorldMap {
 
     // Connect starting and final town with all towns in the neighboring layer
     this.townArray.map((t) => {
-      if (t.layer === numOfLayers) {
-        t.connectedTowns.push(townID);
+      if (t.layer === numOfLayers - 1) {
+        t.connectedTowns.push(finalTown.ID);
       }
       if (t.layer === 0) {
         t.connectedTowns.push(...this.townArray.filter((u) => {
@@ -221,9 +221,9 @@ class WorldMap {
           })
           .map((o) => o.ID));
       }
-      if (t.layer === numOfLayers + 1) {
+      if (t.layer === numOfLayers) {
         t.connectedTowns.push(...this.townArray.filter((u) => {
-          return u.layer === numOfLayers;
+          return u.layer === numOfLayers-1;
         }).map((o) => o.ID))
       }
     });

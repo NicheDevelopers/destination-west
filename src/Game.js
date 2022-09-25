@@ -30,6 +30,7 @@ import Player from "./Player.js";
 import AudioPlayer from "./AudioPlayer.js";
 import Town from "./Town.js";
 import WorldMap from "./WorldMap.js";
+import WorldMapDisplay from "./WorldMapDisplay.js";
 import KeyboardVisualizer from "./KeyboardVisualizer.js";
 
 class Game {
@@ -39,7 +40,8 @@ class Game {
     this.testTile = new Tile("sand");
     this.player = new Player(this);
     this.audioPlayer = new AudioPlayer();
-    this.worldMap = new WorldMap(5, 0.5, 0.5, 2, 4, 672, 288);
+    this.worldMap = new WorldMap(5, 0.2, 0.2, 2, 3, 672, 288);
+    this.worldMapDisplay = new WorldMapDisplay(this);
 
     this.testTown = new Town('Franowo', 64, 64, 0, 0, {sheriff: 1, house: 2, saloon: 10});
     this.testTown.createTown();
@@ -88,6 +90,7 @@ class Game {
     this.keyVisualizer.update();
     this.browser.update();
     this.player.update();
+    this.worldMapDisplay.update();
     for (let x=0; x<42; x++){
       for (let y=0; y<18; y++){
 	//this.testTile.draw(x*16,y*16);

@@ -25,6 +25,7 @@ const defaultKeybinds = [
   ['a', 'Move Left'],
   ['d', 'Move Right'],
   ['w', 'Move Up'],
-  ['s', 'Move Down']
+  ['s', 'Move Down'],
+  ['l', 'Toggle Keyboard Visualization']
 ];
 export default defaultKeybinds;

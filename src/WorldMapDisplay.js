@@ -43,12 +43,17 @@ class WorldMapDisplay {
     map_ctx.font = "15px Arial";
 
     for (let town of map.townArray) {
-      drawCircle(map_ctx, town.x, town.y, 6, 'black', 'black', 2);
-      map_ctx.fillText(town.ID, town.x+15, town.y+15);
+      let size;
+      if (town.connectedTowns.length < 3) size = 4;
+      else if (town.connectedTowns.length < 5) size = 10;
+      else if (town.connectedTowns.length < 10) size = 12;
+      
+      drawCircle(map_ctx, town.x, town.y, size, 'black', 'black', 2);
+      map_ctx.fillText(town.ID, town.x+5, town.y-10);
       
       for (let connection of town.connectedTowns) {
 	let town2 = this.game.worldMap.getID(connection);
-	drawLine(map_ctx, town.x, town.y, town2.x, town2.y, 'black', 2);
+	drawLine(map_ctx, town.x, town.y, town2.x, town2.y, 'black', 1);
       }
     }
   }

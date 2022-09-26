@@ -32,21 +32,33 @@ import Town from "./Town.js";
 import WorldMap from "./WorldMap.js";
 import WorldMapDisplay from "./WorldMapDisplay.js";
 import KeyboardVisualizer from "./KeyboardVisualizer.js";
+import PauseMenu from "./PauseMenu.js";
+
+import Animation from "./Animation.js";
 
 class Game {
   constructor(keybinds=[]){
     this.userFunctionsMap = new Map();
+    
+    this.pauseMenu = new PauseMenu(this);
+    this.paused = false;
+    
     this.browser = new Browser(this);
     this.testTile = new Tile("sand");
     this.player = new Player(this);
     this.audioPlayer = new AudioPlayer();
     this.worldMap = new WorldMap(5, 0.2, 0.2, 2, 3, 672, 288);
     this.worldMapDisplay = new WorldMapDisplay(this);
+    
 
-    this.testTown = new Town('Franowo', 64, 64, 0, 0, {sheriff: 1, house: 2, saloon: 10});
+    this.testTown = new Town('Franowo', 64, 64, 0, 0,
+			     {sheriff: 1, house: 2, saloon: 10});
     this.testTown.createTown();
-        
-    this.a = 0;
+
+    this.fps = 0;
+    this.testFPSCounter = new Animation(this, '()updateFPSCounter', 5);
+    
+    
     /* Keyman has to load keybinds AFTER functions are written to
        userFunctionsMap. This means it has to be instantinated AFTER
        every function provider */
@@ -65,7 +77,6 @@ class Game {
     document.addEventListener("keyup", (event) => {
       self.keyman.manageKeyup(event);
     });
-    this.previousTime = Date.now();
   }
   
   registerAction(action, func){
@@ -85,36 +96,37 @@ class Game {
   }
   
   loop(){
+    window.requestAnimationFrame(() => this.loop());
     time.update();
-    ctx.clearRect(0,0, 672, 288);
+    
+    this.pauseMenu.update();
+    if (this.paused) return;
+
     this.keyVisualizer.update();
     this.browser.update();
     this.player.update();
     this.worldMapDisplay.update();
-    for (let x=0; x<42; x++){
-      for (let y=0; y<18; y++){
-	//this.testTile.draw(x*16,y*16);
-      }
-    }
+
+    ctx.clearRect(0,0, 672, 288);
     for (let x=0; x < this.testTown.array.length; ++x){
       for (let y=0; y < this.testTown.array[0].length; ++y){
 	let tile = this.testTown.array[x][y];
-	//if (tile.typeName !== 'sand') continue;
 	tile.draw(tile.x, tile.y);
       }
     }
+    this.testFPSCounter.next();
     ctx.font = "16px serif";
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
-
+    
     this.player.draw(128 + this.player.x, 128 + this.player.y);
-
-    if (!(this.a++ % 30)){
+  }
+  togglePause(){
+    this.paused = !this.paused;
+  }
+  updateFPSCounter(){
       this.fps = time.getFPS();
       this.fps = ((this.fps > 99)? "" : " ") + this.fps;
-    }
-    window.requestAnimationFrame(() => this.loop());
   }
-  
   test(){
     return "Game class functional";
   }

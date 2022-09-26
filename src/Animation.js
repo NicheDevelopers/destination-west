@@ -56,7 +56,7 @@ class Animation{
       };
       if (v.substring(0,2) === '()'){
 	property.name = v.substring(2);
-	this.methods.push(v.substring(2));
+	this.methods.push(property);
 	return;
       }
       if (v[0] === '-'){
@@ -83,7 +83,7 @@ class Animation{
     this.methods.forEach((method) => {
       let changesNow = calculateChangesInThisTick(method);
       for (let i=0; i < changesNow; ++i){
-	this.host[method.name].call(this.h);
+	this.host[method.name].call(this.host);
       }
     });
   }

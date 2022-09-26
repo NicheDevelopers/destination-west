@@ -42,11 +42,14 @@ function canConnect(l1, l2, i, j) {
 /**
  * Connect two layers
  */
+// the last condition in the `if` statement is so we can avoid weird looking connections
+// between far-away towns
 function connectLayers(l1, l2, chanceOfConnection) {
   for (let i = 0; i < l1.length; i++) {
     for (let j = 0; j < l2.length; j++) {
-      if (canConnect(l1, l2, i, j) && Math.random() < chanceOfConnection) {
-        l1[i].connectedTowns.push(l2[j].ID);
+      if (canConnect(l1, l2, i, j) && Math.random() < chanceOfConnection &&
+	l2[j].ID - l1[i].ID <= 3) {
+	l1[i].connectedTowns.push(l2[j].ID);
         l2[j].connectedTowns.push(l1[i].ID);
       }
     }
@@ -83,7 +86,6 @@ function makeFallbackConnectionsInLayer(l1, l2) {
       otherTown.connectedTowns.push(town.ID);
     }
   }
-
 }
 
 // Check if l1 connects to l2 and make a connection if it doesn't
@@ -133,9 +135,13 @@ function positionTowns(numOfLayers, width, height, towns) {
         topBorder = middle + deviation;
         bottomBorder = middle - deviation;
       }
-
-      let x = Math.floor(randIntInRange(leftBorder, rightBorder));
-      let y = Math.floor(randIntInRange(bottomBorder, topBorder));
+      // center everything
+//      let x = leftBorder + horizontalSegmentWidth/2;
+      // let y = bottomBorder + segmentHeight/2;
+      let deviationX = horizontalSegmentWidth/3;
+      let deviationY = segmentHeight/3;
+      let x = Math.floor(randIntInRange(leftBorder + deviationX, rightBorder - deviationX));
+      let y = Math.floor(randIntInRange(bottomBorder + deviationY, topBorder - deviationY));
       town.x = x;
       town.y = y;
       topBorder = bottomBorder;

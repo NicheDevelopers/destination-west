@@ -47,7 +47,7 @@ class Game {
     this.testTile = new Tile("sand");
     this.player = new Player(this);
     this.audioPlayer = new AudioPlayer();
-    this.worldMap = new WorldMap(5, 0.2, 0.2, 2, 3, 672, 288);
+    this.worldMap = new WorldMap(5, 0.8, 0.3, 2, 4, 672, 288);
     this.worldMapDisplay = new WorldMapDisplay(this);
     
 

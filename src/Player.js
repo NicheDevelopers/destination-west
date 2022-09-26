@@ -62,7 +62,8 @@ class Player extends Entity{
       this.direction -= 3;
     if (this.game.isActionRequested('Move Down'))
       this.direction += 3;
-    //console.log(this.direction);
+    
+    this.sprite.next();
     this.states[this.direction].call(this);
   }
   moveLeftUpFunc(){

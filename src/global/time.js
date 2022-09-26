@@ -24,12 +24,14 @@
  */
 class Time{
   constructor(){
+    this.speed = 1;
     this.now = Date.now();
   }
   update(){
     this.then = this.now;
     this.now = Date.now();
     this.delta = this.now - this.then;
+    this.delta *= this.speed;
   }
   getFPS(){
     if (!this.delta) return 0;

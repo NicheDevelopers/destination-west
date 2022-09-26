@@ -22,6 +22,8 @@ import ctx from "./global/ctx.js";
 
 import imgInfo from "./static/imgInfo.js";
 
+import Animation from "./Animation.js";
+
 /**
  * Create sprites to make display and animation simple
  */
@@ -30,14 +32,16 @@ class Sprite{
    * Create a sprite
      @param {string} typeName - Name of the sprite graphic to be used
      @param {Object} [options] - Additional options
-     @param {boolean} [options.autoAnimation=false]Toggle automatical animation
+     @param {boolean} [options.autoAnimation=false] - Toggle automatical animation
      @param {number} [options.interval=110] - The interval to use with autoAnimation
      @param {number} [options.framesPerInterval=1] - The number of frames to cycle through after each interval in the auto animation
   */
   constructor(typeName, options={}){
     this.img = new Image();
     this.typeName = typeName;
-    if (!imgInfo.has(typeName)) throw `Sprite: Type name is not defined: ${typeName}`;
+    if (!imgInfo.has(typeName))
+      throw `Sprite: Type name is not defined: ${typeName}`;
+    
     ({src: this.src,
       height: this.height, width: this.width,
       row: this.spriteSheetRow, col: this.spriteSheetCol,
@@ -54,41 +58,36 @@ class Sprite{
 
     this.currentFrame = 0;
     this.currentAnimation = undefined;
-
-    this.intervalID = false;
-
-    this.interval = 110;
-    if (options?.interval)
-      this.interval = options.interval;
-
-    this.framesPerInterval = 1;
-    if (options?.framesPerInterval)
-      this.framesPerInterval = options.framesPerInterval;
-
-    this.autoAnimation = false;
-    if (options?.autoAnimation)
-      this.autoAnimation = true;
-
     if (this.defaultAnimation){
       this.changeAnimation(this.defaultAnimation);
     }
-    
+
+    this.autoAnimation = options.autoAnimation ?? false;
+    if (this.autoAnimation) {
+      this.intervalID = false;
+      this.interval = options.interval ?? 110;
+      this.framesPerInterval = options.framesPerInterval ?? 1;
+      return;
+    }
+    this.animationSpeed = options.animationSpeed ?? 8;
+    this.animationController = new Animation(this, '()alterFrame', this.animationSpeed);
   }
   /**
    * Change the current animation
    @param {string} animationName - The name of the animation to switch to
    */
   changeAnimation(animationName){
-    if (!this.animations.has(animationName)){
-      console.error('Sprite: Attempted to change to an animation that' +
+    if (!this.animations.has(animationName))
+      throw('Sprite: Attempted to change to an animation that' +
 	` does not exist: ${animationName}`);
-      return;
-    }
+
     this.animation = this.animations.get(animationName);
     this.frame = 0;
-    clearInterval(this.intervalID);
-    if (this.autoAnimation)
+
+    if (this.autoAnimation){
+      clearInterval(this.intervalID);
       this.animate(this.interval, this.framesPerInterval);
+    }
   }
   /**
    * Reset the animation to frame 0
@@ -104,26 +103,30 @@ class Sprite{
   animate(interval=110, framesPerInterval=1){
     this.animating = true;
     this.intervalID = setInterval(
-      () => this.next(framesPerInterval),
+      () => this.alterFrame(framesPerInterval),
       interval);
   }
+
   /**
    * Switch the current frame of an animation
    @param {number} [frameCount=1] - The number of frames to cycle through
    */
-  next(frameCount=1){
-    if (!this.animation){
-      console.error('Sprite: Attempted to cycle an animation' +
+  alterFrame(frameCount=1){
+    if (!this.animation)
+      throw('Sprite: Attempted to cycle an animation' +
 	' which was not defined');
-      return;
-    }
     this.frame = (this.frame + frameCount) % this.animation.frames;
   }
+
+  next(){
+    this.animationController.next();
+  }
+  
   /**
-   * Draw the sprite on the #game-canvas
-   @param {number} x - Position x of the draw location
-   @param {number} y - Position y of the draw location
-   */
+  * Draw the sprite on the #game-canvas
+  @param {number} x - Position x of the draw location
+  @param {number} y - Position y of the draw location
+  */
   draw(x, y){
     if (this.animations){
       let row = (this.mirrored)? this.animation.mirroredRow : this.animation.row;
@@ -132,14 +135,13 @@ class Sprite{
 		    row * this.height,
 		    this.width, this.height, x, y,
 		    this.width, this.height);
+      return;
     }
-    else {
-      ctx.drawImage(this.img,
-		    this.spriteSheetCol * this.width,
-		    this.spriteSheetRow * this.height,
-		    this.width, this.height, x, y,
-		    this.width, this.height);
-    }
+    ctx.drawImage(this.img,
+		  this.spriteSheetCol * this.width,
+		  this.spriteSheetRow * this.height,
+		  this.width, this.height, x, y,
+		  this.width, this.height);
   }
 }
 

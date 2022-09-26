@@ -29,7 +29,7 @@ import Animation from "./Animation.js";
 class Entity {
   constructor(typeName, x=0, y=0, speed=100){
     this.typeName = typeName;
-    this.sprite = new Sprite(typeName, {autoAnimation: true});
+    this.sprite = new Sprite(typeName, {animationSpeed: 9});
     this.x = x;
     this.y = y;
     this.moveRightAnimation = new Animation(this, "x", speed);

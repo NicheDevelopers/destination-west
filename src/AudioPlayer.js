@@ -35,11 +35,12 @@ class AudioPlayer {
   }
 
   play(soundName) {
-    if (typeof this.soundMap.get(soundName) === undefined) {
+    const obtainedSound = this.soundMap.get(soundName);
+    if (typeof obtainedSound === undefined) {
       throw `Audio Player: ` + `No sound object found for name ${soundName}`;
     }
-    this.soundMap.get(soundName).sound.play();
-    return true;
+    // Cloning allows for multiple instances of the sound to be played at once
+    obtainedSound.sound.cloneNode().play();
   }
 
   updateVolumes() {

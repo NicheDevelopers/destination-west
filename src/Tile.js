@@ -31,6 +31,7 @@ class Tile{
     this.sprite = new Sprite(typeName);
     this.x = x;
     this.y = y;
+    this.walkable = true;
     this.items = [];
   }
   draw(x,y){

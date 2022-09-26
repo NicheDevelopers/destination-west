@@ -57,33 +57,8 @@ class Town {
 	}
       }
     });
-    /*
-    for (let i = 0; i < 37; i++) {
-      for (let j = 5; j < 8; j++) {
-        let x = new Tile('street', i * 16, j * 16);
-        this.array[i][j] = x;
-      }
-    }
-    
-    for (let i = 25; i < 27; i++) {
-      for (let j = 0; j < 20; j++) {
-        this.array[i][j] = new Tile('street', i * 16, j * 16);
-      }
-    }
-    */
-    /*
-    for (let i = 27; i < 31; i++) this.array[i][10] =
-      new Tile('street', i * 16, 10 * 16);
-    
-    for (let i = 27; i < 31; i++) this.array[i][14] =
-      new Tile('street', i * 16, 14 * 16);
-    for (let i = 27; i < 31; i++) this.array[i][18] =
-    new Tile('street', i * 16, 18 * 16);
-    
-    for (let i = 19; i < 25; i++) this.array[i][16] =
-    new Tile('street', i * 16, 16 * 16);
-    */
   }
+  
   placeBuildings(preset) {
     let buildings = preset.buildings;
     // `buildings` holds an array with objects describing
@@ -133,6 +108,7 @@ class Building {
   createTile(name, x, y) {
     this.array[x][y] = new Tile('building-' + this.buildingType +
       "-" + name, x * 16, y * 16);
+    this.array[x][y].walkable = false;
   }
   create() {
     let min = {

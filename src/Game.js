@@ -45,7 +45,7 @@ class Game {
     
     this.browser = new Browser(this);
     this.testTile = new Tile("sand");
-    this.player = new Player(this);
+    this.player = new Player(this, 128, 128);
     this.audioPlayer = new AudioPlayer();
     this.worldMap = new WorldMap(5, 0.8, 0.3, 2, 4, 672, 288);
     this.worldMapDisplay = new WorldMapDisplay(this);
@@ -118,7 +118,7 @@ class Game {
     ctx.font = "16px serif";
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
     
-    this.player.draw(128 + this.player.x, 128 + this.player.y);
+    this.player.draw(this.player.x, this.player.y);
   }
   togglePause(){
     this.paused = !this.paused;

@@ -1,5 +1,5 @@
 /*
-  file: src/imgInfo.js
+  file: src/static/imgInfo.js
   purpose: describe spirtesheets that come with the game
   author: Artur Gulik <https://gitlab.com/ArturGulik>
           Michał Miłek <https://gitlab.com/mmilek>

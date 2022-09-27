@@ -182,7 +182,7 @@ class WorldMap {
       let count = randIntInRange(minTownsInLayer, maxTownsInLayer);
       let l = new Array();
       for (let i=0; i<count; i++) {
-	l.push(new Town(genTownName(), undefined, undefined, layer, townID++, {}));
+	l.push(new Town(genTownName(0.4), undefined, undefined, layer, townID++, {}));
       }
       return l;
     }
@@ -190,7 +190,7 @@ class WorldMap {
     this.townArray = new Array();
 
     // Create a starting town
-    let startingTown = new Town(genTownName(), undefined, undefined, 0, townID++, {});
+    let startingTown = new Town(genTownName(0.4), undefined, undefined, 0, townID++, {});
     this.townArray.push(startingTown);
 
     // Create layer no. 1
@@ -213,7 +213,7 @@ class WorldMap {
     }
 
     // Create a final town
-    let finalTown = new Town(genTownName(), undefined, undefined, ++numOfLayers, townID++, {});
+    let finalTown = new Town(genTownName(0.4), undefined, undefined, ++numOfLayers, townID++, {});
     this.townArray.push(finalTown);
 
     // Connect starting and final town with all towns in the neighboring layer

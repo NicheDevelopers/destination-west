@@ -22,38 +22,72 @@
 */
 
 import Entity from "./Entity.js";
+import imgInfo from "./static/imgInfo.js";
 
 /**
- * A constant representing the default player speed value
+ * a constant representing the default player speed value
  */
 const defaultPlayerSpeed = 100;
 
 /**
- * A constant representing the change in player's speed value while running on diagonals
+ * a constant representing the change in player's speed value while running on diagonals
  */
 const defaultDiagonalOffset = 0.71;
 
 /**
- * Class for managing the player-controlled character
+ * constants representing the width and height of the character sprite.
+ */
+
+const playerWidth = imgInfo.get("player").width;
+const playerHeight = imgInfo.get("player").height;
+
+/**
+ * class for managing the player-controlled character
  */
 class Player extends Entity{
   constructor(game, x=0, y=0){
     super("player", x, y, defaultPlayerSpeed);
     this.game = game;
+    //an object containing info on the player model's center point. once we get normal sized sprites this will be much cleaner.
+    this.defaultCenterPoint = {x: 24, //for the inaccurate sprite we have now this is around the center point
+                               y: 30};
+    //an object which contains info on how many pixels from the center point you want to detect collisions
+    this.standardCenterPointDeviation = {up: -1,
+                                         left: -10,
+                                         right: 10,
+                                         down: playerHeight - this.defaultCenterPoint.y}
+    //an object containing appropriate center point deviation so that the player's model doesn't go out of bounds.
+    this.CenterPoint = {x: this.x + this.defaultCenterPoint.x, 
+                        y: this.y + this.defaultCenterPoint.y};
+    //array of functions which handles player movement
     this.states = [this.moveLeftUpFunc, this.moveUpFunc, this.moveRightUpFunc, 
                    this.moveLeftFunc, this.idleFunc, this.moveRightFunc, 
                    this.moveLeftDownFunc, this.moveDownFunc, this.moveRightDownFunc];
+    //array of information on which pixels should be checked for colliding objects
+    this.boundaries = [[this.standardCenterPointDeviation.left, this.standardCenterPointDeviation.up], [0, this.standardCenterPointDeviation.up], [this.standardCenterPointDeviation.right, this.standardCenterPointDeviation.up],
+                       [this.standardCenterPointDeviation.left, 0], [0, 0], [this.standardCenterPointDeviation.right, 0],
+                       [this.standardCenterPointDeviation.left, this.standardCenterPointDeviation.down], [0, this.standardCenterPointDeviation.down], [this.standardCenterPointDeviation.right, this.standardCenterPointDeviation.down]];
     this.default_direction = 4; //the default direction being staying idle, on index 4 in the state array
+    this.currentTown = this.game.testTown;
     this.addUserActions();
   }
-  addUserActions(){
+  addUserActions(){ //register all actions that the player can do and bind them to correct keys
     this.game.registerAction('Move Right');
     this.game.registerAction('Move Left');
     this.game.registerAction('Move Up');
     this.game.registerAction('Move Down');
   }
-  update(){
+  update(){ //manages everything
     this.direction = this.default_direction;
+    //find where the center point of the player's sprite in current frame is in relation to the entire map
+    this.CenterPoint.x = this.x + this.defaultCenterPoint.x;
+    this.CenterPoint.y = this.y + this.defaultCenterPoint.y;
+    //calculate the direction in which the player is moving, according to this diagram:
+    //       N
+    //    0  1  2
+    // W  3  4  5  E
+    //    6  7  8
+    //       S
     if (this.game.isActionRequested('Move Right'))
       this.direction += 1;
     if (this.game.isActionRequested('Move Left'))
@@ -62,10 +96,28 @@ class Player extends Entity{
       this.direction -= 3;
     if (this.game.isActionRequested('Move Down'))
       this.direction += 3;
-    
+    if (!this.doesCollide(this.direction)) //moves the player if movement is not obstructed
+      this.states[this.direction].call(this);
+    else{
+      //if the player wanted to move right but is blocked, they will look right
+      if (this.direction === 2 || this.direction === 5 || this.direction === 8)
+        this.sprite.mirrored = false;
+      //if the player wanted to move left but is blocked, they will look left
+      if (this.direction === 0 || this.direction === 3 || this.direction === 6)
+        this.sprite.mirrored = true;
+      if (this.sprite.animation.name !== "idle") //this makes the player stop running instead of constantly running into a wall
+        this.sprite.changeAnimation("idle");
+    }
     this.sprite.next();
-    this.states[this.direction].call(this);
   }
+  doesCollide(direction){
+    //~~(a/b) is a fast way to do integer division. we need this to find the index of the tile we want to check.
+    if ((this.currentTown.array[~~((this.CenterPoint.x + this.boundaries[direction][0])/16)][~~((this.CenterPoint.y + this.boundaries[direction][1])/16)].walkable))
+      return 0;
+    return 1;
+  }
+  //below are simple yet many functions which handle movement in every direction
+  //movement on diagonals is slower because math
   moveLeftUpFunc(){
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");

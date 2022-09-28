@@ -2,8 +2,8 @@
   file: src/Player.js
   purpose: Define the Player class for managing the player-controlled
            character
-  authors: Artur Gulik <https://gitlab.com/ArturGulik>
-           Kamil Małecki <https://gitlab.com/gaussx>
+  authors: Kamil Małecki <https://gitlab.com/gaussx>
+           Artur Gulik <https://gitlab.com/ArturGulik>
   
   This file is part of 'Destination West'.
   

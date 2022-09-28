@@ -3,6 +3,7 @@
   purpose: define the default keybinds array
   authors: Artur Gulik <https://gitlab.com/ArturGulik>
            Kamil Małecki <https://gitlab.com/gaussx>
+           Michał Miłek <https://gitlab.com/mmilek>
 
   This file is part of 'Destination West'.
   

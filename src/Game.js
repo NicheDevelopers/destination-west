@@ -1,8 +1,8 @@
 /*
   file: src/Game.js
   purpose: define the Game class
-  author: Artur Gulik <https://gitlab.com/ArturGulik>
-  author: Michał Miłek <https://gitlab.com/mmilek>
+  authors: Artur Gulik <https://gitlab.com/ArturGulik>
+          Michał Miłek <https://gitlab.com/mmilek>
   
   This file is part of 'Destination West'.
   

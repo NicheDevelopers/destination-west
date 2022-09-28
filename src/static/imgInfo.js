@@ -1,7 +1,7 @@
 /*
   file: src/static/imgInfo.js
   purpose: describe spirtesheets that come with the game
-  author: Artur Gulik <https://gitlab.com/ArturGulik>
+  authors: Artur Gulik <https://gitlab.com/ArturGulik>
           Michał Miłek <https://gitlab.com/mmilek>
   
   This file is part of 'Destination West'.

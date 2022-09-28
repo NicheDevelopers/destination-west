@@ -1,6 +1,6 @@
 /*
-  file: src/time.js
-  purpose: Define the time global object for managing time and frames
+  file: src/Animation.js
+  purpose: Define the Animation class for managing animated sprites
   author: Artur Gulik <https://gitlab.com/ArturGulik>
   
   This file is part of 'Destination West'.

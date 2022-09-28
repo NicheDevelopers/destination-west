@@ -2,8 +2,8 @@
   file: src/PauseMenu.js
   purpose: define the PauseMenu class to toggle on and off  provide a simple interface
            for keyboard event management
-  author: Artur Gulik <https://gitlab.com/ArturGulik>
-          Sebastian Nowak <https://gitlab.com/sebnow91>
+  authors: Artur Gulik <https://gitlab.com/ArturGulik>
+           Sebastian Nowak <https://gitlab.com/sebnow91>
 
   This file is part of 'Destination West'.
 

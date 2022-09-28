@@ -33,6 +33,8 @@ import WorldMap from "./WorldMap.js";
 import WorldMapDisplay from "./WorldMapDisplay.js";
 import KeyboardVisualizer from "./KeyboardVisualizer.js";
 import PauseMenu from "./PauseMenu.js";
+import EquipmentDisplay from "./EquipmentDisplay.js";
+import Equipment from "./Equipment.js";
 
 import Animation from "./Animation.js";
 
@@ -48,6 +50,9 @@ class Game {
     this.audioPlayer = new AudioPlayer();
     this.worldMap = new WorldMap(5, 0.8, 0.3, 2, 4, 672, 288);
     this.worldMapDisplay = new WorldMapDisplay(this);
+
+    let testEq = new Equipment(7,7);
+    this.equipmentDisplay = new EquipmentDisplay(this, testEq, true);
     
     this.testTown = new Town('Franowo', 64, 64, 0, 0,
 			     {sheriff: 1, house: 2, saloon: 10});
@@ -106,6 +111,7 @@ class Game {
     this.browser.update();
     this.player.update();
     this.worldMapDisplay.update();
+    this.equipmentDisplay.update();
 
     ctx.clearRect(0,0, 672, 288);
     for (let x=0; x < this.testTown.array.length; ++x){

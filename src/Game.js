@@ -45,15 +45,15 @@ class Game {
     
     this.browser = new Browser(this);
     this.testTile = new Tile("sand");
-    this.player = new Player(this, 128, 128);
     this.audioPlayer = new AudioPlayer();
     this.worldMap = new WorldMap(5, 0.8, 0.3, 2, 4, 672, 288);
     this.worldMapDisplay = new WorldMapDisplay(this);
     
-
     this.testTown = new Town('Franowo', 64, 64, 0, 0,
 			     {sheriff: 1, house: 2, saloon: 10});
     this.testTown.createTown();
+
+    this.player = new Player(this, 128, 128);
 
     this.fps = 0;
     this.testFPSCounter = new Animation(this, '()updateFPSCounter', 5);

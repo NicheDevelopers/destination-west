@@ -69,6 +69,8 @@ class Player extends Entity{
                        [this.standardCenterPointDeviation.left, this.standardCenterPointDeviation.down], [0, this.standardCenterPointDeviation.down], [this.standardCenterPointDeviation.right, this.standardCenterPointDeviation.down]];
     this.default_direction = 4; //the default direction being staying idle, on index 4 in the state array
     this.currentTown = this.game.testTown;
+    this.townLength = this.currentTown.array.length;
+    this.townWidth = this.currentTown.array[0].length;
     this.addUserActions();
   }
   addUserActions(){ //register all actions that the player can do and bind them to correct keys
@@ -112,6 +114,8 @@ class Player extends Entity{
   }
   doesCollide(direction){
     //~~(a/b) is a fast way to do integer division. we need this to find the index of the tile we want to check.
+    if (~~((this.CenterPoint.x + this.boundaries[direction][0])/16) < 0 || ~~((this.CenterPoint.x + this.boundaries[direction][0])/16) >= this.townLength || ~~((this.CenterPoint.y + this.boundaries[direction][1])/16) < 0 || ~~((this.CenterPoint.y + this.boundaries[direction][1])/16) >= this.townWidth)
+      return 1;
     if ((this.currentTown.array[~~((this.CenterPoint.x + this.boundaries[direction][0])/16)][~~((this.CenterPoint.y + this.boundaries[direction][1])/16)].walkable))
       return 0;
     return 1;

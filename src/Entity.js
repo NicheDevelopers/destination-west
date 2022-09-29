@@ -19,7 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Sprite from "./Sprite.js";
+import AnimatedSprite from "./AnimatedSprite.js";
 import Animation from "./Animation.js";
 
 /**
@@ -29,7 +29,7 @@ import Animation from "./Animation.js";
 class Entity {
   constructor(typeName, x=0, y=0, speed=100){
     this.typeName = typeName;
-    this.sprite = new Sprite(typeName, {animationSpeed: 9});
+    this.sprite = new AnimatedSprite(typeName, {animationSpeed: 9});
     this.x = x;
     this.y = y;
     this.moveRightAnimation = new Animation(this, "x", speed);

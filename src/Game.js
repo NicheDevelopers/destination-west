@@ -36,6 +36,9 @@ import PauseMenu from "./PauseMenu.js";
 import EquipmentDisplay from "./EquipmentDisplay.js";
 import Equipment from "./Equipment.js";
 
+import Sprite from "./Sprite.js";
+import ColoredSprite from "./ColoredSprite.js";
+
 import Animation from "./Animation.js";
 
 class Game {
@@ -53,6 +56,9 @@ class Game {
 
     let testEq = new Equipment(7,7);
     this.equipmentDisplay = new EquipmentDisplay(this, testEq, true);
+    
+    //this.testJacket = new ColoredSprite('jacket');
+    //this.testPants = new ColoredSprite('pants');
     
     this.testTown = new Town('Franowo', 64, 64, 0, 0,
 			     {sheriff: 1, house: 2, saloon: 10});
@@ -125,6 +131,8 @@ class Game {
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
     
     this.player.draw(this.player.x, this.player.y);
+    //this.testJacket.draw(150, 180);
+    //this.testPants.draw(150, 180);
   }
   togglePause(){
     this.paused = !this.paused;

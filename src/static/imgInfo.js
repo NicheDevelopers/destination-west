@@ -20,7 +20,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-let propData = (src, height, width, row, col) =>
+let img = (src, height=32, width=32, row=0, col=0) =>
   ({src: src, height: height, width: width, row: row, col: col});
 
 const  townPropSheet = "img/town_props.png";
@@ -29,20 +29,22 @@ const  townPropSheet = "img/town_props.png";
  * Map describing spritesheets that come with the game
  */
 const imgInfo = new Map([
-  ["sand", propData("img/sand.png", 16, 16, 0, 0)],
-  ["street", propData("img/street.png", 16, 16, 0, 0)],
-  ["cactus-3x", propData(townPropSheet, 16, 16, 0, 0)],
-  ["small-stone-3x", propData(townPropSheet, 16, 16, 0, 1)],
-  ["big-stone-1x", propData(townPropSheet, 16, 16, 0, 2)],
-  ["small-dry-bush-left-1x", propData(townPropSheet, 16, 16, 1, 0)],
-  ["small-dry-bush-right-1x", propData(townPropSheet, 16, 16, 1, 1)],
-  ["roadsign", propData(townPropSheet, 16, 16, 1, 2)],
-  ["big-dry-grass-1x", propData(townPropSheet, 16, 16, 2, 0)],
-  ["small-dry-grass-left-1x", propData(townPropSheet, 16, 16, 2, 1)],
-  ["small-dry-grass-right-1x", propData(townPropSheet, 16, 16, 2, 2)],
-  ["wooden-crate-small-3x", propData(townPropSheet, 16, 16, 3, 0)],
-  ["brick-well", propData(townPropSheet, 16, 16, 3, 1)],
-  ["metal-crate-big-1x", propData(townPropSheet, 16, 16, 3, 2)],
+  ["sand", img("img/sand.png", 16, 16, 0, 0)],
+  ["street", img("img/street.png", 16, 16, 0, 0)],
+  ["cactus-3x", img(townPropSheet, 16, 16, 0, 0)],
+  ["small-stone-3x", img(townPropSheet, 16, 16, 0, 1)],
+  ["big-stone-1x", img(townPropSheet, 16, 16, 0, 2)],
+  ["small-dry-bush-left-1x", img(townPropSheet, 16, 16, 1, 0)],
+  ["small-dry-bush-right-1x", img(townPropSheet, 16, 16, 1, 1)],
+  ["roadsign", img(townPropSheet, 16, 16, 1, 2)],
+  ["big-dry-grass-1x", img(townPropSheet, 16, 16, 2, 0)],
+  ["small-dry-grass-left-1x", img(townPropSheet, 16, 16, 2, 1)],
+  ["small-dry-grass-right-1x", img(townPropSheet, 16, 16, 2, 2)],
+  ["wooden-crate-small-3x", img(townPropSheet, 16, 16, 3, 0)],
+  ["brick-well", img(townPropSheet, 16, 16, 3, 1)],
+  ["metal-crate-big-1x", img(townPropSheet, 16, 16, 3, 2)],
+  ["jacket", img("img/clothes.png", 32, 32, 0, 0)],
+  ["pants", img("img/clothes.png", 32, 32, 0, 1)],
   ["player", {
     src: "img/player.png",
     height: 37,
@@ -62,17 +64,6 @@ const imgInfo = new Map([
 	mirroredRow: 3
       }]
     ])
-  }],
-  ["saloon_0", {
-    src: "img/saloon.png",
-    height: 96,
-    width: 96,
-    row: 0,
-    col: 0,
-    physicalWidth: 3,
-    physicalHeight: 2,
-    tileWidth: 3,
-    tileHeight: 3
   }]
 ]);
 

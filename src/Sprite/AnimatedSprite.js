@@ -19,11 +19,11 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import ctx from "./global/ctx.js";
+import ctx from "../global/ctx.js";
 
 import Sprite from "./Sprite.js";
 
-import Animation from "./Animation.js";
+import Animation from "../Animation.js";
 
 /**
  * Create sprites to make display and animation simple

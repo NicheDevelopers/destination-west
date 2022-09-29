@@ -19,8 +19,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import AnimatedSprite from "./AnimatedSprite.js";
-import Animation from "./Animation.js";
+import AnimatedSprite from "../Sprite/AnimatedSprite.js";
+import Animation from "../Animation.js";
 
 /**
  * The super class for entity classes to derive from

@@ -18,9 +18,9 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import ctx from "./global/ctx.js";
+import ctx from "../global/ctx.js";
 import Sprite from "./Sprite.js";
-import imgInfo from "./static/imgInfo.js";
+import imgInfo from "../static/imgInfo.js";
 
 /**
  * Create sprites to display grayscale-source sprites in color

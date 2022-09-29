@@ -22,7 +22,7 @@
 */
 
 import Entity from "./Entity.js";
-import imgInfo from "./static/imgInfo.js";
+import imgInfo from "../static/imgInfo.js";
 
 /**
  * a constant representing the default player speed value

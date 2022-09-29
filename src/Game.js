@@ -26,7 +26,7 @@ import Browser from "./Browser.js";
 import KeyMan from "./KeyboardManager.js";
 
 import Tile from "./Tile.js";
-import Player from "./Player.js";
+import Player from "./Entity/Player.js";
 import AudioPlayer from "./AudioPlayer.js";
 import Town from "./Town.js";
 import WorldMap from "./WorldMap.js";
@@ -36,8 +36,8 @@ import PauseMenu from "./PauseMenu.js";
 import EquipmentDisplay from "./EquipmentDisplay.js";
 import Equipment from "./Equipment.js";
 
-import Sprite from "./Sprite.js";
-import ColoredSprite from "./ColoredSprite.js";
+import Sprite from "./Sprite/Sprite.js";
+import ColoredSprite from "./Sprite/ColoredSprite.js";
 
 import Animation from "./Animation.js";
 

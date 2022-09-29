@@ -19,7 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Sprite from "./Sprite.js";
+import Sprite from "./Sprite/Sprite.js";
 /**
  * Class for creating tiles - the base of the game world structure
  */

@@ -30,6 +30,8 @@ const defaultKeybinds = [
   ['m', 'Toggle Map Display'],
   ['l', 'Toggle Keyboard Visualization'],
   ['escape', 'Toggle Pause Menu'],
-  ['e', 'Toggle Equipment Display']
+  ['e', 'Toggle Equipment Display'],
+  ['shift', 'Toggle Sprint'],
+  ['c', 'Toggle Sneak']
 ];
 export default defaultKeybinds;

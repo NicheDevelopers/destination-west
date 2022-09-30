@@ -42,6 +42,19 @@ const playerWidth = imgInfo.get("player").width;
 const playerHeight = imgInfo.get("player").height;
 
 /**
+ * constants representing the default speed multipliers for sneaking and sprinting
+ */
+
+const defaultSprintMultiplier = 1.5;
+const defaultSneakMultiplier = 0.5;
+
+/**
+ * variables containing information on whether sprint and sneak are handled by "hold"-ing the key down or "toggle"-ing the states by pressing the key once
+ */
+const defaultSprintMode = 'hold';
+const defaultSneakMode = 'hold';
+
+/**
  * class for managing the player-controlled character
  */
 class Player extends Entity{
@@ -69,8 +82,12 @@ class Player extends Entity{
                        [this.standardCenterPointDeviation.left, this.standardCenterPointDeviation.down], [0, this.standardCenterPointDeviation.down], [this.standardCenterPointDeviation.right, this.standardCenterPointDeviation.down]];
     this.default_direction = 4; //the default direction being staying idle, on index 4 in the state array
     this.currentTown = this.game.testTown;
+    this.sprintMode = defaultSprintMode;
+    this.sneakMode = defaultSneakMode;
     this.townLength = this.currentTown.array.length;
     this.townWidth = this.currentTown.array[0].length;
+    this.sprinting = false;
+    this.sneaking = false;
     this.addUserActions();
   }
   addUserActions(){ //register all actions that the player can do and bind them to correct keys
@@ -78,9 +95,18 @@ class Player extends Entity{
     this.game.registerAction('Move Left');
     this.game.registerAction('Move Up');
     this.game.registerAction('Move Down');
+    this.game.registerAction('Toggle Sprint');
+    this.game.registerAction('Toggle Sneak');
   }
   update(){ //manages everything
+    //resets the player movement's direction
     this.direction = this.default_direction;
+    if (this.sprintMode === 'hold'){
+      this.sprinting = false;
+    }
+    if (this.sneakMode === 'hold'){
+      this.sneaking = false;
+    }
     //find where the center point of the player's sprite in current frame is in relation to the entire map
     this.CenterPoint.x = this.x + this.defaultCenterPoint.x;
     this.CenterPoint.y = this.y + this.defaultCenterPoint.y;
@@ -98,6 +124,13 @@ class Player extends Entity{
       this.direction -= 3;
     if (this.game.isActionRequested('Move Down'))
       this.direction += 3;
+    //manages sprinting and sneaking states
+    this.game.manageRequest('Toggle Sprint',
+                             () => this.toggleSprint(), {once: (this.sprintMode === 'toggle')? true : false});
+    this.game.manageRequest('Toggle Sneak',
+                             () => this.toggleSneak(), {once: (this.sneakMode === 'toggle')? true : false});
+    if (this.sprinting && this.sneaking) //checks if the player is trying to move slow and fast at the same time
+      this.sprinting = false, this.sneaking = false;
     if (!this.doesCollide(this.direction)) //moves the player if movement is not obstructed
       this.states[this.direction].call(this);
     else{
@@ -120,6 +153,12 @@ class Player extends Entity{
       return 0;
     return 1;
   }
+  toggleSprint(){
+    this.sprinting = !this.sprinting;
+  }
+  toggleSneak(){
+    this.sneaking = !this.sneaking;
+  }
   //below are simple yet many functions which handle movement in every direction
   //movement on diagonals is slower because math
   moveLeftUpFunc(){
@@ -128,14 +167,26 @@ class Player extends Entity{
     this.sprite.mirrored = true;
     this.moveLeftAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
     this.moveUpAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
+    if (this.sprinting){
+      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
+      this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
+    }
+    if (this.sneaking){
+      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
+      this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
+    }
     this.moveLeftAnimation.next();
     this.moveUpAnimation.next();
   }
   moveUpFunc(){
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
-    this.moveUpAnimation.speed = defaultPlayerSpeed;
-    this.moveUpAnimation.next();
+      this.moveUpAnimation.speed = defaultPlayerSpeed;
+      if (this.sprinting)
+        this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier;
+      if (this.sneaking)
+        this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier;
+        this.moveUpAnimation.next();
   }
   moveRightUpFunc(){
     if (this.sprite.animation.name !== "run")
@@ -143,6 +194,14 @@ class Player extends Entity{
     this.sprite.mirrored = false;
     this.moveRightAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
     this.moveUpAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
+    if (this.sprinting){
+      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
+      this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
+    }
+    if (this.sneaking){
+      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
+      this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
+    }
     this.moveRightAnimation.next();
     this.moveUpAnimation.next();
   }
@@ -151,6 +210,10 @@ class Player extends Entity{
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = true;
     this.moveLeftAnimation.speed = defaultPlayerSpeed;
+    if (this.sprinting)
+      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier;
+    if (this.sneaking)
+      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier;
     this.moveLeftAnimation.next();
   }
   idleFunc(){
@@ -162,6 +225,10 @@ class Player extends Entity{
       this.sprite.changeAnimation("run");
     this.sprite.mirrored = false;
     this.moveRightAnimation.speed = defaultPlayerSpeed;
+    if (this.sprinting)
+      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier;
+    if (this.sneaking)
+      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier;
     this.moveRightAnimation.next();
   }
   moveLeftDownFunc(){
@@ -170,6 +237,14 @@ class Player extends Entity{
     this.sprite.mirrored = true;
     this.moveLeftAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
     this.moveDownAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
+    if (this.sprinting){
+      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
+      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
+    }
+    if (this.sneaking){
+      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
+      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
+    }
     this.moveLeftAnimation.next();
     this.moveDownAnimation.next();
   }
@@ -177,6 +252,10 @@ class Player extends Entity{
     if (this.sprite.animation.name !== "run")
       this.sprite.changeAnimation("run");
     this.moveDownAnimation.speed = defaultPlayerSpeed;
+    if (this.sprinting)
+      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier;
+    if (this.sneaking)
+      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier;
     this.moveDownAnimation.next();
   }
   moveRightDownFunc(){
@@ -185,6 +264,14 @@ class Player extends Entity{
     this.sprite.mirrored = false;
     this.moveRightAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
     this.moveDownAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
+    if (this.sprinting){
+      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
+      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
+    }
+    if (this.sneaking){
+      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
+      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
+    }
     this.moveRightAnimation.next();
     this.moveDownAnimation.next();
   }

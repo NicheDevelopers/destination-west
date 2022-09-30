@@ -29,7 +29,7 @@ const defaultKeybinds = [
   ['s', 'Move Down'],
   ['m', 'Toggle Map Display'],
   ['l', 'Toggle Keyboard Visualization'],
-  ['Escape', 'Toggle Pause Menu'],
+  ['escape', 'Toggle Pause Menu'],
   ['e', 'Toggle Equipment Display']
 ];
 export default defaultKeybinds;

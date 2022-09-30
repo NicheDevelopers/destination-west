@@ -20,6 +20,14 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+
+/* Prevent accidental game exit. To be used in the future
+window.onbeforeunload = (e) => {
+  e.preventDefault();
+  e.returnValue = 'Are you sure you want to exit Destination West?';
+  };
+*/
+
 /**
  * Provide a simple interface for managing keyboard events
  */
@@ -41,7 +49,6 @@ class KeyboardManager {
    @returns true on success, false on failure
   */
   bind(key, action){
-
     let funcToBind = this.game.isActionRegistered(action);
     if (!funcToBind) {
       throw `Keyboard Manager: ` +
@@ -87,7 +94,8 @@ class KeyboardManager {
     });
   }
   manageKeydown(event){
-    let actions = this.actions.get(event.key);
+    let k = event.key.toLowerCase();
+    let actions = this.actions.get(k);
     if (!actions) return;
     actions.forEach(action => {
       if (!this.ignore.has(action))
@@ -95,7 +103,8 @@ class KeyboardManager {
     });
   }
   manageKeyup(event){
-    let actions = this.actions.get(event.key);
+    let k = event.key.toLowerCase();
+    let actions = this.actions.get(k);
     if (!actions) return;
     actions.forEach(action => {
       this.ignore.delete(action);

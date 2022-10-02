@@ -1,7 +1,8 @@
 /*
   file: src/utilities.js
   purpose: Provide utility functions useful in many scenarios.
-  author: Michał Miłek <https://gitlab.com/mmilek>
+  authors: Michał Miłek <https://gitlab.com/mmilek>
+           Artur Gulik <https://gitlab.com/ArturGulik>
   
   This file is part of 'Destination West'.
   
@@ -59,4 +60,17 @@ function randIntInRange(min, max) {
     return (Math.random() * (max - min) + min) | 0;
 }
 
-export {randIntInRange, randFloatInRange};
+/**
+ * A map storing the highest recorded ID for each objectName
+ */
+const ids = new Map();
+
+/**
+ * Generate unique IDs for in-game objects
+ */
+function generateID(objectName){
+  ids.set(objectName, ids.get(objectName)+1 || 0);
+  return ids.get(objectName);
+}
+
+export {randIntInRange, randFloatInRange, generateID};

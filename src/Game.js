@@ -35,7 +35,7 @@ import KeyboardVisualizer from "./KeyboardVisualizer.js";
 import PauseMenu from "./PauseMenu.js";
 import EquipmentDisplay from "./EquipmentDisplay.js";
 import Equipment from "./Equipment.js";
-import IDGenerator from "./global/IDGenerator.js";
+import {generateID} from "./global/utilities.js";
 
 import Sprite from "./Sprite/Sprite.js";
 import ColoredSprite from "./Sprite/ColoredSprite.js";
@@ -52,13 +52,11 @@ class Game {
     this.browser = new Browser(this);
     this.testTile = new Tile("sand");
     this.audioPlayer = new AudioPlayer();
-    this.idGenerator = new IDGenerator();
     this.worldMap = new WorldMap(5, 0.8, 0.3, 2, 4, 672, 288);
     this.worldMapDisplay = new WorldMapDisplay(this);
 
     let testEq = new Equipment(7,7);
     this.equipmentDisplay = new EquipmentDisplay(this, testEq, true);
-    
     
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');

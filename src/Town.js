@@ -22,7 +22,7 @@
 */
 
 import Tile from "./Tile.js";
-import preset1 from "./static/buildingPresets.js";
+import presets from "./static/townPresets.js";
 import {randIntInRange} from "./global/utilities.js";
 
 class Town {
@@ -46,8 +46,9 @@ class Town {
     for (let x = 0; x < 42; ++x) {
       this.array[x] = new Array(20);
     }
-    this.placeStreets(preset1);
-    this.placeBuildings(preset1);
+    let preset = presets[randIntInRange(0,presets.length)];
+    this.placeStreets(preset);
+    this.placeBuildings(preset);
     this.placeBackground('sand');
     return this.array;
   }

@@ -114,4 +114,6 @@ const preset4 = {
     newStreet(15, 7, 1, 5)
   ]
 };
-export default preset4;
+
+let presets = [preset1, preset2, preset3, preset4];
+export default presets;

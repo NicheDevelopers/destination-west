@@ -19,11 +19,46 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-let div = document.createElement('div');
-div.classList.add('window');
-div.style.width = 100;
-div.style.height = 200;
+let newDiv = (w, h) => {
+  let r = document.createElement('div')
+  r.setAttribute('style', `width: ${w}px; height: ${h}px`);
+  return r;
+}
 
+let div = newDiv(650, 400);
+div.classList.add('window');
+div.classList.add('window-background');
+div.style.display = 'flex';
+let previewDiv = newDiv(300,400);
+previewDiv.style.background = 'white';
+let preview = document.createElement('canvas');
+preview.width = '300';
+preview.height = '400';
+let previewCtx = preview.getContext('2d');
+previewDiv.appendChild(preview);
+div.appendChild(previewDiv);
+
+let setDiv = newDiv(100, 400);
+setDiv.style.borderRight = '1px solid black';
+setDiv.style.borderLeft = '1px solid black';
+setDiv.style.display = 'grid';
+setDiv.style.alignContent = 'center';
+setDiv.style.justifyContent = 'center';
+
+let coloringDiv = newDiv(250, 400);
+
+let img = document.createElement('img');
+img.src = 'img/clothes.png';
+img.style.display = 'block';
+img.style.border = '2px solid black';
+
+setDiv.appendChild(img);
+
+div.appendChild(setDiv);
+div.appendChild(coloringDiv);
+
+
+document.querySelector('#game-container').appendChild(div);
 /**
  * Create an interface for designing colored sprites
  */

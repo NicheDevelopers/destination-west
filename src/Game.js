@@ -42,6 +42,8 @@ import ColoredSprite from "./Sprite/ColoredSprite.js";
 
 import Animation from "./Animation.js";
 
+import Designer from "./Designer.js";
+
 class Game {
   constructor(keybinds=[]){
     this.userFunctionsMap = new Map();

@@ -74,11 +74,16 @@ canvas {
     z-index: 2;
 }
 
-#equipment {
+.window {
     display: none;
     justify-content:center;
     align-items: center;
     z-index: 3;
+}
+
+.window-background {
+    background-color: rgb(121, 70, 20);
+    border: 1px solid black;
 }
 
 .grid-background {

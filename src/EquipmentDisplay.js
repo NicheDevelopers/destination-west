@@ -9,6 +9,7 @@ class EquipmentDisplay{
         let gameContainer = document.querySelector("#game-container");
         this.div.id = "equipment";
         this.div.classList.add("display-2x");
+        this.div.classList.add("window");
         this.divEq = document.createElement("div");
         this.divEq.classList.add("grid-background");
         this.divEq.style.width = `${tilesSize*equipment.width+1}px`;

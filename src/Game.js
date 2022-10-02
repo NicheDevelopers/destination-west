@@ -35,6 +35,7 @@ import KeyboardVisualizer from "./KeyboardVisualizer.js";
 import PauseMenu from "./PauseMenu.js";
 import EquipmentDisplay from "./EquipmentDisplay.js";
 import Equipment from "./Equipment.js";
+import {generateID} from "./global/utilities.js";
 
 import Sprite from "./Sprite/Sprite.js";
 import ColoredSprite from "./Sprite/ColoredSprite.js";

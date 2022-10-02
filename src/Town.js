@@ -51,6 +51,7 @@ class Town {
     this.placeBackground('sand');
     return this.array;
   }
+  
   placeBackground(background) {
     let length = this.array.length;
     let height = this.array[0].length;

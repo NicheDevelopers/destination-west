@@ -26,7 +26,7 @@ import Sprite from "./Sprite/Sprite.js";
 class Tile{
   constructor(typeName, x=0, y=0){
     this.typeName = typeName;
-    if(typeName.substring(0, 9) === 'building-')
+    if(typeName.substring(0, 9) === 'building-' || typeName.substring(0, 11) === 'decoration-')
       this.background = new Sprite('sand');
     this.sprite = new Sprite(typeName);
     this.x = x;

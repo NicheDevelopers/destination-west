@@ -19,6 +19,15 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+function compareSecondColumn(a, b){
+    if (a[1] === b[1]){
+        return 0;
+    }
+    else{
+        return (a[1] > b[1]) ? -1 : 1;
+    }
+}
+
 class Equipment{
     constructor (width, height){
         this.width = width;
@@ -28,9 +37,9 @@ class Equipment{
     }
     
     clear(){
-        for (let i=0; i<this.width; i++){
+        for (let i=0; i<this.height; i++){
             if (!this.items[i]) this.items[i]=[];
-            for (let j=0; j<this.height; j++){
+            for (let j=0; j<this.width; j++){
                 this.items[i][j]=false;
             }
         }
@@ -42,21 +51,20 @@ class Equipment{
     
     canFit(item){
         let flag = true;
-        for (let i=0; i<this.width; i++){
-            for (let j=0; j<this.height; j++){
+        for (let i=0; i<this.height; i++){
+            for (let j=0; j<this.width; j++){
                 flag = true;
                 // if something is on this tiles it can't be fit in this place 
-                for (let x=i; x<i+item.width; x++){
-                    for (let y=j; y<j+item.height; y++){
-                        if (x>=this.width || y>=this.height) {
+                for (let x=i; x<i+item.height; x++){
+                    for (let y=j; y<j+item.width; y++){
+                        if (x>=this.height || y>=this.width) {
                             flag = false;
                             break;
                         }
-                        //console.log(x,y);
                         if (this.items[x][y] != false) flag = false;
                     }
                 }
-                //if it fits, return true and its posistion
+                // if it fits, return true and its posistion
                 if (flag) return [true,i,j];
             }
         }
@@ -67,15 +75,54 @@ class Equipment{
     put(item){
         let fit = this.canFit(item);
         if (fit[0]){
-            for (let x=fit[1]; x<fit[1]+item.width; x++){
-                for (let y=fit[2]; y<fit[2]+item.height; y++){
-                    this.items[x][y]=item.id;
+            for (let x=fit[1]; x<fit[1]+item.height; x++){
+                for (let y=fit[2]; y<fit[2]+item.width; y++){
+                    this.items[x][y]=item;
                 }
             }
             return;
         }
         console.log("NO FIT!");
+        return false;
     }
+    
+    sortEqBySpace(){
+        let tmparr = [];
+        let arr = [];
+        let tmpitem = new item;
+        for (let i=0; i<this.height; i++){
+            for (let j=0; j<this.width; j++){
+                if (this.items[i][j] != false){
+                    tmpitem = this.items[i][j];
+                    tmparr.push([this.items[i][j], tmpitem.width*tmpitem.height]);
+                    arr.push(this.items[i][j]);
+                    for (let x=i; x<i+tmpitem.height; x++){
+                        for (let y=j; y<j+tmpitem.width; y++){
+                            this.items[x][y] = false;
+                        }
+                    }
+                }
+            }
+        }
+        tmparr.sort(compareSecondColumn);
+        let flag = true;
+        for (let i=0; i<tmparr.length; i++){
+            if (this.put(tmparr[i][0]) == false){
+                console.log("I can't sort it.");
+                flag = false;
+                break;
+            }
+        }
+        // if equipment cannot be sort go back to state before sorting try
+        if (!flag){
+            this.clear();
+            for (let i=0; i<arr.length; i++){
+                this.put(arr[i]);
+            }
+        }
+        // if flag is true, it means that equipment is already sorted
+    }
+    
 };
 
 export default Equipment;

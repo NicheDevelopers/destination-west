@@ -115,5 +115,124 @@ const preset4 = {
   ]
 };
 
-let presets = [preset1, preset2, preset3, preset4];
+const preset5 = {
+  buildings: [
+
+    newBuilding(16, 11, 5, 2),
+    newBuilding(21, 11, 5, 2),
+    newBuilding(11, 6, 3, 3),
+    newBuilding(28, 6, 3, 3),
+    newBuilding(28, 11, 3, 2),
+    newBuilding(16, 6, 3, 3),
+    newBuilding(5, 6, 3, 3),
+    newBuilding(7, 2, 5, 2),
+    newBuilding(7, 11, 5, 2),
+    newBuilding(16, 1, 3, 3),
+    newBuilding(31, 7, 5, 2),
+    newBuilding(36, 11, 3, 2),
+    newBuilding(36, 6, 3, 3),
+    newBuilding(31, 2, 5, 2)
+  ],
+  streets: [
+    newStreet(6, 4, 21, 1),
+    newStreet(27, 4, 10, 1),
+    newStreet(4, 9, 23, 1),
+    newStreet(27, 9, 13, 1),
+    newStreet(0, 13, 42, 2),
+    newStreet(9, 5, 1, 5),
+    newStreet(13, 10, 1, 5),
+    newStreet(27, 5, 1, 5),
+    newStreet(33, 10, 1, 5)
+  ]
+};
+
+const preset6 = {
+  buildings: [
+    newBuilding(20, 4, 5, 3),
+    newBuilding(16, 4, 4, 3),
+    newBuilding(25, 4, 5, 3),
+    newBuilding(20, 11, 5, 3),
+    newBuilding(25, 12, 4, 2),
+    newBuilding(30, 4, 3, 3),
+    newBuilding(16, 11, 3, 3),
+    newBuilding(12, 5, 3, 2),
+    newBuilding(12, 12, 4, 2),
+    newBuilding(29, 11, 3, 3),
+    newBuilding(34, 5, 3, 2)
+  ],
+  streets: [
+    newStreet(0, 7, 42, 3),
+    newStreet(10, 14, 30, 2),
+    newStreet(19, 10, 1, 4)
+  ]
+};
+
+const preset7 = {
+  buildings: [
+    newBuilding(18, 7, 5, 3),
+    newBuilding(23, 7, 4, 3),
+    newBuilding(27, 7, 3, 3),
+    newBuilding(20, 14, 5, 3),
+    newBuilding(14, 8, 4, 2),
+    newBuilding(15, 3, 5, 2),
+    newBuilding(16, 14, 4, 3),
+    newBuilding(26, 15, 4, 2),
+    newBuilding(30, 14, 3, 3),
+    newBuilding(20, 3, 3, 2),
+    newBuilding(10, 8, 3, 2),
+    newBuilding(31, 8, 3, 2)
+  ],
+  streets: [
+    newStreet(14, 5, 10, 1),
+    newStreet(0, 10, 42, 3),
+    newStreet(15, 17, 20, 1),
+    newStreet(13, 5, 1, 5),
+    newStreet(25, 13, 1, 4)
+  ]
+};
+
+const preset8 = {
+  buildings: [
+    newBuilding(10, 7, 5, 3),
+    newBuilding(15, 7, 4, 3),
+    newBuilding(16, 2, 4, 3),
+    newBuilding(12, 14, 5, 3),
+    newBuilding(17, 14, 3, 3),
+    newBuilding(20, 7, 4, 3),
+    newBuilding(22, 14, 4, 3),
+    newBuilding(21, 3, 3, 2),
+    newBuilding(24, 8, 3, 2),
+    newBuilding(28, 8, 4, 2),
+    newBuilding(7, 8, 3, 2),
+    newBuilding(32, 8, 3, 2)
+  ],
+  streets: [
+    newStreet(0, 10, 42, 3),
+    newStreet(15, 5, 10, 1),
+    newStreet(19, 5, 1, 5),
+    newStreet(20, 13, 2, 4),
+    newStreet(11, 17, 16, 1)
+  ]
+};
+
+const preset9 = {
+  buildings: [
+    newBuilding(10, 7, 4, 3),
+    newBuilding(27, 7, 5, 3),
+    newBuilding(14, 7, 3, 3),
+    newBuilding(20, 7, 4, 3),
+    newBuilding(17, 8, 3, 2),
+    newBuilding(24, 8, 3, 2),
+    newBuilding(32, 8, 3, 2),
+    newBuilding(7, 8, 3, 2),
+    newBuilding(36, 8, 3, 2),
+    newBuilding(3, 8, 3, 2),
+    newBuilding(39, 8, 3, 2)
+  ],
+  streets: [
+    newStreet(0, 10, 42, 3)
+  ]
+};
+
+let presets = [preset1,preset2,preset3,preset4,preset5,preset6,preset7,preset8,preset9];
 export default presets;

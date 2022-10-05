@@ -30,7 +30,7 @@ class Designer {
   constructor(){
     let div = createDiv(
       650, 400, ['window', 'window-background'],
-      {display: 'flex', zIndex: '4'});
+      {display: 'none', zIndex: '4'}); //flex to show by default
     
     let previewDiv = createDiv(
       300,400, ['window', 'window-background'],

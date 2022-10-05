@@ -1,21 +1,22 @@
 let dropped = false;
 const tilesSize = 32;
 class EquipmentDisplay{
-    constructor(game, equipment, isPlayer){
-        this.equipment = equipment;
-        this.game = game;
-        this.register();
-        this.div = document.createElement("div");
-        let gameContainer = document.querySelector("#game-container");
-        this.div.id = "equipment";
-        this.div.classList.add("display-2x");
-        this.div.classList.add("grid-background");
-        this.divEq = document.createElement("div");
-      this.divEq.style.width = `${tilesSize*equipment.width}px`;
-      this.divEq.style.height = `${tilesSize*equipment.height}px`;
-        this.divEq.style.display = "grid";
-        this.divEq.style.gridTemplateColumns = "repeat(7, 32px)"; 
-        this.itemsDivs = [];
+  constructor(game, equipment, isPlayer){
+    this.equipment = equipment;
+    this.game = game;
+    this.register();
+    this.div = document.createElement("div");
+    let gameContainer = document.querySelector("#game-container");
+    this.div.id = "equipment";
+    this.div.classList.add("display-2x");
+    this.div.classList.add("window");
+    this.div.classList.add("grid-background");
+    this.divEq = document.createElement("div");
+    this.divEq.style.width = `${tilesSize*equipment.width}px`;
+    this.divEq.style.height = `${tilesSize*equipment.height}px`;
+    this.divEq.style.display = "grid";
+    this.divEq.style.gridTemplateColumns = "repeat(7, 32px)"; 
+    this.itemsDivs = [];
 
         for (let i=0; i<equipment.height; i++){
             if (!this.itemsDivs[i]) this.itemsDivs[i]=[];

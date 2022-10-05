@@ -19,17 +19,71 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-let div = document.createElement('div');
-div.classList.add('window');
-div.style.width = 100;
-div.style.height = 200;
+import ColoredSprite from "./Sprite/ColoredSprite.js";
+
+import {createDiv, createCanvas} from "./global/utilities.js";
 
 /**
  * Create an interface for designing colored sprites
  */
 class Designer {
   constructor(){
+    let div = createDiv(
+      650, 400, ['window', 'window-background'],
+      {display: 'none', zIndex: '4'}); //flex to show by default
     
+    let previewDiv = createDiv(
+      300,400, ['window', 'window-background'],
+      {border: 'none', display: 'flex', background: 'white'});
+
+    let preview;
+    ({canvas: preview, context: this.previewCtx} = createCanvas(32));
+    preview.style.transform = 'scale(8)';
+
+    previewDiv.appendChild(preview);
+    div.appendChild(previewDiv);
+    
+    let setDiv = createDiv(
+      100, 400, [],
+      {borderRight: '1px solid black',
+       borderLeft: '1px solid black',
+       display: 'grid',
+       alignItems: 'center',
+       justifyItems: 'center'});
+    
+    let coloringDiv = createDiv(250, 400);
+    
+    let newSetter = (src) => {
+      let img = document.createElement('img');
+      img.classList.add('designer');
+      img.classList.add('button');
+      img.src = 'img/' + src + '.png';
+      img.style.display = 'block';
+      img.style.border = '2px solid black';
+      return img;
+    }
+    
+    setDiv.appendChild(newSetter('head'));
+    setDiv.appendChild(newSetter('torso'));
+    setDiv.appendChild(newSetter('legs'));
+    
+    let input = document.createElement('input');
+    input.type = 'color';
+    coloringDiv.appendChild(input);
+    
+    div.appendChild(setDiv);
+    div.appendChild(coloringDiv);
+    
+    document.querySelector('#game-container').appendChild(div);
+    
+    input.addEventListener('change', () => {
+      this.clothes.pants.setColor(input.value);
+    });
+
+    this.clothes = {pants: new ColoredSprite('pants')};
+  }
+  update(){
+    this.clothes.pants.draw(0, 0, this.previewCtx);
   }
 }
 

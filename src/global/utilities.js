@@ -73,4 +73,23 @@ function generateID(objectName){
   return ids.get(objectName);
 }
 
-export {randIntInRange, randFloatInRange, generateID};
+function createDiv(w, h, classes=[], styles={}){
+  let r = document.createElement('div');
+  classes.forEach((styleClass) => r.classList.add(styleClass));
+  r.setAttribute('style', `width: ${w}px; height: ${h}px`);
+  for (const styleName in styles){
+    r.style[styleName] = styles[styleName];
+  }
+  return r;
+}
+
+function createCanvas(w, h){
+  let r = document.createElement('canvas');
+  r.width = w;
+  r.height = h ?? w;
+  return {canvas: r, context: r.getContext('2d')};
+}
+
+
+export {randIntInRange, randFloatInRange, generateID,
+	createDiv, createCanvas};

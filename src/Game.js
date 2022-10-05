@@ -42,12 +42,16 @@ import ColoredSprite from "./Sprite/ColoredSprite.js";
 
 import Animation from "./Animation.js";
 
+import Designer from "./Designer.js";
+
 class Game {
   constructor(keybinds=[]){
     this.userFunctionsMap = new Map();
     
     this.pauseMenu = new PauseMenu(this);
     this.paused = false;
+
+    this.designer = new Designer();
     
     this.browser = new Browser(this);
     this.testTile = new Tile("sand");
@@ -113,6 +117,8 @@ class Game {
     
     this.pauseMenu.update();
     if (this.paused) return;
+
+    this.designer.update();
 
     this.keyVisualizer.update();
     this.browser.update();

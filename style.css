@@ -71,6 +71,7 @@ canvas {
     height: 288px;
     display: none;
     background-color: rgba(0,200, 100, 0.9);
+    flex-direction: column;
     z-index: 2;
 }
 
@@ -109,6 +110,10 @@ canvas {
 
 .invisible {
     background-image: none;
+}
+
+.pause-menu-buttons {
+    margin: auto auto;
 }
 
 .grid-background {

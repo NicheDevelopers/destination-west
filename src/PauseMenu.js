@@ -27,6 +27,26 @@ class PauseMenu {
     this.div = document.getElementById("pause-menu");
     this.paused = false;
     this.registerActions();
+    this.resumeButton = document.createElement("button");
+    this.resumeButton.id = "pause-menu-resume-button";
+    this.resumeButton.classList.add("pause-menu-buttons");
+    this.resumeButton.innerHTML = "Resume";
+    this.settingsButton = document.createElement("button");
+    this.settingsButton.id = "pause-menu-settings-button";
+    this.settingsButton.classList.add("pause-menu-buttons");
+    this.settingsButton.innerHTML = "Settings";
+    this.saveButton = document.createElement("button");
+    this.saveButton.id = "pause-menu-save-button";
+    this.saveButton.classList.add("pause-menu-buttons");
+    this.saveButton.innerHTML = "Save";
+    this.exitButton = document.createElement("button");
+    this.exitButton.id = "pause-menu-exit-button";
+    this.exitButton.classList.add("pause-menu-buttons");
+    this.exitButton.innerHTML = "Exit";
+    this.div.appendChild(this.resumeButton);
+    this.div.appendChild(this.settingsButton);
+    this.div.appendChild(this.saveButton);
+    this.div.appendChild(this.exitButton);
   }
   registerActions() {
     this.game.registerAction('Toggle Pause Menu');
@@ -45,7 +65,7 @@ class PauseMenu {
       this.game.togglePause();
       return;
     }
-    this.div.style.display = 'block';
+    this.div.style.display = 'flex';
     this.paused = true;
     this.game.togglePause();
   }

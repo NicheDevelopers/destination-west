@@ -19,52 +19,71 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-let newDiv = (w, h) => {
-  let r = document.createElement('div')
-  r.setAttribute('style', `width: ${w}px; height: ${h}px`);
-  return r;
-}
+import ColoredSprite from "./Sprite/ColoredSprite.js";
 
-let div = newDiv(650, 400);
-div.classList.add('window');
-div.classList.add('window-background');
-div.style.display = 'flex';
-let previewDiv = newDiv(300,400);
-previewDiv.style.background = 'white';
-let preview = document.createElement('canvas');
-preview.width = '300';
-preview.height = '400';
-let previewCtx = preview.getContext('2d');
-previewDiv.appendChild(preview);
-div.appendChild(previewDiv);
+import {createDiv, createCanvas} from "./global/utilities.js";
 
-let setDiv = newDiv(100, 400);
-setDiv.style.borderRight = '1px solid black';
-setDiv.style.borderLeft = '1px solid black';
-setDiv.style.display = 'grid';
-setDiv.style.alignContent = 'center';
-setDiv.style.justifyContent = 'center';
-
-let coloringDiv = newDiv(250, 400);
-
-let img = document.createElement('img');
-img.src = 'img/clothes.png';
-img.style.display = 'block';
-img.style.border = '2px solid black';
-
-setDiv.appendChild(img);
-
-div.appendChild(setDiv);
-div.appendChild(coloringDiv);
-
-
-document.querySelector('#game-container').appendChild(div);
 /**
  * Create an interface for designing colored sprites
  */
 class Designer {
   constructor(){
+    let div = createDiv(
+      650, 400, ['window', 'window-background'],
+      {display: 'flex', zIndex: '4'});
     
+    let previewDiv = createDiv(
+      300,400, ['window', 'window-background'],
+      {border: 'none', display: 'flex', background: 'white'});
+
+    let preview;
+    ({canvas: preview, context: this.previewCtx} = createCanvas(32));
+    preview.style.transform = 'scale(8)';
+
+    previewDiv.appendChild(preview);
+    div.appendChild(previewDiv);
+    
+    let setDiv = createDiv(
+      100, 400, [],
+      {borderRight: '1px solid black',
+       borderLeft: '1px solid black',
+       display: 'grid',
+       alignItems: 'center',
+       justifyItems: 'center'});
+    
+    let coloringDiv = createDiv(250, 400);
+    
+    let newSetter = (src) => {
+      let img = document.createElement('img');
+      img.classList.add('designer');
+      img.classList.add('button');
+      img.src = 'img/' + src + '.png';
+      img.style.display = 'block';
+      img.style.border = '2px solid black';
+      return img;
+    }
+    
+    setDiv.appendChild(newSetter('head'));
+    setDiv.appendChild(newSetter('torso'));
+    setDiv.appendChild(newSetter('legs'));
+    
+    let input = document.createElement('input');
+    input.type = 'color';
+    coloringDiv.appendChild(input);
+    
+    div.appendChild(setDiv);
+    div.appendChild(coloringDiv);
+    
+    document.querySelector('#game-container').appendChild(div);
+    
+    input.addEventListener('change', () => {
+      this.clothes.pants.setColor(input.value);
+    });
+
+    this.clothes = {pants: new ColoredSprite('pants')};
+  }
+  update(){
+    this.clothes.pants.draw(0, 0, this.previewCtx);
   }
 }
 

@@ -78,7 +78,6 @@ canvas {
     display: none;
     justify-content:center;
     align-items: center;
-    z-index: 3;
 }
 
 .window-background {
@@ -90,4 +89,33 @@ canvas {
     background-image: repeating-linear-gradient(#000 0 1px, transparent 1px 100%), repeating-linear-gradient(90deg, #000 0 1px, transparent 1px 100%);
     background-size: 32px 32px;
     background-color: rgb(121, 70, 20);
+}
+
+.button {
+    cursor: pointer;
+    border-radius: 10%;
+    box-shadow: 0 5px #999;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+.button:hover {
+    background-color: #3e8e41;
+    box-shadow: 0 6px #999;
+    transform: translateY(-1px);
+}
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 0px #666;
+  transform: translateY(6px);
+}
+
+.designer.button {
+    background-color: rgb(67,102,94);
+}
+
+.designer.button:hover {
+    background-color: rgb(77,112,104);
+}
+
+.designer.button:active {
+    background-color: rgb(77,112,104);
 }

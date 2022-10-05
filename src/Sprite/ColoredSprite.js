@@ -21,6 +21,7 @@
 import ctx from "../global/ctx.js";
 import Sprite from "./Sprite.js";
 import imgInfo from "../static/imgInfo.js";
+import {createCanvas} from "../global/utilities.js";
 
 /**
  * Create sprites to display grayscale-source sprites in color
@@ -29,39 +30,51 @@ class ColoredSprite extends Sprite{
   constructor(spriteName, options){
     super(spriteName, options);
     
-    let canvas = document.createElement('canvas');
-    canvas.width = this.width;
-    canvas.height = this.height;
-    //let offscreen = new OffscreenCanvas(this.width, this.height);
-    let offCtx = canvas.getContext('2d');
-    offCtx.drawImage(
+    ({canvas: this.canvas, context: this.offCtx} = createCanvas(this.width, this.height));
+    
+    this.offCtx.drawImage(
       this.img, this.spriteSheetCol * this.width,
       this.spriteSheetRow * this.height,
       this.width, this.height, 0, 0,
       this.width * this.scaleX, this.height * this.scaleY);
-  
-    let image = offCtx.getImageData(0, 0, this.width, this.height);
-    offCtx.clearRect(0, 0, this.width, this.height);
+    
+    this.image = this.offCtx.getImageData(0, 0, this.width, this.height);
 
-    for (let x = 0; x < image.data.length; x += 4){
-      if (image.data[x+3] === 0) continue;
-      let brightness = image.data[x];
-      //image.data[x] += 80;
-      //image.data[x+1] += 20;
-      //image.data[x+2] += 3;
+    let pixelCount = this.image.data.length/4;
+    this.brightness = new Uint8ClampedArray(pixelCount);
+    this.alpha = new Uint8ClampedArray(pixelCount);
+    
+    for (let x = 0; x < pixelCount; ++x){
+      //this.brightness[x] = this.image.data[x*4];
+      //this.alpha[x] = this.image.data[x*4+3];
+      //console.log(this.brightness[x]);
     }
-    offCtx.putImageData(image, 0, 0);
-    
-    this.img = new Image(32, 32);
-    
-    this.img.src = canvas.toDataURL('image/png');
-    //console.log(this.img.src);
-    //this.img.src = this.imageData;
+    this.img = new Image();
+    this.setColor('#000000');
   }
-
-  draw(x,y){
-    ctx.drawImage(this.img, x, y);
-    //ctx.putImageData(this.imageData, 32, 32);
+  setColor(colorHex, areaID=0){
+    colorHex = colorHex.toString().substring(1);
+    let r = parseInt(colorHex.substring(0,2), 16);
+    let g = parseInt(colorHex.substring(2,4), 16);
+    let b = parseInt(colorHex.substring(4,6), 16);
+    
+    console.log(r,g,b);
+    for (let x = 0; x < this.image.data.length; x += 4){
+      if (this.image.data[x+3] === 0) continue;
+      let br = this.brightness[x]/255 | 0;
+      console.log(br, this.alpha[x]);
+      this.image.data[x] = r + br;
+      this.image.data[x+1] = g + br;
+      this.image.data[x+2] = b + br;
+      this.image.data[x+3] = 255;
+    }
+    this.offCtx.clearRect(0, 0, this.width, this.height);
+    this.offCtx.putImageData(this.image, 0, 0);
+    this.img.src = this.canvas.toDataURL('image/png');
+  }
+  draw(x, y, context){
+    let c = context ?? ctx;
+    c.drawImage(this.img, x, y);
   }
     
 }

@@ -63,8 +63,9 @@ class Sprite{
   @param {number} x - Position x of the draw location
   @param {number} y - Position y of the draw location
   */
-  draw(x, y){
-    ctx.drawImage(this.img,
+  draw(x, y, context){
+    let c = context ?? ctx;
+    c.drawImage(this.img,
 		  this.spriteSheetCol * this.width,
 		  this.spriteSheetRow * this.height,
 		  this.width, this.height, x, y,

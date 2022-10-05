@@ -85,6 +85,32 @@ canvas {
     border: 1px solid black;
 }
 
+.fill {
+    background-image: url('http://source.unsplash.com/random/32x32');
+    position: relative;
+    height: 32px;
+    width: 32px;
+    cursor: pointer;
+}
+
+.empty {
+    height: 32px;
+    width: 32px;
+}
+
+.hold {
+    border: #03fd10 10px;
+}
+
+.hovered {
+    background: #fd0303;
+    
+}
+
+.invisible {
+    background-image: none;
+}
+
 .grid-background {
     background-image: repeating-linear-gradient(#000 0 1px, transparent 1px 100%), repeating-linear-gradient(90deg, #000 0 1px, transparent 1px 100%);
     background-size: 32px 32px;

@@ -66,7 +66,7 @@ class Game {
     //this.testPants = new ColoredSprite('pants');
     
     this.testTown = new Town('Franowo', 64, 64, 0, 0,
-			     {sheriff: 1, house: 2, saloon: 10});
+			     {sheriff: 1, house: 2, saloon: 11});
     this.testTown.createTown();
 
     this.player = new Player(this, 128, 128);

@@ -22,7 +22,7 @@
 */
 
 import Tile from "./Tile.js";
-import preset1 from "./static/buildingPresets.js";
+import presets from "./static/townPresets.js";
 import {randIntInRange} from "./global/utilities.js";
 
 class Town {
@@ -46,11 +46,40 @@ class Town {
     for (let x = 0; x < 42; ++x) {
       this.array[x] = new Array(20);
     }
-    this.placeStreets(preset1);
-    this.placeBuildings(preset1);
+    let preset = presets[randIntInRange(0,presets.length)];
+    this.placeStreets(preset);
+    this.placeBuildings(preset);
     this.placeBackground('sand');
+    this.placeDecoration();
     return this.array;
   }
+  
+  nearToBuilding(xPoz,yPoz){
+    for(let i=-1; i<2; i++){
+      for(let j=-1; j<2; j++){
+        if(xPoz===0) continue;
+        if(xPoz===this.array.length-1) continue;
+        if(yPoz===0) continue;
+        if(yPoz===this.array[0].length-1) continue;
+        if(this.array[xPoz+i][yPoz+j].typeName.substring(0,9)=='building-') return true;
+      }
+    }
+    return false;
+  }
+
+  placeDecoration(){
+    let decorations = ["cactus-3x", "small-stone-3x", "big-stone-1x", "small-dry-bush-left-1x", "small-dry-bush-right-1x", "big-dry-grass-1x", "small-dry-grass-left-1x", "small-dry-grass-right-1x"];
+    let length = this.array.length;
+    let height = this.array[0].length;
+    for (let i = 0; i < length; i++) {
+      for (let j = 0; j < height; j++) {
+        if (this.array[i][j].typeName === 'sand' &&  randIntInRange(1,15) === 1 && this.nearToBuilding(i,j)===false)
+	  this.array[i][j] = new Tile("decoration-" + decorations[randIntInRange(0,decorations.length)], i * 16, j * 16);
+      }
+    }
+    return this.array;
+  }
+
   placeBackground(background) {
     let length = this.array.length;
     let height = this.array[0].length;

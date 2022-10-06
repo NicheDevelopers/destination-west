@@ -24,6 +24,8 @@
 import Entity from "./Entity.js";
 import imgInfo from "../static/imgInfo.js";
 
+import tileSize from "../global/tileSize.js";
+
 /**
  * a constant representing the default player speed value
  */
@@ -147,9 +149,9 @@ class Player extends Entity{
   }
   doesCollide(direction){
     //~~(a/b) is a fast way to do integer division. we need this to find the index of the tile we want to check.
-    if (~~((this.CenterPoint.x + this.boundaries[direction][0])/16) < 0 || ~~((this.CenterPoint.x + this.boundaries[direction][0])/16) >= this.townLength || ~~((this.CenterPoint.y + this.boundaries[direction][1])/16) < 0 || ~~((this.CenterPoint.y + this.boundaries[direction][1])/16) >= this.townWidth)
+    if (~~((this.CenterPoint.x + this.boundaries[direction][0])/tileSize) < 0 || ~~((this.CenterPoint.x + this.boundaries[direction][0])/tileSize) >= this.townLength || ~~((this.CenterPoint.y + this.boundaries[direction][1])/tileSize) < 0 || ~~((this.CenterPoint.y + this.boundaries[direction][1])/tileSize) >= this.townWidth)
       return 1;
-    if ((this.currentTown.array[~~((this.CenterPoint.x + this.boundaries[direction][0])/16)][~~((this.CenterPoint.y + this.boundaries[direction][1])/16)].walkable))
+    if ((this.currentTown.array[~~((this.CenterPoint.x + this.boundaries[direction][0])/tileSize)][~~((this.CenterPoint.y + this.boundaries[direction][1])/tileSize)].walkable))
       return 0;
     return 1;
   }

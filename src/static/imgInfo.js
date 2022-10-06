@@ -29,8 +29,8 @@ const  townPropSheet = "img/town_props.png";
  * Map describing spritesheets that come with the game
  */
 const imgInfo = new Map([
-  ["sand", img("img/sand.png", 16, 16, 0, 0)],
-  ["street", img("img/street.png", 16, 16, 0, 0)],
+  ["sand", img("img/town_props32x32.png", 32, 32, 0, 1)],
+  ["street", img("img/town_props32x32.png", 32, 32, 0, 0)],
   ["decoration-cactus-3x", img(townPropSheet, 16, 16, 0, 0)],
   ["decoration-small-stone-3x", img(townPropSheet, 16, 16, 0, 1)],
   ["decoration-big-stone-1x", img(townPropSheet, 16, 16, 0, 2)],
@@ -92,7 +92,7 @@ buildings.forEach((building) => {
     imgInfo.set('building-' + building + '-' + buildingPart.name,
     {
       src: "img/saloon.png",
-      height: 16, width: 16,
+      height: 32, width: 32,
       row: buildingPart.row,
       col: buildingPart.col
     }

@@ -25,6 +25,8 @@ import Tile from "./Tile.js";
 import presets from "./static/townPresets.js";
 import {randIntInRange} from "./global/utilities.js";
 
+import tileSize from "./global/tileSize.js";
+
 class Town {
   constructor(name, x, y, layer, ID, numBldInTown = {}) {
     this.layer = layer;
@@ -74,7 +76,7 @@ class Town {
     for (let i = 0; i < length; i++) {
       for (let j = 0; j < height; j++) {
         if (this.array[i][j].typeName === 'sand' &&  randIntInRange(1,15) === 1 && this.nearToBuilding(i,j)===false)
-	  this.array[i][j] = new Tile("decoration-" + decorations[randIntInRange(0,decorations.length)], i * 16, j * 16);
+	  this.array[i][j] = new Tile("decoration-" + decorations[randIntInRange(0,decorations.length)], i * tileSize, j * tileSize);
       }
     }
     return this.array;
@@ -86,7 +88,7 @@ class Town {
     for (let i = 0; i < length; i++) {
       for (let j = 0; j < height; j++) {
         if (this.array[i][j] === undefined)
-	  this.array[i][j] = new Tile(background, i * 16, j * 16);
+	  this.array[i][j] = new Tile(background, i * tileSize, j * tileSize);
       }
     }
     return this.array;
@@ -95,8 +97,8 @@ class Town {
     for (let i = 0; i < building.xTiles; i++) {
       for (let j = 0; j < building.yTiles; j++) {
 	this.array[xStart + i][yStart + j] = building.array[i][j];
-	this.array[xStart + i][yStart + j].x = xStart * 16 + building.array[i][j].x;
-	this.array[xStart + i][yStart + j].y = yStart * 16 + building.array[i][j].y;
+	this.array[xStart + i][yStart + j].x = xStart * tileSize + building.array[i][j].x;
+	this.array[xStart + i][yStart + j].y = yStart * tileSize + building.array[i][j].y;
       }
     }
   }
@@ -105,7 +107,7 @@ class Town {
     preset.streets.forEach((street) => {
       for (let i = street.start.x; i < street.start.x + street.width; ++i){
 	for (let j = street.start.y; j < street.start.y + street.height; ++j){
-	  this.array[i][j] = new Tile('street', i*16, j*16);
+	  this.array[i][j] = new Tile('street', i*tileSize, j*tileSize);
 	}
       }
     });
@@ -159,7 +161,7 @@ class Building {
   }
   createTile(name, x, y) {
     this.array[x][y] = new Tile('building-' + this.buildingType +
-      "-" + name, x * 16, y * 16);
+      "-" + name, x * tileSize, y * tileSize);
     this.array[x][y].walkable = false;
   }
   create() {

@@ -19,32 +19,33 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
+import tileSize from "../global/tileSize.js";
 
-let img = (src, height=32, width=32, row=0, col=0) =>
+let img = (src, height=tileSize, width=tileSize, row=0, col=0) =>
   ({src: src, height: height, width: width, row: row, col: col});
 
-const  townPropSheet = "img/town_props.png";
+const  townPropSheet = "img/town_props32x32.png";
 
 /**
  * Map describing spritesheets that come with the game
  */
 const imgInfo = new Map([
-  ["sand", img("img/town_props32x32.png", 32, 32, 0, 1)],
-  ["street", img("img/town_props32x32.png", 32, 32, 0, 0)],
-  ["decoration-cactus-3x", img(townPropSheet, 16, 16, 0, 0)],
-  ["decoration-small-stone-3x", img(townPropSheet, 16, 16, 0, 1)],
-  ["decoration-big-stone-1x", img(townPropSheet, 16, 16, 0, 2)],
-  ["decoration-small-dry-bush-left-1x", img(townPropSheet, 16, 16, 1, 0)],
-  ["decoration-small-dry-bush-right-1x", img(townPropSheet, 16, 16, 1, 1)],
-  ["decoration-roadsign", img(townPropSheet, 16, 16, 1, 2)],
-  ["decoration-big-dry-grass-1x", img(townPropSheet, 16, 16, 2, 0)],
-  ["decoration-small-dry-grass-left-1x", img(townPropSheet, 16, 16, 2, 1)],
-  ["decoration-small-dry-grass-right-1x", img(townPropSheet, 16, 16, 2, 2)],
-  ["decoration-wooden-crate-small-3x", img(townPropSheet, 16, 16, 3, 0)],
-  ["decoration-brick-well", img(townPropSheet, 16, 16, 3, 1)],
-  ["decoration-metal-crate-big-1x", img(townPropSheet, 16, 16, 3, 2)],
-  ["jacket", img("img/clothes.png", 32, 32, 0, 0)],
-  ["pants", img("img/clothes.png", 32, 32, 0, 1)],
+  ["street", img(townPropSheet, tileSize, tileSize, 0, 0)],
+  ["sand", img(townPropSheet, tileSize, tileSize, 0, 1)],
+  ["decoration-big-stone-1x", img(townPropSheet, tileSize, tileSize, 0, 2)],
+  ["decoration-cactus-1x", img(townPropSheet, tileSize, tileSize, 1, 0)],
+  ["decoration-roadsign", img(townPropSheet, tileSize, tileSize, 1, 1)],
+  ["decoration-stone-well", img(townPropSheet, tileSize, tileSize, 1, 2)],
+  ["decoration-big-bag-3x", img(townPropSheet, tileSize, tileSize, 2, 0)],
+  //["decoration-small-stone-3x", img(townPropSheet, tileSize, tileSize, 0, 1)],
+  //["decoration-small-dry-bush-left-1x", img(townPropSheet, tileSize, tileSize, 1, 0)],
+  //["decoration-small-dry-bush-right-1x", img(townPropSheet, tileSize, tileSize, 1, 1)],
+  //["decoration-big-dry-grass-1x", img(townPropSheet, tileSize, tileSize, 2, 0)],
+  //["decoration-small-dry-grass-left-1x", img(townPropSheet, tileSize, tileSize, 2, 1)],
+  //["decoration-small-dry-grass-right-1x", img(townPropSheet, tileSize, tileSize, 2, 2)],
+  //["decoration-metal-crate-big-1x", img(townPropSheet, tileSize, tileSize, 3, 2)],
+  ["jacket", img("img/clothes.png", tileSize, tileSize, 0, 0)],
+  ["pants", img("img/clothes.png", tileSize, tileSize, 0, 1)],
   ["player", {
     src: "img/player.png",
     height: 37,

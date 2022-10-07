@@ -70,7 +70,12 @@ class Town {
   }
 
   placeDecoration(){
-    let decorations = ["cactus-3x", "small-stone-3x", "big-stone-1x", "small-dry-bush-left-1x", "small-dry-bush-right-1x", "big-dry-grass-1x", "small-dry-grass-left-1x", "small-dry-grass-right-1x"];
+    let decorations = ["cactus-1x",
+		       "big-stone-1x",
+		       "roadsign",
+		       "stone-well",
+		       "big-bag-3x",
+		      ];
     let length = this.array.length;
     let height = this.array[0].length;
     for (let i = 0; i < length; i++) {

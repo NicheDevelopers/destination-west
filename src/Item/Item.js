@@ -19,6 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+import Sprite from "../Sprite/Sprite.js";
 class Item {
   constructor(itemName, spriteName, durability, id, height, width, price, priceRetention) {
     this.name = itemName;

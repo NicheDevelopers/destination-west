@@ -86,26 +86,25 @@ canvas {
     border: 1px solid black;
 }
 
-.fill {
-    background-image: url('http://source.unsplash.com/random/32x32');
-    position: relative;
-    height: 32px;
-    width: 32px;
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.draggable {
     cursor: pointer;
 }
 
-.empty {
-    height: 32px;
-    width: 32px;
-}
-
 .hold {
-    border: #03fd10 10px;
+    
 }
 
 .hovered {
     background: #fd0303;
-    
 }
 
 .invisible {

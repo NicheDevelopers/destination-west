@@ -44,6 +44,8 @@ import Animation from "./Animation.js";
 
 import Designer from "./Designer.js";
 
+import Item from "./Item/Item.js";
+
 class Game {
   constructor(keybinds=[]){
     this.userFunctionsMap = new Map();
@@ -60,6 +62,8 @@ class Game {
     this.worldMapDisplay = new WorldMapDisplay(this);
 
     let testEq = new Equipment(7,7);
+    testEq.put(new Item('Apple', 'decoration-big-stone-1x', 0, 0, 1, 1, 0, 0));
+    testEq.put(new Item('Apple', 'decoration-big-stone-1x', 0, 0, 1, 1, 0, 0));
     this.equipmentDisplay = new EquipmentDisplay(this, testEq, true);
     
     //this.testJacket = new ColoredSprite('jacket');

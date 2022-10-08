@@ -21,7 +21,7 @@
 
 import time from "./global/time.js";
 
-function calculateChangesInThisTick(element){
+function calculateChangeInThisTick(element){
   element.changeStack += (element.speed*time.delta) / 1000;
   let changesInThisTick = (element.changeStack/element.quantum) | 0;
   element.changeStack -= changesInThisTick;      
@@ -45,9 +45,10 @@ class Animation{
     if (!values.length) throw "Animation: No values specified";
     this.properties = [];
     this.methods = [];
+    this.propertyMap = new Map(); // property name -> property object
     speeds = [].concat(speeds??[]);
     let quantums = [].concat(options.quantums??[]);
-
+    
     values.forEach((v, i) => {
       let property = {
 	changeStack: 0,
@@ -57,31 +58,60 @@ class Animation{
       if (v.substring(0,2) === '()'){
 	property.name = v.substring(2);
 	this.methods.push(property);
-	return;
-      }
-      if (v[0] === '-'){
-	property.name = v.substring(1);
-	property.direction = false;
-	this.properties.push(property);
+	//this.methodMap.set(property.name, property);
 	return;
       }
       property.name = v;
       property.direction = true;
+      
+      if (property.speed < 0) {
+	property.direction = false;
+	property.speed *= -1;
+      }
+      
       this.properties.push(property);
+      this.propertyMap.set(property.name, property);
     });
   }
   set speed(speed){
-    this.properties.forEach((property) => { property.speed = speed; });
-    this.methods.forEach((method) => { method.speed = speed; });
+    let direction = true;
+    if (speed < 0) {
+      direction = false;
+      speed *= -1;
+    }
+    this.properties.forEach((property) => {
+      property.direction = direction;
+      property.speed = speed;
+    });
+    this.methods.forEach((method) => {
+      method.speed = speed;
+    });
   }
+  get speed(){
+    if (this.properties.length > 1)
+      throw 'Animation: Adjusting speeds for multianimations' +
+      ' is not supported yet.';
+    return this.properties[0].speed;
+  }
+  getChangeInThisTick(property, testSpeed){
+    property = this.propertyMap.get(property);
+    
+    testSpeed = testSpeed ?? property.speed;
+
+    let change = (testSpeed*time.delta) / 1000;
+    return ((property.direction)? 1 : -1) *
+      (((property.changeStack+change)/property.quantum) | 0);
+  }
+  
   next(){
     this.properties.forEach((property) => {
-      let changesNow = calculateChangesInThisTick(property);
+      if (property.speed === 0) return;
+      let changesNow = calculateChangeInThisTick(property);
       this.host[property.name] +=
       ((property.direction)? 1 : -1) * changesNow;
     });
     this.methods.forEach((method) => {
-      let changesNow = calculateChangesInThisTick(method);
+      let changesNow = calculateChangeInThisTick(method);
       for (let i=0; i < changesNow; ++i){
 	this.host[method.name].call(this.host);
       }

@@ -20,6 +20,8 @@
 */
 
 import Sprite from "./Sprite/Sprite.js";
+
+import ctx from "./global/ctx.js";
 /**
  * Class for creating tiles - the base of the game world structure
  */
@@ -37,6 +39,12 @@ class Tile{
   draw(x,y){
     this.background?.draw(x,y);
     this.sprite.draw(x, y);
+  }
+  drawDebugInfo(){
+    ctx.fillRect(this.x, this.y, this.sprite.width, 1);
+    ctx.fillRect(this.x, this.y, 1, this.sprite.height);
+    ctx.fillRect(this.x + this.sprite.width, this.y, 1, this.sprite.height);
+    ctx.fillRect(this.x, this.y + this.sprite.height, this.sprite.width, 1);
   }
 }
 

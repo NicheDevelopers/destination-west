@@ -26,6 +26,8 @@ import imgInfo from "../static/imgInfo.js";
 
 import tileSize from "../global/tileSize.js";
 
+import ctx from "../global/ctx.js";
+
 /**
  * a constant representing the default player speed value
  */
@@ -64,24 +66,30 @@ class Player extends Entity{
     super("player", x, y, defaultPlayerSpeed);
     this.game = game;
     //an object containing info on the player model's center point. once we get normal sized sprites this will be much cleaner.
-    this.defaultCenterPoint = {x: 24, //for the inaccurate sprite we have now this is around the center point
-                               y: 30};
+    this.defaultcenterPoint = {x: 24, //for the inaccurate sprite we have now this is around the center point
+                               y: 35};
     //an object which contains info on how many pixels from the center point you want to detect collisions
-    this.standardCenterPointDeviation = {up: -1,
-                                         left: -10,
-                                         right: 10,
-                                         down: playerHeight - this.defaultCenterPoint.y}
+    this.boundingDistance =
+      {up: -1,
+       left: -5,
+       right: 5,
+       down: 1}
     //an object containing appropriate center point deviation so that the player's model doesn't go out of bounds.
-    this.CenterPoint = {x: this.x + this.defaultCenterPoint.x, 
-                        y: this.y + this.defaultCenterPoint.y};
-    //array of functions which handles player movement
-    this.states = [this.moveLeftUpFunc, this.moveUpFunc, this.moveRightUpFunc, 
-                   this.moveLeftFunc, this.idleFunc, this.moveRightFunc, 
-                   this.moveLeftDownFunc, this.moveDownFunc, this.moveRightDownFunc];
+    this.centerPoint = {x: this.x + this.defaultcenterPoint.x, 
+                        y: this.y + this.defaultcenterPoint.y};
+    
     //array of information on which pixels should be checked for colliding objects
-    this.boundaries = [[this.standardCenterPointDeviation.left, this.standardCenterPointDeviation.up], [0, this.standardCenterPointDeviation.up], [this.standardCenterPointDeviation.right, this.standardCenterPointDeviation.up],
-                       [this.standardCenterPointDeviation.left, 0], [0, 0], [this.standardCenterPointDeviation.right, 0],
-                       [this.standardCenterPointDeviation.left, this.standardCenterPointDeviation.down], [0, this.standardCenterPointDeviation.down], [this.standardCenterPointDeviation.right, this.standardCenterPointDeviation.down]];
+    this.boundaries = [
+      [this.boundingDistance.left, this.boundingDistance.up],
+      [0, this.boundingDistance.up],
+      [this.boundingDistance.right, this.boundingDistance.up],
+      [this.boundingDistance.left, 0],
+      [0, 0],
+      [this.boundingDistance.right, 0],
+      [this.boundingDistance.left, this.boundingDistance.down],
+      [0, this.boundingDistance.down],
+      [this.boundingDistance.right, this.boundingDistance.down]];
+        
     this.default_direction = 4; //the default direction being staying idle, on index 4 in the state array
     this.currentTown = this.game.testTown;
     this.sprintMode = defaultSprintMode;
@@ -100,59 +108,145 @@ class Player extends Entity{
     this.game.registerAction('Toggle Sprint');
     this.game.registerAction('Toggle Sneak');
   }
-  update(){ //manages everything
-    //resets the player movement's direction
-    this.direction = this.default_direction;
+  updateMovementMethod(){
     if (this.sprintMode === 'hold'){
       this.sprinting = false;
     }
     if (this.sneakMode === 'hold'){
       this.sneaking = false;
     }
-    //find where the center point of the player's sprite in current frame is in relation to the entire map
-    this.CenterPoint.x = this.x + this.defaultCenterPoint.x;
-    this.CenterPoint.y = this.y + this.defaultCenterPoint.y;
-    //calculate the direction in which the player is moving, according to this diagram:
+    this.game.manageRequest(
+      'Toggle Sprint',
+      () => this.toggleSprint(),
+      {once: (this.sprintMode === 'toggle')? true : false});
+    
+    this.game.manageRequest(
+      'Toggle Sneak',
+      () => this.toggleSneak(),
+      {once: (this.sneakMode === 'toggle')? true : false});
+    
+    if (this.sprinting && this.sneaking)
+      this.sprinting = false, this.sneaking = false;
+
+  }
+  update(){
+    this.direction = this.default_direction;
+    this.updateMovementMethod();
+   
+    this.centerPoint.x = this.x + this.defaultcenterPoint.x;
+    this.centerPoint.y = this.y + this.defaultcenterPoint.y;
+    
+    //calculate the direction in which the player should move, according to this diagram:
     //       N
     //    0  1  2
     // W  3  4  5  E
     //    6  7  8
     //       S
-    if (this.game.isActionRequested('Move Right'))
+    
+    let speedX=0, speedY=0;
+
+    let baseSpeed = // the highest speed possible in this tick
+      defaultPlayerSpeed * ((this.sprinting)? defaultSprintMultiplier :
+	(this.sneaking)? defaultSneakMultiplier : 1);
+
+    if (this.game.isActionRequested('Move Right')){
       this.direction += 1;
-    if (this.game.isActionRequested('Move Left'))
+      speedX += baseSpeed;
+    }
+    if (this.game.isActionRequested('Move Left')){
       this.direction -= 1;
-    if (this.game.isActionRequested('Move Up'))
+      speedX -= baseSpeed;
+    }
+    if (this.game.isActionRequested('Move Up')){
       this.direction -= 3;
-    if (this.game.isActionRequested('Move Down'))
+      speedY -= baseSpeed;
+    }
+    if (this.game.isActionRequested('Move Down')){
       this.direction += 3;
-    //manages sprinting and sneaking states
-    this.game.manageRequest('Toggle Sprint',
-                             () => this.toggleSprint(), {once: (this.sprintMode === 'toggle')? true : false});
-    this.game.manageRequest('Toggle Sneak',
-                             () => this.toggleSneak(), {once: (this.sneakMode === 'toggle')? true : false});
-    if (this.sprinting && this.sneaking) //checks if the player is trying to move slow and fast at the same time
-      this.sprinting = false, this.sneaking = false;
-    if (!this.doesCollide(this.direction)) //moves the player if movement is not obstructed
-      this.states[this.direction].call(this);
-    else{
-      //if the player wanted to move right but is blocked, they will look right
-      if (this.direction === 2 || this.direction === 5 || this.direction === 8)
-        this.sprite.mirrored = false;
-      //if the player wanted to move left but is blocked, they will look left
-      if (this.direction === 0 || this.direction === 3 || this.direction === 6)
-        this.sprite.mirrored = true;
-      if (this.sprite.animation.name !== "idle") //this makes the player stop running instead of constantly running into a wall
-        this.sprite.changeAnimation("idle");
+      speedY += baseSpeed;
+    }
+
+    if (this.direction % 3 === 0){
+      this.sprite.mirrored = true;
+    }
+    if (this.direction % 3 === 2) {
+      this.sprite.mirrored = false;
+    }
+
+    this.speedForDebug = baseSpeed;
+    
+    // Collisions
+    if (this.direction < 3 && this.willCollide(1, baseSpeed)) {
+      this.direction += 3;
+      speedX *= defaultDiagonalOffset;
+      speedY = 0;
+    }
+    if (this.direction > 5 && this.willCollide(7, baseSpeed)) {
+      this.direction -= 3;
+      speedX *= defaultDiagonalOffset;
+      speedY = 0;
+    }
+    if (this.direction % 3 === 0 && this.willCollide(3, baseSpeed)) {
+      this.direction += 1;
+      speedX = 0;
+      speedY *= defaultDiagonalOffset;
+    }
+    if (this.direction % 3 === 2 && this.willCollide(5, baseSpeed)) {
+      this.direction -= 1;
+      speedX = 0;
+      speedY *= defaultDiagonalOffset;
+    }
+
+    if (this.direction % 2 == 0 && this.direction !== 4){
+      speedX *= defaultDiagonalOffset;
+      speedY *= defaultDiagonalOffset;
+    }
+
+    this.moveX.speed = speedX;
+    this.moveY.speed = speedY;
+
+    this.moving = (speedX !== 0 || speedY !== 0);
+
+    this.move();
+    if (!this.currentTown.array[~~(this.centerPoint.x/tileSize)][~~(this.centerPoint.y/tileSize)].walkable){
+      console.log(`STUTTER on direction: ${this.direction}`);
     }
     this.sprite.next();
   }
-  doesCollide(direction){
-    //~~(a/b) is a fast way to do integer division. we need this to find the index of the tile we want to check.
-    if (~~((this.CenterPoint.x + this.boundaries[direction][0])/tileSize) < 0 || ~~((this.CenterPoint.x + this.boundaries[direction][0])/tileSize) >= this.townLength || ~~((this.CenterPoint.y + this.boundaries[direction][1])/tileSize) < 0 || ~~((this.CenterPoint.y + this.boundaries[direction][1])/tileSize) >= this.townWidth)
+  drawDebugInfo(){
+    let moveX = Math.abs(this.moveX.getChangeInThisTick('x', this.speedForDebug));
+    let moveY = Math.abs(this.moveY.getChangeInThisTick('y', this.speedForDebug));
+    //console.log(moveX, moveY);
+    ctx.fillStyle = 'black';
+    let cp = this.centerPoint;
+    ctx.fillRect(cp.x, cp.y, 1, 1);
+    this.boundaries.forEach((boundary, ix) => {
+      let mX = moveX * ((ix % 3 === 0)? -1 : (ix % 3 === 2)? 1 : 0);
+      let mY = moveY * ((ix < 3)? -1 : (ix > 5)? 1 : 0);
+      ctx.fillRect(cp.x + boundary[0] + mX,
+      cp.y + boundary[1] + mY, 1, 1);
+    });
+    
+  }
+  willCollide(direction, speed){
+    /* xTile and yTile represent the coordinates of the tile that
+       the player would start colliding with if he moved in its
+       direction with defaultPlayerSpeed in this tick
+    */
+    let moveX = Math.abs(this.moveX.getChangeInThisTick('x', speed));
+    let moveY = Math.abs(this.moveY.getChangeInThisTick('y', speed));
+   
+    let xTile =
+      ~~((this.centerPoint.x + this.boundaries[direction][0]
+	+ moveX * ((direction % 3 === 0)? -1 : (direction % 3 === 2)? 1 : 0))/tileSize);
+    let yTile = ~~((this.centerPoint.y + this.boundaries[direction][1]
+      + moveY *  ((direction < 3)? -1 : (direction > 5)? 1 : 0))/tileSize);
+   
+    if (xTile < 0 || xTile >= this.townLength || yTile < 0 || yTile >= this.townWidth)
       return 1;
-    if ((this.currentTown.array[~~((this.CenterPoint.x + this.boundaries[direction][0])/tileSize)][~~((this.CenterPoint.y + this.boundaries[direction][1])/tileSize)].walkable))
+    if ((this.currentTown.array[xTile][yTile].walkable)){
       return 0;
+    }
     return 1;
   }
   toggleSprint(){
@@ -161,121 +255,17 @@ class Player extends Entity{
   toggleSneak(){
     this.sneaking = !this.sneaking;
   }
-  //below are simple yet many functions which handle movement in every direction
-  //movement on diagonals is slower because math
-  moveLeftUpFunc(){
-    if (this.sprite.animation.name !== "run")
-      this.sprite.changeAnimation("run");
-    this.sprite.mirrored = true;
-    this.moveLeftAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
-    this.moveUpAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
-    if (this.sprinting){
-      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
-      this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
+  
+  move() {
+    this.moveX.next();
+    this.moveY.next();
+    if (this.moving){
+      if (this.sprite.animation.name !== "run")
+	this.sprite.changeAnimation("run");
+      return;
     }
-    if (this.sneaking){
-      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
-      this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
-    }
-    this.moveLeftAnimation.next();
-    this.moveUpAnimation.next();
-  }
-  moveUpFunc(){
-    if (this.sprite.animation.name !== "run")
-      this.sprite.changeAnimation("run");
-      this.moveUpAnimation.speed = defaultPlayerSpeed;
-      if (this.sprinting)
-        this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier;
-      if (this.sneaking)
-        this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier;
-        this.moveUpAnimation.next();
-  }
-  moveRightUpFunc(){
-    if (this.sprite.animation.name !== "run")
-      this.sprite.changeAnimation("run");
-    this.sprite.mirrored = false;
-    this.moveRightAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
-    this.moveUpAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
-    if (this.sprinting){
-      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
-      this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
-    }
-    if (this.sneaking){
-      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
-      this.moveUpAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
-    }
-    this.moveRightAnimation.next();
-    this.moveUpAnimation.next();
-  }
-  moveLeftFunc(){
-    if (this.sprite.animation.name !== "run")
-      this.sprite.changeAnimation("run");
-    this.sprite.mirrored = true;
-    this.moveLeftAnimation.speed = defaultPlayerSpeed;
-    if (this.sprinting)
-      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier;
-    if (this.sneaking)
-      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier;
-    this.moveLeftAnimation.next();
-  }
-  idleFunc(){
     if (this.sprite.animation.name !== "idle")
       this.sprite.changeAnimation("idle");
-  }
-  moveRightFunc(){
-    if (this.sprite.animation.name !== "run")
-      this.sprite.changeAnimation("run");
-    this.sprite.mirrored = false;
-    this.moveRightAnimation.speed = defaultPlayerSpeed;
-    if (this.sprinting)
-      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier;
-    if (this.sneaking)
-      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier;
-    this.moveRightAnimation.next();
-  }
-  moveLeftDownFunc(){
-    if (this.sprite.animation.name !== "run")
-      this.sprite.changeAnimation("run");
-    this.sprite.mirrored = true;
-    this.moveLeftAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
-    this.moveDownAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
-    if (this.sprinting){
-      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
-      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
-    }
-    if (this.sneaking){
-      this.moveLeftAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
-      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
-    }
-    this.moveLeftAnimation.next();
-    this.moveDownAnimation.next();
-  }
-  moveDownFunc(){
-    if (this.sprite.animation.name !== "run")
-      this.sprite.changeAnimation("run");
-    this.moveDownAnimation.speed = defaultPlayerSpeed;
-    if (this.sprinting)
-      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier;
-    if (this.sneaking)
-      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier;
-    this.moveDownAnimation.next();
-  }
-  moveRightDownFunc(){
-    if (this.sprite.animation.name !== "run")
-      this.sprite.changeAnimation("run");
-    this.sprite.mirrored = false;
-    this.moveRightAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
-    this.moveDownAnimation.speed = defaultDiagonalOffset * defaultPlayerSpeed;
-    if (this.sprinting){
-      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
-      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSprintMultiplier * defaultDiagonalOffset;
-    }
-    if (this.sneaking){
-      this.moveRightAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
-      this.moveDownAnimation.speed = defaultPlayerSpeed * defaultSneakMultiplier * defaultDiagonalOffset;
-    }
-    this.moveRightAnimation.next();
-    this.moveDownAnimation.next();
   }
 }
 

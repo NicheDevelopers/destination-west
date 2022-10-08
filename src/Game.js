@@ -142,8 +142,7 @@ class Game {
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
     
     this.player.draw(this.player.x, this.player.y);
-    //this.testJacket.draw(150, 180);
-    //this.testPants.draw(150, 180);
+    //this.player.drawDebugInfo();
   }
   togglePause(){
     this.paused = !this.paused;

@@ -32,10 +32,8 @@ class Entity {
     this.sprite = new AnimatedSprite(typeName, {animationSpeed: 9});
     this.x = x;
     this.y = y;
-    this.moveRightAnimation = new Animation(this, "x", speed);
-    this.moveLeftAnimation = new Animation(this, "-x", speed);
-    this.moveUpAnimation = new Animation(this, "-y", speed);
-    this.moveDownAnimation = new Animation(this, "y", speed);
+    this.moveX = new Animation(this, "x", speed);
+    this.moveY = new Animation(this, "y", speed);
   }
   draw(x,y){
     this.sprite.draw(x, y);

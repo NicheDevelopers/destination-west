@@ -23,7 +23,9 @@
 
 import Tile from "./Tile.js";
 import presets from "./static/townPresets.js";
+import ctx from "./global/ctx.js";
 import {randIntInRange} from "./global/utilities.js";
+import {createCanvas} from "./global/utilities.js";
 
 import tileSize from "./global/tileSize.js";
 
@@ -36,14 +38,12 @@ class Town {
     this.y = y;
     this.numBldInTown = numBldInTown;
     this.visited = false;
+    this.created = false;
     this.connectedTowns = new Array();
     this.array = undefined;
   }
   createTown() {
-    this.array = this.town1();
-  }
-  town1() {
-    // look https://gitlab.com/niche-devs/destination-west/-/wikis/Technical-Documentation/Classes/Town/Town-Presets
+    // see https://gitlab.com/niche-devs/destination-west/-/wikis/Technical-Documentation/Classes/Town/Town-Presets
     this.array = new Array(42);
     for (let x = 0; x < 42; ++x) {
       this.array[x] = new Array(20);
@@ -53,9 +53,20 @@ class Town {
     this.placeBuildings(preset);
     this.placeBackground('sand');
     this.placeDecoration();
-    return this.array;
+    this.prerenderTown();
+    this.created = true;
   }
-  
+
+  prerenderTown(){
+    let width = this.array.length*tileSize/2;
+    let height = this.array[0].length*tileSize/2;
+    let {canvas, context: offCtx} =
+      createCanvas(width, height);
+    offCtx.clearRect(0, 0, width, height);
+    this.drawRaw(0, 0, offCtx);
+    this.image = new Image(width, height);
+    this.image.src = canvas.toDataURL('image/png');
+  }
   nearToBuilding(xPoz,yPoz){
     for(let i=-1; i<2; i++){
       for(let j=-1; j<2; j++){
@@ -151,6 +162,27 @@ class Town {
         counter++;
       }
     });
+  }
+  draw(x=0, y=0, context=ctx){
+    if (!this.created)
+      throw "Town: Attempt to draw before creating the town";
+    context.drawImage(this.image, x, y);
+  }
+  drawRaw(x0=0, y0=0, context=ctx){
+    for (let x=0; x < this.array.length; ++x){
+      for (let y=0; y < this.array[0].length; ++y){
+	let tile = this.array[x][y];
+	tile.draw(x0+tile.x, y0+tile.y, context);
+      }
+    }
+  }
+  drawDebugInfo(){
+    for (let x=0; x < this.array.length; ++x){
+      for (let y=0; y < this.array[0].length; ++y){
+	let tile = this.array[x][y];
+	tile.drawDebugInfo();
+      }
+    }
   }
 }
 class Building {

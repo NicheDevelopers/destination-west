@@ -49,7 +49,8 @@ import Item from "./Item/Item.js";
 class Game {
   constructor(keybinds=[]){
     this.userFunctionsMap = new Map();
-    
+
+    this.debugging = false;
     this.pauseMenu = new PauseMenu(this);
     this.paused = false;
 
@@ -114,7 +115,11 @@ class Game {
   manageRequest(...args){
     this.keyman.manageRequest(...args);
   }
-  
+
+  debug(){
+    this.player.drawDebugInfo();
+    this.testTown.drawDebugInfo();
+  }
   loop(){
     window.requestAnimationFrame(() => this.loop());
     time.update();
@@ -131,18 +136,16 @@ class Game {
     this.equipmentDisplay.update();
 
     ctx.clearRect(0,0, 672, 288);
-    for (let x=0; x < this.testTown.array.length; ++x){
-      for (let y=0; y < this.testTown.array[0].length; ++y){
-	let tile = this.testTown.array[x][y];
-	tile.draw(tile.x, tile.y);
-      }
-    }
+    
+    this.testTown.draw();
     this.testFPSCounter.next();
     ctx.font = "16px serif";
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
     
     this.player.draw(this.player.x, this.player.y);
-    //this.player.drawDebugInfo();
+    
+    if (this.debugging)
+      this.debug();
   }
   togglePause(){
     this.paused = !this.paused;

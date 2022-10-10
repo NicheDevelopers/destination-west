@@ -104,10 +104,9 @@ class AnimatedSprite extends Sprite{
     this.animationController.next();
   }
 
-  draw(x, y, context){
-    let c = context ?? ctx;
+  draw(x, y, context=ctx){
     let row = (this.mirrored)? this.animation.mirroredRow : this.animation.row;
-    c.drawImage(this.img,
+    context.drawImage(this.img,
 		  this.frame * this.width,
 		  row * this.height,
 		  this.width, this.height, x, y,

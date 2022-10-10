@@ -70,11 +70,10 @@ class ColoredSprite extends Sprite{
     }
     this.offCtx.clearRect(0, 0, this.width, this.height);
     this.offCtx.putImageData(this.image, 0, 0);
-    this.img.src = this.canvas.toDataURL('image/png');
+    this.image.src = this.canvas.toDataURL('image/png');
   }
-  draw(x, y, context){
-    let c = context ?? ctx;
-    c.drawImage(this.img, x, y);
+  draw(x, y, context=ctx){
+    context.drawImage(this.img, x, y);
   }
     
 }

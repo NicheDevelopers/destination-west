@@ -36,15 +36,15 @@ class Tile{
     this.walkable = true;
     this.items = [];
   }
-  draw(x,y){
-    this.background?.draw(x,y);
-    this.sprite.draw(x, y);
+  draw(x, y, context=ctx){
+    this.background?.draw(x, y, context);
+    this.sprite.draw(x, y, context);
   }
-  drawDebugInfo(){
-    ctx.fillRect(this.x, this.y, this.sprite.width, 1);
-    ctx.fillRect(this.x, this.y, 1, this.sprite.height);
-    ctx.fillRect(this.x + this.sprite.width, this.y, 1, this.sprite.height);
-    ctx.fillRect(this.x, this.y + this.sprite.height, this.sprite.width, 1);
+  drawDebugInfo(context=ctx){
+    context.fillRect(this.x, this.y, this.sprite.width, 1);
+    context.fillRect(this.x, this.y, 1, this.sprite.height);
+    context.fillRect(this.x + this.sprite.width, this.y, 1, this.sprite.height);
+    context.fillRect(this.x, this.y + this.sprite.height, this.sprite.width, 1);
   }
 }
 

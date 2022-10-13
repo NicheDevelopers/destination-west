@@ -173,11 +173,28 @@ class WorldMap {
     maxTownsInLayer,
     width,
     height
-  ) {
+	     ) {
+    while(true) {
+      this.townArray = this.createTowns(numOfLayers,
+    chanceOfConnectionBetweenLayers,
+    chanceOfConnectionInLayer,
+    minTownsInLayer,
+    maxTownsInLayer,
+    width,
+    height);
+      if (this.isConnected()) break;
+    }
+  }
 
-    let townID = 0;
-
+  createTowns(numOfLayers,
+    chanceOfConnectionBetweenLayers,
+    chanceOfConnectionInLayer,
+    minTownsInLayer,
+    maxTownsInLayer,
+    width,
+    height) {
     // Return a new Town array of a random length
+    let townID = 0;
     const newLayerArray = (layer) => {
       let count = randIntInRange(minTownsInLayer, maxTownsInLayer);
       let l = new Array();
@@ -187,17 +204,17 @@ class WorldMap {
       return l;
     }
 
-    this.townArray = new Array();
+    let townArray = new Array();
 
     // Create a starting town
     let startingTown = new Town(genTownName(0.4), undefined, undefined, 0, townID++, {});
-    this.townArray.push(startingTown);
+    townArray.push(startingTown);
 
     // Create layer no. 1
     let prevLayer = newLayerArray(1);
     prevLayer.forEach((t) => t.connectedTowns.push(0));
     connectInLayer(prevLayer, chanceOfConnectionInLayer);
-    this.townArray.push(...prevLayer);
+    townArray.push(...prevLayer);
 
     // Create layers no. 2-numOfLayers
     for (let layer = 2; layer <= numOfLayers; layer++) {
@@ -208,27 +225,27 @@ class WorldMap {
         makeFallbackConnectionBetweenLayers(prevLayer, currLayer);
       }
       makeFallbackConnectionsInLayer(prevLayer, currLayer);
-      this.townArray.push(...currLayer);
+      townArray.push(...currLayer);
       prevLayer = currLayer;
     }
 
     // Create a final town
     let finalTown = new Town(genTownName(0.4), undefined, undefined, ++numOfLayers, townID++, {});
-    this.townArray.push(finalTown);
+    townArray.push(finalTown);
 
     // Connect starting and final town with all towns in the neighboring layer
-    this.townArray.map((t) => {
+    townArray.map((t) => {
       if (t.layer === numOfLayers - 1) {
         t.connectedTowns.push(finalTown.ID);
       }
       if (t.layer === 0) {
-        t.connectedTowns.push(...this.townArray.filter((u) => {
+        t.connectedTowns.push(...townArray.filter((u) => {
             return u.layer === 1;
           })
           .map((o) => o.ID));
       }
       if (t.layer === numOfLayers) {
-        t.connectedTowns.push(...this.townArray.filter((u) => {
+        t.connectedTowns.push(...townArray.filter((u) => {
           return u.layer === numOfLayers-1;
         }).map((o) => o.ID))
       }
@@ -236,8 +253,37 @@ class WorldMap {
 
     // Fill the 'x' and 'y' attributes of each town
     // numOfLayers+2 because: those in the middle + zero layer + final layer
-    positionTowns(numOfLayers + 2, width, height, this.townArray);
+    positionTowns(numOfLayers + 2, width, height, townArray);
+    return townArray;
+  }
+  
+  // return a hash map HashMap<int, [int]>
+  intoNeighborList() {
+    let map = new Map();
+    for (let town of this.townArray) {
+      map.set(town.ID, town.connectedTowns);
+    }
+    return map;
+  }
 
+  DFS() {
+    let g = this.intoNeighborList();
+    let visited = new Array();
+    const dfsUtil = (g, start) => {
+      visited.push(start)
+      for (let v of g.get(start)) {
+	if (!visited.includes(v)) {
+	  dfsUtil(g, v);
+	}
+      }
+    }
+    let start = 0;
+    dfsUtil(g, start);
+    return visited;
+  }
+
+  isConnected() {
+    return this.DFS().length == this.townArray.length
   }
 
   /**

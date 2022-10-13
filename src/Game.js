@@ -61,6 +61,7 @@ class Game {
     this.audioPlayer = new AudioPlayer();
     this.worldMap = new WorldMap(5, 0.8, 0.3, 2, 4, 672, 288);
     this.worldMapDisplay = new WorldMapDisplay(this);
+    console.log(this.worldMap);
 
     let testEq = new Equipment(7,7);
     testEq.put(new Item('Apple', 'decoration-big-stone-1x', 0, 0, 1, 1, 0, 0));

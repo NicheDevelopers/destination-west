@@ -58,11 +58,11 @@ class ColoredSprite extends Sprite{
     let g = parseInt(colorHex.substring(2,4), 16);
     let b = parseInt(colorHex.substring(4,6), 16);
     
-    console.log(r,g,b);
+//    console.log(r,g,b);
     for (let x = 0; x < this.image.data.length; x += 4){
       if (this.image.data[x+3] === 0) continue;
       let br = this.brightness[x]/255 | 0;
-      console.log(br, this.alpha[x]);
+//      console.log(br, this.alpha[x]);
       this.image.data[x] = r + br;
       this.image.data[x+1] = g + br;
       this.image.data[x+2] = b + br;

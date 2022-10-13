@@ -61,7 +61,7 @@ class WorldMapDisplay {
     let map = this.game.worldMap;
     let map_ctx = this.mapCanvas.getContext('2d');
     map_ctx.fillStyle = 'white';
-    map_ctx.font = "15px Arial";
+    //map_ctx.font = "15px Arial";
 
     for (let town of map.townArray) {
       let size;
@@ -70,7 +70,7 @@ class WorldMapDisplay {
       else if (town.connectedTowns.length < 10) size = 12;
       
       drawCircle(map_ctx, town.x, town.y, size, 'black', 'black', 2);
-      map_ctx.fillText(town.ID, town.x+5, town.y-10);
+      map_ctx.fillText(town.name, town.x+5, town.y-10);
       
       for (let connection of town.connectedTowns) {
 	let town2 = this.game.worldMap.getID(connection);

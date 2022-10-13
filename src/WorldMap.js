@@ -268,13 +268,13 @@ class WorldMap {
 
   DFS() {
     let g = this.intoNeighborList();
-    let visited = new Array();
+    let visited = [this.townArray[this.townArray.length-1].ID]
     const dfsUtil = (g, start) => {
       visited.push(start)
       for (let v of g.get(start)) {
-	if (!visited.includes(v)) {
-	  dfsUtil(g, v);
-	}
+	      if (!visited.includes(v)) {
+	        dfsUtil(g, v);
+	      }
       }
     }
     let start = 0;

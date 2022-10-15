@@ -19,18 +19,24 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
+import { createCanvas, createDiv } from "./global/utilities.js";
+
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+}
+
+function drawCircle(ctx, x, y, radius, strokeWidth) {
   ctx.beginPath()
   ctx.arc(x, y, radius, 0, 2 * Math.PI, false)
-  if (fill) {
-    ctx.fillStyle = fill
-    ctx.fill()
-  }
-  if (stroke) {
-    ctx.lineWidth = strokeWidth
-    ctx.strokeStyle = stroke
-    ctx.stroke()
-  }
+  ctx.fillStyle = 'black'
+  ctx.fill()
+  ctx.lineWidth = strokeWidth
+  ctx.strokeStyle = 'black'
+  ctx.stroke()
 }
 
 function drawLine(ctx, start_x, start_y, end_x, end_y, strokeStyle, lineWidth) {
@@ -48,9 +54,17 @@ function drawLine(ctx, start_x, start_y, end_x, end_y, strokeStyle, lineWidth) {
 class WorldMapDisplay {
   constructor(game) {
     this.game = game;
-    this.register();
-    this.mapCanvas = document.querySelector('#map-canvas');
+    this.div = createDiv(1344, 576);
+    this.div.style.position = 'absolute';
+    this.div.style.zIndex = 1;
+    this.div.classList.add('map-canvas-div');
+    this.mapCanvas = createCanvas(1344,576).canvas;
+    this.mapCanvas.style.background = 'rgb(150,130,100,0.8)';
+    this.div.appendChild(this.mapCanvas);
+    document.getElementById('game-container').appendChild(this.div);
     this.mapCanvas.style.display = 'none';
+    this.drawn = false;
+    this.register();
   }
   
   register() {
@@ -58,25 +72,53 @@ class WorldMapDisplay {
   }
 
   draw() {
+    if (this.drawn) {
+      return;
+    }
     let map = this.game.worldMap;
     let map_ctx = this.mapCanvas.getContext('2d');
     map_ctx.fillStyle = 'white';
-    //map_ctx.font = "15px Arial";
+    map_ctx.font = "20px Verdana";
 
     for (let town of map.townArray) {
-      let size;
-      if (town.connectedTowns.length < 3) size = 4;
-      else if (town.connectedTowns.length < 5) size = 10;
-      else if (town.connectedTowns.length < 10) size = 12;
       
-      drawCircle(map_ctx, town.x, town.y, size, 'black', 'black', 2);
-      map_ctx.fillText(town.name, town.x+5, town.y-10);
+      map_ctx.fillStyle = 'white';
+      let size;
+      if (town.connectedTowns.length < 3) size = 10;
+      else if (town.connectedTowns.length < 5) size = 20;
+      else if (town.connectedTowns.length < 10) size = 30;
+      // make the last town large
+      if (town.ID === this.game.worldMap.townArray[this.game.worldMap.townArray.length-1].ID) {
+	size = 30;
+      }
+      let d = createDiv(80,80,[`town-div`], town.ID, {
+	display: 'block',
+	position: 'absolute',
+	width: size*2 + 'px',
+	height: size*2 + 'px',
+	left: town.x - size + 'px',
+	top: town.y - size + 'px',
+	'border-radius' : '100%',
+      });
+      d.addEventListener('click', (evt) => {
+	this.game.travel(evt.target.id);
+      })
+      this.div.appendChild(d);
+      
+      drawCircle(map_ctx, town.x, town.y, size, 2);
       
       for (let connection of town.connectedTowns) {
-	let town2 = this.game.worldMap.getID(connection);
-	drawLine(map_ctx, town.x, town.y, town2.x, town2.y, 'black', 1);
+	let town2 = this.game.worldMap.getByID(connection);
+	drawLine(map_ctx, town.x, town.y, town2.x, town2.y, 'black', 3);
       }
     }
+    
+    for (let town of map.townArray) {
+      map_ctx.fillStyle = 'white';
+      // display town names somewhat under the dots
+      map_ctx.fillText(town.name, town.x-50,  town.y+40);
+    }
+    this.drawn = true;
   }
   
   update() {
@@ -88,12 +130,19 @@ class WorldMapDisplay {
   }
   
   toggleMapDisplayFunc() {
-    this.mapCanvas = document.getElementById('map-canvas');
     if (this.mapCanvas.style.display !== 'none') {
       this.mapCanvas.style.display = 'none';
+      let d = document.getElementsByClassName('town-div');
+      for (let td of d) {
+	td.style.display = 'none'
+      }
     } else {
       this.draw();
       this.mapCanvas.style.display = 'block';
+      let d = document.getElementsByClassName('town-div');
+      for (let td of d) {
+	td.style.display = 'block'
+      }
     }
   }
 }

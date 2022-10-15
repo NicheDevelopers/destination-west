@@ -295,7 +295,7 @@ class WorldMap {
     });
   }
 
-  getID(ID) {
+  getByID(ID) {
     if (ID > this.townArray.length-1 || ID < 0) {
       throw `WorldMap: no town with ID ${ID} - townArray length is ${this.townArray.length}`;
     }

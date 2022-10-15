@@ -149,3 +149,7 @@ canvas {
 .designer.button:active {
     background-color: rgb(77,112,104);
 }
+
+.town-div:hover {
+    background-color: red;
+}

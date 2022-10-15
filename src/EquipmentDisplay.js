@@ -38,6 +38,7 @@ class EquipmentDisplay{
     let gameContainer = document.querySelector("#game-container");
     this.div.id = "equipment";
     this.div.style.position = 'absolute';
+    this.div.style.zIndex = 1; // make it work with changes in map display
     this.div.classList.add("window");
     this.div.style.backgroundColor = 'rgb(121,70,20)';
     this.divEq = document.createElement("div");

@@ -91,7 +91,7 @@ class Player extends Entity{
       [this.boundingDistance.right, this.boundingDistance.down]];
         
     this.default_direction = 4; //the default direction being staying idle, on index 4 in the state array
-    this.currentTown = this.game.testTown;
+    this.currentTown = this.game.currentTown;
     this.sprintMode = defaultSprintMode;
     this.sneakMode = defaultSneakMode;
     this.townLength = this.currentTown.array.length;

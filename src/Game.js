@@ -2,7 +2,7 @@
   file: src/Game.js
   purpose: define the Game class
   authors: Artur Gulik <https://gitlab.com/ArturGulik>
-          Michał Miłek <https://gitlab.com/mmilek>
+           Michał Miłek <https://gitlab.com/mmilek>
   
   This file is part of 'Destination West'.
   
@@ -59,7 +59,7 @@ class Game {
     this.browser = new Browser(this);
     this.testTile = new Tile("sand");
     this.audioPlayer = new AudioPlayer();
-    this.worldMap = new WorldMap(5, 0.5, 0.3, 2, 4, 672, 288);
+    this.worldMap = new WorldMap(5, 0.5, 0.3, 2, 4, 1344, 576);
     this.worldMapDisplay = new WorldMapDisplay(this);
 
     let testEq = new Equipment(7,7);
@@ -69,10 +69,10 @@ class Game {
     
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
-    
-    this.testTown = new Town('Franowo', 64, 64, 0, 0,
-			     {sheriff: 1, house: 2, saloon: 11});
-    this.testTown.createTown();
+    this.currentTown = this.worldMap.townArray[0];
+    this.currentTown.createTown();
+//    this.testTown = new Town('Franowo', 64, 64, 0, 0,
+//			     {sheriff: 1, house: 2, saloon: 11});
 
     this.player = new Player(this, 128, 128);
 
@@ -116,10 +116,18 @@ class Game {
     this.keyman.manageRequest(...args);
   }
 
+  travel(id) {
+    this.currentTown = this.worldMap.getByID(id);
+    if (!this.currentTown.created) { 
+      this.currentTown.createTown();
+    }
+  }
+
   debug(){
     this.player.drawDebugInfo();
     this.testTown.drawDebugInfo();
   }
+  
   loop(){
     window.requestAnimationFrame(() => this.loop());
     time.update();
@@ -137,13 +145,12 @@ class Game {
 
     ctx.clearRect(0,0, 672, 288);
     
-    this.testTown.draw();
+    this.currentTown.draw();
     this.testFPSCounter.next();
     ctx.font = "16px serif";
     ctx.fillText(`FPS: ${this.fps}`, 606, 16);
     
     this.player.draw(this.player.x, this.player.y);
-    
     if (this.debugging)
       this.debug();
   }
@@ -153,9 +160,6 @@ class Game {
   updateFPSCounter(){
       this.fps = time.getFPS();
       this.fps = ((this.fps > 99)? "" : " ") + this.fps;
-  }
-  test(){
-    return "Game class functional";
   }
 }
 

@@ -67,13 +67,10 @@ class Game {
     testEq.put(new Item('Apple', 'decoration-big-stone-1x', 0, 0, 1, 1, 0, 0));
     this.equipmentDisplay = new EquipmentDisplay(this, testEq, true);
     
+    this.travel(0);
+
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
-    this.currentTown = this.worldMap.townArray[0];
-    this.currentTown.createTown();
-//    this.testTown = new Town('Franowo', 64, 64, 0, 0,
-//			     {sheriff: 1, house: 2, saloon: 11});
-
     this.player = new Player(this, 128, 128);
 
     this.fps = 0;

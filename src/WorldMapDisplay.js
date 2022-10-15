@@ -54,15 +54,14 @@ function drawLine(ctx, start_x, start_y, end_x, end_y, strokeStyle, lineWidth) {
 class WorldMapDisplay {
   constructor(game) {
     this.game = game;
-    this.div = createDiv(1344, 576);
-    this.div.style.position = 'absolute';
-    this.div.style.zIndex = 1;
-    this.div.classList.add('map-canvas-div');
+    this.div = createDiv(1344, 576, ['map-canvas-div'], {
+      position: 'absolute',
+      display: 'none',
+      zIndex: '1'});
     this.mapCanvas = createCanvas(1344,576).canvas;
     this.mapCanvas.style.background = 'rgb(150,130,100,0.8)';
     this.div.appendChild(this.mapCanvas);
     document.getElementById('game-container').appendChild(this.div);
-    this.mapCanvas.style.display = 'none';
     this.drawn = false;
     this.register();
   }
@@ -91,7 +90,7 @@ class WorldMapDisplay {
       if (town.ID === this.game.worldMap.townArray[this.game.worldMap.townArray.length-1].ID) {
 	size = 30;
       }
-      let d = createDiv(80,80,[`town-div`], town.ID, {
+      let d = createDiv(80,80,[`town-div`], {
 	display: 'block',
 	position: 'absolute',
 	width: size*2 + 'px',
@@ -100,8 +99,9 @@ class WorldMapDisplay {
 	top: town.y - size + 'px',
 	'border-radius' : '100%',
       });
+      d.dataset.id = town.ID;
       d.addEventListener('click', (evt) => {
-	this.game.travel(evt.target.id);
+	this.game.travel(evt.target.dataset.id);
       })
       this.div.appendChild(d);
       
@@ -130,20 +130,12 @@ class WorldMapDisplay {
   }
   
   toggleMapDisplayFunc() {
-    if (this.mapCanvas.style.display !== 'none') {
-      this.mapCanvas.style.display = 'none';
-      let d = document.getElementsByClassName('town-div');
-      for (let td of d) {
-	td.style.display = 'none'
-      }
-    } else {
-      this.draw();
-      this.mapCanvas.style.display = 'block';
-      let d = document.getElementsByClassName('town-div');
-      for (let td of d) {
-	td.style.display = 'block'
-      }
+    if (this.div.style.display !== 'none') {
+      this.div.style.display = 'none';
+      return;
     }
+    this.draw();
+    this.div.style.display = 'block';
   }
 }
 

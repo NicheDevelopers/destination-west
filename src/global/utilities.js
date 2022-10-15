@@ -73,16 +73,15 @@ function generateID(objectName){
   return ids.get(objectName);
 }
 
-function createDiv(w, h, classes=[], id, styles={}){
+function createDiv(w, h, classes=[], styles={}, id){
   let r = document.createElement('div');
   classes.forEach((styleClass) => r.classList.add(styleClass));
   r.setAttribute('style', `width: ${w}px; height: ${h}px`);
-  if (id !== undefined) {
-    r.setAttribute('id', `${id}`);
-  }
   for (const styleName in styles){
     r.style[styleName] = styles[styleName];
   }
+  if (id === undefined) return r;
+  r.setAttribute('id', `${id}`);
   return r;
 }
 

@@ -213,49 +213,65 @@ class Building {
       x: this.xTiles - 1,
       y: this.yTiles - 1
     };
+    let pedestal = false;
+    if (max.y > 1) {
+      //pedestal = true;
+      //max.y--;
+    }
     this.createTile('leftwall', min.x, max.y);
     this.createTile('rightwall', max.x, max.y);
     this.createTile('door', max.x / 2 | 0, max.y);
     for (let x = 1; x < max.x; x++) {
       if (this.array[x][max.y] !== undefined) continue;
-      if (randIntInRange(0,7) === 1) {
-	this.createTile('barrels', x, max.y);
+      if (randIntInRange(0,6) === 1) {
+	this.createTile('window', x, max.y);
 	continue;
       }
       this.createTile('wall', x, max.y);
     }
+    if (pedestal) {
+      max.y++;
+      this.createTile('leftpedestal', min.x, max.y);
+      this.createTile('rightpedestal', max.x, max.y);
+      this.createTile('doorpedestal', max.x / 2 | 0, max.y);
+      for (let x = 1; x < max.x; x++) {
+	if (this.array[x][max.y] !== undefined) continue;
+	this.createTile('pedestal', x, max.y);
+      }
+    }
     for (let y = 1; y < max.y; y++) {
-      this.createTile('leftwall', min.x, y);
-      this.createTile('rightwall', max.x, y);
+      this.createTile('upleftwall', min.x, y);
+      this.createTile('uprightwall', max.x, y);
       for (let x = 1; x < max.x; x++) {
         if (this.array[x][y] !== undefined) continue;
 	let r = randIntInRange(0,6);
         if (r === 4){
-	  this.createTile('window', x, y);
+	  this.createTile('upwindow', x, y);
 	  continue;
 	}
 	if (r === 5){
-	  this.createTile('smallwindow', x, y);
+	  this.createTile('upwindow', x, y);
 	  continue;
 	}
-        this.createTile('wall', x, y);
+        this.createTile('upwall', x, y);
       }
     }
+    
     this.createTile('leftroof', min.x, min.y);
     this.createTile('rightroof', max.x, min.y);
     if (max.x === 2) {
-      this.createTile('roofdecoration', 1, min.y);
+      this.createTile('sign', 1, min.y);
       return;
     }
-    this.createTile('lefthighroof', min.x + 1, min.y);
-    this.createTile('righthighroof', max.x - 1, min.y);
+    this.createTile('roof', min.x + 1, min.y);
+    this.createTile('roof', max.x - 1, min.y);
     if (max.x === 3) return;
     if (max.x === 4) {
-      this.createTile('highroof', 2, min.y);
+      this.createTile('sign', 2, min.y);
       return;
     }
-    this.createTile('lefthighroof', min.x + 2, min.y);
-    this.createTile('righthighroof', max.x - 2, min.y);
+    this.createTile('roof', min.x + 2, min.y);
+    this.createTile('roof', max.x - 2, min.y);
   }
 }
 export default Town;

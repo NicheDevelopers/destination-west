@@ -2,7 +2,7 @@
   file: src/static/imgInfo.js
   purpose: describe spirtesheets that come with the game
   authors: Artur Gulik <https://gitlab.com/ArturGulik>
-          Michał Miłek <https://gitlab.com/mmilek>
+           Michał Miłek <https://gitlab.com/mmilek>
   
   This file is part of 'Destination West'.
   
@@ -68,23 +68,33 @@ const imgInfo = new Map([
   }]
 ]);
 
-let newBuildingPart = (name, row, col) => ({name: name, row: row, col:col});
+let newBuildingPart = (name, col, row) => ({name: name, row: row, col:col});
 let buildingParts = [
-  newBuildingPart('leftwall', 1, 0),
-  newBuildingPart('smallwindow', 1, 1),
-  newBuildingPart('door', 1, 2),
-  newBuildingPart('window', 1, 3),
-  newBuildingPart('wall', 1, 4),
-  newBuildingPart('barrels', 1, 5),
-  newBuildingPart('rightwall', 1, 6),
+  newBuildingPart('leftwallwindow', 0, 2),
+  newBuildingPart('leftwall', 1, 2),
+  newBuildingPart('door', 2, 2),
+  newBuildingPart('window', 3, 2),
+  newBuildingPart('wall', 4, 2),
+  newBuildingPart('rightwall', 5, 2),
+  newBuildingPart('rightwallwindow', 6, 2),
 
-  newBuildingPart('leftroof', 0, 0),
-  newBuildingPart('lefthighroof', 0, 1),
-  newBuildingPart('highroof', 0, 2),
-  newBuildingPart('righthighroof', 0, 3),
-  newBuildingPart('roof', 0, 4),
-  newBuildingPart('roofdecoration', 0, 5),
-  newBuildingPart('rightroof', 0, 6)
+  newBuildingPart('upleftwallwindow', 0, 1),
+  newBuildingPart('upleftwall', 1, 1),
+  newBuildingPart('updoor', 2, 1),
+  newBuildingPart('upwindow', 3, 1),
+  newBuildingPart('upwall', 4, 1),
+  newBuildingPart('uprightwall', 5, 1),
+  newBuildingPart('uprightwallwindow', 6, 1),
+
+  newBuildingPart('leftroof', 1, 0),
+  newBuildingPart('roof', 2, 0),
+  newBuildingPart('sign', 3, 0),
+  newBuildingPart('rightroof', 4, 0),
+
+  newBuildingPart('leftpedestal', 1, 3),
+  newBuildingPart('doorpedestal', 2, 3),
+  newBuildingPart('pedestal', 3, 3),
+  newBuildingPart('rightpedestal', 4, 3)
 ];
 let buildings = ['sheriff', 'house', 'saloon'];
 
@@ -92,7 +102,7 @@ buildings.forEach((building) => {
   buildingParts.forEach((buildingPart) => {
     imgInfo.set('building-' + building + '-' + buildingPart.name,
     {
-      src: "img/saloon.png",
+      src: "img/bank.png",
       height: 32, width: 32,
       row: buildingPart.row,
       col: buildingPart.col

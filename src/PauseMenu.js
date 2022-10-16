@@ -47,7 +47,7 @@ class PauseMenu {
     this.exitSettingsButton = document.createElement("button");
 
     // settingsMenu settings
-    this.exitSettingsButton.classList.add("pause-menu-buttons");
+    this.exitSettingsButton.classList.add("pause-menu-buttons", "button");
     this.exitSettingsButton.innerHTML = "Return";
     this.exitSettingsButton.style.position = "absolute";
     this.exitSettingsButton.style.top = "5px";
@@ -66,32 +66,24 @@ class PauseMenu {
     this.exitMenuPrompt.innerHTML = "Do you really want to exit?";
     this.exitMenuPrompt.style.padding = "0 0 35% 0";
     this.exitMenuConfirmationButton.innerHTML = "Yes";
-    this.exitMenuConfirmationButton.classList.add("pause-menu-buttons");
+    this.exitMenuConfirmationButton.classList.add("pause-menu-buttons", "button");
     this.exitMenuConfirmationButton.style.margin = "0 calc(100% - 132px) 0 0"; // width of the propmt minus 2 widths of buttons
     this.exitMenuRefusalButton.innerHTML = "No";
-    this.exitMenuRefusalButton.classList.add("pause-menu-buttons");
+    this.exitMenuRefusalButton.classList.add("pause-menu-buttons", "button");
 
     // resumeButton settings
-    this.resumeButton = document.createElement("button");
-    this.resumeButton.id = "pause-menu-resume-button";
-    this.resumeButton.classList.add("pause-menu-buttons");
-    this.resumeButton.innerHTML = "Resume";
-    // settingsButton settings
-    this.settingsButton = document.createElement("button");
-    this.settingsButton.id = "pause-menu-settings-button";
-    this.settingsButton.classList.add("pause-menu-buttons");
-    this.settingsButton.innerHTML = "Settings";
-    // saveButton settings
-    this.saveButton = document.createElement("button");
-    this.saveButton.id = "pause-menu-save-button";
-    this.saveButton.classList.add("pause-menu-buttons");
-    this.saveButton.innerHTML = "Save";
-    // exitButton settings
-    this.exitButton = document.createElement("button");
-    this.exitButton.id = "pause-menu-exit-button";
-    this.exitButton.classList.add("pause-menu-buttons");
-    this.exitButton.innerHTML = "Exit";
-
+    let createButton = (text) => {
+      let b = document.createElement("button");
+      b.id = 'pause-menu-' + text.toLowerCase() + '-button';
+      b.classList.add('pause-menu-buttons', 'button');
+      b.innerHTML = text;
+      return b;
+    };
+    this.resumeButton = createButton("Resume");
+    this.settingsButton = createButton("Settings");
+    this.saveButton = createButton("Save");
+    this.exitButton = createButton("Exit");
+    
     // append created divs and buttons to corresponding parents
     this.pauseMenu.appendChild(this.pauseMenuButtonsDiv);
     this.pauseMenu.appendChild(this.pauseMenuWantedDiv);

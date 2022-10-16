@@ -36,13 +36,22 @@ class Camera {
   }
   render(){
     ctx.clearRect(0, 0, this.width, this.height);
+    const playerX = this.game.player.x
+      + this.game.player.spriteCenterPoint.x;
+    const playerY = this.game.player.y
+      + this.game.player.spriteCenterPoint.y-5;
     
-    const topLeftX = Math.max(0, Math.min(this.game.player.x - this.width/2, this.game.currentTown.widthPx - this.width)) + this.x;
-    const topLeftY = Math.max(0, Math.min(this.game.player.y - this.height/2, this.game.currentTown.heightPx - this.height)) + this.y;
+    const topLeftX = this.x + Math.max(0, Math.min(
+      playerX - this.width/2,
+      this.game.currentTown.widthPx - this.width));
+    const topLeftY = this.y + Math.max(0, Math.min(
+      playerY - this.height/2,
+      this.game.currentTown.heightPx - this.height));
 
     this.game.currentTown.draw(topLeftX, topLeftY);
     this.game.player.draw(this.game.player.x-topLeftX,
 			  this.game.player.y-topLeftY);
+    
     ctx.font = "16px serif";
     ctx.fillText(`FPS: ${this.game.fps}`, 606, 16);
   }

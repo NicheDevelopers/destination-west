@@ -30,7 +30,6 @@ class PauseMenu {
     this.game = game;
     this.registerActions();
     this.paused = false;
-    this.displaySettings();
     // create buttons and divs inside pauseMenu
     this.pauseMenu = document.getElementById("pause-menu");
     this.pauseMenuButtonsDiv = document.createElement("div");

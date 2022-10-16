@@ -65,9 +65,12 @@ class Player extends Entity{
   constructor(game, x=0, y=0){
     super("player", x, y, defaultPlayerSpeed);
     this.game = game;
-    //an object containing info on the player model's center point. once we get normal sized sprites this will be much cleaner.
-    this.defaultcenterPoint = {x: 24, //for the inaccurate sprite we have now this is around the center point
-                               y: 35};
+    
+    // Cooridinates of the sprite's center point
+    this.spriteCenterPoint = {x:24, y: 30};
+    // Coordinates for calculating collisions
+    this.rootPoint = {x: 24, y: 35};
+    
     //an object which contains info on how many pixels from the center point you want to detect collisions
     this.boundingDistance =
       {up: -1,
@@ -75,8 +78,8 @@ class Player extends Entity{
        right: 5,
        down: 1}
     //an object containing appropriate center point deviation so that the player's model doesn't go out of bounds.
-    this.centerPoint = {x: this.x + this.defaultcenterPoint.x, 
-                        y: this.y + this.defaultcenterPoint.y};
+    this.centerPoint = {x: this.x + this.rootPoint.x, 
+                        y: this.y + this.rootPoint.y};
     
     //array of information on which pixels should be checked for colliding objects
     this.boundaries = [
@@ -132,8 +135,8 @@ class Player extends Entity{
     this.direction = this.default_direction;
     this.updateMovementMethod();
    
-    this.centerPoint.x = this.x + this.defaultcenterPoint.x;
-    this.centerPoint.y = this.y + this.defaultcenterPoint.y;
+    this.centerPoint.x = this.x + this.rootPoint.x;
+    this.centerPoint.y = this.y + this.rootPoint.y;
     
     //calculate the direction in which the player should move, according to this diagram:
     //       N

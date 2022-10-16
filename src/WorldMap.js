@@ -232,7 +232,7 @@ class WorldMap {
     }
 
     // Create a final town
-    let finalTown = new Town(genTownName(0.4), undefined, undefined, ++numOfLayers, townID++, {});
+    let finalTown = new Town(genTownName(0.4), undefined, undefined, ++numOfLayers, townID++, {sheriff: 1, house: 2, saloon: 11});
     townArray.push(finalTown);
 
     // Connect starting and final town with all towns in the neighboring layer

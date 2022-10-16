@@ -66,8 +66,9 @@ class Game {
     testEq.put(new Item('Apple', 'decoration-big-stone-1x', 0, 0, 1, 1, 0, 0));
     testEq.put(new Item('Apple', 'decoration-big-stone-1x', 0, 0, 1, 1, 0, 0));
     this.equipmentDisplay = new EquipmentDisplay(this, testEq, true);
-    
-    this.travel(0);
+
+    this.currentTown = this.worldMap.getByID(0);
+    this.currentTown.createTown();
 
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
@@ -114,6 +115,9 @@ class Game {
   }
 
   travel(id) {
+    if (!this.currentTown.connectedTowns.includes(parseInt(id))) {
+      return;
+    }
     this.currentTown = this.worldMap.getByID(id);
     if (!this.currentTown.created) { 
       this.currentTown.createTown();

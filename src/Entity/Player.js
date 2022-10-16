@@ -91,11 +91,10 @@ class Player extends Entity{
       [this.boundingDistance.right, this.boundingDistance.down]];
         
     this.default_direction = 4; //the default direction being staying idle, on index 4 in the state array
-    this.currentTown = this.game.currentTown;
     this.sprintMode = defaultSprintMode;
     this.sneakMode = defaultSneakMode;
-    this.townLength = this.currentTown.array.length;
-    this.townWidth = this.currentTown.array[0].length;
+    this.townLength = this.game.currentTown.array.length;
+    this.townWidth = this.game.currentTown.array[0].length;
     this.sprinting = false;
     this.sneaking = false;
     this.addUserActions();
@@ -208,7 +207,7 @@ class Player extends Entity{
     this.moving = (speedX !== 0 || speedY !== 0);
 
     this.move();
-    if (!this.currentTown.array[~~(this.centerPoint.x/tileSize)][~~(this.centerPoint.y/tileSize)].walkable){
+    if (!this.game.currentTown.array[~~(this.centerPoint.x/tileSize)][~~(this.centerPoint.y/tileSize)].walkable){
       console.log(`STUTTER on direction: ${this.direction}`);
     }
     this.sprite.next();
@@ -242,9 +241,9 @@ class Player extends Entity{
     let yTile = ~~((this.centerPoint.y + this.boundaries[direction][1]
       + moveY *  ((direction < 3)? -1 : (direction > 5)? 1 : 0))/tileSize);
    
-    if (xTile < 0 || xTile >= this.townLength || yTile < 0 || yTile >= this.townWidth)
+    if (xTile < 0 || xTile >= this.game.currentTown.array.length || yTile < 0 || yTile >= this.game.currentTown.array[0].length)
       return 1;
-    if ((this.currentTown.array[xTile][yTile].walkable)){
+    if ((this.game.currentTown.array[xTile][yTile].walkable)){
       return 0;
     }
     return 1;

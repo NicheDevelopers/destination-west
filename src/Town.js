@@ -36,6 +36,10 @@ class Town {
     this.name = name;
     this.x = x;
     this.y = y;
+    this.width = 42;
+    this.height = 20;
+    this.widthPx = this.width*tileSize;
+    this.heightPx = this.height*tileSize;
     this.numBldInTown = numBldInTown;
     this.visited = false;
     this.created = false;
@@ -44,9 +48,9 @@ class Town {
   }
   createTown() {
     // see https://gitlab.com/niche-devs/destination-west/-/wikis/Technical-Documentation/Classes/Town/Town-Presets
-    this.array = new Array(42);
+    this.array = new Array(this.width);
     for (let x = 0; x < 42; ++x) {
-      this.array[x] = new Array(20);
+      this.array[x] = new Array(this.height);
     }
     let preset = presets[randIntInRange(0,presets.length)];
     this.placeStreets(preset);
@@ -58,13 +62,11 @@ class Town {
   }
 
   prerenderTown(){
-    let width = this.array.length*tileSize/2;
-    let height = this.array[0].length*tileSize/2;
     let {canvas, context: offCtx} =
-      createCanvas(width, height);
-    offCtx.clearRect(0, 0, width, height);
+      createCanvas(this.widthPx, this.heightPx);
+    offCtx.clearRect(0, 0, this.widthPx, this.heightPx);
     this.drawRaw(0, 0, offCtx);
-    this.image = new Image(width, height);
+    this.image = new Image(this.widthPx, this.heightPx);
     this.image.src = canvas.toDataURL('image/png');
   }
   nearToBuilding(xPoz,yPoz){
@@ -163,10 +165,11 @@ class Town {
       }
     });
   }
-  draw(x=0, y=0, context=ctx){
+  draw(x=0, y=0, context=ctx, width=672, height=288){
     if (!this.created)
       throw "Town: Attempt to draw before creating the town";
-    context.drawImage(this.image, x, y);
+    context.drawImage(this.image, x, y, width, height,
+		      0, 0, width, height);
   }
   drawRaw(x0=0, y0=0, context=ctx){
     for (let x=0; x < this.array.length; ++x){

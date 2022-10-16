@@ -236,12 +236,13 @@ class Player extends Entity{
     let moveY = Math.abs(this.moveY.getChangeInThisTick('y', speed));
    
     let xTile =
-      ~~((this.centerPoint.x + this.boundaries[direction][0]
-	+ moveX * ((direction % 3 === 0)? -1 : (direction % 3 === 2)? 1 : 0))/tileSize);
-    let yTile = ~~((this.centerPoint.y + this.boundaries[direction][1]
-      + moveY *  ((direction < 3)? -1 : (direction > 5)? 1 : 0))/tileSize);
-   
-    if (xTile < 0 || xTile >= this.game.currentTown.array.length || yTile < 0 || yTile >= this.game.currentTown.array[0].length)
+      ~~((this.centerPoint.x + this.boundaries[direction][0] + tileSize
+	+ moveX * ((direction % 3 === 0)? -1 : (direction % 3 === 2)? 1 : 0))/tileSize)-1;
+    let yTile = ~~((this.centerPoint.y + this.boundaries[direction][1] + tileSize
+      + moveY *  ((direction < 3)? -1 : (direction > 5)? 1 : 0))/tileSize)-1;
+
+    if (xTile < 0 || xTile >= this.game.currentTown.width ||
+        yTile < 1 || yTile >= this.game.currentTown.height)
       return 1;
     if ((this.game.currentTown.array[xTile][yTile].walkable)){
       return 0;

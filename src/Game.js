@@ -21,29 +21,20 @@
 */
 
 import time from "./global/time.js";
-import ctx from "./global/ctx.js";
+import Camera from "./Camera.js";
 import Browser from "./Browser.js";
 import KeyMan from "./KeyboardManager.js";
-
 import Tile from "./Tile.js";
 import Player from "./Entity/Player.js";
 import AudioPlayer from "./AudioPlayer.js";
-import Town from "./Town.js";
 import WorldMap from "./WorldMap.js";
 import WorldMapDisplay from "./WorldMapDisplay.js";
 import KeyboardVisualizer from "./KeyboardVisualizer.js";
 import PauseMenu from "./PauseMenu.js";
 import EquipmentDisplay from "./EquipmentDisplay.js";
 import Equipment from "./Equipment.js";
-import {generateID} from "./global/utilities.js";
-
-import Sprite from "./Sprite/Sprite.js";
-import ColoredSprite from "./Sprite/ColoredSprite.js";
-
 import Animation from "./Animation.js";
-
 import Designer from "./Designer.js";
-
 import Item from "./Item/Item.js";
 
 class Game {
@@ -72,8 +63,9 @@ class Game {
 
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
-    this.player = new Player(this, 128, 128);
-
+    this.player = new Player(this, 350, 290);
+    this.camera = new Camera(this);
+    
     this.fps = 0;
     this.testFPSCounter = new Animation(this, '()updateFPSCounter', 5);
     
@@ -126,7 +118,7 @@ class Game {
 
   debug(){
     this.player.drawDebugInfo();
-    this.testTown.drawDebugInfo();
+    this.currentTown.drawDebugInfo();
   }
   
   loop(){
@@ -143,15 +135,10 @@ class Game {
     this.player.update();
     this.worldMapDisplay.update();
     this.equipmentDisplay.update();
-
-    ctx.clearRect(0,0, 672, 288);
-    
-    this.currentTown.draw();
     this.testFPSCounter.next();
-    ctx.font = "16px serif";
-    ctx.fillText(`FPS: ${this.fps}`, 606, 16);
+
+    this.camera.render();
     
-    this.player.draw(this.player.x, this.player.y);
     if (this.debugging)
       this.debug();
   }

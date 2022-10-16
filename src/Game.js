@@ -69,8 +69,10 @@ class Game {
 
     this.currentTown = this.worldMap.getByID(0);
     this.currentTown.visited = true;
-    this.currentTown.createTown();
-
+    if (!this.currentTown.created) { 
+      this.currentTown.createTown();
+    }
+    
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
     this.player = new Player(this, 128, 128);

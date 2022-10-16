@@ -67,7 +67,6 @@ class WorldMapDisplay {
     let map_ctx = this.mapCanvas.getContext('2d');
     map_ctx.fillStyle = 'white';
     map_ctx.font = "20px Verdana";
-    map_ctx.fillRect(0,0,200,200);
     map_ctx.clearRect(0,0,this.mapCanvas.width, this.mapCanvas.height);
     let visibleTowns = [...new Set(this.game.worldMap.townArray
       .filter((t) => t.visited)

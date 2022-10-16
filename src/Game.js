@@ -68,6 +68,7 @@ class Game {
     this.equipmentDisplay = new EquipmentDisplay(this, testEq, true);
 
     this.currentTown = this.worldMap.getByID(0);
+    this.currentTown.visited = true;
     this.currentTown.createTown();
 
     //this.testJacket = new ColoredSprite('jacket');
@@ -119,9 +120,11 @@ class Game {
       return;
     }
     this.currentTown = this.worldMap.getByID(id);
+    this.currentTown.visited = true;
     if (!this.currentTown.created) { 
       this.currentTown.createTown();
     }
+    this.worldMapDisplay.draw();
   }
 
   debug(){

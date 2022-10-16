@@ -21,14 +21,6 @@
 
 import { createCanvas, createDiv } from "./global/utilities.js";
 
-function getMousePos(canvas, evt) {
-  var rect = canvas.getBoundingClientRect();
-  return {
-    x: evt.clientX - rect.left,
-    y: evt.clientY - rect.top
-  };
-}
-
 function drawCircle(ctx, x, y, radius, strokeWidth) {
   ctx.beginPath()
   ctx.arc(x, y, radius, 0, 2 * Math.PI, false)
@@ -62,7 +54,7 @@ class WorldMapDisplay {
     this.mapCanvas.style.background = 'rgb(150,130,100,0.8)';
     this.div.appendChild(this.mapCanvas);
     document.getElementById('game-container').appendChild(this.div);
-    this.drawn = false;
+    this.drawnDivs= new Array(this.game.worldMap.townArray.length).fill(false);
     this.register();
   }
   
@@ -71,16 +63,21 @@ class WorldMapDisplay {
   }
 
   draw() {
-    if (this.drawn) {
-      return;
-    }
     let map = this.game.worldMap;
     let map_ctx = this.mapCanvas.getContext('2d');
     map_ctx.fillStyle = 'white';
     map_ctx.font = "20px Verdana";
+    map_ctx.fillRect(0,0,200,200);
+    map_ctx.clearRect(0,0,this.mapCanvas.width, this.mapCanvas.height);
+    let visibleTowns = [...new Set(this.game.worldMap.townArray
+      .filter((t) => t.visited)
+      .map((m) => m.connectedTowns)
+      .flat()
+      .concat(this.game.worldMap.townArray
+      .filter((t) => t.visited)
+      .map((x) => x.ID)))];
 
     for (let town of map.townArray) {
-      
       map_ctx.fillStyle = 'white';
       let size;
       if (town.connectedTowns.length < 3) size = 10;
@@ -90,35 +87,40 @@ class WorldMapDisplay {
       if (town.ID === this.game.worldMap.townArray[this.game.worldMap.townArray.length-1].ID) {
 	size = 30;
       }
-      let d = createDiv(80,80,[`town-div`], {
-	display: 'block',
-	position: 'absolute',
-	width: size*2 + 'px',
-	height: size*2 + 'px',
-	left: town.x - size + 'px',
-	top: town.y - size + 'px',
-	'border-radius' : '100%',
-      });
-      d.dataset.id = town.ID;
-      d.addEventListener('click', (evt) => {
-	this.game.travel(evt.target.dataset.id);
-      })
-      this.div.appendChild(d);
+
       
-      drawCircle(map_ctx, town.x, town.y, size, 2);
-      
-      for (let connection of town.connectedTowns) {
-	let town2 = this.game.worldMap.getByID(connection);
-	drawLine(map_ctx, town.x, town.y, town2.x, town2.y, 'black', 3);
+      // if the town has been visited, is the current town or can be reached from the current town, draw it
+      if (town.visited || this.game.worldMap.townArray.filter((t) => t.visited).map((m) => m.connectedTowns).some((e) => e.includes(town.ID))) {
+	if (!this.drawnDivs[town.ID]) {
+	  let d = createDiv(80, 80, [`town-div`], {
+	    display: 'block',
+	    position: 'absolute',
+	    height: size*2 + 'px',
+	    width: size * 2 + 'px',
+	    left: town.x - size + 'px',
+	    top: town.y - size + 'px',
+	    'border-radius': '100%',
+	  });
+	  d.dataset.id = town.ID;
+	  d.addEventListener('click', (evt) => {
+	    this.game.travel(evt.target.dataset.id);
+	  })
+	  this.div.appendChild(d);
+	  this.drawnDivs[town.ID] = true;
+	}
+	for (let connection of town.connectedTowns) {
+	  let town2 = this.game.worldMap.getByID(connection);
+	  if (town.visited && (town2.visited || visibleTowns.includes(town2.ID))) {
+	    drawLine(map_ctx, town.x, town.y, town2.x, town2.y, 'black', 3);
+	  }
+	}
+	drawCircle(map_ctx, town.x, town.y, size, 2);
       }
     }
-    
-    for (let town of map.townArray) {
+    for (let t of visibleTowns.map((r) => this.game.worldMap.getByID(r))) {
       map_ctx.fillStyle = 'white';
-      // display town names somewhat under the dots
-      map_ctx.fillText(town.name, town.x-50,  town.y+40);
+      map_ctx.fillText(t.name, t.x - 50, t.y + 40);
     }
-    this.drawn = true;
   }
   
   update() {

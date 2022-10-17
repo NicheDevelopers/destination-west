@@ -32,16 +32,14 @@ function drawCircle(ctx, x, y, radius, strokeWidth) {
 }
 
 function drawLine(ctx, start_x, start_y, end_x, end_y, strokeStyle, lineWidth) {
-  // set line stroke and line width
   ctx.strokeStyle = strokeStyle;
   ctx.lineWidth = lineWidth;
-  
-  // draw a red line
   ctx.beginPath();
   ctx.moveTo(start_x, start_y);
   ctx.lineTo(end_x, end_y);
   ctx.stroke();
 }
+
 
 class WorldMapDisplay {
   constructor(game) {
@@ -78,15 +76,7 @@ class WorldMapDisplay {
 
     for (let town of map.townArray) {
       map_ctx.fillStyle = 'white';
-      let size;
-      if (town.connectedTowns.length < 3) size = 10;
-      else if (town.connectedTowns.length < 5) size = 20;
-      else if (town.connectedTowns.length < 10) size = 30;
-      // make the last town large
-      if (town.ID === this.game.worldMap.townArray[this.game.worldMap.townArray.length-1].ID) {
-	size = 30;
-      }
-
+      let size = this.computeTownSize(town);
       
       // if the town has been visited, is the current town or can be reached from the current town, draw it
       if (town.visited || this.game.worldMap.townArray.filter((t) => t.visited).map((m) => m.connectedTowns).some((e) => e.includes(town.ID))) {
@@ -120,6 +110,15 @@ class WorldMapDisplay {
       map_ctx.fillStyle = 'white';
       map_ctx.fillText(t.name, t.x - 50, t.y + 40);
     }
+  }
+  computeTownSize(town) {
+    // make the last town large
+    if (town.ID === this.game.worldMap.townArray[this.game.worldMap.townArray.length - 1].ID) {
+      return 30;
+    }
+    if (town.connectedTowns.length < 3) return 10;
+    else if (town.connectedTowns.length < 5) return 20;
+    else if (town.connectedTowns.length < 10) return  30;
   }
   
   update() {

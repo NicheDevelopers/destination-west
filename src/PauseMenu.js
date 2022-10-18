@@ -30,6 +30,7 @@ class PauseMenu {
     this.game = game;
     this.registerActions();
     this.paused = false;
+    this.customKeybinds = defaultKeybinds;
     // create buttons and divs inside pauseMenu
     this.pauseMenu = document.getElementById("pause-menu");
     this.pauseMenuButtonsDiv = document.createElement("div");
@@ -45,13 +46,20 @@ class PauseMenu {
     this.settingsMenu = document.createElement("div");
     this.settingsMenu.id = "settings-menu";
     this.exitSettingsButton = document.createElement("button");
+    this.settingsActions = document.createElement("div");
+    this.settingsKeys = document.createElement("div");
 
     // settingsMenu settings
     this.exitSettingsButton.classList.add("pause-menu-buttons", "button");
     this.exitSettingsButton.innerHTML = "Return";
     this.exitSettingsButton.style.position = "absolute";
     this.exitSettingsButton.style.top = "5px";
-    this.exitSettingsButton.style.right = "5px";
+    this.exitSettingsButton.style.right = "10px";
+    this.settingsActions.innerHTML = "Actions:";
+    this.settingsActions.style.width = "50%";
+    this.settingsKeys.innerHTML = "Keys:";
+    this.settingsActions.style.display = "inline-block";
+    this.settingsKeys.style.display = "inline";
 
     // exitMenu
     this.exitMenu = document.createElement("div");
@@ -83,7 +91,7 @@ class PauseMenu {
     this.settingsButton = createButton("Settings");
     this.saveButton = createButton("Save");
     this.exitButton = createButton("Exit");
-    
+
     // append created divs and buttons to corresponding parents
     this.pauseMenu.appendChild(this.pauseMenuButtonsDiv);
     this.pauseMenu.appendChild(this.pauseMenuWantedDiv);
@@ -95,6 +103,24 @@ class PauseMenu {
     this.pauseMenuButtonsDiv.appendChild(this.saveButton);
     this.pauseMenuButtonsDiv.appendChild(this.exitButton);
     this.settingsMenu.appendChild(this.exitSettingsButton);
+    this.settingsMenu.appendChild(this.settingsActions);
+    this.settingsMenu.appendChild(this.settingsKeys);
+    this.loadKeybinds();
+
+    // this.jeden = document.createElement("div");
+    // this.jeden.innerHTML = "lorem ipsum dolor sit amet";
+    // this.jeden.style.width = "50%";
+    // this.jeden.style.display = "inline-block";
+    // this.dwa = document.createElement("button");
+    // this.dwa.innerHTML = "escape";
+    // this.trzy = document.createElement("div");
+    // this.trzy.innerHTML = "dolor sit amet";
+    // this.trzy.style.width = "50%";
+    // this.trzy.style.display = "inline-block";
+    // this.settingsMenu.appendChild(this.jeden);
+    // this.settingsMenu.appendChild(this.dwa);
+    // this.settingsMenu.appendChild(this.trzy);
+
     this.exitMenu.appendChild(this.exitMenuDiv);
     this.exitMenuDiv.appendChild(this.exitMenuPrompt);
     this.exitMenuDiv.appendChild(this.exitMenuConfirmationButton);
@@ -135,10 +161,27 @@ class PauseMenu {
   }
 
   // functions displaying settings
+  loadKeybinds() {
+    this.customKeybinds.forEach(e => {
+      let actionName = e[1];
+      let keyName = e[0];
+      let action = document.createElement("div");
+      action.style.width = "50%";
+      action.style.display = "inline-block";
+      action.innerHTML = actionName;
+      action.style.padding = "10px 0 0 0";
+      this.settingsMenu.appendChild(action);
+      let key = document.createElement("button");
+      key.innerHTML = keyName;
+      key.classList.add("pause-menu-buttons", "button");
+      this.settingsMenu.appendChild(key);
+
+      console.log(actionName, keyName)});
+  }
 
   // functions toggling settings menu
   enterSettingsMenu() {
-    this.settingsMenu.style.display = "flex";
+    this.settingsMenu.style.display = "block";
   }
   exitSettingsMenu() {
     this.settingsMenu.style.display = "none";

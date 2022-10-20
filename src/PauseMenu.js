@@ -31,6 +31,7 @@ class PauseMenu {
     this.registerActions();
     this.paused = false;
     this.customKeybinds = defaultKeybinds;
+    this.customVolumeMap = volumeMap;
     // create buttons and divs inside pauseMenu
     this.pauseMenu = document.getElementById("pause-menu");
     this.pauseMenuButtonsDiv = document.createElement("div");
@@ -46,20 +47,33 @@ class PauseMenu {
     this.settingsMenu = document.createElement("div");
     this.settingsMenu.id = "settings-menu";
     this.exitSettingsButton = document.createElement("button");
+    this.settingsActionLabel = document.createElement("div");
     this.settingsActions = document.createElement("div");
     this.settingsKeys = document.createElement("div");
+    this.settingsSounds = document.createElement("div");
+    this.settingsVolumes = document.createElement("div");
+    this.settingsVolumeLabel = document.createElement("div");
 
     // settingsMenu settings
+    // this.settingsActionLabel.style.border = "2px solid brown";
+    // write a function creating labels for settings menu
+    this.settingsActionLabel.style.padding = "5px 0 10px 0";
     this.exitSettingsButton.classList.add("pause-menu-buttons", "button");
     this.exitSettingsButton.innerHTML = "Return";
     this.exitSettingsButton.style.position = "absolute";
     this.exitSettingsButton.style.top = "5px";
-    this.exitSettingsButton.style.right = "10px";
+    this.exitSettingsButton.style.right = "12px";
     this.settingsActions.innerHTML = "Actions:";
     this.settingsActions.style.width = "50%";
     this.settingsKeys.innerHTML = "Keys:";
     this.settingsActions.style.display = "inline-block";
     this.settingsKeys.style.display = "inline";
+    this.settingsSounds.innerHTML = "Sounds:";
+    this.settingsSounds.style.width = "50%";
+    this.settingsSounds.style.display = "inline-block";
+    this.settingsVolumes.innerHTML = "Volume:";
+    this.settingsVolumes.style.display = "inline";
+    this.settingsVolumeLabel.style.padding = "20px 0 10px 0";
 
     // exitMenu
     this.exitMenu = document.createElement("div");
@@ -103,24 +117,14 @@ class PauseMenu {
     this.pauseMenuButtonsDiv.appendChild(this.saveButton);
     this.pauseMenuButtonsDiv.appendChild(this.exitButton);
     this.settingsMenu.appendChild(this.exitSettingsButton);
-    this.settingsMenu.appendChild(this.settingsActions);
-    this.settingsMenu.appendChild(this.settingsKeys);
+    this.settingsMenu.appendChild(this.settingsActionLabel);
+    this.settingsActionLabel.appendChild(this.settingsActions);
+    this.settingsActionLabel.appendChild(this.settingsKeys);
     this.loadKeybinds();
-
-    // this.jeden = document.createElement("div");
-    // this.jeden.innerHTML = "lorem ipsum dolor sit amet";
-    // this.jeden.style.width = "50%";
-    // this.jeden.style.display = "inline-block";
-    // this.dwa = document.createElement("button");
-    // this.dwa.innerHTML = "escape";
-    // this.trzy = document.createElement("div");
-    // this.trzy.innerHTML = "dolor sit amet";
-    // this.trzy.style.width = "50%";
-    // this.trzy.style.display = "inline-block";
-    // this.settingsMenu.appendChild(this.jeden);
-    // this.settingsMenu.appendChild(this.dwa);
-    // this.settingsMenu.appendChild(this.trzy);
-
+    this.settingsMenu.appendChild(this.settingsVolumeLabel);
+    this.settingsVolumeLabel.appendChild(this.settingsSounds);
+    this.settingsVolumeLabel.appendChild(this.settingsVolumes);
+    this.loadVolumeMap();
     this.exitMenu.appendChild(this.exitMenuDiv);
     this.exitMenuDiv.appendChild(this.exitMenuPrompt);
     this.exitMenuDiv.appendChild(this.exitMenuConfirmationButton);
@@ -165,23 +169,46 @@ class PauseMenu {
     this.customKeybinds.forEach(e => {
       let actionName = e[1];
       let keyName = e[0];
+      let div = document.createElement("div");
+      div.style.borderBottom = "2px solid brown";
+      div.style.padding = "5px 0 10px 0";
       let action = document.createElement("div");
       action.style.width = "50%";
       action.style.display = "inline-block";
-      action.innerHTML = actionName;
-      action.style.padding = "10px 0 0 0";
-      this.settingsMenu.appendChild(action);
+      action.innerHTML = actionName + ":";
+      div.appendChild(action);
       let key = document.createElement("button");
-      key.innerHTML = keyName;
+      key.innerHTML = keyName.charAt(0).toUpperCase() + keyName.slice(1);
       key.classList.add("pause-menu-buttons", "button");
-      this.settingsMenu.appendChild(key);
+      div.appendChild(key);
+      this.settingsMenu.appendChild(div);
+    });
+  }
 
-      console.log(actionName, keyName)});
+  // function loading volumeMap
+  loadVolumeMap() {
+    this.customVolumeMap.forEach((value, key) => {
+      let div = document.createElement("div");
+      div.style.padding = "5px 0 10px 0";
+      div.style.borderBottom = "2px solid brown";
+      let volume = document.createElement("div");
+      volume.style.width = "50%";
+      volume.style.display = "inline-block";
+      volume.innerHTML = key.charAt(0).toUpperCase() + key.slice(1) + ":";
+      let slider = document.createElement("input");
+      slider.type = "range";
+      slider.min = "0";
+      slider.max = "1";
+      slider.step = "0.1";
+      div.appendChild(volume);
+      div.append(slider);
+      this.settingsMenu.appendChild(div);
+    } )
   }
 
   // functions toggling settings menu
   enterSettingsMenu() {
-    this.settingsMenu.style.display = "block";
+    this.settingsMenu.style.display = "flex";
   }
   exitSettingsMenu() {
     this.settingsMenu.style.display = "none";

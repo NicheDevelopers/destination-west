@@ -56,7 +56,7 @@ class Town {
     this.placeStreets(preset);
     this.placeBuildings(preset);
     this.placeBackground('sand');
-    this.placeDecoration();
+    this.placeGenericDecoration();
     this.prerenderTown();
     this.created = true;
   }
@@ -69,35 +69,61 @@ class Town {
     this.image = new Image(this.widthPx, this.heightPx);
     this.image.src = canvas.toDataURL('image/png');
   }
-  nearToBuilding(xPoz,yPoz){
-    for(let i=-1; i<2; i++){
-      for(let j=-1; j<2; j++){
-        if(xPoz===0) continue;
-        if(xPoz===this.array.length-1) continue;
-        if(yPoz===0) continue;
-        if(yPoz===this.array[0].length-1) continue;
-        if(this.array[xPoz+i][yPoz+j].typeName.substring(0,9)=='building-') return true;
+
+  // check if there's a builing in the 5x5 square surrounding a tile
+  nearToBuilding(xPos,yPos){
+    for(let i=-2; i<=2; i++)
+      for(let j=-2; j<=2; j++) {
+        if (xPos + i < 0 || xPos + i >= this.array.length) continue;
+        if (yPos + j < 0 || yPos + j >= this.array[0].length) continue;
+        if(this.array[xPos+i][yPos+j].typeName.substring(0,9)=='building-') return true;
       }
-    }
     return false;
   }
 
-  placeDecoration(){
-    let decorations = ["cactus-1x",
-		       "big-stone-1x",
-		       "roadsign",
-		       "stone-well",
-		       "big-bag-3x",
-		      ];
-    let length = this.array.length;
-    let height = this.array[0].length;
-    for (let i = 0; i < length; i++) {
-      for (let j = 0; j < height; j++) {
-        if (this.array[i][j].typeName === 'sand' &&  randIntInRange(1,15) === 1 && this.nearToBuilding(i,j)===false)
-	  this.array[i][j] = new Tile("decoration-" + decorations[randIntInRange(0,decorations.length)], i * tileSize, j * tileSize);
+  /**
+   * Place generic decorations according to tiles' proximity to buildings.
+   * Generic decorations are objects like cacti, stones, bushes. We don't care about their placement that much.
+   * Special decorations are more unique objects such as roadsigns, wells, things that shouldn't appear as often.
+   * Tiles within a 5x5 square of a building are considered to be close to it.
+   */
+  placeGenericDecoration(){
+    let rural_percent = 20;
+    let rural_generic_decorations = [
+      ["cactus-1x"],
+      ["small-stones-1"],
+      ["green-bush-1"]
+    ];
+    
+    let town_percent = 5;
+    let town_generic_decorations = [
+      //["roadsign", 1],
+      //["stone-well", 1],
+      ["big-bag-3x"],
+    ];
+    
+    let array = [];
+    
+    for (let i = 0; i < this.array.length; i++)
+      for (let j = 0; j < this.array[0].length; j++) {
+        if (this.array[i][j].typeName !== 'sand') continue;
+
+        let rand = randIntInRange(0, 100);
+        if (this.nearToBuilding(i, j) && rand < town_percent) {
+          array = town_generic_decorations;
+          let idx = randIntInRange(0, array.length);
+          this.array[i][j] = new Tile("decoration-" + array[idx], i * tileSize, j * tileSize);
+        }
+        else if (!this.nearToBuilding(i, j) && rand < rural_percent) {
+          array = rural_generic_decorations;
+          let idx = randIntInRange(0, array.length);
+          this.array[i][j] = new Tile("decoration-" + array[idx], i * tileSize, j * tileSize);
+        }
       }
-    }
-    return this.array;
+  }
+
+  getNumOfTiles() {
+    return this.array.length * this.array[0].length;
   }
 
   placeBackground(background) {
@@ -109,7 +135,6 @@ class Town {
 	  this.array[i][j] = new Tile(background, i * tileSize, j * tileSize);
       }
     }
-    return this.array;
   }
   placeBuilding(xStart, yStart, building) {
     for (let i = 0; i < building.xTiles; i++) {

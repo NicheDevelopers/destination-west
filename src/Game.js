@@ -54,8 +54,8 @@ class Game {
     this.worldMapDisplay = new WorldMapDisplay(this);
 
     let testEq = new Equipment(7,7);
-    testEq.put(new Item('Apple', 'decoration-big-stone-1x', 0, 0, 1, 1, 0, 0));
-    testEq.put(new Item('Apple', 'decoration-big-stone-1x', 0, 0, 1, 1, 0, 0));
+    testEq.put(new Item('Apple', 'decoration-small-stones-1', 0, 0, 1, 1, 0, 0));
+    testEq.put(new Item('Apple', 'decoration-small-stones-1', 0, 0, 1, 1, 0, 0));
     this.equipmentDisplay = new EquipmentDisplay(this, testEq, true);
 
     this.currentTown = this.worldMap.getByID(0);

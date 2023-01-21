@@ -24,7 +24,7 @@ import tileSize from "../global/tileSize.js";
 let img = (src, height=tileSize, width=tileSize, row=0, col=0) =>
   ({src: src, height: height, width: width, row: row, col: col});
 
-const  townPropSheet = "img/town_props32x32.png";
+const  townPropSheet = "img/town-props.png";
 
 /**
  * Map describing spritesheets that come with the game
@@ -32,12 +32,12 @@ const  townPropSheet = "img/town_props32x32.png";
 const imgInfo = new Map([
   ["street", img(townPropSheet, tileSize, tileSize, 0, 0)],
   ["sand", img(townPropSheet, tileSize, tileSize, 0, 1)],
-  ["decoration-big-stone-1x", img(townPropSheet, tileSize, tileSize, 0, 2)],
+  ["decoration-small-stones-1", img(townPropSheet, tileSize, tileSize, 0, 2)],
   ["decoration-cactus-1x", img(townPropSheet, tileSize, tileSize, 1, 0)],
   ["decoration-roadsign", img(townPropSheet, tileSize, tileSize, 1, 1)],
   ["decoration-stone-well", img(townPropSheet, tileSize, tileSize, 1, 2)],
   ["decoration-big-bag-3x", img(townPropSheet, tileSize, tileSize, 2, 0)],
-  //["decoration-small-stone-3x", img(townPropSheet, tileSize, tileSize, 0, 1)],
+  ["decoration-green-bush-1", img(townPropSheet, tileSize, tileSize, 2, 1)],
   //["decoration-small-dry-bush-left-1x", img(townPropSheet, tileSize, tileSize, 1, 0)],
   //["decoration-small-dry-bush-right-1x", img(townPropSheet, tileSize, tileSize, 1, 1)],
   //["decoration-big-dry-grass-1x", img(townPropSheet, tileSize, tileSize, 2, 0)],

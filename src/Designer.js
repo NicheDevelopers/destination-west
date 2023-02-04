@@ -69,8 +69,6 @@ function createMenu(designer, buttons){
  */
 class Designer {
   constructor(game){
-    this.display = true;
-    
     let div = createDiv(
       650, 400, ['window', 'window-background'],
       {display: 'none', zIndex: '4'});
@@ -152,14 +150,11 @@ class Designer {
     this.game.manageRequest(
       'Toggle Designer Display',
       () => {
-	this.display = !this.display;
 	this.div.style.display = (this.div.style.display == 'none')?
 	  'flex' : 'none';
       },
       {once: true});
 
-    if (!this.display) return;
-    
     for (const clothing in this.clothes) {
       this.clothes[clothing].draw(0, 0, this.previewCtx);
     }

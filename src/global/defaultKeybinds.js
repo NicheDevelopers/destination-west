@@ -28,6 +28,7 @@ const defaultKeybinds = [
   ['w', 'Move Up'],
   ['s', 'Move Down'],
   ['m', 'Toggle Map Display'],
+  ['g', 'Toggle Designer Display'],
   ['l', 'Toggle Keyboard Visualization'],
   ['escape', 'Toggle Pause Menu'],
   ['e', 'Toggle Equipment Display'],

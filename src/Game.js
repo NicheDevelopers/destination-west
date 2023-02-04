@@ -45,7 +45,7 @@ class Game {
     this.pauseMenu = new PauseMenu(this);
     this.paused = false;
 
-    this.designer = new Designer();
+    this.designer = new Designer(this);
     
     this.browser = new Browser(this);
     this.testTile = new Tile("sand");
@@ -134,7 +134,7 @@ class Game {
     if (this.paused) return;
 
     this.designer.update();
-
+    
     this.keyVisualizer.update();
     this.browser.update();
     this.player.update();

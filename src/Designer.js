@@ -23,14 +23,57 @@ import ColoredSprite from "./Sprite/ColoredSprite.js";
 
 import {createDiv, createCanvas} from "./global/utilities.js";
 
+
+function newMenuButton(name, designer, setName=name) {
+  let button = document.createElement('img');
+  button.classList.add('designer');
+  button.classList.add('button');
+  button.src = 'img/' + name + '.png';
+  button.style.display = 'block';
+  button.style.border = '2px solid black';
+    
+  if (setName.substr(-4) === 'Menu'){
+    button.onclick = () => {
+      designer.changeMenu(setName);
+    }
+    return button;
+  }
+  button.onclick = () => {
+    designer.currentElement = setName;
+    designer.input.value = designer.clothes[setName].color;
+    designer.input.style.display = 'block';
+  }
+  return button;
+}
+
+function createMenu(designer, buttons){
+  let setDiv = createDiv(
+      100, 400, [],
+      {borderRight: '1px solid black',
+       borderLeft: '1px solid black',
+       display: 'none', // to show - set to 'grid'
+       alignItems: 'center',
+       justifyItems: 'center',
+      });
+
+  buttons.forEach((button) => {
+    setDiv.appendChild(newMenuButton(
+      button.name, designer, button.action ?? button.name));
+  });
+  
+  return setDiv;
+}
+
 /**
  * Create an interface for designing colored sprites
  */
 class Designer {
-  constructor(){
+  constructor(game){
+    this.display = true;
+    
     let div = createDiv(
       650, 400, ['window', 'window-background'],
-      {display: 'none', zIndex: '4'}); //flex to show by default
+      {display: 'none', zIndex: '4'});
     
     let previewDiv = createDiv(
       300,400, ['window', 'window-background'],
@@ -42,48 +85,84 @@ class Designer {
 
     previewDiv.appendChild(preview);
     div.appendChild(previewDiv);
-    
-    let setDiv = createDiv(
-      100, 400, [],
-      {borderRight: '1px solid black',
-       borderLeft: '1px solid black',
-       display: 'grid',
-       alignItems: 'center',
-       justifyItems: 'center'});
+
+    this.menus = {
+      mainMenu: createMenu(this, [
+	{name: 'head', action: 'headMenu'},
+	{name: 'torso', action: 'torsoMenu'},
+	{name: 'legs', action: 'legsMenu'}
+      ]),
+      headMenu: createMenu(this, [
+	{name: 'back', action: 'mainMenu'},
+	{name: 'head'}
+      ]),
+      torsoMenu: createMenu(this, [
+	{name: 'back', action: 'mainMenu'},
+	{name: 'torso', action: 'jacket'}
+      ]),
+      legsMenu: createMenu(this, [
+	{name: 'back', action: 'mainMenu'},
+	{name: 'legs', action: 'pants'}
+      ])
+    };
     
     let coloringDiv = createDiv(250, 400);
     
-    let newSetter = (src) => {
-      let img = document.createElement('img');
-      img.classList.add('designer');
-      img.classList.add('button');
-      img.src = 'img/' + src + '.png';
-      img.style.display = 'block';
-      img.style.border = '2px solid black';
-      return img;
+    this.input = document.createElement('input');
+    this.input.type = 'color';
+    coloringDiv.appendChild(this.input);
+
+    for (const menu in this.menus){
+      div.appendChild(this.menus[menu]);
     }
+    this.changeMenu('mainMenu');
+    this.input.style.display = 'none';
     
-    setDiv.appendChild(newSetter('head'));
-    setDiv.appendChild(newSetter('torso'));
-    setDiv.appendChild(newSetter('legs'));
-    
-    let input = document.createElement('input');
-    input.type = 'color';
-    coloringDiv.appendChild(input);
-    
-    div.appendChild(setDiv);
     div.appendChild(coloringDiv);
+
+    this.div =
+      document.querySelector('#game-container').appendChild(div);
+
+    this.clothes = {
+      pants: new ColoredSprite('pants', () => this.update),
+      jacket: new ColoredSprite('jacket', () => this.update)
+    };
     
-    document.querySelector('#game-container').appendChild(div);
-    
-    input.addEventListener('change', () => {
-      this.clothes.pants.setColor(input.value);
+    this.input.addEventListener('change', () => {
+      this.clothes[this.currentElement].setColor(this.input.value);
     });
 
-    this.clothes = {pants: new ColoredSprite('pants')};
+    this.currentElement = 'jacket';
+    this.input.value = this.clothes["jacket"].color;
+
+    this.game = game;
+
+    this.game.registerAction('Toggle Designer Display');
   }
+
+  changeMenu(menuName){
+    if (this.currentMenu)
+      this.currentMenu.style.display = 'none';
+    this.input.style.display = 'none';
+    this.currentMenu = this.menus[menuName];
+    this.currentMenu.style.display = 'grid';
+  }
+  
   update(){
-    this.clothes.pants.draw(0, 0, this.previewCtx);
+    this.game.manageRequest(
+      'Toggle Designer Display',
+      () => {
+	this.display = !this.display;
+	this.div.style.display = (this.div.style.display == 'none')?
+	  'flex' : 'none';
+      },
+      {once: true});
+
+    if (!this.display) return;
+    
+    for (const clothing in this.clothes) {
+      this.clothes[clothing].draw(0, 0, this.previewCtx);
+    }
   }
 }
 

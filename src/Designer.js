@@ -55,7 +55,6 @@ function createMenu(designer, buttons){
        alignItems: 'center',
        justifyItems: 'center',
       });
-
   buttons.forEach((button) => {
     setDiv.appendChild(newMenuButton(
       button.name, designer, button.action ?? button.name));
@@ -69,7 +68,7 @@ function createMenu(designer, buttons){
  */
 class Designer {
   constructor(game){
-    this.display = true;
+    this.display = false;
     
     let div = createDiv(
       650, 400, ['window', 'window-background'],

@@ -22,34 +22,25 @@
 
 import time from "./global/time.js";
 import Camera from "./Camera.js";
-import Browser from "./Browser.js";
-import KeyMan from "./KeyboardManager.js";
 import Tile from "./Tile.js";
 import Player from "./Entity/Player.js";
-import AudioPlayer from "./AudioPlayer.js";
 import WorldMap from "./WorldMap.js";
 import WorldMapDisplay from "./WorldMapDisplay.js";
-import KeyboardVisualizer from "./KeyboardVisualizer.js";
 import PauseMenu from "./PauseMenu.js";
 import EquipmentDisplay from "./EquipmentDisplay.js";
 import Equipment from "./Equipment.js";
-import Animation from "./Animation.js";
 import Designer from "./Designer.js";
 import Item from "./Item/Item.js";
 
 class Game {
-  constructor(keybinds=[]){
-    this.userFunctionsMap = new Map();
-
-    this.debugging = false;
+  constructor(app){
+    this.app = app;
     this.pauseMenu = new PauseMenu(this);
     this.paused = false;
 
     this.designer = new Designer();
     
-    this.browser = new Browser(this);
     this.testTile = new Tile("sand");
-    this.audioPlayer = new AudioPlayer();
     this.worldMap = new WorldMap(5, 0.5, 0.3, 2, 4, 1344, 576);
     this.worldMapDisplay = new WorldMapDisplay(this);
 
@@ -68,45 +59,6 @@ class Game {
     //this.testPants = new ColoredSprite('pants');
     this.player = new Player(this, 350, 290);
     this.camera = new Camera(this);
-    
-    this.fps = 0;
-    this.testFPSCounter = new Animation(this, '()updateFPSCounter', 5);
-    
-    
-    /* Keyman has to load keybinds AFTER functions are written to
-       userFunctionsMap. This means it has to be instantinated AFTER
-       every function provider */
-
-    // Temporal bind
-    this.registerAction('Toggle Keyboard Visualization');
-    
-    this.keyman = new KeyMan(this, keybinds);
-        
-    this.keyVisualizer = new KeyboardVisualizer(this);
-    
-    let self = this;
-    document.addEventListener("keydown", (event) => {
-      self.keyman.manageKeydown(event);
-    });
-    document.addEventListener("keyup", (event) => {
-      self.keyman.manageKeyup(event);
-    });
-  }
-  
-  registerAction(action, func){
-    this.userFunctionsMap.set(action, true);
-  }
-  
-  isActionRegistered(action){
-    return this.userFunctionsMap.has(action);
-  }
-
-  isActionRequested(action){
-    return this.keyman.isActionRequested(action);
-  }
-  
-  manageRequest(...args){
-    this.keyman.manageRequest(...args);
   }
 
   travel(id) {
@@ -132,27 +84,20 @@ class Game {
     
     this.pauseMenu.update();
     if (this.paused) return;
-
+    
     this.designer.update();
-
-    this.keyVisualizer.update();
-    this.browser.update();
     this.player.update();
     this.worldMapDisplay.update();
     this.equipmentDisplay.update();
-    this.testFPSCounter.next();
 
     this.camera.render();
     
     if (this.debugging)
       this.debug();
   }
+  
   togglePause(){
     this.paused = !this.paused;
-  }
-  updateFPSCounter(){
-      this.fps = time.getFPS();
-      this.fps = ((this.fps > 99)? "" : " ") + this.fps;
   }
 }
 

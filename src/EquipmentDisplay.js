@@ -33,7 +33,7 @@ class EquipmentDisplay{
   constructor(game, equipment, isPlayer){
     this.equipment = equipment;
     this.game = game;
-    this.register();
+    this.actions = ['Toggle Equipment Display'];
     this.div = document.createElement("div");
     let gameContainer = document.querySelector("#game-container");
     this.div.id = "equipment";
@@ -111,11 +111,7 @@ class EquipmentDisplay{
     this.div.appendChild(this.divPlayerPanel);
     gameContainer.appendChild(this.div);
   }
-
-  register(){
-    this.game.registerAction('Toggle Equipment Display');
-  }
-
+  
   toggleDisplay(){
     if (this.isDisplayed){
       this.div.style.display = "none";
@@ -127,7 +123,7 @@ class EquipmentDisplay{
   }
   
   update(){
-      this.game.manageRequest(
+      this.game.app.manageRequest(
         'Toggle Equipment Display',
         () => this.toggleDisplay(),
         {once: true}

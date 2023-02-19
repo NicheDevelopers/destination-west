@@ -44,6 +44,7 @@ function drawLine(ctx, start_x, start_y, end_x, end_y, strokeStyle, lineWidth) {
 class WorldMapDisplay {
   constructor(game) {
     this.game = game;
+    this.actions = ['Toggle Map Display'];
     this.div = createDiv(1344, 576, ['map-canvas-div'], {
       position: 'absolute',
       display: 'none',
@@ -53,11 +54,6 @@ class WorldMapDisplay {
     this.div.appendChild(this.mapCanvas);
     document.getElementById('game-container').appendChild(this.div);
     this.drawnDivs= new Array(this.game.worldMap.townArray.length).fill(false);
-    this.register();
-  }
-  
-  register() {
-    this.game.registerAction('Toggle Map Display');
   }
 
   draw() {
@@ -122,7 +118,7 @@ class WorldMapDisplay {
   }
   
   update() {
-    this.game.manageRequest(
+    this.game.app.manageRequest(
       'Toggle Map Display',
       () => this.toggleMapDisplayFunc(),
       {once: true}

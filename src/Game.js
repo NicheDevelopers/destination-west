@@ -20,7 +20,6 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import time from "./global/time.js";
 import Camera from "./Camera.js";
 import Tile from "./Tile.js";
 import Player from "./Entity/Player.js";
@@ -79,8 +78,8 @@ class Game {
   }
   
   loop(){
-    window.requestAnimationFrame(() => this.loop());
-    time.update();
+    //window.requestAnimationFrame(() => this.loop());
+    //time.update();
     
     this.pauseMenu.update();
     if (this.paused) return;
@@ -91,9 +90,6 @@ class Game {
     this.equipmentDisplay.update();
 
     this.camera.render();
-    
-    if (this.debugging)
-      this.debug();
   }
   
   togglePause(){

@@ -24,4 +24,4 @@ import App from "./src/App.js";
 import defaultKeybinds from "./src/global/defaultKeybinds.js";
 
 const app = new App(defaultKeybinds);
-app.game.loop();
+app.loop();

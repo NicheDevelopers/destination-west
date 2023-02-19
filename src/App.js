@@ -35,7 +35,7 @@ class App {
     this.stateManager = new StateManager();
     this.userFunctionsMap = new Map();
 
-    this.debugging = true;
+    this.debugging = false;
     
     this.browser = new Browser(this);
     this.audioPlayer = new AudioPlayer();
@@ -76,22 +76,19 @@ class App {
     window.requestAnimationFrame(() => this.loop());
     time.update();
     
-    this.pauseMenu.update();
-    if (this.paused) return;
-
     this.keyVisualizer.update();
     this.browser.update();
     this.testFPSCounter.next();
 
-    this.camera.render();
+    this.game.loop();
     
     if (this.debugging)
       this.debug();
   }
   
   updateFPSCounter(){
-      this.fps = time.getFPS();
-      this.fps = ((this.fps > 99)? "" : " ") + this.fps;
+    this.fps = time.getFPS();
+    this.fps = ((this.fps > 99)? "" : " ") + this.fps;
   }
 }
 

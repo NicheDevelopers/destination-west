@@ -107,9 +107,9 @@ function addInput(keyman, button, action, triggerListenerType, cancelListenerTyp
  * Provide a way for visualizing keyboard inputs
  */
 class KeyboardVisualizer {
-  constructor(game){
-    this.game = game;
-    this.keyman = game.keyman;
+  constructor(app){
+    this.app = app;
+    this.keyman = app.keyman;
     let div = document.createElement('div');
     div.setAttribute('style', `width: 300px; height: 150px;
 position: absolute; left: 0; bottom: 0;`);
@@ -147,7 +147,7 @@ position: absolute; left: 0; bottom: 0;`);
     this.hoverMode();
   }
   update(){
-    this.game.manageRequest('Toggle Keyboard Visualization', () => {
+    this.app.manageRequest('Toggle Keyboard Visualization', () => {
       if (!this.hidden) {
 	this.hide();
 	return;

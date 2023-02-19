@@ -20,8 +20,8 @@
 */
 
 "use-strict";
-import Game from "./src/Game.js";
+import App from "./src/App.js";
 import defaultKeybinds from "./src/global/defaultKeybinds.js";
 
-const game = new Game(defaultKeybinds);
-game.loop();
+const app = new App(defaultKeybinds);
+app.loop();

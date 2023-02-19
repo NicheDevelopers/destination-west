@@ -134,8 +134,6 @@ class Designer {
     this.input.value = this.clothes["jacket"].color;
 
     this.game = game;
-
-    this.game.registerAction('Toggle Designer Display');
   }
 
   changeMenu(menuName){
@@ -147,7 +145,7 @@ class Designer {
   }
   
   update(){
-    this.game.manageRequest(
+    this.game.app.manageRequest(
       'Toggle Designer Display',
       () => {
 	this.div.style.display = (this.div.style.display == 'none')?

@@ -21,14 +21,14 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import defaultKeybinds from "./global/defaultKeybinds.js";
-import volumeMap from "./static/volumeMap.js";
+// import defaultKeybinds from "./global/defaultKeybinds.js";
+// import volumeMap from "./static/volumeMap.js";
 
 class PauseMenu {
-  constructor(game){
+  constructor(game) {
     // basic functions
     this.game = game;
-    this.registerActions();
+    this.actions = ['Toggle Pause Menu'];
     this.paused = false;
     // create buttons and divs inside pauseMenu
     this.pauseMenu = document.getElementById("pause-menu");
@@ -83,7 +83,7 @@ class PauseMenu {
     this.settingsButton = createButton("Settings");
     this.saveButton = createButton("Save");
     this.exitButton = createButton("Exit");
-    
+
     // append created divs and buttons to corresponding parents
     this.pauseMenu.appendChild(this.pauseMenuButtonsDiv);
     this.pauseMenu.appendChild(this.pauseMenuWantedDiv);
@@ -101,28 +101,25 @@ class PauseMenu {
     this.exitMenuDiv.appendChild(this.exitMenuRefusalButton);
 
     // buttons eventListeners
-    this.resumeButton.addEventListener("click", () => {this.togglePauseMenu()});
-    this.settingsButton.addEventListener("click", () => {this.enterSettingsMenu()});
-    this.exitSettingsButton.addEventListener("click", () => {this.exitSettingsMenu()});
-    this.exitButton.addEventListener("click", () => {this.enterExitMenu()});
-    this.exitMenuRefusalButton.addEventListener("click", () => {this.exitExitMenu()});
+    this.resumeButton.addEventListener("click", () => { this.togglePauseMenu() });
+    this.settingsButton.addEventListener("click", () => { this.enterSettingsMenu() });
+    this.exitSettingsButton.addEventListener("click", () => { this.exitSettingsMenu() });
+    this.exitButton.addEventListener("click", () => { this.enterExitMenu() });
+    this.exitMenuRefusalButton.addEventListener("click", () => { this.exitExitMenu() });
   }
-  // functions needed for keyboardManager
-  registerActions() {
-    this.game.registerAction('Toggle Pause Menu');
-  }
-  update(){
-    this.game.manageRequest(
+
+  update() {
+    this.game.app.manageRequest(
       'Toggle Pause Menu',
       () => this.togglePauseMenu(),
-      {once: true}
+      { once: true }
     );
   }
 
   // function passed to the keyboardManager
   togglePauseMenu() {
-    if (this.paused){
-      this.pauseMenu.style.display  = 'none';
+    if (this.paused) {
+      this.pauseMenu.style.display = 'none';
       this.exitMenu.style.display = 'none';
       this.settingsMenu.style.display = 'none';
       this.paused = false;
@@ -146,7 +143,7 @@ class PauseMenu {
 
   //functions toggling exit menu
   enterExitMenu() {
-      this.exitMenu.style.display = 'flex';
+    this.exitMenu.style.display = 'flex';
   }
   exitExitMenu() {
     this.exitMenu.style.display = 'none';

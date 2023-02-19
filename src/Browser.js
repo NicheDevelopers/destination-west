@@ -24,17 +24,13 @@
  */
 class Browser{
     
-  constructor(game){
-    this.game = game;
-    this.addUserActions();
+  constructor(app){
+    this.app = app;
+    this.actions = ['Toggle Fullscreen'];
   }
-  
-  addUserActions(){
-    this.game.registerAction('Toggle Fullscreen');
-  }
-  
+
   update(){
-    this.game.manageRequest(
+    this.app.manageRequest(
       'Toggle Fullscreen',
       this.toggleFullscreen,
       {once: true}

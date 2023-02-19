@@ -32,8 +32,8 @@ window.onbeforeunload = (e) => {
  * Provide a simple interface for managing keyboard events
  */
 class KeyboardManager {
-  constructor(game, keybinds=[]){
-    this.game = game;
+  constructor(app, keybinds=[]){
+    this.app = app;
     this.actions = new Map(); // [key, array of actions]
     
     this.load(keybinds);
@@ -49,12 +49,6 @@ class KeyboardManager {
    @returns true on success, false on failure
   */
   bind(key, action){
-    let funcToBind = this.game.isActionRegistered(action);
-    if (!funcToBind) {
-      throw `Keyboard Manager: ` +
-	`Attempted to bind a non-registered function: ${action}`;
-    }
-
     if (!this.actions.get(key)) this.actions.set(key, []);
 
     let actions = this.actions.get(key);
@@ -68,6 +62,7 @@ class KeyboardManager {
     actions.push(action);
     return true;
   }
+  
   unbind(key, action=false){
     // Remove *key* from the keymap.
     // Returns: true on success, false on failure

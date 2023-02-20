@@ -26,13 +26,14 @@ import KeyMan from "./KeyboardManager.js";
 import AudioPlayer from "./AudioPlayer.js";
 import KeyboardVisualizer from "./KeyboardVisualizer.js";
 import Animation from "./Animation.js";
-import StateManager from "./StateManager.js";
 import Game from "./Game.js";
+import stateManager from "./global/stateManager.js"
 
 class App {
   constructor(keybinds=[]){
     this.game = new Game(this);
-    this.stateManager = new StateManager();
+    stateManager.pushState(this.game)
+    
     this.userFunctionsMap = new Map();
 
     this.debugging = false;
@@ -80,7 +81,7 @@ class App {
     this.browser.update();
     this.testFPSCounter.next();
 
-    this.game.loop();
+    stateManager.updateCurrentState();
     
     if (this.debugging)
       this.debug();

@@ -22,19 +22,32 @@
 class StateManager {
   constructor() {
     this.stateStack = [];
+    this.previous = null;
   }
   pushState(state) {
+    this.previous = this.currentState() ?? state;
     this.stateStack.push(state);
   }
   popState() {
     this.stateStack.pop();
   }
-  getCurrent() {
-    return this.stateStack[this.stateStack.length-1];
+  currentState() {
+    return this.stateStack[this.stateStack.length - 1];
   }
-  getNthUnderCurrent(n) {
-    return this.stateStack[this.stateStack.length-1-n];
+  nthUnderCurrent(n) {
+    return this.stateStack[this.stateStack.length - 1 - n];
+  }
+  stateChanged() {
+    return (this.currentState() != this.previous)
+  }
+  updateCurrentState() {
+    this.currentState().update();
+    for (let slave of this.currentState().slaves) {
+      slave.update();
+      if (this.stateChanged()) break;
+    }
   }
 }
 
-export default StateManager;
+let stateManager = new StateManager();
+export default stateManager;

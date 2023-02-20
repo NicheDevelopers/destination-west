@@ -145,6 +145,7 @@ class Designer {
   }
   
   update(){
+    console.log("updating designer")
     this.game.app.manageRequest(
       'Toggle Designer Display',
       () => {

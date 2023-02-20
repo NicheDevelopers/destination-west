@@ -58,6 +58,13 @@ class Game {
     //this.testPants = new ColoredSprite('pants');
     this.player = new Player(this, 350, 290);
     this.camera = new Camera(this);
+
+    this.slaves = [
+      this.pauseMenu,
+      this.designer,
+      this.worldMapDisplay,
+      this.equipmentDisplay,
+    ]
   }
 
   travel(id) {
@@ -77,18 +84,8 @@ class Game {
     this.currentTown.drawDebugInfo();
   }
   
-  loop(){
-    //window.requestAnimationFrame(() => this.loop());
-    //time.update();
-    
-    this.pauseMenu.update();
-    if (this.paused) return;
-    
-    this.designer.update();
+  update(){
     this.player.update();
-    this.worldMapDisplay.update();
-    this.equipmentDisplay.update();
-
     this.camera.render();
   }
   

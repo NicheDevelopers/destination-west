@@ -21,8 +21,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-// import defaultKeybinds from "./global/defaultKeybinds.js";
-// import volumeMap from "./static/volumeMap.js";
+import defaultKeybinds from "./global/defaultKeybinds.js";
+import volumeMap from "./static/volumeMap.js";
 
 class PauseMenu {
   constructor(game) {

@@ -27,8 +27,7 @@ class Consumable extends Item {
 	  sprite,
 	  durability,
 	  id,
-	  height,
-	  width,
+    weight,
 	  price,
 	  priceRetention);
     this.stat = stat;

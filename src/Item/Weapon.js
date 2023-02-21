@@ -1,3 +1,4 @@
+
 /*
   file: src/Weapon.js
   purpose: Define the Weapon class
@@ -27,8 +28,7 @@ class Weapon extends Item {
 	  sprite,
 	  durability,
 	  id,
-	  height,
-	  width,
+	  weight,
 	  price,
 	  priceRetention);
     this.type = weaponType;

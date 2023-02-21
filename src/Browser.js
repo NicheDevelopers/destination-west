@@ -22,23 +22,23 @@
 /**
  * Class for dealing with browser-specific methods, requests
  */
-class Browser{
-    
-  constructor(app){
+class Browser {
+
+  constructor(app) {
     this.app = app;
     this.actions = ['Toggle Fullscreen'];
   }
 
-  update(){
+  update() {
     this.app.manageRequest(
       'Toggle Fullscreen',
       this.toggleFullscreen,
-      {once: true}
+      { once: true }
     );
   }
 
-  toggleFullscreen(){
-    if (document.fullscreenElement){
+  toggleFullscreen() {
+    if (document.fullscreenElement) {
       document.exitFullscreen();
       return;
     }

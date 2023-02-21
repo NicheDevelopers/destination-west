@@ -21,9 +21,82 @@
 
 // arrays holding parts of string to generate full name of the Town
 
-const arr1=["Copper", "Wide", "Lead", "Torn", "Abandon", "Desert", "Fair", "Whisper", "Dead", "False", "Lost", "Evil", "Red", "Farm", "Windy", "Skull", "Old", "Sand", "Forsaken", "Wrath", "Grave", "Low", "Wild", "Golden", "Broken", "Silver", "Vain", "Devil's", "Bull's", "New", "Dark", "Rapid", "Oat", "Tomb", "Dodge"];
-    
-const arr2=["city", "wood", "stone", "field", "peaks", "river", "point", "howl", "hill", "roost", "cliff", "george", "cross", "edge", "canyon", "tooth", "town", "alley" ,"post", "dune", "mountain", "gate", "lake", "scar", "rock", "rise", "range", "reach", "dale", "flats", "pass", "Gate", "chapel", "hallow", "trails", "man", "ton"];
+const arr1 = ["Copper",
+  "Wide",
+  "Lead",
+  "Torn",
+  "Abandon",
+  "Desert",
+  "Fair",
+  "Whisper",
+  "Dead",
+  "False",
+  "Lost",
+  "Evil",
+  "Red",
+  "Farm",
+  "Windy",
+  "Skull",
+  "Old",
+  "Sand",
+  "Forsaken",
+  "Wrath",
+  "Grave",
+  "Low",
+  "Wild",
+  "Golden",
+  "Broken",
+  "Silver",
+  "Vain",
+  "Devil's",
+  "Bull's",
+  "New",
+  "Dark",
+  "Rapid",
+  "Oat",
+  "Tomb",
+  "Dodge"
+];
 
-export{arr1, arr2};
+const arr2 = [
+  "city",
+  "wood",
+  "stone",
+  "field",
+  "peaks",
+  "river",
+  "point",
+  "howl",
+  "hill",
+  "roost",
+  "cliff",
+  "george",
+  "cross",
+  "edge",
+  "canyon",
+  "tooth",
+  "town",
+  "alley",
+  "post",
+  "dune",
+  "mountain",
+  "gate",
+  "lake",
+  "scar",
+  "rock",
+  "rise",
+  "range",
+  "reach",
+  "dale",
+  "flats",
+  "pass",
+  "Gate",
+  "chapel",
+  "hallow",
+  "trails",
+  "man",
+  "ton"
+];
+
+export { arr1, arr2 };
 

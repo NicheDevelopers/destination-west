@@ -30,27 +30,27 @@ import StateManager from "./StateManager.js";
 import Game from "./Game.js";
 
 class App {
-  constructor(keybinds=[]){
+  constructor(keybinds = []) {
     this.game = new Game(this);
     this.stateManager = new StateManager();
     this.userFunctionsMap = new Map();
 
     this.debugging = false;
-    
+
     this.browser = new Browser(this);
     this.audioPlayer = new AudioPlayer();
 
     this.fps = 0;
     this.testFPSCounter = new Animation(this, '()updateFPSCounter', 5);
-    
+
     /* Keyman has to load keybinds AFTER functions are written to
        userFunctionsMap. This means it has to be instantinated AFTER
        every function provider */
-    
+
     this.keyman = new KeyMan(this, keybinds);
-        
+
     this.keyVisualizer = new KeyboardVisualizer(this);
-    
+
     let self = this;
     document.addEventListener("keydown", (event) => {
       self.keyman.manageKeydown(event);
@@ -60,35 +60,35 @@ class App {
     });
   }
 
-  isActionRequested(action){
+  isActionRequested(action) {
     return this.keyman.isActionRequested(action);
   }
-  
-  manageRequest(...args){
+
+  manageRequest(...args) {
     this.keyman.manageRequest(...args);
   }
 
-  debug(){
+  debug() {
     this.game.debug();
   }
-  
-  loop(){
+
+  loop() {
     window.requestAnimationFrame(() => this.loop());
     time.update();
-    
+
     this.keyVisualizer.update();
     this.browser.update();
     this.testFPSCounter.next();
 
     this.game.loop();
-    
+
     if (this.debugging)
       this.debug();
   }
-  
-  updateFPSCounter(){
+
+  updateFPSCounter() {
     this.fps = time.getFPS();
-    this.fps = ((this.fps > 99)? "" : " ") + this.fps;
+    this.fps = ((this.fps > 99) ? "" : " ") + this.fps;
   }
 }
 

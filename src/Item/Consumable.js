@@ -23,14 +23,14 @@ import Item from "./Item.js";
 class Consumable extends Item {
   constructor(stat, changeAmount) {
     super(itemName,
-	  spriteName,
-	  sprite,
-	  durability,
-	  id,
-	  height,
-	  width,
-	  price,
-	  priceRetention);
+      spriteName,
+      sprite,
+      durability,
+      id,
+      height,
+      width,
+      price,
+      priceRetention);
     this.stat = stat;
     this.changeAmount = changeAmount;
   }

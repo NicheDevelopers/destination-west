@@ -19,9 +19,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {randIntInRange} from "./global/utilities.js";
+import { randIntInRange } from "./global/utilities.js";
 import Town from "./Town.js";
-import {genTownName} from "./nameGenerators.js";
+import { genTownName } from "./nameGenerators.js";
 
 // Determine if two towns can be connected without the connection crossing any other connection
 function canConnect(l1, l2, i, j) {
@@ -48,8 +48,8 @@ function connectLayers(l1, l2, chanceOfConnection) {
   for (let i = 0; i < l1.length; i++) {
     for (let j = 0; j < l2.length; j++) {
       if (canConnect(l1, l2, i, j) && Math.random() < chanceOfConnection &&
-	l2[j].ID - l1[i].ID <= 3) {
-	l1[i].connectedTowns.push(l2[j].ID);
+        l2[j].ID - l1[i].ID <= 3) {
+        l1[i].connectedTowns.push(l2[j].ID);
         l2[j].connectedTowns.push(l1[i].ID);
       }
     }
@@ -136,10 +136,10 @@ function positionTowns(numOfLayers, width, height, towns) {
         bottomBorder = middle - deviation;
       }
       // center everything
-//      let x = leftBorder + horizontalSegmentWidth/2;
+      //      let x = leftBorder + horizontalSegmentWidth/2;
       // let y = bottomBorder + segmentHeight/2;
-      let deviationX = horizontalSegmentWidth/3;
-      let deviationY = segmentHeight/3;
+      let deviationX = horizontalSegmentWidth / 3;
+      let deviationY = segmentHeight / 3;
       let x = Math.floor(randIntInRange(leftBorder + deviationX, rightBorder - deviationX));
       let y = Math.floor(randIntInRange(bottomBorder + deviationY, topBorder - deviationY));
       town.x = x;
@@ -173,15 +173,15 @@ class WorldMap {
     maxTownsInLayer,
     width,
     height
-	     ) {
-    while(true) {
+  ) {
+    while (true) {
       this.townArray = this.createTowns(numOfLayers,
-    chanceOfConnectionBetweenLayers,
-    chanceOfConnectionInLayer,
-    minTownsInLayer,
-    maxTownsInLayer,
-    width,
-    height);
+        chanceOfConnectionBetweenLayers,
+        chanceOfConnectionInLayer,
+        minTownsInLayer,
+        maxTownsInLayer,
+        width,
+        height);
       if (this.isConnected()) break;
     }
   }
@@ -198,9 +198,9 @@ class WorldMap {
     const newLayerArray = (layer) => {
       let count = randIntInRange(minTownsInLayer, maxTownsInLayer);
       let l = new Array();
-      for (let i=0; i<count; i++) {
-	l.push(new Town(genTownName(0.4), 0, 0, layer, townID++,
-			{sheriff: 1, house: 2, saloon: 11}));
+      for (let i = 0; i < count; i++) {
+        l.push(new Town(genTownName(0.4), 0, 0, layer, townID++,
+          { sheriff: 1, house: 2, saloon: 11 }));
       }
       return l;
     }
@@ -209,7 +209,7 @@ class WorldMap {
 
     // Create a starting town
     let startingTown = new Town(genTownName(0.4), 0, 0, 0, townID++,
-			       {sheriff: 1, house: 2, saloon: 11});
+      { sheriff: 1, house: 2, saloon: 11 });
     townArray.push(startingTown);
 
     // Create layer no. 1
@@ -232,7 +232,7 @@ class WorldMap {
     }
 
     // Create a final town
-    let finalTown = new Town(genTownName(0.4), undefined, undefined, ++numOfLayers, townID++, {sheriff: 1, house: 2, saloon: 11});
+    let finalTown = new Town(genTownName(0.4), undefined, undefined, ++numOfLayers, townID++, { sheriff: 1, house: 2, saloon: 11 });
     townArray.push(finalTown);
 
     // Connect starting and final town with all towns in the neighboring layer
@@ -242,13 +242,13 @@ class WorldMap {
       }
       if (t.layer === 0) {
         t.connectedTowns.push(...townArray.filter((u) => {
-            return u.layer === 1;
-          })
+          return u.layer === 1;
+        })
           .map((o) => o.ID));
       }
       if (t.layer === numOfLayers) {
         t.connectedTowns.push(...townArray.filter((u) => {
-          return u.layer === numOfLayers-1;
+          return u.layer === numOfLayers - 1;
         }).map((o) => o.ID))
       }
     });
@@ -258,7 +258,7 @@ class WorldMap {
     positionTowns(numOfLayers + 2, width, height, townArray);
     return townArray;
   }
-  
+
   // return a hash map HashMap<int, [int]>
   intoNeighborList() {
     let map = new Map();
@@ -270,13 +270,13 @@ class WorldMap {
 
   DFS() {
     let g = this.intoNeighborList();
-    let visited = [this.townArray[this.townArray.length-1].ID]
+    let visited = [this.townArray[this.townArray.length - 1].ID]
     const dfsUtil = (g, start) => {
       visited.push(start)
       for (let v of g.get(start)) {
-	      if (!visited.includes(v)) {
-	        dfsUtil(g, v);
-	      }
+        if (!visited.includes(v)) {
+          dfsUtil(g, v);
+        }
       }
     }
     let start = 0;
@@ -298,7 +298,7 @@ class WorldMap {
   }
 
   getByID(ID) {
-    if (ID > this.townArray.length-1 || ID < 0) {
+    if (ID > this.townArray.length - 1 || ID < 0) {
       throw `WorldMap: no town with ID ${ID} - townArray length is ${this.townArray.length}`;
     }
     return this.townArray[ID];

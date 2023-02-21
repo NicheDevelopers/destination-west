@@ -22,20 +22,20 @@
 /**
  * Class for managing time and frames
  */
-class Time{
-  constructor(){
+class Time {
+  constructor() {
     this.speed = 1;
     this.now = Date.now();
   }
-  update(){
+  update() {
     this.then = this.now;
     this.now = Date.now();
     this.delta = this.now - this.then;
     this.delta *= this.speed;
   }
-  getFPS(){
+  getFPS() {
     if (!this.delta) return 0;
-    return (1000/this.delta) | 0;
+    return (1000 / this.delta) | 0;
   }
 }
 

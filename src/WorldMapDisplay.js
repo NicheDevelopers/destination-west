@@ -21,14 +21,19 @@
 
 import { createCanvas, createDiv } from "./global/utilities.js";
 
-function drawCircle(ctx, x, y, radius, strokeWidth) {
+function drawCircle(ctx, x, y, radius, strokeWidth, color) {
+  let old_color = ctx.fillStyle;
   ctx.beginPath()
   ctx.arc(x, y, radius, 0, 2 * Math.PI, false)
-  ctx.fillStyle = 'black'
+  ctx.fillStyle = color
+  ctx.strokeStyle = color
   ctx.fill()
   ctx.lineWidth = strokeWidth
-  ctx.strokeStyle = 'black'
+  
   ctx.stroke()
+  
+  ctx.fillStyle = old_color
+  ctx.strokeStyle = old_color
 }
 
 function drawLine(ctx, start_x, start_y, end_x, end_y, strokeStyle, lineWidth) {
@@ -74,7 +79,7 @@ class WorldMapDisplay {
     for (let town of map.townArray) {
       map_ctx.fillStyle = 'white';
       let size = this.computeTownSize(town);
-
+      
       // if the town has been visited, is the current town or can be reached from the current town, draw it
       if (town.visited || this.game.worldMap.townArray.filter((t) => t.visited).map((m) => m.connectedTowns).some((e) => e.includes(town.ID))) {
         if (!this.drawnDivs[town.ID]) {
@@ -100,13 +105,18 @@ class WorldMapDisplay {
             drawLine(map_ctx, town.x, town.y, town2.x, town2.y, 'black', 3);
           }
         }
-        drawCircle(map_ctx, town.x, town.y, size, 2);
+        if (this.game.currentTown.ID == town.ID) {
+          drawCircle(map_ctx, town.x, town.y, size, 2, "green");
+        } else {
+          drawCircle(map_ctx, town.x, town.y, size, 2, "black");
+        }
       }
     }
     for (let t of visibleTowns.map((r) => this.game.worldMap.getByID(r))) {
       map_ctx.fillStyle = 'white';
       map_ctx.fillText(t.name, t.x - 50, t.y + 40);
     }
+    
   }
   computeTownSize(town) {
     // make the last town large

@@ -25,33 +25,33 @@ import ctx from "./global/ctx.js";
  * Render fragments of the world easily
  */
 class Camera {
-  constructor(game){
+  constructor(game) {
     this.x = 0;
     this.y = 0;
     this.width = 672;
     this.height = 288;
-    this.centerX = this.width/2;
-    this.centerY = this.height/2;
+    this.centerX = this.width / 2;
+    this.centerY = this.height / 2;
     this.game = game;
   }
-  render(){
+  render() {
     ctx.clearRect(0, 0, this.width, this.height);
     const playerX = this.game.player.x
       + this.game.player.spriteCenterPoint.x;
     const playerY = this.game.player.y
-      + this.game.player.spriteCenterPoint.y-5;
-    
+      + this.game.player.spriteCenterPoint.y - 5;
+
     const topLeftX = this.x + Math.max(0, Math.min(
-      playerX - this.width/2,
+      playerX - this.width / 2,
       this.game.currentTown.widthPx - this.width));
     const topLeftY = this.y + Math.max(0, Math.min(
-      playerY - this.height/2,
+      playerY - this.height / 2,
       this.game.currentTown.heightPx - this.height));
 
     this.game.currentTown.draw(topLeftX, topLeftY);
-    this.game.player.draw(this.game.player.x-topLeftX,
-			  this.game.player.y-topLeftY);
-    
+    this.game.player.draw(this.game.player.x - topLeftX,
+      this.game.player.y - topLeftY);
+
     ctx.font = "16px serif";
     ctx.fillText(`FPS: ${this.game.app.fps}`, 606, 16);
   }

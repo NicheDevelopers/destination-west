@@ -23,14 +23,14 @@ import Item from "./Item.js";
 class Weapon extends Item {
   constructor(weaponType, damage, critChance, critMultiplier, durabilityLossPerUse) {
     super(itemName,
-	  spriteName,
-	  sprite,
-	  durability,
-	  id,
-	  height,
-	  width,
-	  price,
-	  priceRetention);
+      spriteName,
+      sprite,
+      durability,
+      id,
+      height,
+      width,
+      price,
+      priceRetention);
     this.type = weaponType;
     this.damage = damage;
     this.critChance = critChance;

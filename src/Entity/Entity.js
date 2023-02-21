@@ -27,15 +27,15 @@ import Animation from "../Animation.js";
  @abstract
  */
 class Entity {
-  constructor(typeName, x=0, y=0, speed=100){
+  constructor(typeName, x = 0, y = 0, speed = 100) {
     this.typeName = typeName;
-    this.sprite = new AnimatedSprite(typeName, {animationSpeed: 9});
+    this.sprite = new AnimatedSprite(typeName, { animationSpeed: 9 });
     this.x = x;
     this.y = y;
     this.moveX = new Animation(this, "x", speed);
     this.moveY = new Animation(this, "y", speed);
   }
-  draw(x,y){
+  draw(x, y) {
     this.sprite.draw(x, y);
   }
 }

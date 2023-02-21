@@ -32,28 +32,28 @@ import Designer from "./Designer.js";
 import Item from "./Item/Item.js";
 
 class Game {
-  constructor(app){
+  constructor(app) {
     this.app = app;
     this.pauseMenu = new PauseMenu(this);
     this.paused = false;
 
     this.designer = new Designer(this);
-    
+
     this.testTile = new Tile("sand");
     this.worldMap = new WorldMap(5, 0.5, 0.3, 2, 4, 1344, 576);
     this.worldMapDisplay = new WorldMapDisplay(this);
 
-    let testEq = new Equipment(7,7);
+    let testEq = new Equipment(7, 7);
     testEq.put(new Item('Apple', 'decoration-small-stones-1', 0, 0, 1, 1, 0, 0));
     testEq.put(new Item('Apple', 'decoration-small-stones-1', 0, 0, 1, 1, 0, 0));
     this.equipmentDisplay = new EquipmentDisplay(this, testEq, true);
 
     this.currentTown = this.worldMap.getByID(0);
     this.currentTown.visited = true;
-    if (!this.currentTown.created) { 
+    if (!this.currentTown.created) {
       this.currentTown.createTown();
     }
-    
+
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
     this.player = new Player(this, 350, 290);
@@ -66,24 +66,24 @@ class Game {
     }
     this.currentTown = this.worldMap.getByID(id);
     this.currentTown.visited = true;
-    if (!this.currentTown.created) { 
+    if (!this.currentTown.created) {
       this.currentTown.createTown();
     }
     this.worldMapDisplay.draw();
   }
 
-  debug(){
+  debug() {
     this.player.drawDebugInfo();
     this.currentTown.drawDebugInfo();
   }
-  
-  loop(){
+
+  loop() {
     //window.requestAnimationFrame(() => this.loop());
     //time.update();
-    
+
     this.pauseMenu.update();
     if (this.paused) return;
-    
+
     this.designer.update();
     this.player.update();
     this.worldMapDisplay.update();
@@ -91,8 +91,8 @@ class Game {
 
     this.camera.render();
   }
-  
-  togglePause(){
+
+  togglePause() {
     this.paused = !this.paused;
   }
 }

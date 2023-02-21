@@ -24,8 +24,8 @@
 import Tile from "./Tile.js";
 import presets from "./static/townPresets.js";
 import ctx from "./global/ctx.js";
-import {randIntInRange} from "./global/utilities.js";
-import {createCanvas} from "./global/utilities.js";
+import { randIntInRange } from "./global/utilities.js";
+import { createCanvas } from "./global/utilities.js";
 
 import tileSize from "./global/tileSize.js";
 
@@ -38,8 +38,8 @@ class Town {
     this.y = y;
     this.width = 42;
     this.height = 20;
-    this.widthPx = this.width*tileSize;
-    this.heightPx = this.height*tileSize;
+    this.widthPx = this.width * tileSize;
+    this.heightPx = this.height * tileSize;
     this.numBldInTown = numBldInTown;
     this.visited = false;
     this.created = false;
@@ -52,7 +52,7 @@ class Town {
     for (let x = 0; x < 42; ++x) {
       this.array[x] = new Array(this.height);
     }
-    let preset = presets[randIntInRange(0,presets.length)];
+    let preset = presets[randIntInRange(0, presets.length)];
     this.placeStreets(preset);
     this.placeBuildings(preset);
     this.placeBackground('sand');
@@ -61,8 +61,8 @@ class Town {
     this.created = true;
   }
 
-  prerenderTown(){
-    let {canvas, context: offCtx} =
+  prerenderTown() {
+    let { canvas, context: offCtx } =
       createCanvas(this.widthPx, this.heightPx);
     offCtx.clearRect(0, 0, this.widthPx, this.heightPx);
     this.drawRaw(0, 0, offCtx);
@@ -71,12 +71,12 @@ class Town {
   }
 
   // check if there's a builing in the 5x5 square surrounding a tile
-  nearToBuilding(xPos,yPos){
-    for(let i=-2; i<=2; i++)
-      for(let j=-2; j<=2; j++) {
+  nearToBuilding(xPos, yPos) {
+    for (let i = -2; i <= 2; i++)
+      for (let j = -2; j <= 2; j++) {
         if (xPos + i < 0 || xPos + i >= this.array.length) continue;
         if (yPos + j < 0 || yPos + j >= this.array[0].length) continue;
-        if(this.array[xPos+i][yPos+j].typeName.substring(0,9)=='building-') return true;
+        if (this.array[xPos + i][yPos + j].typeName.substring(0, 9) == 'building-') return true;
       }
     return false;
   }
@@ -87,23 +87,23 @@ class Town {
    * Special decorations are more unique objects such as roadsigns, wells, things that shouldn't appear as often.
    * Tiles within a 5x5 square of a building are considered to be close to it.
    */
-  placeGenericDecoration(){
+  placeGenericDecoration() {
     let rural_percent = 20;
     let rural_generic_decorations = [
       ["cactus-1x"],
       ["small-stones-1"],
       ["green-bush-1"]
     ];
-    
+
     let town_percent = 5;
     let town_generic_decorations = [
       //["roadsign", 1],
       //["stone-well", 1],
       ["big-bag-3x"],
     ];
-    
+
     let array = [];
-    
+
     for (let i = 0; i < this.array.length; i++)
       for (let j = 0; j < this.array[0].length; j++) {
         if (this.array[i][j].typeName !== 'sand') continue;
@@ -132,30 +132,30 @@ class Town {
     for (let i = 0; i < length; i++) {
       for (let j = 0; j < height; j++) {
         if (this.array[i][j] === undefined)
-	  this.array[i][j] = new Tile(background, i * tileSize, j * tileSize);
+          this.array[i][j] = new Tile(background, i * tileSize, j * tileSize);
       }
     }
   }
   placeBuilding(xStart, yStart, building) {
     for (let i = 0; i < building.xTiles; i++) {
       for (let j = 0; j < building.yTiles; j++) {
-	this.array[xStart + i][yStart + j] = building.array[i][j];
-	this.array[xStart + i][yStart + j].x = xStart * tileSize + building.array[i][j].x;
-	this.array[xStart + i][yStart + j].y = yStart * tileSize + building.array[i][j].y;
+        this.array[xStart + i][yStart + j] = building.array[i][j];
+        this.array[xStart + i][yStart + j].x = xStart * tileSize + building.array[i][j].x;
+        this.array[xStart + i][yStart + j].y = yStart * tileSize + building.array[i][j].y;
       }
     }
   }
-  
+
   placeStreets(preset) {
     preset.streets.forEach((street) => {
-      for (let i = street.start.x; i < street.start.x + street.width; ++i){
-	for (let j = street.start.y; j < street.start.y + street.height; ++j){
-	  this.array[i][j] = new Tile('street', i*tileSize, j*tileSize);
-	}
+      for (let i = street.start.x; i < street.start.x + street.width; ++i) {
+        for (let j = street.start.y; j < street.start.y + street.height; ++j) {
+          this.array[i][j] = new Tile('street', i * tileSize, j * tileSize);
+        }
       }
     });
   }
-  
+
   placeBuildings(preset) {
     let buildings = preset.buildings;
     // `buildings` holds an array with objects describing
@@ -171,44 +171,44 @@ class Town {
     if (requiredNumBlds > numBlds) requiredNumBlds = numBlds;
     let counter = 0;
     let toPlace;
-    
+
     ['saloon', 'sheriff', 'house'].forEach((place) => {
       if (!this.numBldInTown[place]) toPlace = 0;
       else if (this.numBldInTown[place] + counter < numBlds)
         toPlace = this.numBldInTown[place];
       else toPlace = numBlds - counter;
       for (let i = 0; i < toPlace; i++) {
-	this.placeBuilding(
-	  buildings[counter].xStart,
+        this.placeBuilding(
+          buildings[counter].xStart,
           buildings[counter].yStart,
           new Building(
-	    buildings[counter].xTiles,
+            buildings[counter].xTiles,
             buildings[counter].yTiles,
-	    place)
-	);
+            place)
+        );
         counter++;
       }
     });
   }
-  draw(x=0, y=0, context=ctx, width=672, height=288){
+  draw(x = 0, y = 0, context = ctx, width = 672, height = 288) {
     if (!this.created)
       throw "Town: Attempt to draw before creating the town";
     context.drawImage(this.image, x, y, width, height,
-		      0, 0, width, height);
+      0, 0, width, height);
   }
-  drawRaw(x0=0, y0=0, context=ctx){
-    for (let x=0; x < this.array.length; ++x){
-      for (let y=0; y < this.array[0].length; ++y){
-	let tile = this.array[x][y];
-	tile.draw(x0+tile.x, y0+tile.y, context);
+  drawRaw(x0 = 0, y0 = 0, context = ctx) {
+    for (let x = 0; x < this.array.length; ++x) {
+      for (let y = 0; y < this.array[0].length; ++y) {
+        let tile = this.array[x][y];
+        tile.draw(x0 + tile.x, y0 + tile.y, context);
       }
     }
   }
-  drawDebugInfo(){
-    for (let x=0; x < this.array.length; ++x){
-      for (let y=0; y < this.array[0].length; ++y){
-	let tile = this.array[x][y];
-	tile.drawDebugInfo();
+  drawDebugInfo() {
+    for (let x = 0; x < this.array.length; ++x) {
+      for (let y = 0; y < this.array[0].length; ++y) {
+        let tile = this.array[x][y];
+        tile.drawDebugInfo();
       }
     }
   }
@@ -248,9 +248,9 @@ class Building {
     this.createTile('door', max.x / 2 | 0, max.y);
     for (let x = 1; x < max.x; x++) {
       if (this.array[x][max.y] !== undefined) continue;
-      if (randIntInRange(0,6) === 1) {
-	this.createTile('window', x, max.y);
-	continue;
+      if (randIntInRange(0, 6) === 1) {
+        this.createTile('window', x, max.y);
+        continue;
       }
       this.createTile('wall', x, max.y);
     }
@@ -260,8 +260,8 @@ class Building {
       this.createTile('rightpedestal', max.x, max.y);
       this.createTile('doorpedestal', max.x / 2 | 0, max.y);
       for (let x = 1; x < max.x; x++) {
-	if (this.array[x][max.y] !== undefined) continue;
-	this.createTile('pedestal', x, max.y);
+        if (this.array[x][max.y] !== undefined) continue;
+        this.createTile('pedestal', x, max.y);
       }
     }
     for (let y = 1; y < max.y; y++) {
@@ -269,19 +269,19 @@ class Building {
       this.createTile('uprightwall', max.x, y);
       for (let x = 1; x < max.x; x++) {
         if (this.array[x][y] !== undefined) continue;
-	let r = randIntInRange(0,6);
-        if (r === 4){
-	  this.createTile('upwindow', x, y);
-	  continue;
-	}
-	if (r === 5){
-	  this.createTile('upwindow', x, y);
-	  continue;
-	}
+        let r = randIntInRange(0, 6);
+        if (r === 4) {
+          this.createTile('upwindow', x, y);
+          continue;
+        }
+        if (r === 5) {
+          this.createTile('upwindow', x, y);
+          continue;
+        }
         this.createTile('upwall', x, y);
       }
     }
-    
+
     this.createTile('leftroof', min.x, min.y);
     this.createTile('rightroof', max.x, min.y);
     if (max.x === 2) {

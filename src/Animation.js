@@ -21,17 +21,17 @@
 
 import time from "./global/time.js";
 
-function calculateChangeInThisTick(element){
-  element.changeStack += (element.speed*time.delta) / 1000;
-  let changesInThisTick = (element.changeStack/element.quantum) | 0;
-  element.changeStack -= changesInThisTick;      
+function calculateChangeInThisTick(element) {
+  element.changeStack += (element.speed * time.delta) / 1000;
+  let changesInThisTick = (element.changeStack / element.quantum) | 0;
+  element.changeStack -= changesInThisTick;
   return changesInThisTick;
 }
 
 /**
  * Class for performing operations independent of the game loop speed
  */
-class Animation{
+class Animation {
   /**
    * Create an animation
    @param {Object} host - The object to animate
@@ -39,41 +39,41 @@ class Animation{
    @param {number, Array} speed - Speed or an array of speeds of the animation in changes per second
    @param {number} quantums - A number or array of numbers specifying the smallest portion the value can change by
   */
-  constructor(host, values, speeds, options={}){
+  constructor(host, values, speeds, options = {}) {
     this.host = host;
-    values = [].concat(values??[]);
+    values = [].concat(values ?? []);
     if (!values.length) throw "Animation: No values specified";
     this.properties = [];
     this.methods = [];
     this.propertyMap = new Map(); // property name -> property object
-    speeds = [].concat(speeds??[]);
-    let quantums = [].concat(options.quantums??[]);
-    
+    speeds = [].concat(speeds ?? []);
+    let quantums = [].concat(options.quantums ?? []);
+
     values.forEach((v, i) => {
       let property = {
-	changeStack: 0,
-	speed: speeds[i] ?? 60,
-	quantum: quantums[i] ?? 1,
+        changeStack: 0,
+        speed: speeds[i] ?? 60,
+        quantum: quantums[i] ?? 1,
       };
-      if (v.substring(0,2) === '()'){
-	property.name = v.substring(2);
-	this.methods.push(property);
-	//this.methodMap.set(property.name, property);
-	return;
+      if (v.substring(0, 2) === '()') {
+        property.name = v.substring(2);
+        this.methods.push(property);
+        //this.methodMap.set(property.name, property);
+        return;
       }
       property.name = v;
       property.direction = true;
-      
+
       if (property.speed < 0) {
-	property.direction = false;
-	property.speed *= -1;
+        property.direction = false;
+        property.speed *= -1;
       }
-      
+
       this.properties.push(property);
       this.propertyMap.set(property.name, property);
     });
   }
-  set speed(speed){
+  set speed(speed) {
     let direction = true;
     if (speed < 0) {
       direction = false;
@@ -87,33 +87,33 @@ class Animation{
       method.speed = speed;
     });
   }
-  get speed(){
+  get speed() {
     if (this.properties.length > 1)
       throw 'Animation: Adjusting speeds for multianimations' +
       ' is not supported yet.';
     return this.properties[0].speed;
   }
-  getChangeInThisTick(property, testSpeed){
+  getChangeInThisTick(property, testSpeed) {
     property = this.propertyMap.get(property);
-    
+
     testSpeed = testSpeed ?? property.speed;
 
-    let change = (testSpeed*time.delta) / 1000;
-    return ((property.direction)? 1 : -1) *
-      (((property.changeStack+change)/property.quantum) | 0);
+    let change = (testSpeed * time.delta) / 1000;
+    return ((property.direction) ? 1 : -1) *
+      (((property.changeStack + change) / property.quantum) | 0);
   }
-  
-  next(){
+
+  next() {
     this.properties.forEach((property) => {
       if (property.speed === 0) return;
       let changesNow = calculateChangeInThisTick(property);
       this.host[property.name] +=
-      ((property.direction)? 1 : -1) * changesNow;
+        ((property.direction) ? 1 : -1) * changesNow;
     });
     this.methods.forEach((method) => {
       let changesNow = calculateChangeInThisTick(method);
-      for (let i=0; i < changesNow; ++i){
-	this.host[method.name].call(this.host);
+      for (let i = 0; i < changesNow; ++i) {
+        this.host[method.name].call(this.host);
       }
     });
   }

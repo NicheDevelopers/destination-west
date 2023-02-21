@@ -37,4 +37,4 @@ class Sound {
   }
 }
 
-export {Sound, soundKind};
+export { Sound, soundKind };

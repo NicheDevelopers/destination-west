@@ -30,10 +30,10 @@ class StateManager {
     this.stateStack.pop();
   }
   getCurrent() {
-    return this.stateStack[this.stateStack.length-1];
+    return this.stateStack[this.stateStack.length - 1];
   }
   getNthUnderCurrent(n) {
-    return this.stateStack[this.stateStack.length-1-n];
+    return this.stateStack[this.stateStack.length - 1 - n];
   }
 }
 

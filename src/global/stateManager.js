@@ -26,9 +26,11 @@ class StateManager {
   }
   pushState(state) {
     this.previous = this.currentState() ?? state;
+    state.startHook();
     this.stateStack.push(state);
   }
   popState() {
+    this.currentState().endHook();
     this.stateStack.pop();
   }
   currentState() {

@@ -19,10 +19,12 @@ class EquipmentDisplay extends State {
     this.div.classList.add("window");
     this.div.style.backgroundColor = 'rgb(121,70,20)';
     this.divEq = document.createElement("div");
-    this.divEq.style.width = `${(tileSize + 2) * equipment.width * 2}px`;
-    this.divEq.style.height = `${(tileSize + 2) * equipment.height * 2}px`;
+    // '7' to change - constant value of equipment display width 
+    this.divEq.style.width = `${(tileSize+2)*7*2}px`;
+    this.divEq.style.height = `${(tileSize+2)*equipment.items.length*2}px`;
     this.divEq.style.display = "grid";
-    this.divEq.style.gridTemplateColumns = "repeat(7, 68px)";
+    // '7' to change - constant value of equipment display width 
+    this.divEq.style.gridTemplateColumns = "repeat(7, 68px)"; 
 
     /**
      * A 2d array of div elements representing the equipment grid
@@ -32,10 +34,10 @@ class EquipmentDisplay extends State {
      * A 2d array of image elements representing the equipment grid
      */
     this.itemImages = [];
-
-    for (let i = 0; i < equipment.width; i++) {
-      this.itemDivs.push(new Array(equipment.height));
-      this.itemImages.push(new Array(equipment.height));
+    
+    for (let i=0; i<equipment.items.length; i++){
+      this.itemDivs.push(new Array(equipment.items.length));
+      this.itemImages.push(new Array(equipment.items.length));
     }
 
     let f1 = (e) => this.dragStart(e);

@@ -21,14 +21,13 @@
 
 import Sprite from "../Sprite/Sprite.js";
 class Item {
-  constructor(itemName, spriteName, durability, id, height, width, price, priceRetention) {
+  constructor(itemName, spriteName, durability, id, weight, price, priceRetention) {
     this.name = itemName;
     this.spriteName = spriteName;
     this.sprite = new Sprite(spriteName);
     this.durability = durability;
     this.ID = id;
-    this.height = height;
-    this.width = width;
+    this.weight = weight;
     this.price = price;
     this.priceRetention = priceRetention;
   }

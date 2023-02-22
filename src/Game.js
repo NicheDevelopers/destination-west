@@ -45,9 +45,16 @@ class Game extends State {
     this.worldMap = new WorldMap(5, 0.5, 0.3, 2, 4, 1344, 576);
     this.worldMapDisplay = new WorldMapDisplay(this);
 
-    let testEq = new Equipment(7, 7);
-    testEq.put(new Item('Apple', 'decoration-small-stones-1', 0, 0, 1, 1, 0, 0));
-    testEq.put(new Item('Apple', 'decoration-small-stones-1', 0, 0, 1, 1, 0, 0));
+    let testEq = new Equipment(100);
+    testEq.put(new Item('Apple3', 'decoration-small-stones-1', 0, 0, 3, 0, 0));
+    testEq.put(new Item('Apple2', 'decoration-small-stones-1', 0, 0, 2, 0, 0));
+    testEq.put(new Item('Apple4', 'decoration-small-stones-1', 0, 0, 4, 0, 0));
+    // testEq.printEq();
+    // testEq.drop(testEq.items[0]);
+    // testEq.printEq();
+    // testEq.sortByWeight();
+    // testEq.clear();
+    // testEq.printEq();
     this.equipmentDisplay = new EquipmentDisplay(this, testEq, true);
 
     this.currentTown = this.worldMap.getByID(0);

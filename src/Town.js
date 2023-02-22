@@ -21,139 +21,35 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Tile from "./Tile.js";
 import presets from "./static/townPresets.js";
-import ctx from "./global/ctx.js";
 import { randIntInRange } from "./global/utilities.js";
-import { createCanvas } from "./global/utilities.js";
+import Location from "./Location.js";
+import Building from "./Building.js";
 
-import tileSize from "./global/tileSize.js";
-
-class Town {
+class Town extends Location{
   constructor(name, x, y, layer, ID, numBldInTown = {}) {
+    super(42, 20);
     this.layer = layer;
     this.ID = ID;
     this.name = name;
     this.x = x;
     this.y = y;
-    this.width = 42;
-    this.height = 20;
-    this.widthPx = this.width * tileSize;
-    this.heightPx = this.height * tileSize;
     this.numBldInTown = numBldInTown;
     this.visited = false;
-    this.created = false;
     this.connectedTowns = new Array();
-    this.array = undefined;
+    
   }
   createTown() {
     // see https://gitlab.com/niche-devs/destination-west/-/wikis/Technical-Documentation/Classes/Town/Town-Presets
     this.array = new Array(this.width);
-    for (let x = 0; x < 42; ++x) {
-      this.array[x] = new Array(this.height);
-    }
+    for (let x = 0; x < 42; ++x) this.array[x] = new Array(this.height);
     let preset = presets[randIntInRange(0, presets.length)];
     this.placeStreets(preset);
     this.placeBuildings(preset);
     this.placeBackground('sand');
     this.placeGenericDecoration();
-    this.prerenderTown();
+    this.prerender();
     this.created = true;
-  }
-
-  prerenderTown() {
-    let { canvas, context: offCtx } =
-      createCanvas(this.widthPx, this.heightPx);
-    offCtx.clearRect(0, 0, this.widthPx, this.heightPx);
-    this.drawRaw(0, 0, offCtx);
-    this.image = new Image(this.widthPx, this.heightPx);
-    this.image.src = canvas.toDataURL('image/png');
-  }
-
-  // check if there's a builing in the 5x5 square surrounding a tile
-  nearToBuilding(xPos, yPos) {
-    for (let i = -2; i <= 2; i++)
-      for (let j = -2; j <= 2; j++) {
-        if (xPos + i < 0 || xPos + i >= this.array.length) continue;
-        if (yPos + j < 0 || yPos + j >= this.array[0].length) continue;
-        if (this.array[xPos + i][yPos + j].typeName.substring(0, 9) == 'building-') return true;
-      }
-    return false;
-  }
-
-  /**
-   * Place generic decorations according to tiles' proximity to buildings.
-   * Generic decorations are objects like cacti, stones, bushes. We don't care about their placement that much.
-   * Special decorations are more unique objects such as roadsigns, wells, things that shouldn't appear as often.
-   * Tiles within a 5x5 square of a building are considered to be close to it.
-   */
-  placeGenericDecoration() {
-    let rural_percent = 20;
-    let rural_generic_decorations = [
-      ["cactus-1x"],
-      ["small-stones-1"],
-      ["green-bush-1"]
-    ];
-
-    let town_percent = 5;
-    let town_generic_decorations = [
-      //["roadsign", 1],
-      //["stone-well", 1],
-      ["big-bag-3x"],
-    ];
-
-    let array = [];
-
-    for (let i = 0; i < this.array.length; i++)
-      for (let j = 0; j < this.array[0].length; j++) {
-        if (this.array[i][j].typeName !== 'sand') continue;
-
-        let rand = randIntInRange(0, 100);
-        if (this.nearToBuilding(i, j) && rand < town_percent) {
-          array = town_generic_decorations;
-          let idx = randIntInRange(0, array.length);
-          this.array[i][j] = new Tile("decoration-" + array[idx], i * tileSize, j * tileSize);
-        }
-        else if (!this.nearToBuilding(i, j) && rand < rural_percent) {
-          array = rural_generic_decorations;
-          let idx = randIntInRange(0, array.length);
-          this.array[i][j] = new Tile("decoration-" + array[idx], i * tileSize, j * tileSize);
-        }
-      }
-  }
-
-  getNumOfTiles() {
-    return this.array.length * this.array[0].length;
-  }
-
-  placeBackground(background) {
-    let length = this.array.length;
-    let height = this.array[0].length;
-    for (let i = 0; i < length; i++) {
-      for (let j = 0; j < height; j++) {
-        if (this.array[i][j] === undefined)
-          this.array[i][j] = new Tile(background, i * tileSize, j * tileSize);
-      }
-    }
-  }
-  placeBuilding(xStart, yStart, building) {
-    for (let i = 0; i < building.xTiles; i++) {
-      for (let j = 0; j < building.yTiles; j++) {
-        this.array[xStart + i][yStart + j] = building.array[i][j];
-        this.array[xStart + i][yStart + j].x = xStart * tileSize + building.array[i][j].x;
-        this.array[xStart + i][yStart + j].y = yStart * tileSize + building.array[i][j].y;
-      }
-    }
-  }
-
-  placeStreets(preset) {
-    preset.streets.forEach((street) => {
-      for (let i = street.start.x; i < street.start.x + street.width; ++i) {
-        for (let j = street.start.y; j < street.start.y + street.height; ++j) {
-          this.array[i][j] = new Tile('street', i * tileSize, j * tileSize);
-        }
-      }
-    });
   }
 
   placeBuildings(preset) {
@@ -190,113 +86,7 @@ class Town {
       }
     });
   }
-  draw(x = 0, y = 0, context = ctx, width = 672, height = 288) {
-    if (!this.created)
-      throw "Town: Attempt to draw before creating the town";
-    context.drawImage(this.image, x, y, width, height,
-      0, 0, width, height);
-  }
-  drawRaw(x0 = 0, y0 = 0, context = ctx) {
-    for (let x = 0; x < this.array.length; ++x) {
-      for (let y = 0; y < this.array[0].length; ++y) {
-        let tile = this.array[x][y];
-        tile.draw(x0 + tile.x, y0 + tile.y, context);
-      }
-    }
-  }
-  drawDebugInfo() {
-    for (let x = 0; x < this.array.length; ++x) {
-      for (let y = 0; y < this.array[0].length; ++y) {
-        let tile = this.array[x][y];
-        tile.drawDebugInfo();
-      }
-    }
-  }
+  
 }
-class Building {
-  constructor(xTiles, yTiles, buildingType) {
-    this.xTiles = xTiles;
-    this.yTiles = yTiles;
-    this.buildingType = buildingType;
-    this.array = new Array(this.xTiles);
-    for (let x = 0; x < this.xTiles; ++x) {
-      this.array[x] = new Array(this.yTiles);
-    }
-    this.create();
-  }
-  createTile(name, x, y) {
-    this.array[x][y] = new Tile('building-' + this.buildingType +
-      "-" + name, x * tileSize, y * tileSize);
-    this.array[x][y].walkable = false;
-  }
-  create() {
-    let min = {
-      x: 0,
-      y: 0
-    };
-    let max = {
-      x: this.xTiles - 1,
-      y: this.yTiles - 1
-    };
-    let pedestal = false;
-    if (max.y > 1) {
-      //pedestal = true;
-      //max.y--;
-    }
-    this.createTile('leftwall', min.x, max.y);
-    this.createTile('rightwall', max.x, max.y);
-    this.createTile('door', max.x / 2 | 0, max.y);
-    for (let x = 1; x < max.x; x++) {
-      if (this.array[x][max.y] !== undefined) continue;
-      if (randIntInRange(0, 6) === 1) {
-        this.createTile('window', x, max.y);
-        continue;
-      }
-      this.createTile('wall', x, max.y);
-    }
-    if (pedestal) {
-      max.y++;
-      this.createTile('leftpedestal', min.x, max.y);
-      this.createTile('rightpedestal', max.x, max.y);
-      this.createTile('doorpedestal', max.x / 2 | 0, max.y);
-      for (let x = 1; x < max.x; x++) {
-        if (this.array[x][max.y] !== undefined) continue;
-        this.createTile('pedestal', x, max.y);
-      }
-    }
-    for (let y = 1; y < max.y; y++) {
-      this.createTile('upleftwall', min.x, y);
-      this.createTile('uprightwall', max.x, y);
-      for (let x = 1; x < max.x; x++) {
-        if (this.array[x][y] !== undefined) continue;
-        let r = randIntInRange(0, 6);
-        if (r === 4) {
-          this.createTile('upwindow', x, y);
-          continue;
-        }
-        if (r === 5) {
-          this.createTile('upwindow', x, y);
-          continue;
-        }
-        this.createTile('upwall', x, y);
-      }
-    }
 
-    this.createTile('leftroof', min.x, min.y);
-    this.createTile('rightroof', max.x, min.y);
-    if (max.x === 2) {
-      this.createTile('sign', 1, min.y);
-      return;
-    }
-    this.createTile('roof', min.x + 1, min.y);
-    this.createTile('roof', max.x - 1, min.y);
-    if (max.x === 3) return;
-    if (max.x === 4) {
-      this.createTile('sign', 2, min.y);
-      return;
-    }
-    this.createTile('roof', min.x + 2, min.y);
-    this.createTile('roof', max.x - 2, min.y);
-  }
-}
 export default Town;

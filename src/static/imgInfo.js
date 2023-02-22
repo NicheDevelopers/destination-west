@@ -21,10 +21,10 @@
 */
 import tileSize from "../global/tileSize.js";
 
-let img = (src, height=tileSize, width=tileSize, row=0, col=0) =>
-  ({src: src, height: height, width: width, row: row, col: col});
+let img = (src, height = tileSize, width = tileSize, row = 0, col = 0) =>
+  ({ src: src, height: height, width: width, row: row, col: col });
 
-const  townPropSheet = "img/town-props.png";
+const townPropSheet = "img/town-props.png";
 
 /**
  * Map describing spritesheets that come with the game
@@ -53,22 +53,22 @@ const imgInfo = new Map([
     defaultAnimation: "idle",
     animations: new Map([
       ["idle", {
-	name: "idle",
-	row: 0,
-	frames: 3,
-	mirroredRow: 1
+        name: "idle",
+        row: 0,
+        frames: 3,
+        mirroredRow: 1
       }],
       ["run", {
-	name: "run",
-	row: 2,
-	frames: 6,
-	mirroredRow: 3
+        name: "run",
+        row: 2,
+        frames: 6,
+        mirroredRow: 3
       }]
     ])
   }]
 ]);
 
-let newBuildingPart = (name, col, row) => ({name: name, row: row, col:col});
+let newBuildingPart = (name, col, row) => ({ name: name, row: row, col: col });
 let buildingParts = [
   newBuildingPart('leftwallwindow', 0, 2),
   newBuildingPart('leftwall', 1, 2),
@@ -101,13 +101,13 @@ let buildings = ['sheriff', 'house', 'saloon'];
 buildings.forEach((building) => {
   buildingParts.forEach((buildingPart) => {
     imgInfo.set('building-' + building + '-' + buildingPart.name,
-    {
-      src: "img/bank.png",
-      height: 32, width: 32,
-      row: buildingPart.row,
-      col: buildingPart.col
-    }
-	       );
+      {
+        src: "img/bank.png",
+        height: 32, width: 32,
+        row: buildingPart.row,
+        col: buildingPart.col
+      }
+    );
   });
 });
 

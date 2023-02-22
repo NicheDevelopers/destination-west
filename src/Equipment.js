@@ -31,8 +31,8 @@ class Equipment{
   clear(){
     this.items.splice(0, this.items.length);
   }
-  
-  printEq(){
+
+  printEq() {
     console.log(this.items);
   }
   

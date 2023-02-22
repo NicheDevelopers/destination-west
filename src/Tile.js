@@ -25,10 +25,10 @@ import ctx from "./global/ctx.js";
 /**
  * Class for creating tiles - the base of the game world structure
  */
-class Tile{
-  constructor(typeName, x=0, y=0){
+class Tile {
+  constructor(typeName, x = 0, y = 0) {
     this.typeName = typeName;
-    if(typeName.substring(0, 9) === 'building-' || typeName.substring(0, 11) === 'decoration-')
+    if (typeName.substring(0, 9) === 'building-' || typeName.substring(0, 11) === 'decoration-')
       this.background = new Sprite('sand');
     this.sprite = new Sprite(typeName);
     this.x = x;
@@ -36,11 +36,11 @@ class Tile{
     this.walkable = true;
     this.items = [];
   }
-  draw(x, y, context=ctx){
+  draw(x, y, context = ctx) {
     this.background?.draw(x, y, context);
     this.sprite.draw(x, y, context);
   }
-  drawDebugInfo(context=ctx){
+  drawDebugInfo(context = ctx) {
     context.fillRect(this.x, this.y, this.sprite.width, 1);
     context.fillRect(this.x, this.y, 1, this.sprite.height);
     context.fillRect(this.x + this.sprite.width, this.y, 1, this.sprite.height);

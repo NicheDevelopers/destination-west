@@ -20,7 +20,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-function createButton(width, height, offsetX=0, offsetY=0){
+function createButton(width, height, offsetX = 0, offsetY = 0) {
   let o = document.createElement('div');
   o.style.width = `${width}px`;
   o.style.height = `${height}px`;
@@ -33,14 +33,14 @@ function createButton(width, height, offsetX=0, offsetY=0){
   return o;
 }
 
-function createOption(option){
+function createOption(option) {
   let o = document.createElement('option');
   o.value = option;
   o.innerHTML = option;
   return o;
 }
 
-function createForm(width, height, offsetX=0, offsetY=0, name, options=[]){
+function createForm(width, height, offsetX = 0, offsetY = 0, name, options = []) {
   let f = document.createElement('form');
   f.style.margin = '5px';
   let l = document.createElement('label');
@@ -52,7 +52,7 @@ function createForm(width, height, offsetX=0, offsetY=0, name, options=[]){
   options.forEach((option) => {
     s.appendChild(createOption(option));
   });
-  
+
   f.style.width = `${width}px`;
   f.style.height = `${height}px`;
   f.style.position = 'absolute';
@@ -61,7 +61,7 @@ function createForm(width, height, offsetX=0, offsetY=0, name, options=[]){
 
   f.appendChild(l);
   f.appendChild(s);
-  return {form: f, select: s};
+  return { form: f, select: s };
 }
 
 /**
@@ -72,7 +72,7 @@ function createForm(width, height, offsetX=0, offsetY=0, name, options=[]){
  @param triggerListenerType - The name of the event listener type to trigger the action
  @param cancelListenerType - The name of the event listener type to cancel the action
  */
-function addInput(keyman, button, action, triggerListenerType, cancelListenerType){
+function addInput(keyman, button, action, triggerListenerType, cancelListenerType) {
   // If no cancelListenerType is provided,
   // triggerListenerType is used as a toggle function
   let trigger = () => {
@@ -84,20 +84,20 @@ function addInput(keyman, button, action, triggerListenerType, cancelListenerTyp
 
   if (!cancelListenerType) {
     trigger = () => {
-      if (keyman.requests.has(action)){
-	keyman.requests.delete(action);
-	return;
+      if (keyman.requests.has(action)) {
+        keyman.requests.delete(action);
+        return;
       }
-      keyman.requests.set(action,true);
+      keyman.requests.set(action, true);
     }
   }
-  
-  button.listeners.push({type: triggerListenerType, listener: trigger});
+
+  button.listeners.push({ type: triggerListenerType, listener: trigger });
   button.element.addEventListener(triggerListenerType, trigger);
-  
+
   if (!cancelListenerType) return;
-  
-  button.listeners.push({type: cancelListenerType, listener: cancel});
+
+  button.listeners.push({ type: cancelListenerType, listener: cancel });
   button.element.addEventListener(cancelListenerType, cancel);
 }
 
@@ -107,13 +107,13 @@ function addInput(keyman, button, action, triggerListenerType, cancelListenerTyp
  * Provide a way for visualizing keyboard inputs
  */
 class KeyboardVisualizer {
-  constructor(app){
+  constructor(app) {
     this.app = app;
     this.keyman = app.keyman;
     let div = document.createElement('div');
     div.setAttribute('style', `width: 300px; height: 150px;
 position: absolute; left: 0; bottom: 0;`);
-    
+
     this.div = div;
     this.hide();
     this.inputModes = new Map([
@@ -121,68 +121,68 @@ position: absolute; left: 0; bottom: 0;`);
       ['Toggle', this.toggleMode],
       ['None', () => {}]
     ]);
-    
-    let {form, select} = createForm(100, 20, 0, 0, 'Input mode',
-			  Array.from(this.inputModes.keys()));
+
+    let { form, select } = createForm(100, 20, 0, 0, 'Input mode',
+      Array.from(this.inputModes.keys()));
     form.onchange = () => {
       let mode = select.options[select.selectedIndex].value;
       this.clearMode();
       this.inputModes.get(mode).call(this);
     };
-    
+
     this.div.appendChild(form);
-    
+
     this.buttons = new Map([
-      ['Move Left', {element: createButton(50, 40, 50, 100), listeners: []}],
-      ['Move Up', {element: createButton(50, 40, 105, 55), listeners: []}],
-      ['Move Right', {element: createButton(50, 40, 160, 100), listeners: []}],
-      ['Move Down', {element: createButton(50, 40, 105, 100), listeners: []}]
+      ['Move Left', { element: createButton(50, 40, 50, 100), listeners: [] }],
+      ['Move Up', { element: createButton(50, 40, 105, 55), listeners: [] }],
+      ['Move Right', { element: createButton(50, 40, 160, 100), listeners: [] }],
+      ['Move Down', { element: createButton(50, 40, 105, 100), listeners: [] }]
     ]);
-    
+
     this.buttons.forEach((button) => {
       this.div.appendChild(button.element);
     });
-    
+
     document.body.appendChild(this.div);
     this.hoverMode();
   }
-  update(){
+  update() {
     this.app.manageRequest('Toggle Keyboard Visualization', () => {
       if (!this.hidden) {
-	this.hide();
-	return;
+        this.hide();
+        return;
       }
       this.show();
-    }, {once: true});
+    }, { once: true });
     if (this.hidden) return;
     this.buttons.forEach((button, action) => {
       button.element.style.background = 'lightblue';
       if (this.keyman.isActionRequested(action))
-	button.element.style.background = 'blue';
+        button.element.style.background = 'blue';
     });
   }
-  show(){
+  show() {
     this.div.style.display = 'block';
     this.hidden = false;
   }
-  hide(){
+  hide() {
     this.div.style.display = 'none';
     this.hidden = true;
   }
-  clearMode(){
+  clearMode() {
     this.buttons.forEach((button) => {
       button.listeners.forEach((listener) => {
-	button.element.removeEventListener(listener.type, listener.listener);
+        button.element.removeEventListener(listener.type, listener.listener);
       });
       button.listeners = [];
     });
   }
-  hoverMode(){
+  hoverMode() {
     this.buttons.forEach((button, action) => {
       addInput(this.keyman, button, action, 'mouseover', 'mouseout');
     });
   }
-  toggleMode(){
+  toggleMode() {
     this.buttons.forEach((button, action) => {
       addInput(this.keyman, button, action, 'click');
     });

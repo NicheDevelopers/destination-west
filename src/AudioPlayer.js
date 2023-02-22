@@ -20,7 +20,7 @@
 */
 
 
-import {soundKind} from "./Sound.js"
+import { soundKind } from "./Sound.js"
 import soundMap from "./static/soundMap.js";
 import volumeMap from "./static/volumeMap.js";
 

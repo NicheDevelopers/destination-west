@@ -19,10 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {Sound, soundKind} from "../Sound.js";
+import { Sound, soundKind } from "../Sound.js";
 
 const soundMap = new Map([
-  ['gunshot-revolver', new Sound('sounds/gunshot-revolver.mp3', soundKind.Effect)], 
+  ['gunshot-revolver', new Sound('sounds/gunshot-revolver.mp3', soundKind.Effect)],
 ]);
 
 export default soundMap;

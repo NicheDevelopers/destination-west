@@ -28,8 +28,8 @@ import Animation from "../Animation.js";
 /**
  * Create sprites to make display and animation simple
  */
-class AnimatedSprite extends Sprite{
-  constructor(spriteName, options){
+class AnimatedSprite extends Sprite {
+  constructor(spriteName, options) {
     super(spriteName, options);
 
     this.animations = this.imageInfo.animations;
@@ -39,7 +39,7 @@ class AnimatedSprite extends Sprite{
     this.currentAnimation = undefined;
     this.mirrored = false;
 
-    if (this.defaultAnimation){
+    if (this.defaultAnimation) {
       this.changeAnimation(this.defaultAnimation);
     }
 
@@ -53,20 +53,20 @@ class AnimatedSprite extends Sprite{
     this.animationSpeed = options.animationSpeed ?? 8;
     this.animationController = new Animation(this, '()alterFrame', this.animationSpeed);
   }
-  
+
   /**
    * Change the current animation
    @param {string} animationName - The name of the animation to switch to
    */
-  changeAnimation(animationName){
+  changeAnimation(animationName) {
     if (!this.animations.has(animationName))
-      throw('Sprite: Attempted to change to an animation that' +
-	` does not exist: ${animationName}`);
+      throw ('Sprite: Attempted to change to an animation that' +
+        ` does not exist: ${animationName}`);
 
     this.animation = this.animations.get(animationName);
     this.frame = 0;
 
-    if (this.autoAnimation){
+    if (this.autoAnimation) {
       clearInterval(this.intervalID);
       this.animate(this.interval, this.framesPerInterval);
     }
@@ -74,7 +74,7 @@ class AnimatedSprite extends Sprite{
   /**
    * Reset the animation to frame 0
    */
-  reset(){
+  reset() {
     this.frame = 0;
   }
   /**
@@ -82,7 +82,7 @@ class AnimatedSprite extends Sprite{
    @param {number} [interval=110] - The time between intervals in miliseconds
    @param {number} [framesPerInterval=1] - The number of frames to cycle through after each interval
    */
-  animate(interval=110, framesPerInterval=1){
+  animate(interval = 110, framesPerInterval = 1) {
     this.animating = true;
     this.intervalID = setInterval(
       () => this.alterFrame(framesPerInterval),
@@ -93,24 +93,24 @@ class AnimatedSprite extends Sprite{
    * Switch the current frame of an animation
    @param {number} [frameCount=1] - The number of frames to cycle through
    */
-  alterFrame(frameCount=1){
+  alterFrame(frameCount = 1) {
     if (!this.animation)
-      throw('Sprite: Attempted to cycle an animation' +
-	' which was not defined');
+      throw ('Sprite: Attempted to cycle an animation' +
+        ' which was not defined');
     this.frame = (this.frame + frameCount) % this.animation.frames;
   }
 
-  next(){
+  next() {
     this.animationController.next();
   }
 
-  draw(x, y, context=ctx){
-    let row = (this.mirrored)? this.animation.mirroredRow : this.animation.row;
+  draw(x, y, context = ctx) {
+    let row = (this.mirrored) ? this.animation.mirroredRow : this.animation.row;
     context.drawImage(this.img,
-		  this.frame * this.width,
-		  row * this.height,
-		  this.width, this.height, x, y,
-		  this.width, this.height);
+      this.frame * this.width,
+      row * this.height,
+      this.width, this.height, x, y,
+      this.width, this.height);
   }
 }
 

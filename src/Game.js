@@ -30,15 +30,17 @@ import EquipmentDisplay from "./EquipmentDisplay.js";
 import Equipment from "./Equipment.js";
 import Designer from "./Designer.js";
 import Item from "./Item/Item.js";
+import { State } from "./global/stateManager.js"
 
-class Game {
-  constructor(app){
+class Game extends State {
+  constructor(app) {
+    super(true);
     this.app = app;
     this.pauseMenu = new PauseMenu(this);
     this.paused = false;
 
     this.designer = new Designer(this);
-    
+
     this.testTile = new Tile("sand");
     this.worldMap = new WorldMap(5, 0.5, 0.3, 2, 4, 1344, 576);
     this.worldMapDisplay = new WorldMapDisplay(this);
@@ -57,14 +59,21 @@ class Game {
 
     this.currentTown = this.worldMap.getByID(0);
     this.currentTown.visited = true;
-    if (!this.currentTown.created) { 
+    if (!this.currentTown.created) {
       this.currentTown.createTown();
     }
-    
+
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
     this.player = new Player(this, 350, 290);
     this.camera = new Camera(this);
+
+    this.slaves = [
+      this.pauseMenu,
+      this.designer,
+      this.worldMapDisplay,
+      this.equipmentDisplay,
+    ]
   }
 
   travel(id) {
@@ -73,33 +82,23 @@ class Game {
     }
     this.currentTown = this.worldMap.getByID(id);
     this.currentTown.visited = true;
-    if (!this.currentTown.created) { 
+    if (!this.currentTown.created) {
       this.currentTown.createTown();
     }
     this.worldMapDisplay.draw();
   }
 
-  debug(){
+  debug() {
     this.player.drawDebugInfo();
     this.currentTown.drawDebugInfo();
   }
-  
-  loop(){
-    //window.requestAnimationFrame(() => this.loop());
-    //time.update();
-    
-    this.pauseMenu.update();
-    if (this.paused) return;
-    
-    this.designer.update();
-    this.player.update();
-    this.worldMapDisplay.update();
-    this.equipmentDisplay.update();
 
+  update() {
+    this.player.update();
     this.camera.render();
   }
-  
-  togglePause(){
+
+  togglePause() {
     this.paused = !this.paused;
   }
 }

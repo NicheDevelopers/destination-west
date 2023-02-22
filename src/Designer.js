@@ -20,14 +20,14 @@
 */
 
 import ColoredSprite from "./Sprite/ColoredSprite.js";
-import {createDiv, createCanvas} from "./global/utilities.js";
-import {State, stateManager} from "./global/stateManager.js";
+import { createDiv, createCanvas } from "./global/utilities.js";
+import { State, stateManager } from "./global/stateManager.js";
 
 /**
  * Create an interface for designing colored sprites
  */
 class Designer extends State {
-  constructor(game){
+  constructor(game) {
     super(false);
     this.display = false;
     let div = createDiv(
@@ -108,12 +108,12 @@ class Designer extends State {
   startHook() {
     this.div.style.display = 'flex'
   }
-  
+
   endHook() {
     this.div.style.display = 'none'
   }
-  
-  update(){
+
+  update() {
     this.game.app.manageRequest(
       'Toggle Designer Display',
       () => {
@@ -127,15 +127,15 @@ class Designer extends State {
   }
 }
 
-function newMenuButton(name, designer, setName=name) {
+function newMenuButton(name, designer, setName = name) {
   let button = document.createElement('img');
   button.classList.add('designer');
   button.classList.add('button');
   button.src = 'img/' + name + '.png';
   button.style.display = 'block';
   button.style.border = '2px solid black';
-    
-  if (setName.substr(-4) === 'Menu'){
+
+  if (setName.substr(-4) === 'Menu') {
     button.onclick = () => {
       designer.changeMenu(setName);
     }
@@ -149,20 +149,21 @@ function newMenuButton(name, designer, setName=name) {
   return button;
 }
 
-function createMenu(designer, buttons){
+function createMenu(designer, buttons) {
   let setDiv = createDiv(
-      100, 400, [],
-      {borderRight: '1px solid black',
-       borderLeft: '1px solid black',
-       display: 'none', // to show - set to 'grid'
-       alignItems: 'center',
-       justifyItems: 'center',
-      });
+    100, 400, [],
+    {
+      borderRight: '1px solid black',
+      borderLeft: '1px solid black',
+      display: 'none', // to show - set to 'grid'
+      alignItems: 'center',
+      justifyItems: 'center',
+    });
   buttons.forEach((button) => {
     setDiv.appendChild(newMenuButton(
       button.name, designer, button.action ?? button.name));
   });
-  
+
   return setDiv;
 }
 

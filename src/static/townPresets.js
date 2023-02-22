@@ -20,9 +20,9 @@
 */
 
 let newBuilding = (x1, y1, x2, y2) =>
-  ({xStart: x1, yStart: y1, xTiles: x2, yTiles: y2});
+  ({ xStart: x1, yStart: y1, xTiles: x2, yTiles: y2 });
 let newStreet = (x1, y1, width, height) =>
-  ({start: {x: x1, y: y1}, width: width, height: height});
+  ({ start: { x: x1, y: y1 }, width: width, height: height });
 
 const preset1 = {
   buildings: [
@@ -234,5 +234,5 @@ const preset9 = {
   ]
 };
 
-let presets = [preset1,preset2,preset3,preset4,preset5,preset6,preset7,preset8,preset9];
+let presets = [preset1, preset2, preset3, preset4, preset5, preset6, preset7, preset8, preset9];
 export default presets;

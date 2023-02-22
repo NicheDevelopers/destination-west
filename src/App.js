@@ -27,13 +27,13 @@ import AudioPlayer from "./AudioPlayer.js";
 import KeyboardVisualizer from "./KeyboardVisualizer.js";
 import Animation from "./Animation.js";
 import Game from "./Game.js";
-import {stateManager} from "./global/stateManager.js"
+import { stateManager } from "./global/stateManager.js"
 
 class App {
   constructor(keybinds = []) {
     this.game = new Game(this);
     stateManager.pushState(this.game)
-    
+
     this.userFunctionsMap = new Map();
 
     this.debugging = false;
@@ -85,7 +85,7 @@ class App {
 
     if (this.debugging)
       this.debug();
-    
+
     // ctx.font = "16px serif";
     // ctx.fillText(`FPS: ${this.game.app.fps}`, 606, 16);
   }

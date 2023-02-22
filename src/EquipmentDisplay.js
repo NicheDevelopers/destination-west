@@ -1,7 +1,7 @@
 import tileSize from "./global/tileSize.js";
 
 import { createDiv } from "./global/utilities.js";
-import {stateManager, State} from "./global/stateManager.js"
+import { stateManager, State } from "./global/stateManager.js"
 
 let dropped = false;
 

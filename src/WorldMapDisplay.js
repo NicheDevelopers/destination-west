@@ -20,7 +20,7 @@
 */
 
 import { createCanvas, createDiv } from "./global/utilities.js";
-import {State, stateManager} from "./global/stateManager.js"
+import { State, stateManager } from "./global/stateManager.js"
 
 class WorldMapDisplay extends State {
   constructor(game) {
@@ -56,7 +56,7 @@ class WorldMapDisplay extends State {
     for (let town of map.townArray) {
       map_ctx.fillStyle = 'white';
       let size = this.computeTownSize(town);
-      
+
       // if the town has been visited, is the current town or can be reached from the current town, draw it
       if (town.visited || this.game.worldMap.townArray.filter((t) => t.visited).map((m) => m.connectedTowns).some((e) => e.includes(town.ID))) {
         if (!this.drawnDivs[town.ID]) {
@@ -93,7 +93,7 @@ class WorldMapDisplay extends State {
       map_ctx.fillStyle = 'white';
       map_ctx.fillText(t.name, t.x - 50, t.y + 40);
     }
-    
+
   }
   computeTownSize(town) {
     // make the last town large
@@ -109,10 +109,10 @@ class WorldMapDisplay extends State {
     this.game.app.manageRequest(
       'Toggle Map Display',
       () => stateManager.toggleState(this),
-      {once: true}
+      { once: true }
     );
   }
-  
+
   startHook() {
     this.draw();
     this.div.style.display = 'block';

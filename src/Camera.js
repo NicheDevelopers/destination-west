@@ -53,9 +53,9 @@ class Camera {
     this.game.player.draw(this.game.player.x - topLeftX,
       this.game.player.y - topLeftY);
 
-    this.game.player.draw(this.game.player.x-topLeftX,
-			  this.game.player.y-topLeftY);
-    
+    this.game.player.draw(this.game.player.x - topLeftX,
+      this.game.player.y - topLeftY);
+
   }
 }
 

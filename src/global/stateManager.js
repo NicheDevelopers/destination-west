@@ -19,22 +19,60 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { generateID } from "./utilities.js"
+
+class State {
+  constructor(fundamental) {
+    this.slaves = [];
+    this.id = generateID("state");
+    this.fundamental = fundamental;
+  }
+  startHook() {}
+  endHook() {}
+}
+
 class StateManager {
   constructor() {
     this.stateStack = [];
+    this.previous = null;
   }
   pushState(state) {
+    this.previous = this.currentState() ?? state;
+    state.startHook();
     this.stateStack.push(state);
   }
   popState() {
+    this.currentState().endHook();
     this.stateStack.pop();
   }
-  getCurrent() {
+  currentState() {
     return this.stateStack[this.stateStack.length - 1];
   }
-  getNthUnderCurrent(n) {
+  nthUnderCurrent(n) {
     return this.stateStack[this.stateStack.length - 1 - n];
+  }
+  stateChanged() {
+    return (this.currentState() !== this.previous)
+  }
+  updateStates() {
+    for (let state of this.stateStack.slice().reverse()) {
+      state.update();
+      for (let slave of this.currentState().slaves) {
+        slave.update();
+        if (this.stateChanged()) break;
+      }
+      if (state.fundamental) break;
+    }
+  }
+  // if cond is true, pop and run endhook, else push and run starthook
+  toggleState(state) {
+    (this.currentState().id === state.id) ?
+      this.popState() : this.pushState(state)
+  }
+  print() {
+    console.log(this.stateStack.map((s) => s.id));
   }
 }
 
-export default StateManager;
+let stateManager = new StateManager();
+export { stateManager, State };

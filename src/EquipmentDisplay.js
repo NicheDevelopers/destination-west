@@ -1,36 +1,13 @@
 import tileSize from "./global/tileSize.js";
 
 import { createDiv } from "./global/utilities.js";
-function preventDefault(e) {
-  e.preventDefault ? e.preventDefault() : e.returnValue = false;
-}
-function addImage(div, display) {
-  div.removeEventListener('drop', display.dragDropWrapper);
-  let img = display.itemImages[div.pos.x][div.pos.y];
-  img.className = 'draggable';
-  img.setAttribute('draggable', 'true');
-  img.addEventListener('dragstart', display.dragStartWrapper);
-  img.addEventListener('dragend', display.dragEndWrapper);
-  img.removeEventListener('mousedown', preventDefault);
-  img.src = 'img/sand.png';
-  img.style.display = 'block';
-}
-
-function removeImage(div, display) {
-  div.addEventListener('drop', display.dragDropWrapper);
-  let img = display.itemImages[div.pos.x][div.pos.y];
-  img.src = '';
-  img.style.display = 'none';
-  img.setAttribute('draggable', 'false');
-  img.addEventListener('mousedown', preventDefault);
-  img.removeEventListener('dragstart', display.dragStartWrapper);
-  img.removeEventListener('dragend', display.dragEndWrapper);
-}
+import {stateManager, State} from "./global/stateManager.js"
 
 let dropped = false;
 
-class EquipmentDisplay {
+class EquipmentDisplay extends State {
   constructor(game, equipment, isPlayer) {
+    super(false);
     this.equipment = equipment;
     this.game = game;
     this.actions = ['Toggle Equipment Display'];
@@ -95,7 +72,6 @@ class EquipmentDisplay {
       }
     }
 
-    this.isDisplayed = false;
     if (!isPlayer) {
       this.div.appendChild(this.divEq);
       gameContainer.appendChild(this.div);
@@ -112,20 +88,17 @@ class EquipmentDisplay {
     gameContainer.appendChild(this.div);
   }
 
-  toggleDisplay() {
-    if (this.isDisplayed) {
-      this.div.style.display = "none";
-      this.isDisplayed = false;
-      return;
-    }
+  startHook() {
     this.div.style.display = "flex";
-    this.isDisplayed = true;
+  }
+  endHook() {
+    this.div.style.display = "none";
   }
 
   update() {
     this.game.app.manageRequest(
       'Toggle Equipment Display',
-      () => this.toggleDisplay(),
+      () => stateManager.toggleState(this),
       { once: true }
     );
   }
@@ -175,6 +148,34 @@ class EquipmentDisplay {
     addImage(div, this);
     dropped = true;
   }
-};
+}
+
+function preventDefault(e) {
+  e.preventDefault ? e.preventDefault() : e.returnValue = false;
+}
+
+function addImage(div, display) {
+  div.removeEventListener('drop', display.dragDropWrapper);
+  let img = display.itemImages[div.pos.x][div.pos.y];
+  img.className = 'draggable';
+  img.setAttribute('draggable', 'true');
+  img.addEventListener('dragstart', display.dragStartWrapper);
+  img.addEventListener('dragend', display.dragEndWrapper);
+  img.removeEventListener('mousedown', preventDefault);
+  img.src = 'img/sand.png';
+  img.style.display = 'block';
+}
+
+function removeImage(div, display) {
+  div.addEventListener('drop', display.dragDropWrapper);
+  let img = display.itemImages[div.pos.x][div.pos.y];
+  img.src = '';
+  img.style.display = 'none';
+  img.setAttribute('draggable', 'false');
+  img.addEventListener('mousedown', preventDefault);
+  img.removeEventListener('dragstart', display.dragStartWrapper);
+  img.removeEventListener('dragend', display.dragEndWrapper);
+}
+
 
 export default EquipmentDisplay;

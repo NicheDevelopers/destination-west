@@ -20,34 +20,11 @@
 */
 
 import { createCanvas, createDiv } from "./global/utilities.js";
+import {State, stateManager} from "./global/stateManager.js"
 
-function drawCircle(ctx, x, y, radius, strokeWidth, color) {
-  let old_color = ctx.fillStyle;
-  ctx.beginPath()
-  ctx.arc(x, y, radius, 0, 2 * Math.PI, false)
-  ctx.fillStyle = color
-  ctx.strokeStyle = color
-  ctx.fill()
-  ctx.lineWidth = strokeWidth
-  
-  ctx.stroke()
-  
-  ctx.fillStyle = old_color
-  ctx.strokeStyle = old_color
-}
-
-function drawLine(ctx, start_x, start_y, end_x, end_y, strokeStyle, lineWidth) {
-  ctx.strokeStyle = strokeStyle;
-  ctx.lineWidth = lineWidth;
-  ctx.beginPath();
-  ctx.moveTo(start_x, start_y);
-  ctx.lineTo(end_x, end_y);
-  ctx.stroke();
-}
-
-
-class WorldMapDisplay {
+class WorldMapDisplay extends State {
   constructor(game) {
+    super(false);
     this.game = game;
     this.actions = ['Toggle Map Display'];
     this.div = createDiv(1344, 576, ['map-canvas-div'], {
@@ -131,19 +108,37 @@ class WorldMapDisplay {
   update() {
     this.game.app.manageRequest(
       'Toggle Map Display',
-      () => this.toggleMapDisplayFunc(),
-      { once: true }
+      () => stateManager.toggleState(this),
+      {once: true}
     );
   }
-
-  toggleMapDisplayFunc() {
-    if (this.div.style.display !== 'none') {
-      this.div.style.display = 'none';
-      return;
-    }
+  
+  startHook() {
     this.draw();
     this.div.style.display = 'block';
   }
+  endHook() {
+    this.div.style.display = 'none';
+  }
+}
+
+function drawCircle(ctx, x, y, radius, strokeWidth) {
+  ctx.beginPath()
+  ctx.arc(x, y, radius, 0, 2 * Math.PI, false)
+  ctx.fillStyle = 'black'
+  ctx.fill()
+  ctx.lineWidth = strokeWidth
+  ctx.strokeStyle = 'black'
+  ctx.stroke()
+}
+
+function drawLine(ctx, start_x, start_y, end_x, end_y, strokeStyle, lineWidth) {
+  ctx.strokeStyle = strokeStyle;
+  ctx.lineWidth = lineWidth;
+  ctx.beginPath();
+  ctx.moveTo(start_x, start_y);
+  ctx.lineTo(end_x, end_y);
+  ctx.stroke();
 }
 
 export default WorldMapDisplay;

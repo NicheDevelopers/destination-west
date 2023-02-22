@@ -20,54 +20,15 @@
 */
 
 import ColoredSprite from "./Sprite/ColoredSprite.js";
-
 import {createDiv, createCanvas} from "./global/utilities.js";
-
-
-function newMenuButton(name, designer, setName=name) {
-  let button = document.createElement('img');
-  button.classList.add('designer');
-  button.classList.add('button');
-  button.src = 'img/' + name + '.png';
-  button.style.display = 'block';
-  button.style.border = '2px solid black';
-    
-  if (setName.substr(-4) === 'Menu'){
-    button.onclick = () => {
-      designer.changeMenu(setName);
-    }
-    return button;
-  }
-  button.onclick = () => {
-    designer.currentElement = setName;
-    designer.input.value = designer.clothes[setName].color;
-    designer.input.style.display = 'block';
-  }
-  return button;
-}
-
-function createMenu(designer, buttons){
-  let setDiv = createDiv(
-      100, 400, [],
-      {borderRight: '1px solid black',
-       borderLeft: '1px solid black',
-       display: 'none', // to show - set to 'grid'
-       alignItems: 'center',
-       justifyItems: 'center',
-      });
-  buttons.forEach((button) => {
-    setDiv.appendChild(newMenuButton(
-      button.name, designer, button.action ?? button.name));
-  });
-  
-  return setDiv;
-}
+import {State, stateManager} from "./global/stateManager.js";
 
 /**
  * Create an interface for designing colored sprites
  */
-class Designer {
+class Designer extends State {
   constructor(game){
+    super(false);
     this.display = false;
     let div = createDiv(
       650, 400, ['window', 'window-background'],
@@ -143,13 +104,20 @@ class Designer {
     this.currentMenu = this.menus[menuName];
     this.currentMenu.style.display = 'grid';
   }
+
+  startHook() {
+    this.div.style.display = 'flex'
+  }
+  
+  endHook() {
+    this.div.style.display = 'none'
+  }
   
   update(){
     this.game.app.manageRequest(
       'Toggle Designer Display',
       () => {
-	this.div.style.display = (this.div.style.display == 'none')?
-	  'flex' : 'none';
+        stateManager.toggleState(this)
       },
       {once: true});
 
@@ -157,6 +125,45 @@ class Designer {
       this.clothes[clothing].draw(0, 0, this.previewCtx);
     }
   }
+}
+
+function newMenuButton(name, designer, setName=name) {
+  let button = document.createElement('img');
+  button.classList.add('designer');
+  button.classList.add('button');
+  button.src = 'img/' + name + '.png';
+  button.style.display = 'block';
+  button.style.border = '2px solid black';
+    
+  if (setName.substr(-4) === 'Menu'){
+    button.onclick = () => {
+      designer.changeMenu(setName);
+    }
+    return button;
+  }
+  button.onclick = () => {
+    designer.currentElement = setName;
+    designer.input.value = designer.clothes[setName].color;
+    designer.input.style.display = 'block';
+  }
+  return button;
+}
+
+function createMenu(designer, buttons){
+  let setDiv = createDiv(
+      100, 400, [],
+      {borderRight: '1px solid black',
+       borderLeft: '1px solid black',
+       display: 'none', // to show - set to 'grid'
+       alignItems: 'center',
+       justifyItems: 'center',
+      });
+  buttons.forEach((button) => {
+    setDiv.appendChild(newMenuButton(
+      button.name, designer, button.action ?? button.name));
+  });
+  
+  return setDiv;
 }
 
 export default Designer;

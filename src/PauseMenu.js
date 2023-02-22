@@ -21,11 +21,13 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-// import defaultKeybinds from "./global/defaultKeybinds.js";
-// import volumeMap from "./static/volumeMap.js";
+import defaultKeybinds from "./global/defaultKeybinds.js";
+import volumeMap from "./static/volumeMap.js";
+import { State, stateManager } from "./global/stateManager.js"
 
-class PauseMenu {
+class PauseMenu extends State {
   constructor(game) {
+    super(true);
     // basic functions
     this.game = game;
     this.actions = ['Toggle Pause Menu'];
@@ -101,7 +103,7 @@ class PauseMenu {
     this.exitMenuDiv.appendChild(this.exitMenuRefusalButton);
 
     // buttons eventListeners
-    this.resumeButton.addEventListener("click", () => { this.togglePauseMenu() });
+    this.resumeButton.addEventListener("click", () => { stateManager.toggleState(this) });
     this.settingsButton.addEventListener("click", () => { this.enterSettingsMenu() });
     this.exitSettingsButton.addEventListener("click", () => { this.exitSettingsMenu() });
     this.exitButton.addEventListener("click", () => { this.enterExitMenu() });
@@ -111,27 +113,24 @@ class PauseMenu {
   update() {
     this.game.app.manageRequest(
       'Toggle Pause Menu',
-      () => this.togglePauseMenu(),
+      () => stateManager.toggleState(this),
       { once: true }
     );
   }
 
-  // function passed to the keyboardManager
-  togglePauseMenu() {
-    if (this.paused) {
-      this.pauseMenu.style.display = 'none';
-      this.exitMenu.style.display = 'none';
-      this.settingsMenu.style.display = 'none';
-      this.paused = false;
-      this.game.togglePause();
-      return;
-    }
+  startHook() {
     this.pauseMenu.style.display = 'flex';
     this.paused = true;
     this.game.togglePause();
   }
 
-  // functions displaying settings
+  endHook() {
+    this.pauseMenu.style.display = 'none';
+    this.exitMenu.style.display = 'none';
+    this.settingsMenu.style.display = 'none';
+    this.paused = false;
+    this.game.togglePause();
+  }
 
   // functions toggling settings menu
   enterSettingsMenu() {

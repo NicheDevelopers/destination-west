@@ -19,6 +19,18 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { generateID } from "./utilities.js"
+
+class State {
+  constructor(fundamental) {
+    this.slaves = [];
+    this.id = generateID("state");
+    this.fundamental = fundamental;
+  }
+  startHook() {}
+  endHook() {}
+}
+
 class StateManager {
   constructor() {
     this.stateStack = [];
@@ -40,16 +52,28 @@ class StateManager {
     return this.stateStack[this.stateStack.length - 1 - n];
   }
   stateChanged() {
-    return (this.currentState() != this.previous)
+    return (this.currentState() !== this.previous)
   }
-  updateCurrentState() {
-    this.currentState().update();
-    for (let slave of this.currentState().slaves) {
-      slave.update();
-      if (this.stateChanged()) break;
+  updateStates() {
+    for (let state of this.stateStack.slice().reverse()) {
+      state.update();
+      this.print()
+      for (let slave of this.currentState().slaves) {
+        slave.update();
+        if (this.stateChanged()) break;
+      }
+      if (state.fundamental) break;
     }
+  }
+  // if cond is true, pop and run endhook, else push and run starthook
+  toggleState(state) {
+    (this.currentState().id === state.id) ?
+      this.popState() : this.pushState(state)
+  }
+  print() {
+    console.log(this.stateStack.map((s) => s.id));
   }
 }
 
 let stateManager = new StateManager();
-export default stateManager;
+export { stateManager, State };

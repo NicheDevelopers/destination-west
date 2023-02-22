@@ -52,8 +52,6 @@ class Camera {
     this.game.player.draw(this.game.player.x-topLeftX,
 			  this.game.player.y-topLeftY);
     
-    ctx.font = "16px serif";
-    ctx.fillText(`FPS: ${this.game.app.fps}`, 606, 16);
   }
 }
 

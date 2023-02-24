@@ -35,6 +35,7 @@ import { State } from "./global/stateManager.js"
 class Game extends State {
   constructor(app) {
     super(true);
+    
     this.app = app;
     this.pauseMenu = new PauseMenu(this);
     this.paused = false;

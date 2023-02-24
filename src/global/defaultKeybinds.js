@@ -33,6 +33,8 @@ const defaultKeybinds = [
   ['escape', 'Toggle Pause Menu'],
   ['e', 'Toggle Equipment Display'],
   ['shift', 'Toggle Sprint'],
-  ['c', 'Toggle Sneak']
+  ['c', 'Toggle Sneak'],
+  ['=', 'Camera zoom in'],
+  ['-', 'Camera zoom out']
 ];
 export default defaultKeybinds;

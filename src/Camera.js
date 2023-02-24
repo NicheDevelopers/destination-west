@@ -19,8 +19,13 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import ctx from "./global/ctx.js";
+import ctx, { getGameCanvasSizeX, getGameCanvasSizeY } from "./global/ctx.js";
 
+function makeEven(x){
+  if (x%2 == 1)
+    x++;
+  return x;
+}
 /*
  * Render fragments of the world easily
  */
@@ -28,13 +33,39 @@ class Camera {
   constructor(game) {
     this.x = 0;
     this.y = 0;
-    this.width = 672;
-    this.height = 288;
-    this.centerX = this.width / 2;
-    this.centerY = this.height / 2;
+    this.zoom = 3;
+    this.zoomMin = 1.8;
+    this.zoomMax = 5;
+    this.updateSize();
     this.game = game;
   }
+  updateSize(){
+    const gcon = document.querySelector("#game-container");
+    const gc = document.querySelector("#game-canvas");
+    gc.width = makeEven((gcon.scrollWidth / this.zoom) | 0);
+    gc.height = makeEven((gcon.scrollHeight / this.zoom) | 0);
+    gc.style.transform = `scale(${this.zoom})`;
+    this.width = getGameCanvasSizeX();
+    this.height = getGameCanvasSizeY();
+    this.centerX = this.width / 2;
+    this.centerY = this.height / 2;
+  }
   render() {
+    this.game.app.manageRequest(
+      'Camera zoom in',
+      () => {
+	if (this.zoom < this.zoomMax)
+	  this.zoom += 0.05;
+      }
+    );
+    this.game.app.manageRequest(
+      'Camera zoom out',
+      () => {
+	if (this.zoom > this.zoomMin)
+	  this.zoom -= 0.05;
+      }
+    );
+    this.updateSize();
     ctx.clearRect(0, 0, this.width, this.height);
     const playerX = this.game.player.x
       + this.game.player.spriteCenterPoint.x;
@@ -48,14 +79,14 @@ class Camera {
       playerY - this.height / 2,
       this.game.currentTown.heightPx - this.height));
 
-    this.game.currentTown.draw(topLeftX, topLeftY);
+    this.game.currentTown.draw(topLeftX, topLeftY, ctx,
+			       this.width, this.height);
 
     this.game.player.draw(this.game.player.x - topLeftX,
       this.game.player.y - topLeftY);
 
     this.game.player.draw(this.game.player.x - topLeftX,
       this.game.player.y - topLeftY);
-
   }
 }
 

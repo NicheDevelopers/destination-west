@@ -18,8 +18,21 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
+
+const gc = document.querySelector("#game-canvas");
+
 /**
  * The canvas rendering context for the canvas #game-canvas
  */
-const ctx = document.querySelector("#game-canvas").getContext("2d");
+const ctx = gc.getContext("2d");
+
+
+export function getGameCanvasSizeX() {
+  return gc.scrollWidth;
+}
+
+export function getGameCanvasSizeY() {
+  return gc.scrollHeight;
+}
+
 export default ctx;

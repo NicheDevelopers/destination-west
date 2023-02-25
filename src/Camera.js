@@ -36,15 +36,22 @@ class Camera {
     this.zoom = 3;
     this.zoomMin = 1.8;
     this.zoomMax = 5;
+    /* Browsers sometimes struggle to position scaled elements perfectly.
+       In order to prevent leaving empty space around the canvas we
+       scale it up more than should be needed.
+       */
+    this.zoomSafetyMultiplier = 1.05;
     this.updateSize();
+    window.addEventListener('resize', () => this.updateSize());
+    window.addEventListener('fullscreenchange', () => this.updateSize());
     this.game = game;
   }
   updateSize(){
     const gcon = document.querySelector("#game-container");
     const gc = document.querySelector("#game-canvas");
-    gc.width = makeEven((gcon.scrollWidth / this.zoom) | 0);
-    gc.height = makeEven((gcon.scrollHeight / this.zoom) | 0);
-    gc.style.transform = `scale(${this.zoom})`;
+    gc.width = makeEven(Math.ceil(gcon.scrollWidth / this.zoom));
+    gc.height = makeEven(Math.ceil(gcon.scrollHeight / this.zoom));
+    gc.style.transform = `scale(${this.zoomSafetyMultiplier*this.zoom})`;
     this.width = getGameCanvasSizeX();
     this.height = getGameCanvasSizeY();
     this.centerX = this.width / 2;
@@ -54,18 +61,21 @@ class Camera {
     this.game.app.manageRequest(
       'Camera zoom in',
       () => {
-	if (this.zoom < this.zoomMax)
+	if (this.zoom < this.zoomMax) {
 	  this.zoom += 0.05;
+	  this.updateSize();
+	}
       }
     );
     this.game.app.manageRequest(
       'Camera zoom out',
       () => {
-	if (this.zoom > this.zoomMin)
+	if (this.zoom > this.zoomMin) {
 	  this.zoom -= 0.05;
+	  this.updateSize();
+	}
       }
     );
-    this.updateSize();
     ctx.clearRect(0, 0, this.width, this.height);
     const playerX = this.game.player.x
       + this.game.player.spriteCenterPoint.x;

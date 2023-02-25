@@ -26,7 +26,7 @@ class Item {
     this.spriteName = spriteName;
     this.sprite = new Sprite(spriteName);
     this.durability = durability;
-    this.ID = id;
+    this.id = id;
     this.weight = weight;
     this.price = price;
     this.priceRetention = priceRetention;

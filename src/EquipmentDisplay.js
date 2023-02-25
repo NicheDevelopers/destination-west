@@ -6,7 +6,7 @@ import { stateManager, State } from "./global/stateManager.js"
 let dropped = false;
 
 class EquipmentDisplay extends State {
-  constructor(game, equipment, isPlayer) {
+  constructor(game, equipment) {
     super(false);
     this.equipment = equipment;
     this.game = game;
@@ -14,89 +14,65 @@ class EquipmentDisplay extends State {
     this.div = document.createElement("div");
     let gameContainer = document.querySelector("#game-container");
     this.div.id = "equipment";
-    this.div.style.position = 'absolute';
-    this.div.style.zIndex = 1; // make it work with changes in map display
     this.div.classList.add("window");
-    this.div.style.backgroundColor = 'rgb(121,70,20)';
-    this.divEq = document.createElement("div");
+    this.divEqList = document.createElement("div");
+    this.divEqList.id = "eq-list";
     // '7' to change - constant value of equipment display width 
-    this.divEq.style.width = `${(tileSize+2)*7*2}px`;
-    this.divEq.style.height = `${(tileSize+2)*equipment.items.length*2}px`;
-    this.divEq.style.display = "grid";
-    // '7' to change - constant value of equipment display width 
-    this.divEq.style.gridTemplateColumns = "repeat(7, 68px)"; 
+    this.divEqList.style.width = `${(tileSize+2)*7*2}px`;
+    this.divEqList.style.height = `${(tileSize+2)*7*2}px`;
 
-    /**
-     * A 2d array of div elements representing the equipment grid
-     */
-    this.itemDivs = [];
-    /**
-     * A 2d array of image elements representing the equipment grid
-     */
-    this.itemImages = [];
+    // /**
+    //  * A 2d array of div elements representing the equipment grid
+    //  */
+    // this.itemDivs = [];
+    // /**
+    //  * A 2d array of image elements representing the equipment grid
+    //  */
+    // this.itemImages = [];
     
-    for (let i=0; i<equipment.items.length; i++){
-      this.itemDivs.push(new Array(equipment.items.length));
-      this.itemImages.push(new Array(equipment.items.length));
-    }
+    // for (let i=0; i<equipment.items.length; i++){
+    //   this.itemDivs.push(new Array(equipment.items.length));
+    //   this.itemImages.push(new Array(equipment.items.length));
+    // }
 
-    let f1 = (e) => this.dragStart(e);
-    let f2 = (e) => this.dragEnd(e);
-    let f3 = (e) => this.dragDrop(e);
-    this.dragStartWrapper = f1;
-    this.dragEndWrapper = f2;
-    this.dragDropWrapper = f3;
-
-    for (let j = 0; j < equipment.height; j++) {
-      for (let i = 0; i < equipment.width; i++) {
-        let itemDiv = createDiv(64, 64);
-        let img = new Image(64, 64);
-
-        this.itemDivs[i][j] = itemDiv;
-        this.itemImages[i][j] = img;
-
-        itemDiv.classList.add('unselectable');
-        itemDiv.pos = { x: i, y: j };
-        itemDiv.addEventListener('dragover', (e) => this.dragOver(e));
-        itemDiv.addEventListener('dragenter', (e) => this.dragEnter(e));
-        itemDiv.addEventListener('dragleave', (e) => this.dragLeave(e));
-        itemDiv.style.border = '2px solid black';
-
-        img.pos = { x: i, y: j };
-        img.classList.add('unselectable');
-        addImage(itemDiv, this);
-        if (!this.equipment.items[i][j]) {
-          removeImage(itemDiv, this);
-        }
-
-        itemDiv.appendChild(img);
-        this.divEq.appendChild(itemDiv);
-      }
-    }
-
-    if (!isPlayer) {
-      this.div.appendChild(this.divEq);
-      gameContainer.appendChild(this.div);
-      return;
-    }
-    this.divPlayerPanel = document.createElement("div");
-    this.divPlayerPanel.style.backgroundColor = "rgb(121,70,20)";
-    // PlayerPanel width can be changed, for now it is 4 tiles
-    this.divPlayerPanel.style.width = `${tileSize * 8}px`;
-    this.divPlayerPanel.style.height = `${((tileSize + 2) * equipment.height - 2) * 2}px`;
-    this.divPlayerPanel.style.border = "2px solid black";
-    this.div.appendChild(this.divEq);
-    this.div.appendChild(this.divPlayerPanel);
+    // let f1 = (e) => this.dragStart(e);
+    // let f2 = (e) => this.dragEnd(e);
+    // let f3 = (e) => this.dragDrop(e);
+    // this.dragStartWrapper = f1;
+    // this.dragEndWrapper = f2;
+    // this.dragDropWrapper = f3;
+    this.div.appendChild(this.divEqList);
     gameContainer.appendChild(this.div);
   }
 
+  refresh() {
+    while(this.divEqList.firstChild) {
+      this.divEqList.removeChild(this.divEqList.lastChild);
+    }
+    for (let item of this.equipment.items) {
+      this.divEqList.appendChild(this.itemToListElement(item));
+    }
+  }
   startHook() {
+    this.refresh();
     this.div.style.display = "flex";
   }
   endHook() {
     this.div.style.display = "none";
   }
-
+  itemToListElement(item) {
+    let div = document.createElement("div");
+    div.classList.add("list-element");
+    let nameDiv = document.createElement("div");
+    nameDiv.innerText = item.name;
+    nameDiv.style.display = "inline-block";
+    let dropButton = document.createElement("button");
+    dropButton.classList.add("button", "eq-button");
+    dropButton.addEventListener("click", () => { this.equipment.drop(item); this.refresh() });
+    div.appendChild(nameDiv);
+    div.appendChild(dropButton);
+    return div;
+  }
   update() {
     this.game.app.manageRequest(
       'Toggle Equipment Display',

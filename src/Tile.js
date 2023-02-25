@@ -28,8 +28,8 @@ import ctx from "./global/ctx.js";
 class Tile {
   constructor(typeName, x = 0, y = 0) {
     this.typeName = typeName;
-    if (typeName.substring(0, 9) === 'building-' || typeName.substring(0, 11) === 'decoration-')
-      this.background = new Sprite('sand');
+    if (typeName.substring(0, 9) === 'building-' || typeName.substring(0, 11) === 'decoration-'
+     || typeName.substring(0, 5) === 'path-') this.background = new Sprite('sand');
     this.sprite = new Sprite(typeName);
     this.x = x;
     this.y = y;

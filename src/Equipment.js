@@ -56,13 +56,9 @@ class Equipment{
   }
 
   drop(item){
-    for (let i=0; i<this.items.length; i++){
-      if (this.items[i] === item){
-        this.items.splice(i,1);
-        this.sumWeight -= item.weight;
-        break;
-      }
-    }
+    console.log("Dropping item: ", item);
+    this.items = this.items.filter( (i) => i.id != item.id );
+    console.log("Eq: ", this.items);
   }
 };
 

@@ -20,6 +20,7 @@
 */
 import Item from "./Item/Item.js";
 import DroppedItem from "./Item/DroppedItem.js";
+import tileSize from "./global/tileSize.js";
 
 class Equipment{
   constructor (game, maxWeight){
@@ -62,8 +63,8 @@ class Equipment{
     this.items = this.items.filter( (i) => i.id != item.id );
     this.game.currentTown.droppedItems.push(new DroppedItem(
       item,
-      this.game.player.centerPoint.x,
-      this.game.player.centerPoint.y
+      this.game.player.centerPoint.x - tileSize/2,
+      this.game.player.centerPoint.y - tileSize/2
     ));
     console.log("Dropped items: ", this.game.currentTown.droppedItems);
     console.log("Eq: ", this.items);

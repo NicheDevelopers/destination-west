@@ -28,9 +28,8 @@ class DroppedItem {
     this.x = x;
     this.y = y;
   }
-  draw() {
-    console.log(`Drawing dropped item at ${this.x}, ${this.y}`)
-    this.sprite.draw(this.x, this.y);
+  draw(cameraX, cameraY) {
+    this.sprite.draw(this.x - cameraX, this.y - cameraY);
   }
 }
 

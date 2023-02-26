@@ -201,7 +201,7 @@ class Location {
     context.drawImage(this.image, x, y, width, height,
                       0, 0, width, height);
     for (let droppedItem of this.droppedItems) {
-      droppedItem.draw();
+      droppedItem.draw(x, y);
     }
   }
   drawRaw(x0 = 0, y0 = 0, context = ctx) {

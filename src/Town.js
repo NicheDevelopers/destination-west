@@ -49,7 +49,6 @@ class Town extends Location{
     this.placeBackground('sand');
     this.placeGenericDecoration();
     this.prerender();
-    this.created = true;
   }
 
   placeBuildings(preset) {

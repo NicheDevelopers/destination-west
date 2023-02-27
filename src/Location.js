@@ -28,11 +28,13 @@ import { createCanvas } from "./global/utilities.js";
 import tileSize from "./global/tileSize.js";
 const variants = 2;
 
-//This key is the binary code that describes the position of near squars.
-//We start with top left corner and we are checking if the squate is going to be a path.
-//If yes then we represet is as a 1, otherway we return 0. The next square that we check is over the top edge.
-//After checking row we are moving no next row.
-//The last numeral is the number that represent one of the 'variants' of sprite that we have prepered.  
+/* pathInfo keys describe the presence of paths on adjacent squares.
+   The first digit describes the top-left adjacent tile. If that tile
+   is a path then we represet is as a 1, otherwise as 0.
+   The next digit describes the tile over the top edge and so on.
+   After checking a whole row we move to the next one.
+   The last numeral is the number that represent one of the 'variants' of the sprite that we have prepered.
+*/
 const pathInfo = new Map([
   ["street","street"],
   ["000110000","path-narrow-side-1"],
@@ -62,17 +64,25 @@ class Location{
         this.width = width;
         this.height = height;
         this.widthPx = this.width * tileSize;
-        this.heightPx = this.height * tileSize;
+      this.heightPx = this.height * tileSize;
+      this.awaitAssets = 0;
     }
 
-    prerender(){
-        let { canvas, context: offCtx } =
-          createCanvas(this.widthPx, this.heightPx);
-        offCtx.clearRect(0, 0, this.widthPx, this.heightPx);
-        this.drawRaw(0, 0, offCtx);
-        this.image = new Image(this.widthPx, this.heightPx);
-        this.image.src = canvas.toDataURL('image/png');
+  prerender(){
+    console.log(this.awaitAssets);
+    if (this.awaitAssets > 0) {
+      setTimeout(() => this.prerender(), 0);
+      return;
     }
+    let { canvas, context: offCtx } =
+      createCanvas(this.widthPx, this.heightPx);
+    offCtx.clearRect(0, 0, this.widthPx, this.heightPx);
+    
+    this.drawRaw(0, 0, offCtx);
+    this.image = new Image(this.widthPx, this.heightPx);
+    this.image.onload = () => {this.created = true;};
+    this.image.src = canvas.toDataURL('image/png');
+  }
 
     // check if there's a builing in the 5x5 square surrounding a tile
     nearToBuilding(xPos, yPos) {
@@ -167,11 +177,9 @@ class Location{
       }
     }
     string+=randIntInRange(0,variants);
-    console.log(string ,x , y);
+    //console.log(string ,x , y);
     if (!pathInfo.has(string)) return pathInfo.get('street'); 
-    return pathInfo.get(string); 
-
-    
+    return pathInfo.get(string);
   }
 
   placeStreets(preset) {
@@ -185,18 +193,27 @@ class Location{
           pomArray[i][j]=1;
         }
     });
-    console.log(pomArray);
+    //console.log(pomArray);
     preset.streets.forEach((street) => {
-      for (let i = street.start.x; i < street.start.x + street.width; ++i) 
+      for (let i = street.start.x; i < street.start.x + street.width; ++i) {
         for (let j = street.start.y; j < street.start.y + street.height; ++j) {
-          if(pomArray[i][j]==1)this.array[i][j] = new Tile(this.chooseStreet(pomArray, i, j), i * tileSize, j * tileSize);
-        }
+	  this.awaitAssets++;
+          if(pomArray[i][j]==1)this.array[i][j] =
+	    new Tile(this.chooseStreet(pomArray, i, j),
+		     i * tileSize, j * tileSize,
+		     {rotation: 0,
+		      callback: () => {
+		       this.awaitAssets--;
+		     }});
+	}
+      }
     });
   }
-
+      
   draw(x = 0, y = 0, context = ctx, width = 672, height = 288) {
     if (!this.created)
-      throw "Town: Attempt to draw before creating the town";
+      return;
+      //throw "Town: Attempt to draw before creating the town";
     context.drawImage(this.image, x, y, width, height,
       0, 0, width, height);
   }

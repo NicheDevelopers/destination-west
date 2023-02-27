@@ -19,8 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import ctx from "../global/ctx.js";
-
+import tileSize from "../global/tileSize.js";
+import { createCanvas } from "../global/utilities.js";
 import imgInfo from "../static/imgInfo.js";
+
 
 /**
  * Create sprites to make display of images simple
@@ -32,8 +34,9 @@ class Sprite {
      @param {Object} [options] - Additional options
   */
   constructor(typeName, options = {}, isColored = false) {
-    if (!imgInfo.has(typeName))
-      throw `Sprite: Type name is not defined: ${typeName}`;
+    if (!imgInfo.has(typeName)) {
+      	throw `Sprite: Type name is not recognized: ${typeName}`;
+    }
     this.typeName = typeName;
 
     this.scale = options.scale ?? 1;
@@ -42,22 +45,51 @@ class Sprite {
 
     this.imageInfo = imgInfo.get(typeName);
 
-    this.height = this.imageInfo.height ?? 32;
-    this.width = this.imageInfo.width ?? 32;
+    this.height = this.imageInfo.height ?? tileSize;
+    this.width = this.imageInfo.width ?? tileSize;
     this.spriteSheetRow = this.imageInfo.row ?? 0;
     this.spriteSheetCol = this.imageInfo.col ?? 0;
 
-    if (isColored) return;
+    this.callback = options.callback ?? (() => {});
 
-    this.img = new Image();
+    this.rotation = options.rotation;
+    
+    if (isColored) return;
 
     if (this.imageInfo.src === undefined)
       throw `Sprite: No image path provided for sprite: ${typeName}`;
 
-    this.img.src = this.imageInfo.src;
+    if (!this.rotation) {
+      this.img = new Image();
+      this.img.onload = this.callback;
+      this.img.src = this.imageInfo.src;
+      return;
+    }
 
+    this.imageToRotate = new Image();
+    this.imageToRotate.onload =
+      () => this.rotate(this.rotation * Math.PI / 180);
+    this.imageToRotate.src = this.imageInfo.src;
   }
 
+  rotate(angle, callback){
+    const { canvas: canvas, context: offCtx } = createCanvas(this.width, this.height);
+    offCtx.translate(this.width/2, this.height/2);
+    offCtx.rotate(angle);
+    offCtx.translate(-this.width/2, -this.height/2);
+        
+    offCtx.drawImage(this.imageToRotate,
+		     this.spriteSheetCol * this.width,
+		     this.spriteSheetRow * this.height,
+		     this.width, this.height, 0, 0,
+		     this.width * this.scaleX, this.height * this.scaleY);
+
+    this.spriteSheetCol = 0;
+    this.spriteSheetRow = 0;
+    this.img = new Image();
+    this.img.onload = this.callback;
+    this.img.src = canvas.toDataURL('image/png');
+  }
   /**
   * Draw the sprite on the #game-canvas
   @param {number} x - Position x of the draw location

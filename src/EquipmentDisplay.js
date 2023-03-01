@@ -49,9 +49,34 @@ class EquipmentDisplay extends State {
     while(this.divEqList.firstChild) {
       this.divEqList.removeChild(this.divEqList.lastChild);
     }
+    // let mainDiv = document.createElement("div");
+    // mainDiv.classList.add("list-element");
+    // mainDiv.style.display = "flex";
+    // mainDiv.innerText = "Item name" + "Weight" + "Drop";
+    // this.divEqList.appendChild(mainDiv);
+    let sortDiv = document.createElement("div");
+    sortDiv.classList.add("list-element");
+    let buttonSortUp = document.createElement("button");
+    buttonSortUp.classList.add("button", "eq-button");
+    buttonSortUp.addEventListener("click", () => { this.equipment.sortByWeight(true); this.refresh() });
+    buttonSortUp.innerText = "Heavy";
+    this.divEqList.appendChild(buttonSortUp);
+    let buttonSortDown = document.createElement("button");
+    buttonSortDown.classList.add("button", "eq-button");
+    buttonSortDown.addEventListener("click", () => { this.equipment.sortByWeight(false); this.refresh() });
+    buttonSortDown.innerText = "Light";
+    this.divEqList.appendChild(buttonSortDown);
+    sortDiv.style.textAlign = "center";
+    sortDiv.innerText = "Sort by weight from";
+    this.divEqList.appendChild(sortDiv);
     for (let item of this.equipment.items) {
       this.divEqList.appendChild(this.itemToListElement(item));
     }
+    let sumWeight = document.createElement("div");
+    sumWeight.classList.add("list-element");
+    sumWeight.style.textAlign = "center";
+    sumWeight.innerText = "Weight summary of all items: " + this.equipment.sumWeight;
+    this.divEqList.appendChild(sumWeight);
   }
   startHook() {
     this.refresh();
@@ -63,13 +88,21 @@ class EquipmentDisplay extends State {
   itemToListElement(item) {
     let div = document.createElement("div");
     div.classList.add("list-element");
+    div.style.display = "flex";
     let nameDiv = document.createElement("div");
     nameDiv.innerText = item.name;
     nameDiv.style.display = "inline-block";
+    nameDiv.style.flex = 2;
+    let weightDiv = document.createElement("div");
+    weightDiv.innerText = item.weight;
+    weightDiv.style.display = "inline-block"; 
+    weightDiv.style.flex = 2;
     let dropButton = document.createElement("button");
     dropButton.classList.add("button", "eq-button");
     dropButton.addEventListener("click", () => { this.equipment.drop(item); this.refresh() });
+    dropButton.innerText = "Drop";
     div.appendChild(nameDiv);
+    div.appendChild(weightDiv);
     div.appendChild(dropButton);
     return div;
   }

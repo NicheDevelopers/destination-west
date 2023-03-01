@@ -51,14 +51,16 @@ class Equipment{
     }
   }
 
-  sortByWeight(){
-    this.items.sort((a, b) => b.weight - a.weight);
+  sortByWeight(heavy_on_top){
+    if (heavy_on_top == true) this.items.sort((a, b) => b.weight - a.weight);
+    else this.items.sort((a, b) => a.weight - b.weight);
   }
 
   drop(item){
     console.log("Dropping item: ", item);
     this.items = this.items.filter( (i) => i.id != item.id );
     console.log("Eq: ", this.items);
+    this.sumWeight -= item.weight;
   }
 };
 

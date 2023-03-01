@@ -140,11 +140,12 @@ canvas {
     border: 1px solid red;
     font-size: x-large;
     margin: auto;
+    /* display: table-row; */
 }
 
 .eq-button {
-    height: 10px;
-    width: 10px;
+    height: 20px;
+    width: 50px;
     float: right;
     margin: 0;
 }

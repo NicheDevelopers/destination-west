@@ -36,29 +36,29 @@ const variants = 2;
    The last numeral is the number that represent one of the 'variants' of the sprite that we have prepered.
 */
 const pathInfo = new Map([
-  ["street","street"],
-  ["000110000","path-narrow-side-1"],
-  ["000110001","path-narrow-side-2"],
-  ["000100101","path-narrrow-corner-1"],
-  ["000100101","path-narrrow-corner-2"],
-  ["000100000","path-narrow-end-1"],
-  ["000100001","path-narrow-end-2"],
-  ["010100100","path-narrow-fork-1"],
-  ["010100100","path-narrow-fork-2"],
-  ["010110100","path-narrow-crossroad-1"],
-  ["010110101","path-narrow-crossroad-2"],
-  ["111111110","path-wide-full-1"],
-  ["111111111","path-wide-full-2"],
-  ["011111110","path-wide-inner-corner-1"],
-  ["011111111","path-wide-inner-corner-2"],
-  ["000111110","path-wide-side-1"],
-  ["000111111","path-wide-side-2"],
-  ["000101100","path-wide-corner-1"],
-  ["000101101","path-wide-corner-2"],
+  ["street", "street"],
+  ["000110000", "path-narrow-side-1"],
+  ["000110001", "path-narrow-side-2"],
+  ["000100101", "path-narrrow-corner-1"],
+  ["000100101", "path-narrrow-corner-2"],
+  ["000100000", "path-narrow-end-1"],
+  ["000100001", "path-narrow-end-2"],
+  ["010100100", "path-narrow-fork-1"],
+  ["010100100", "path-narrow-fork-2"],
+  ["010110100", "path-narrow-crossroad-1"],
+  ["010110101", "path-narrow-crossroad-2"],
+  ["111111110", "path-wide-full-1"],
+  ["111111111", "path-wide-full-2"],
+  ["011111110", "path-wide-inner-corner-1"],
+  ["011111111", "path-wide-inner-corner-2"],
+  ["000111110", "path-wide-side-1"],
+  ["000111111", "path-wide-side-2"],
+  ["000101100", "path-wide-corner-1"],
+  ["000101101", "path-wide-corner-2"],
 ]);
 
-class Location{
-    constructor(width, height){
+class Location {
+    constructor(width, height) {
         this.array = undefined;
         this.created = false;
         this.width = width;
@@ -66,10 +66,11 @@ class Location{
         this.widthPx = this.width * tileSize;
       this.heightPx = this.height * tileSize;
       this.awaitAssets = 0;
+      this.droppedItems = new Array();
     }
 
-  prerender(){
-    console.log(this.awaitAssets);
+  prerender() {
+    //console.log(this.awaitAssets);
     if (this.awaitAssets > 0) {
       setTimeout(() => this.prerender(), 0);
       return;
@@ -84,14 +85,14 @@ class Location{
     this.image.src = canvas.toDataURL('image/png');
   }
 
-    // check if there's a builing in the 5x5 square surrounding a tile
-    nearToBuilding(xPos, yPos) {
-        for (let i = -2; i <= 2; i++)
-        for (let j = -2; j <= 2; j++) {
-            if (xPos + i < 0 || xPos + i >= this.array.length) continue;
-            if (yPos + j < 0 || yPos + j >= this.array[0].length) continue;
-            if (this.array[xPos + i][yPos + j].typeName.substring(0, 9) == 'building-') return true;
-        }
+  // check if there's a builing in the 5x5 square surrounding a tile
+  nearToBuilding(xPos, yPos) {
+    for (let i = -2; i <= 2; i++)
+      for (let j = -2; j <= 2; j++) {
+        if (xPos + i < 0 || xPos + i >= this.array.length) continue;
+        if (yPos + j < 0 || yPos + j >= this.array[0].length) continue;
+        if (this.array[xPos + i][yPos + j].typeName.substring(0, 9) == 'building-') return true;
+      }
     return false;
   }
 
@@ -143,7 +144,7 @@ class Location{
   placeBackground(background) {
     let length = this.array.length;
     let height = this.array[0].length;
-    for (let i = 0; i < length; i++) 
+    for (let i = 0; i < length; i++)
       for (let j = 0; j < height; j++) {
         if (this.array[i][j] === undefined)
           this.array[i][j] = new Tile(background, i * tileSize, j * tileSize);
@@ -151,7 +152,7 @@ class Location{
   }
 
   placeBuilding(xStart, yStart, building) {
-    for (let i = 0; i < building.xTiles; i++) 
+    for (let i = 0; i < building.xTiles; i++)
       for (let j = 0; j < building.yTiles; j++) {
         this.array[xStart + i][yStart + j] = building.array[i][j];
         this.array[xStart + i][yStart + j].x = xStart * tileSize + building.array[i][j].x;
@@ -159,38 +160,38 @@ class Location{
       }
   }
 
-  chooseStreet(pomArray, x, y){
+  chooseStreet(pomArray, x, y) {
     let string = '';
 
-    console.assert(pomArray!= undefined, "pomArray is undefined");
+    console.assert(pomArray != undefined, "pomArray is undefined");
 
-    for(let i=-1; i<=1; i++){
-     for(let j=-1; j<=1; j++){
-        if(i===0 && j===0) continue;
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if (i === 0 && j === 0) continue;
         //debugger;
-        try{
-          pomArray[x+j][y+i]===1? string += '1' : string += '0';
+        try {
+          pomArray[x + j][y + i] === 1 ? string += '1' : string += '0';
         }
-        catch( e ){
-          if(e instanceof TypeError) string+= '1'; else throw e;
+        catch (e) {
+          if (e instanceof TypeError) string += '1'; else throw e;
         }
       }
     }
-    string+=randIntInRange(0,variants);
-    //console.log(string ,x , y);
-    if (!pathInfo.has(string)) return pathInfo.get('street'); 
+    string += randIntInRange(0, variants);
+    console.log(string, x, y);
+    if (!pathInfo.has(string)) return pathInfo.get('street');
     return pathInfo.get(string);
   }
 
   placeStreets(preset) {
-    
+
     let pomArray = new Array(this.width);
     for (let x = 0; x < this.width; ++x) pomArray[x] = new Array(this.height);
-    
+
     preset.streets.forEach((street) => {
-      for (let i = street.start.x; i < street.start.x + street.width; ++i) 
+      for (let i = street.start.x; i < street.start.x + street.width; ++i)
         for (let j = street.start.y; j < street.start.y + street.height; ++j) {
-          pomArray[i][j]=1;
+          pomArray[i][j] = 1;
         }
     });
     //console.log(pomArray);
@@ -215,7 +216,10 @@ class Location{
       return;
       //throw "Town: Attempt to draw before creating the town";
     context.drawImage(this.image, x, y, width, height,
-      0, 0, width, height);
+                      0, 0, width, height);
+    for (let droppedItem of this.droppedItems) {
+      droppedItem.draw(x, y);
+    }
   }
   drawRaw(x0 = 0, y0 = 0, context = ctx) {
     for (let x = 0; x < this.array.length; ++x)
@@ -225,7 +229,7 @@ class Location{
       }
   }
   drawDebugInfo() {
-    for (let x = 0; x < this.array.length; ++x) 
+    for (let x = 0; x < this.array.length; ++x)
       for (let y = 0; y < this.array[0].length; ++y) {
         let tile = this.array[x][y];
         tile.drawDebugInfo();

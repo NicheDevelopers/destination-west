@@ -20,7 +20,6 @@
 */
 import ctx from "../global/ctx.js";
 import Sprite from "./Sprite.js";
-import imgInfo from "../static/imgInfo.js";
 import { createCanvas } from "../global/utilities.js";
 
 /**

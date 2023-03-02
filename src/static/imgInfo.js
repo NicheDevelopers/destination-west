@@ -25,7 +25,8 @@ let img = (src, height = tileSize, width = tileSize, row = 0, col = 0) =>
   ({ src: src, height: height, width: width, row: row, col: col });
 
 const townPropSheet = "img/town-props.png";
-
+//When you want to change the name of the path sprite in imgInfo then you have to change the name in file /src/Location.js in pathInfo map as well
+const pathPropSheet = "img/path.png";
 /**
  * Map describing spritesheets that come with the game
  */
@@ -44,6 +45,27 @@ const imgInfo = new Map([
   //["decoration-small-dry-grass-left-1x", img(townPropSheet, tileSize, tileSize, 2, 1)],
   //["decoration-small-dry-grass-right-1x", img(townPropSheet, tileSize, tileSize, 2, 2)],
   //["decoration-metal-crate-big-1x", img(townPropSheet, tileSize, tileSize, 3, 2)],
+  
+  ["path-narrow-side-1", img(pathPropSheet, tileSize, tileSize, 0, 0)],
+  ["path-narrow-side-2", img(pathPropSheet, tileSize, tileSize, 0, 1)],
+  ["path-narrow-side-3", img(pathPropSheet, tileSize, tileSize, 0, 2)],
+  ["path-narrrow-corner-1", img(pathPropSheet, tileSize, tileSize, 0, 3)],
+  ["path-narrrow-corner-2", img(pathPropSheet, tileSize, tileSize, 0, 4)],
+  ["path-narrow-end-1", img(pathPropSheet, tileSize, tileSize, 0, 5)],
+  ["path-narrow-end-2", img(pathPropSheet, tileSize, tileSize, 0, 6)],
+  ["path-narrow-fork-1", img(pathPropSheet, tileSize, tileSize, 0, 7)],
+  ["path-narrow-fork-2", img(pathPropSheet, tileSize, tileSize, 0, 8)],
+  ["path-narrow-crossroad-1", img(pathPropSheet, tileSize, tileSize, 0, 9)],
+  ["path-narrow-crossroad-2", img(pathPropSheet, tileSize, tileSize, 0, 10)],
+  ["path-wide-full-1", img(pathPropSheet, tileSize, tileSize, 0, 11)],
+  ["path-wide-full-2", img(pathPropSheet, tileSize, tileSize, 0, 11)],
+  ["path-wide-inner-corner-1", img(pathPropSheet, tileSize, tileSize, 0, 12)],
+  ["path-wide-inner-corner-2", img(pathPropSheet, tileSize, tileSize, 0, 13)],
+  ["path-wide-side-1", img(pathPropSheet, tileSize, tileSize, 0, 14)],
+  ["path-wide-side-2", img(pathPropSheet, tileSize, tileSize, 0, 15)],
+  ["path-wide-corner-1", img(pathPropSheet, tileSize, tileSize, 0, 16)],
+  ["path-wide-corner-2", img(pathPropSheet, tileSize, tileSize, 0, 17)],
+  
   ["jacket", img("img/clothes.png", tileSize, tileSize, 0, 0)],
   ["pants", img("img/clothes.png", tileSize, tileSize, 0, 1)],
   ["player", {
@@ -66,6 +88,7 @@ const imgInfo = new Map([
       }]
     ])
   }]
+
 ]);
 
 let newBuildingPart = (name, col, row) => ({ name: name, row: row, col: col });

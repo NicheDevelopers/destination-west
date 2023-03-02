@@ -19,9 +19,12 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import Item from "./Item/Item.js";
+import DroppedItem from "./Item/DroppedItem.js";
+import tileSize from "./global/tileSize.js";
 
 class Equipment{
-  constructor (maxWeight){
+  constructor (game, maxWeight){
+    this.game = game;
     this.maxWeight = maxWeight;
     this.sumWeight = 0;
     this.items = [];
@@ -59,7 +62,13 @@ class Equipment{
   drop(item){
     console.log("Dropping item: ", item);
     this.items = this.items.filter( (i) => i.id != item.id );
-    console.log("Eq: ", this.items);
+    this.game.currentTown.droppedItems.push(new DroppedItem(
+      item,
+      this.game.player.centerPoint.x - tileSize/2,
+      this.game.player.centerPoint.y - tileSize/2
+    ));
+    //console.log("Dropped items: ", this.game.currentTown.droppedItems);
+    //console.log("Eq: ", this.items);
     this.sumWeight -= item.weight;
   }
 };

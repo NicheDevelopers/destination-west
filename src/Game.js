@@ -46,7 +46,7 @@ class Game extends State {
     this.worldMap = new WorldMap(5, 0.5, 0.3, 2, 4, 1344, 576);
     this.worldMapDisplay = new WorldMapDisplay(this);
 
-    let testEq = new Equipment(100);
+    let testEq = new Equipment(this, 100);
     for (let i=0; i<5; i++){
       testEq.put(new Item(`Apple${i}`, 'decoration-small-stones-1', 0, i, i+1, 0, 0));
     }

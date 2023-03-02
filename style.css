@@ -137,7 +137,8 @@ canvas {
 }
 
 .list-element {
-    border: 1px solid red;
+    border: 2px solid black;
+    border-top: none;
     font-size: x-large;
     margin: auto;
     /* display: table-row; */

@@ -52,27 +52,30 @@ class Sprite {
 
     this.callback = options.callback ?? (() => {});
 
-    this.rotation = options.rotation;
-    
+    //if (options.debug) debugger;
+    this.rotation = (options.crop)? 0 : options.rotation;
+        
     if (isColored) return;
 
     if (this.imageInfo.src === undefined)
       throw `Sprite: No image path provided for sprite: ${typeName}`;
-
-    if (!this.rotation) {
+      
+    if (this.rotation === undefined) {
       this.img = new Image();
+      this.img.style.display = 'block';
       this.img.onload = this.callback;
       this.img.src = this.imageInfo.src;
       return;
     }
 
     this.imageToRotate = new Image();
+    
     this.imageToRotate.onload =
       () => this.rotate(this.rotation * Math.PI / 180);
     this.imageToRotate.src = this.imageInfo.src;
   }
 
-  rotate(angle, callback){
+  rotate(angle){
     const { canvas: canvas, context: offCtx } = createCanvas(this.width, this.height);
     offCtx.translate(this.width/2, this.height/2);
     offCtx.rotate(angle);
@@ -87,9 +90,11 @@ class Sprite {
     this.spriteSheetCol = 0;
     this.spriteSheetRow = 0;
     this.img = new Image();
+    this.img.style.display = 'block';
     this.img.onload = this.callback;
     this.img.src = canvas.toDataURL('image/png');
   }
+
   /**
   * Draw the sprite on the #game-canvas
   @param {number} x - Position x of the draw location

@@ -48,7 +48,7 @@ class Game extends State {
 
     let testEq = new Equipment(this, 100);
     for (let i=0; i<5; i++){
-      testEq.put(new Item(`Apple${i}`, 'decoration-small-stones-1', 0, i, i+1, 0, 0));
+      testEq.put(new Item(`Apple${i}`, 'decoration-cactus-1x', 0, i, i+1, 0, 0));
     }
     this.equipmentDisplay = new EquipmentDisplay(this, testEq);
 

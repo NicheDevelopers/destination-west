@@ -56,6 +56,8 @@ class EquipmentDisplay extends State {
     // this.divEqList.appendChild(mainDiv);
     let sortDiv = document.createElement("div");
     sortDiv.classList.add("list-element");
+    sortDiv.style.border = 'none';
+    sortDiv.style.borderBottom = '2px solid black';
     let buttonSortUp = document.createElement("button");
     buttonSortUp.classList.add("button", "eq-button");
     buttonSortUp.addEventListener("click", () => { this.equipment.sortByWeight(true); this.refresh() });
@@ -101,6 +103,7 @@ class EquipmentDisplay extends State {
     dropButton.classList.add("button", "eq-button");
     dropButton.addEventListener("click", () => { this.equipment.drop(item); this.refresh() });
     dropButton.innerText = "Drop";
+    div.appendChild(item.sprite.img);
     div.appendChild(nameDiv);
     div.appendChild(weightDiv);
     div.appendChild(dropButton);

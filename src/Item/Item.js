@@ -24,7 +24,7 @@ class Item {
   constructor(itemName, spriteName, durability, id, weight, price, priceRetention) {
     this.name = itemName;
     this.spriteName = spriteName;
-    this.sprite = new Sprite(spriteName);
+    this.sprite = new Sprite(spriteName, {crop: true});
     this.durability = durability;
     this.id = id;
     this.weight = weight;

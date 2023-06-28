@@ -1,7 +1,8 @@
 /*
   file: src/Designer.js
   purpose: create an interface for designing colored sprites
-  author: Artur Gulik <https://gitlab.com/ArturGulik>
+  authors: Artur Gulik <https://gitlab.com/ArturGulik>
+           Kamil Małecki <https://gitlab.com/gaussx>
     
   This file is part of 'Destination West'.
   
@@ -26,6 +27,28 @@ import { State, stateManager } from "./global/stateManager.js";
 /**
  * Create an interface for designing colored sprites
  */
+
+function hex_to_rgb(colorHex){ //this may not be elegant, but at least it's fast
+  let rgb = [0, 0, 0];
+  for(let i = 0; i < 3; i += 1){
+    rgb[i] = parseInt(colorHex.slice(2*i + 1, 2*i + 3), 16)
+  }
+  return rgb;
+}
+
+function rgb_to_hex(colorRgb){
+  let hex = "#";
+  for(const element of colorRgb){
+    let intElement = element
+    if(Object.getPrototypeOf("") === Object.getPrototypeOf(element))
+      intElement = parseInt(element, 10);
+    if(intElement < 15)
+      hex += "0";
+    hex += intElement.toString(16);
+  }
+  return hex.toUpperCase();
+}
+
 class Designer extends State {
   constructor(game) {
     super(false);
@@ -66,15 +89,26 @@ class Designer extends State {
     };
 
     let coloringDiv = createDiv(250, 400);
-
+    this.colorSliders = [0, 0, 0]; //R, G, B
+    for(let i = 0; i < 3; ++i){
+      this.colorSliders[i] = document.createElement('input');
+      this.colorSliders[i].type = 'range';
+      this.colorSliders[i].min = 0;
+      this.colorSliders[i].max = 255;
+      this.colorSliders[i].value = 100;
+      coloringDiv.appendChild(this.colorSliders[i]);
+    }
+    
     this.input = document.createElement('input');
-    this.input.type = 'color';
-    coloringDiv.appendChild(this.input);
-
+    this.input.type = 'text'
+    coloringDiv.appendChild(this.input)
     for (const menu in this.menus) {
       div.appendChild(this.menus[menu]);
     }
     this.changeMenu('mainMenu');
+    for(let i = 0; i < 3; ++i){
+      this.colorSliders[i].style.display = 'none';
+    }
     this.input.style.display = 'none';
 
     div.appendChild(coloringDiv);
@@ -87,7 +121,20 @@ class Designer extends State {
       jacket: new ColoredSprite('jacket', () => this.update)
     };
 
-    this.input.addEventListener('change', () => {
+    for(let i = 0; i < 3; ++i){
+      this.colorSliders[i].addEventListener('change', () => {
+        let rgbValues = [this.colorSliders[0].value, this.colorSliders[1].value, this.colorSliders[2].value]
+        this.input.value = rgb_to_hex(rgbValues);
+        this.clothes[this.currentElement].setColor(rgb_to_hex(rgbValues))
+      });
+    }
+
+    this.input.addEventListener('change', () =>{
+      let newColors = hex_to_rgb(this.input.value);
+      console.log("Inside eventlistener: ", newColors);
+      for(let i = 0; i < 3; ++i){
+        this.colorSliders[i].value = newColors[i];
+      }
       this.clothes[this.currentElement].setColor(this.input.value);
     });
 
@@ -100,7 +147,10 @@ class Designer extends State {
   changeMenu(menuName) {
     if (this.currentMenu)
       this.currentMenu.style.display = 'none';
-    this.input.style.display = 'none';
+      for(let i = 0; i < 3; ++i){
+        this.colorSliders[i].style.display = 'none';
+      }
+      this.input.style.display = 'none';
     this.currentMenu = this.menus[menuName];
     this.currentMenu.style.display = 'grid';
   }
@@ -145,6 +195,11 @@ function newMenuButton(name, designer, setName = name) {
     designer.currentElement = setName;
     designer.input.value = designer.clothes[setName].color;
     designer.input.style.display = 'block';
+    let rgbColor = hex_to_rgb(designer.input.value);
+    for(let i = 0; i < 3; ++i){
+      designer.colorSliders[i].style.display = 'block';
+      designer.colorSliders[i].value = rgbColor[i];
+    }
   }
   return button;
 }

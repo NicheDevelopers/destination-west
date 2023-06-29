@@ -22,12 +22,12 @@
 
 /**
  * Return a random float.
- # Two arguments provided: Return a float between `min` and `max`
- @param {number} min - minimum returned float
- @param {number} max - maximum returned float
- # One argument provided: Return a float between 0 and `max`
- @param {number} max - maximum returned float
- # No arguments provided: Return a float between 0 and 1
+ # Two arguments provided: Return a float from range <`min`, `max`)
+ @param {number} min - returned float lower limit, inclusive
+ @param {number} max - returned float upper limit, exclusive
+ # One argument provided: Return a float from range <0, `max`)
+ @param {number} max - returned float upper limit, exclusive
+ # No arguments provided: Return a float from range <0, 1)
  */
 function randFloatInRange(min, max) {
   if (min === undefined) {
@@ -42,12 +42,12 @@ function randFloatInRange(min, max) {
 
 /**
  * Return a random integer.
- # Two arguments provided: Return an integer between `min` and `max`
- @param {number} min - minimum returned integer
- @param {number} max - maximum returned integer
- # One argument provided: Return an integer between 0 and `max`
- @param {number} max - maximum returned integer
- # No arguments provided: Return an integer between 0 and 1
+ # Two arguments provided: Return an integer from range <`min`, `max`)
+ @param {number} min - returned integer lower limit, inclusive
+ @param {number} max - returned integer upper limit, exclusive
+ # One argument provided: Return an integer from range <0, `max`)
+ @param {number} max - returned integer upper limit, exclusive
+ # No arguments provided: Return 0 or 1
  */
 function randIntInRange(min, max) {
   if (min === undefined) {

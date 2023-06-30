@@ -21,8 +21,8 @@
 
 import ctx, { getGameCanvasSizeX, getGameCanvasSizeY } from "./global/ctx.js";
 
-function makeEven(x){
-  if (x%2 == 1)
+function makeEven(x) {
+  if (x % 2 == 1)
     x++;
   return x;
 }
@@ -46,12 +46,12 @@ class Camera {
     window.addEventListener('fullscreenchange', () => this.updateSize());
     this.game = game;
   }
-  updateSize(){
+  updateSize() {
     const gcon = document.querySelector("#game-container");
     const gc = document.querySelector("#game-canvas");
     gc.width = makeEven(Math.ceil(gcon.scrollWidth / this.zoom));
     gc.height = makeEven(Math.ceil(gcon.scrollHeight / this.zoom));
-    gc.style.transform = `scale(${this.zoomSafetyMultiplier*this.zoom})`;
+    gc.style.transform = `scale(${this.zoomSafetyMultiplier * this.zoom})`;
     this.width = getGameCanvasSizeX();
     this.height = getGameCanvasSizeY();
     this.centerX = this.width / 2;
@@ -61,19 +61,19 @@ class Camera {
     this.game.app.manageRequest(
       'Camera zoom in',
       () => {
-	if (this.zoom < this.zoomMax) {
-	  this.zoom += 0.05;
-	  this.updateSize();
-	}
+        if (this.zoom < this.zoomMax) {
+          this.zoom += 0.05;
+          this.updateSize();
+        }
       }
     );
     this.game.app.manageRequest(
       'Camera zoom out',
       () => {
-	if (this.zoom > this.zoomMin) {
-	  this.zoom -= 0.05;
-	  this.updateSize();
-	}
+        if (this.zoom > this.zoomMin) {
+          this.zoom -= 0.05;
+          this.updateSize();
+        }
       }
     );
     ctx.clearRect(0, 0, this.width, this.height);
@@ -90,11 +90,12 @@ class Camera {
       this.game.currentTown.heightPx - this.height));
 
     this.game.currentTown.draw(topLeftX, topLeftY, ctx,
-			       this.width, this.height);
+      this.width, this.height);
 
-    this.game.player.draw(this.game.player.x - topLeftX,
-      this.game.player.y - topLeftY);
-
+    this.game.currentTown.npcs.forEach(npc => npc.draw(
+      npc.x - topLeftX,
+      npc.y - topLeftY));
+    
     this.game.player.draw(this.game.player.x - topLeftX,
       this.game.player.y - topLeftY);
   }

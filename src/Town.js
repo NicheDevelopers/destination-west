@@ -26,7 +26,7 @@ import { randIntInRange } from "./global/utilities.js";
 import Location from "./Location.js";
 import Building from "./Building.js";
 
-class Town extends Location{
+class Town extends Location {
   constructor(name, x, y, layer, ID, numBldInTown = {}) {
     super(42, 20);
     this.layer = layer;
@@ -84,6 +84,10 @@ class Town extends Location{
         counter++;
       }
     });
+  }
+
+  update() {
+    this.npcs.forEach(npc => npc.update());
   }
   
 }

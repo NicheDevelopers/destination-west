@@ -87,6 +87,7 @@ class Location {
     this.heightPx = this.height * tileSize;
     this.awaitAssets = 0;
     this.droppedItems = new Array();
+    this.npcs = new Array();
   }
 
   prerender() {

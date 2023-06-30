@@ -31,6 +31,7 @@ import Equipment from "./Equipment.js";
 import Designer from "./Designer.js";
 import Item from "./Item/Item.js";
 import { State } from "./global/stateManager.js"
+import Npc from "./Entity/Npc.js";
 
 class Game extends State {
   constructor(app) {
@@ -61,6 +62,7 @@ class Game extends State {
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
     this.player = new Player(this, 350, 290);
+    this.currentTown.npcs.push(new Npc("Ol' Benjamin", 350, 290));
     this.camera = new Camera(this);
 
     this.slaves = [
@@ -90,6 +92,7 @@ class Game extends State {
 
   update() {
     this.player.update();
+    this.currentTown.update();
     this.camera.render();
   }
 

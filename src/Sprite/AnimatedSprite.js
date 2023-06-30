@@ -32,8 +32,8 @@ class AnimatedSprite extends Sprite {
   constructor(spriteName, options) {
     super(spriteName, options);
 
-    this.animations = this.imageInfo.animations;
-    this.defaultAnimation = this.imageInfo.defaultAnimation;
+    this.animations = this.sheetInfo.animations;
+    this.defaultAnimation = this.sheetInfo.defaultAnimation;
 
     this.currentFrame = 0;
     this.currentAnimation = undefined;

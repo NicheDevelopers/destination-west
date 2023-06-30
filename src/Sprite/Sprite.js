@@ -20,9 +20,8 @@
 */
 import ctx from "../global/ctx.js";
 import tileSize from "../global/tileSize.js";
-import { createCanvas } from "../global/utilities.js";
+import { createCanvas, randIntInRange } from "../global/utilities.js";
 import imgInfo from "../static/imgInfo.js";
-
 
 /**
  * Create sprites to make display of images simple
@@ -43,12 +42,16 @@ class Sprite {
     this.scaleX = options.scaleX ?? this.scale;
     this.scaleY = options.scaleY ?? this.scale;
 
-    this.imageInfo = imgInfo.get(typeName);
+    this.sheetInfo = imgInfo.get(typeName);
 
-    this.height = this.imageInfo.height ?? tileSize;
-    this.width = this.imageInfo.width ?? tileSize;
-    this.spriteSheetRow = this.imageInfo.row ?? 0;
-    this.spriteSheetCol = this.imageInfo.col ?? 0;
+    this.height = this.sheetInfo.spriteHeight ?? tileSize;
+    this.width = this.sheetInfo.spriteWidth ?? tileSize;
+    this.spriteSheetRow = this.sheetInfo.row ?? 0;
+    this.spriteSheetCol = this.sheetInfo.col ?? 0;
+    if (this.sheetInfo.random) {
+      this.spriteSheetRow = randIntInRange(0, this.sheetInfo.height);
+      this.spriteSheetCol = randIntInRange(0, this.sheetInfo.width);
+    }
 
     this.callback = options.callback ?? (() => {});
 
@@ -57,14 +60,14 @@ class Sprite {
         
     if (isColored) return;
 
-    if (this.imageInfo.src === undefined)
+    if (this.sheetInfo.src === undefined)
       throw `Sprite: No image path provided for sprite: ${typeName}`;
       
     if (this.rotation === undefined) {
       this.img = new Image();
       this.img.style.display = 'block';
       this.img.onload = this.callback;
-      this.img.src = this.imageInfo.src;
+      this.img.src = this.sheetInfo.src;
       return;
     }
 
@@ -72,7 +75,7 @@ class Sprite {
     
     this.imageToRotate.onload =
       () => this.rotate(this.rotation * Math.PI / 180);
-    this.imageToRotate.src = this.imageInfo.src;
+    this.imageToRotate.src = this.sheetInfo.src;
   }
 
   rotate(angle){

@@ -24,54 +24,55 @@ import tileSize from "../global/tileSize.js";
 let img = (src, height = tileSize, width = tileSize, row = 0, col = 0) =>
   ({ src: src, height: height, width: width, row: row, col: col });
 
-const townPropSheet = "img/town-props.png";
-//When you want to change the name of the path sprite in imgInfo then you have to change the name in file /src/Location.js in pathInfo map as well
-const pathPropSheet = "img/path.png";
 /**
  * Map describing spritesheets that come with the game
  */
+
+class Spritesheet {
+  constructor(path, width, height, elements, options = {}) {
+    if (width*height < elements.length)
+      throw "Error: Spritesheet element count is greater " +
+      `than the specified spritesheet size (${path})\n` +
+      `Size: ${width*height} (${width}*${height})\n` +
+      `Numer of elements: ${elements.length}`;
+    this.path = path;
+    this.width = width;
+    this.height = height;
+    this.spriteWidth = options.spriteWidth ?? tileSize;
+    this.spriteHeight = options.spriteHeight ?? tileSize;
+    this.elements = elements;
+    this.options = options;
+  }
+  saveToMap(map) {
+    let x=-1, y=0;
+    for (const e of this.elements) {
+      ++x;
+      if (x === this.width) {
+	x = 0;
+	++y;
+      }
+      map.set(e, {
+	src: this.path,
+	width: this.spriteWidth,
+	height: this.spriteHeight,
+	row: y,
+	col: x,
+	defaultAnimation: this.options.defaultAnimation,
+	animations: this.options.animations,
+	random: this.options.random
+      });
+    }
+  }
+}
+
 const imgInfo = new Map([
-  ["street", img(townPropSheet, tileSize, tileSize, 0, 0)],
-  ["sand", img(townPropSheet, tileSize, tileSize, 0, 1)],
-  ["decoration-small-stones-1", img(townPropSheet, tileSize, tileSize, 0, 2)],
-  ["decoration-cactus-1x", img(townPropSheet, tileSize, tileSize, 1, 0)],
-  ["decoration-roadsign", img(townPropSheet, tileSize, tileSize, 1, 1)],
-  ["decoration-stone-well", img(townPropSheet, tileSize, tileSize, 1, 2)],
-  ["decoration-big-bag-3x", img(townPropSheet, tileSize, tileSize, 2, 0)],
-  ["decoration-green-bush-1", img(townPropSheet, tileSize, tileSize, 2, 1)],
-  //["decoration-small-dry-bush-left-1x", img(townPropSheet, tileSize, tileSize, 1, 0)],
-  //["decoration-small-dry-bush-right-1x", img(townPropSheet, tileSize, tileSize, 1, 1)],
-  //["decoration-big-dry-grass-1x", img(townPropSheet, tileSize, tileSize, 2, 0)],
-  //["decoration-small-dry-grass-left-1x", img(townPropSheet, tileSize, tileSize, 2, 1)],
-  //["decoration-small-dry-grass-right-1x", img(townPropSheet, tileSize, tileSize, 2, 2)],
-  //["decoration-metal-crate-big-1x", img(townPropSheet, tileSize, tileSize, 3, 2)],
-  
-  ["path-narrow-side-1", img(pathPropSheet, tileSize, tileSize, 0, 0)],
-  ["path-narrow-side-2", img(pathPropSheet, tileSize, tileSize, 0, 1)],
-  ["path-narrow-side-3", img(pathPropSheet, tileSize, tileSize, 0, 2)],
-  ["path-narrrow-corner-1", img(pathPropSheet, tileSize, tileSize, 0, 3)],
-  ["path-narrrow-corner-2", img(pathPropSheet, tileSize, tileSize, 0, 4)],
-  ["path-narrow-end-1", img(pathPropSheet, tileSize, tileSize, 0, 5)],
-  ["path-narrow-end-2", img(pathPropSheet, tileSize, tileSize, 0, 6)],
-  ["path-narrow-fork-1", img(pathPropSheet, tileSize, tileSize, 0, 7)],
-  ["path-narrow-fork-2", img(pathPropSheet, tileSize, tileSize, 0, 8)],
-  ["path-narrow-crossroad-1", img(pathPropSheet, tileSize, tileSize, 0, 9)],
-  ["path-narrow-crossroad-2", img(pathPropSheet, tileSize, tileSize, 0, 10)],
-  ["path-wide-full-1", img(pathPropSheet, tileSize, tileSize, 0, 11)],
-  ["path-wide-full-2", img(pathPropSheet, tileSize, tileSize, 0, 11)],
-  ["path-wide-inner-corner-1", img(pathPropSheet, tileSize, tileSize, 0, 12)],
-  ["path-wide-inner-corner-2", img(pathPropSheet, tileSize, tileSize, 0, 13)],
-  ["path-wide-side-1", img(pathPropSheet, tileSize, tileSize, 0, 14)],
-  ["path-wide-side-2", img(pathPropSheet, tileSize, tileSize, 0, 15)],
-  ["path-wide-corner-1", img(pathPropSheet, tileSize, tileSize, 0, 16)],
-  ["path-wide-corner-2", img(pathPropSheet, tileSize, tileSize, 0, 17)],
-  
+  ["path-wide-full-2", img("img/path.png", tileSize, tileSize, 0, 11)], //fix this @leszmak
   ["jacket", img("img/clothes.png", tileSize, tileSize, 0, 0)],
   ["pants", img("img/clothes.png", tileSize, tileSize, 0, 1)],
   ["player", {
     src: "img/player.png",
-    height: 37,
-    width: 50,
+    spriteHeight: 37,
+    spriteWidth: 50,
     defaultAnimation: "idle",
     animations: new Map([
       ["idle", {
@@ -90,6 +91,25 @@ const imgInfo = new Map([
   }]
 
 ]);
+
+const townPropList = [
+  "street", "sand", "decoration-small-stones-1", "decoration-cactus-1x",
+  "decoration-roadsign", "decoration-stone-well", "decoration-big-bag-3x",
+  "decoration-green-bush-1"
+];
+const townPropSheet = new Spritesheet("img/town-props.png", 3, 3, townPropList);
+
+const pathTypeList = [
+  "path-narrow-side-1", "path-narrow-side-2", "path-narrow-side-3", "path-narrrow-corner-1",
+  "path-narrrow-corner-2", "path-narrow-end-1", "path-narrow-end-2", "path-narrow-fork-1",
+  "path-narrow-fork-2", "path-narrow-crossroad-1", "path-narrow-crossroad-2", "path-wide-full-1",
+  "path-wide-inner-corner-1", "path-wide-inner-corner-2", "path-wide-side-1",
+  "path-wide-side-2", "path-wide-corner-1", "path-wide-corner-2"
+];
+const pathSheet = new Spritesheet("img/path.png", 18, 1, pathTypeList);
+
+townPropSheet.saveToMap(imgInfo);
+pathSheet.saveToMap(imgInfo);
 
 let newBuildingPart = (name, col, row) => ({ name: name, row: row, col: col });
 let buildingParts = [

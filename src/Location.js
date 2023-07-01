@@ -224,10 +224,11 @@ class Location {
         for (let j = street.start.y; j < street.start.y + street.height; ++j) {
           this.awaitAssets++;
           let nameAndDegree = this.chooseStreet(pomArray, i, j);
-          if (pomArray[i][j] == 1) this.array[i][j] = new Tile(nameAndDegree[0], i * tileSize, j * tileSize,
-            {
+          if (pomArray[i][j] == 1) this.array[i][j] = new Tile(
+	    nameAndDegree[0], i * tileSize, j * tileSize,
+	    {
               rotation: nameAndDegree[1],
-              callback: () => {
+	      callback: () => {
                 this.awaitAssets--;
               }
             });

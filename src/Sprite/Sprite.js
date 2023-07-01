@@ -23,6 +23,10 @@ import tileSize from "../global/tileSize.js";
 import { createCanvas, randIntInRange } from "../global/utilities.js";
 import imgInfo from "../static/imgInfo.js";
 
+function transparent(alpha) {
+  return (alpha<5);
+}
+
 /**
  * Create sprites to make display of images simple
  */
@@ -57,13 +61,16 @@ class Sprite {
 
     //if (options.debug) debugger;
     this.rotation = (options.crop)? 0 : options.rotation;
+    this.outline = options.outline;
         
     if (isColored) return;
 
     if (this.sheetInfo.src === undefined)
       throw `Sprite: No image path provided for sprite: ${typeName}`;
-      
-    if (this.rotation === undefined) {
+
+    this.processingImage = (this.rotation !== undefined || this.outline !== undefined);
+    
+    if (!this.processingImage) {
       this.img = new Image();
       this.img.style.display = 'block';
       this.img.onload = this.callback;
@@ -71,20 +78,31 @@ class Sprite {
       return;
     }
 
-    this.imageToRotate = new Image();
-    
-    this.imageToRotate.onload =
-      () => this.rotate(this.rotation * Math.PI / 180);
-    this.imageToRotate.src = this.sheetInfo.src;
-  }
+    this.imageToProcess = new Image();
 
-  rotate(angle){
+    this.imageToProcess.onload = () => {
+      if (this.rotation !== undefined) {
+	this.rotate(this.rotation * Math.PI / 180,
+		    () => {
+		      if (this.outline)
+			this.drawOutline(this.img, this.callback);
+		      else this.callback();
+		    });
+      }
+      else if (this.outline) {
+	this.drawOutline(this.imageToProcess, this.callback);
+      }
+    };
+    this.imageToProcess.src = this.sheetInfo.src;
+  }
+  
+  rotate(angle, callback) {
     const { canvas: canvas, context: offCtx } = createCanvas(this.width, this.height);
     offCtx.translate(this.width/2, this.height/2);
     offCtx.rotate(angle);
     offCtx.translate(-this.width/2, -this.height/2);
         
-    offCtx.drawImage(this.imageToRotate,
+    offCtx.drawImage(this.imageToProcess,
 		     this.spriteSheetCol * this.width,
 		     this.spriteSheetRow * this.height,
 		     this.width, this.height, 0, 0,
@@ -94,8 +112,64 @@ class Sprite {
     this.spriteSheetRow = 0;
     this.img = new Image();
     this.img.style.display = 'block';
-    this.img.onload = this.callback;
+    this.img.onload = callback;
     this.img.src = canvas.toDataURL('image/png');
+  }
+
+  drawOutline(image, callback) {
+    let borderCoordinates = [
+      //{x: 0, y : -5},
+      {x: -1, y:  0},
+      {x:  1, y:  0},
+      {x:  0, y: -1},
+      {x:  0, y:  1}
+    ];
+    if (this.outline.corners) {
+      borderCoordinates.concat([
+	{x:  -1, y: -1},
+	{x:  -1, y:  1},
+	{x:   1, y: -1},
+	{x:   1, y:  1}
+      ]);
+    }
+    let color = {r: 255, g: 255, b: 255, a: 255};
+    const { canvas: canvas, context: offCtx } = createCanvas(this.width, this.height);
+    offCtx.drawImage(
+      image,
+      this.spriteSheetCol * this.width,
+      this.spriteSheetRow * this.height,
+      this.width, this.height, 0, 0,
+      this.width * this.scaleX, this.height * this.scaleY);
+
+    this.spriteSheetCol = 0;
+    this.spriteSheetRow = 0;
+    
+    let imgDataRef = offCtx.getImageData(0, 0, this.width, this.height);
+    let imgData = offCtx.getImageData(0, 0, this.width, this.height);
+
+    for (let y=1; y < this.height-1; ++y) {
+      for (let x=1; x < this.width-1; ++x) {
+	let ix = x*4 + y*this.width*4; // index of the currently processed pixel
+	if (transparent(imgDataRef.data[ix + 3]))
+	    continue;
+
+	borderCoordinates.forEach(({x: dx, y: dy}) => {
+	  let index = ix + dx*4 + dy*this.width*4;
+	  if (transparent(imgDataRef.data[index + 3])) {
+	    imgData.data[index] = color.r;
+	    imgData.data[index + 1] = color.g;
+	    imgData.data[index + 2] = color.b;
+	    imgData.data[index + 3] = color.a;
+	  }
+	});
+      }
+    }
+    offCtx.putImageData(imgData, 0, 0);
+    this.img = new Image();
+    this.img.style.display = 'block';
+    this.img.onload = callback;
+    this.img.src = canvas.toDataURL('image/png');
+    console.log(this.img.src);
   }
 
   /**

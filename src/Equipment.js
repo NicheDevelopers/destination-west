@@ -48,10 +48,11 @@ class Equipment{
   }
 
   put(item){
-    if (this.canFit(item)){
-      this.sumWeight += item.weight;
-      this.items.push(item);
-    }
+    if (!this.canFit(item)) return false;
+    
+    this.sumWeight += item.weight;
+    this.items.push(item);
+    return true;
   }
 
   sortByWeight(heavy_on_top){
@@ -60,13 +61,14 @@ class Equipment{
   }
 
   drop(item){
-    console.log("Dropping item: ", item);
+    ///console.log("Dropping item: ", item);
     this.items = this.items.filter( (i) => i.id != item.id );
     this.game.currentTown.droppedItems.push(new DroppedItem(
       item,
       this.game.player.centerPoint.x - tileSize/2,
       this.game.player.centerPoint.y - tileSize/2
     ));
+    this.game.currentTown.updateFocus(this.game.player);
     //console.log("Dropped items: ", this.game.currentTown.droppedItems);
     //console.log("Eq: ", this.items);
     this.sumWeight -= item.weight;

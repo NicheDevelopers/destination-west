@@ -36,7 +36,10 @@ class Entity {
     this.moveY = new Animation(this, "y", speed);
   }
   draw(x, y) {
-    this.sprite.draw(x, y);
+     if (this.focus && this.loadedFocusedSprite)
+      this.focusedSprite.draw(x, y);
+    else
+      this.sprite.draw(x, y);
   }
 }
 

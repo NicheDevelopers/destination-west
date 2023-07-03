@@ -169,7 +169,6 @@ class Sprite {
     this.img.style.display = 'block';
     this.img.onload = callback;
     this.img.src = canvas.toDataURL('image/png');
-    console.log(this.img.src);
   }
 
   /**

@@ -92,8 +92,26 @@ function createCanvas(w, h) {
   return { canvas: r, context: r.getContext('2d') };
 }
 
+function distance({x: x1, y: y1}, {x: x2, y: y2}) {
+  return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+}
+
+function directedDistance({x: x1, y: y1, direction: dir1},
+			  {x: x2, y: y2, direction: dir2}) {
+  return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+}
+
+function comparePositions({x: x1, y: y1}, {x: x2, y: y2}) {
+  return x1===x2 && y1===y2;
+}
+
+function compareDirectedPositions({x: x1, y: y1, direction: dir1},
+				  {x: x2, y: y2, direction: dir2}) {
+  return x1 === x2 && y1 === y2 && dir1 === dir2;
+}
 
 export {
   randIntInRange, randFloatInRange, generateID,
-  createDiv, createCanvas
+  createDiv, createCanvas, distance, directedDistance,
+  comparePositions, compareDirectedPositions
 };

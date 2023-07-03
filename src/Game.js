@@ -47,11 +47,11 @@ class Game extends State {
     this.worldMap = new WorldMap(5, 0.5, 0.3, 2, 4, 1344, 576);
     this.worldMapDisplay = new WorldMapDisplay(this);
 
-    let testEq = new Equipment(this, 100);
+    this.equipment = new Equipment(this, 100);
     for (let i=0; i<5; i++){
-      testEq.put(new Item(`Apple${i}`, 'decoration-cactus-1x', 0, i, i+1, 0, 0));
+      this.equipment.put(new Item(`Apple${i}`, 'decoration-cactus-1x', 0, i, i+1, 0, 0));
     }
-    this.equipmentDisplay = new EquipmentDisplay(this, testEq);
+    this.equipmentDisplay = new EquipmentDisplay(this, this.equipment);
 
     this.currentTown = this.worldMap.getByID(0);
     this.currentTown.visited = true;
@@ -62,7 +62,7 @@ class Game extends State {
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
     this.player = new Player(this, 350, 290);
-    this.currentTown.npcs.push(new Npc("Ol' Benjamin", 350, 290));
+    this.currentTown.npcs.push(new Npc("Ol' Benjamin", 382, 290));
     this.camera = new Camera(this);
 
     this.slaves = [
@@ -85,6 +85,14 @@ class Game extends State {
     this.worldMapDisplay.draw();
   }
 
+  getFocusedItem() {
+    return this.currentTown.focused;
+  }
+
+  updateFocus() {
+    this.currentTown.updateFocus(this.player);
+  }
+  
   debug() {
     this.player.drawDebugInfo();
     this.currentTown.drawDebugInfo();
@@ -92,7 +100,7 @@ class Game extends State {
 
   update() {
     this.player.update();
-    this.currentTown.update();
+    this.currentTown.update(this.player);
     this.camera.render();
   }
 

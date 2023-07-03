@@ -25,11 +25,28 @@ class DroppedItem {
   constructor(item, x, y) {
     this.item = item,
     this.sprite = new Sprite("decoration-big-bag-3x");
+    this.loadedFocusedSprite = false;
+    this.focusedSprite = new Sprite("decoration-big-bag-3x",
+				    { outline: true, callback:
+				      () => this.loadedFocusedSprite = true });
+    this.focus = false;
     this.x = x;
     this.y = y;
   }
+  
   draw(cameraX, cameraY) {
-    this.sprite.draw(this.x - cameraX, this.y - cameraY);
+    if (this.focus && this.loadedFocusedSprite)
+      this.focusedSprite.draw(this.x - cameraX, this.y - cameraY);
+    else
+      this.sprite.draw(this.x - cameraX, this.y - cameraY);
+  }
+  
+  interact(who) {
+    if (who.game.equipment.put(this.item)) {
+      who.game.currentTown.droppedItems =
+	who.game.currentTown.droppedItems.filter(
+	  (i) => i.item.id !== this.item.id);
+    }
   }
 }
 

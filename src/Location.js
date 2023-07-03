@@ -23,7 +23,7 @@
 
 import Tile from "./Tile.js";
 import ctx from "./global/ctx.js";
-import { randIntInRange } from "./global/utilities.js";
+import { randIntInRange, distance } from "./global/utilities.js";
 import { createCanvas } from "./global/utilities.js";
 import tileSize from "./global/tileSize.js";
 const variants = 2;
@@ -88,6 +88,7 @@ class Location {
     this.awaitAssets = 0;
     this.droppedItems = new Array();
     this.npcs = new Array();
+    this.focused = null;
   }
 
   prerender() {
@@ -237,6 +238,33 @@ class Location {
     });
   }
 
+  getInteractibles() {
+    return this.droppedItems.concat(this.npcs);
+  }
+
+  /*
+    Assign true to property `focus` of the element which is
+    the closest to `point`.
+  */
+  updateFocus(point) {
+    if (this.focused) {
+      this.focused.focus = false;
+      this.focused = null;
+    }
+    let minDist = 50.0;
+    
+    for (let item of this.getInteractibles()) {
+      let d = distance(item, point);
+      if (d < minDist) {
+	minDist = d;
+	this.focused = item;
+      }
+    }
+    
+    if (!this.focused) return;
+    this.focused.focus = true;
+  }
+  
   draw(x = 0, y = 0, context = ctx, width = 672, height = 288) {
     if (!this.created)
       return;

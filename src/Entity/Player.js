@@ -149,6 +149,8 @@ class Player extends Entity {
       defaultPlayerSpeed * ((this.sprinting) ? defaultSprintMultiplier :
         (this.sneaking) ? defaultSneakMultiplier : 1);
 
+    this.game.app.manageRequest('Interact', () => this.interact(), { once: true });
+    
     if (this.game.app.isActionRequested('Move Right')) {
       this.direction += 1;
       speedX += baseSpeed;
@@ -213,6 +215,13 @@ class Player extends Entity {
     }
     this.sprite.next();
   }
+
+  interact() {
+    let focused = this.game.getFocusedItem();
+    focused?.interact(this);
+    this.game.updateFocus();
+  }
+  
   drawDebugInfo() {
     let moveX = Math.abs(this.moveX.getChangeInThisTick('x', this.speedForDebug));
     let moveY = Math.abs(this.moveY.getChangeInThisTick('y', this.speedForDebug));

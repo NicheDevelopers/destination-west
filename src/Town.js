@@ -22,7 +22,7 @@
 */
 
 import presets from "./static/townPresets.js";
-import { randIntInRange } from "./global/utilities.js";
+import { randIntInRange, compareDirectedPositions } from "./global/utilities.js";
 import Location from "./Location.js";
 import Building from "./Building.js";
 
@@ -37,8 +37,9 @@ class Town extends Location {
     this.numBldInTown = numBldInTown;
     this.visited = false;
     this.connectedTowns = new Array();
-    
+    this.lastPlayerPos = null;
   }
+  
   createTown() {
     // see https://gitlab.com/niche-devs/destination-west/-/wikis/Technical-Documentation/Classes/Town/Town-Presets
     this.array = new Array(this.width);
@@ -86,10 +87,16 @@ class Town extends Location {
     });
   }
 
-  update() {
+  update(player) {
     this.npcs.forEach(npc => npc.update());
+
+    if (this.lastPlayerPos && compareDirectedPositions(player, this.lastPlayerPos))
+      return;
+    
+    this.updateFocus(player);
+    this.lastPlayerPos = { x: player.x, y: player.y, direction: player.direction };
   }
-  
+
 }
 
 export default Town;

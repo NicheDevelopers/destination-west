@@ -20,7 +20,7 @@
 */
 
 const gc = document.querySelector("#game-canvas");
-const gcon = document.querySelector("#game-container");
+
 /**
  * The canvas rendering context for the canvas #game-canvas
  */
@@ -33,14 +33,6 @@ export function getGameCanvasSizeX() {
 
 export function getGameCanvasSizeY() {
   return gc.scrollHeight;
-}
-
-export function getGameContainerSizeX() {
-  return gcon.scrollWidth;
-}
-
-export function getGameContainerSizeY() {
-  return gcon.scrollHeight;
 }
 
 export default ctx;

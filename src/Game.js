@@ -27,7 +27,6 @@ import WorldMap from "./WorldMap.js";
 import WorldMapDisplay from "./WorldMapDisplay.js";
 import PauseMenu from "./PauseMenu.js";
 import EquipmentDisplay from "./EquipmentDisplay.js";
-import CombatDisplay from "./Combat/CombatDisplay.js";
 import Equipment from "./Equipment.js";
 import Designer from "./Designer.js";
 import Item from "./Item/Item.js";
@@ -37,7 +36,6 @@ import Npc from "./Entity/Npc.js";
 class Game extends State {
   constructor(app) {
     super(true);
-
     
     this.app = app;
     this.pauseMenu = new PauseMenu(this);
@@ -54,8 +52,6 @@ class Game extends State {
       this.equipment.put(new Item(`Apple${i}`, 'decoration-cactus-1x', 0, i, i+1, 0, 0));
     }
     this.equipmentDisplay = new EquipmentDisplay(this, this.equipment);
-
-    this.combatDisplay = new CombatDisplay(this);
 
     this.currentTown = this.worldMap.getByID(0);
     this.currentTown.visited = true;
@@ -74,7 +70,6 @@ class Game extends State {
       this.designer,
       this.worldMapDisplay,
       this.equipmentDisplay,
-      this.combatDisplay
     ]
   }
 

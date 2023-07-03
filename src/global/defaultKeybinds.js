@@ -36,7 +36,6 @@ const defaultKeybinds = [
   ['shift', 'Toggle Sprint'],
   ['c', 'Toggle Sneak'],
   ['=', 'Camera zoom in'],
-  ['-', 'Camera zoom out'],
-  ['x', 'Toggle Combat Display'] // temporary bind
+  ['-', 'Camera zoom out']
 ];
 export default defaultKeybinds;

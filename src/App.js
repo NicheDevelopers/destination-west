@@ -71,6 +71,7 @@ class App {
 
   debug() {
     this.game.debug();
+    stateManager.print();
   }
 
   loop() {
@@ -82,7 +83,7 @@ class App {
     this.testFPSCounter.next();
 
     stateManager.updateStates();
-
+    
     if (this.debugging)
       this.debug();
 

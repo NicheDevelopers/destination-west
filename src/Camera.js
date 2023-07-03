@@ -19,7 +19,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import ctx, { getGameCanvasSizeX, getGameCanvasSizeY } from "./global/ctx.js";
+import ctx, { getGameCanvasSizeX, getGameCanvasSizeY, getGameContainerSizeX,
+	    getGameContainerSizeY} from "./global/ctx.js";
 
 function makeEven(x) {
   if (x % 2 == 1)
@@ -54,6 +55,7 @@ class Camera {
     gc.style.transform = `scale(${this.zoomSafetyMultiplier * this.zoom})`;
     this.width = getGameCanvasSizeX();
     this.height = getGameCanvasSizeY();
+    
     this.centerX = this.width / 2;
     this.centerY = this.height / 2;
   }

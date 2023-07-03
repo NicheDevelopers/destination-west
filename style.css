@@ -42,10 +42,16 @@ canvas {
     image-rendering: pixelated;
 }
 
-#game-container{
+.centerflex {
     display: flex;
     width: 100%;
     height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-container{
+    display: flex;
     justify-content: center;
     align-items: center;
 }
@@ -66,12 +72,37 @@ canvas {
     z-index: 1;
 }
 
+#combat {
+    display: none;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    flex-direction: column;
+}
+
+#combat-visualizer {
+    display: flex;
+    background-color: red;
+    flex: 0.7;
+}
+
+#combat-menu {
+    display: flex;
+    background-color: green;
+    flex: 0.3;
+}
+
+#combat-canvas {
+    width: 100%;
+    height: 100%;
+}
+
 #pause-menu {
     display: none;
     width: 672px;
     height: 288px;
     background-image: url("img/pauseMenu-background.jpg");
-    z-index: 2;
+    z-index: 9;
 }
 
 .pause-menu-buttons {

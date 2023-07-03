@@ -82,6 +82,7 @@ class App {
     this.testFPSCounter.next();
 
     stateManager.updateStates();
+    stateManager.print();
 
     if (this.debugging)
       this.debug();

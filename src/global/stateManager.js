@@ -37,7 +37,6 @@ class StateManager {
     this.previous = null;
   }
   pushState(state) {
-    this.previous = this.currentState() ?? state;
     state.startHook();
     this.stateStack.push(state);
   }
@@ -55,11 +54,12 @@ class StateManager {
     return (this.currentState() !== this.previous)
   }
   updateStates() {
+    this.previous = this.currentState();
     for (let state of this.stateStack.slice().reverse()) {
       state.update();
       for (let slave of this.currentState().slaves) {
         slave.update();
-        if (this.stateChanged()) break;
+	if (this.stateChanged()) break;
       }
       if (state.fundamental) break;
     }
@@ -70,7 +70,7 @@ class StateManager {
       this.popState() : this.pushState(state)
   }
   print() {
-    console.log(this.stateStack.map((s) => s.id));
+    //console.log(this.stateStack.map((s) => s.id));
   }
 }
 

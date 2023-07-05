@@ -20,16 +20,18 @@
 */
 
 import Sprite from "../Sprite/Sprite.js";
+import { generateID } from "../global/utilities.js";
 class Item {
-  constructor(itemName, spriteName, durability, id, weight, price, priceRetention) {
+  constructor(itemName, spriteName, durability, weight, price, priceRetention, isStackable) {
     this.name = itemName;
     this.spriteName = spriteName;
     this.sprite = new Sprite(spriteName, {crop: true});
     this.durability = durability;
-    this.id = id;
+    this.id = generateID(Item);
     this.weight = weight;
     this.price = price;
     this.priceRetention = priceRetention;
+    this.isStackable = isStackable;
   }
   getResellPrice() {
     return this.price * this.priceRetention;

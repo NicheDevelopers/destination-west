@@ -20,6 +20,7 @@
 */
 
 import Sprite from "../Sprite/Sprite.js"
+import { generateID } from "../global/utilities.js";
 
 class DroppedItem {
   constructor(item, x, y) {
@@ -32,6 +33,7 @@ class DroppedItem {
     this.focus = false;
     this.x = x;
     this.y = y;
+    this.id = generateID(DroppedItem);
   }
   
   draw(cameraX, cameraY) {
@@ -45,7 +47,7 @@ class DroppedItem {
     if (who.game.equipment.put(this.item)) {
       who.game.currentTown.droppedItems =
 	who.game.currentTown.droppedItems.filter(
-	  (i) => i.item.id !== this.item.id);
+	  (i) => i.id !== this.id);
     }
   }
 }

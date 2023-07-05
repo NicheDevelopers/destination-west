@@ -27,6 +27,13 @@ function transparent(alpha) {
   return (alpha<5);
 }
 
+function toKey(name, rotation, outline) {
+  return name+'/'+(rotation===undefined? 'n' : rotation)+'/'+(outline? 'y' : 'n');
+}
+
+const cachedSprites = new Map(); // String -> Image
+const cacheCallbacks = new Map(); // String -> functions[]
+
 /**
  * Create sprites to make display of images simple
  */
@@ -60,6 +67,7 @@ class Sprite {
     this.callback = options.callback ?? (() => {});
 
     //if (options.debug) debugger;
+    this.nocache = options.nocache;
     this.rotation = (options.crop)? 0 : options.rotation;
     this.outline = options.outline;
         
@@ -70,10 +78,38 @@ class Sprite {
 
     this.processingImage = (this.rotation !== undefined || this.outline !== undefined);
     
+    const spriteKey = toKey(this.typeName, this.rotation, this.outline);
+
+       
+    if (!this.nocache && cachedSprites.has(spriteKey)) {
+      this.img = cachedSprites.get(spriteKey);
+      
+      if (cachedSprites.get(spriteKey).complete) {
+	// Image is already loaded
+	if (this.processingImage) {
+	  this.spriteSheetCol = 0;
+	  this.spriteSheetRow = 0;
+	}
+	this.callback();
+      }
+      else {
+	// We need to wait for the image to load
+	cbs.push(this.callback);
+      }
+      //console.log(`Cached: ${spriteKey}: ${this.img.src}`);
+      return;
+    }
+    
+    this.img = new Image();
+    this.img.style.display = 'block';
+    //console.log(`---caching: ${spriteKey}`);
+    cachedSprites.set(spriteKey, this.img);
+    cacheCallbacks.set(spriteKey, [this.callback]);
+    
     if (!this.processingImage) {
-      this.img = new Image();
-      this.img.style.display = 'block';
-      this.img.onload = this.callback;
+      this.img.onload = () => {
+	cacheCallbacks.get(spriteKey).forEach((f) => f());
+      }
       this.img.src = this.sheetInfo.src;
       return;
     }
@@ -84,13 +120,20 @@ class Sprite {
       if (this.rotation !== undefined) {
 	this.rotate(this.rotation * Math.PI / 180,
 		    () => {
-		      if (this.outline)
-			this.drawOutline(this.img, this.callback);
-		      else this.callback();
+		      if (this.outline) {
+			this.drawOutline(this.img, () => {
+			  cacheCallbacks.get(spriteKey).forEach((f) => f());
+			});
+		      }
+		      else {
+			cacheCallbacks.get(spriteKey).forEach((f) => f());
+		      }
 		    });
       }
       else if (this.outline) {
-	this.drawOutline(this.imageToProcess, this.callback);
+	this.drawOutline(this.imageToProcess, () => {
+	  cacheCallbacks.get(spriteKey).forEach((f) => f());
+	});
       }
     };
     this.imageToProcess.src = this.sheetInfo.src;
@@ -110,8 +153,7 @@ class Sprite {
 
     this.spriteSheetCol = 0;
     this.spriteSheetRow = 0;
-    this.img = new Image();
-    this.img.style.display = 'block';
+    
     this.img.onload = callback;
     this.img.src = canvas.toDataURL('image/png');
   }
@@ -165,8 +207,7 @@ class Sprite {
       }
     }
     offCtx.putImageData(imgData, 0, 0);
-    this.img = new Image();
-    this.img.style.display = 'block';
+    
     this.img.onload = callback;
     this.img.src = canvas.toDataURL('image/png');
   }

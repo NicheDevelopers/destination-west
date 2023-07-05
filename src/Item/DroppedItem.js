@@ -37,10 +37,11 @@ class DroppedItem {
   }
   
   draw(cameraX, cameraY) {
-    if (this.focus && this.loadedFocusedSprite)
+    if (this.focus && this.loadedFocusedSprite) {
       this.focusedSprite.draw(this.x - cameraX, this.y - cameraY);
-    else
-      this.sprite.draw(this.x - cameraX, this.y - cameraY);
+      return;
+    }
+    this.sprite.draw(this.x - cameraX, this.y - cameraY);
   }
   
   interact(who) {

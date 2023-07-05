@@ -25,7 +25,7 @@ class Item {
   constructor(itemName, spriteName, durability, weight, price, priceRetention, isStackable) {
     this.name = itemName;
     this.spriteName = spriteName;
-    this.sprite = new Sprite(spriteName, {crop: true});
+    this.sprite = new Sprite(spriteName, {crop: true, nocache: !isStackable});
     this.durability = durability;
     this.id = generateID(Item);
     this.weight = weight;

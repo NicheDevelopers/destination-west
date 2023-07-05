@@ -106,6 +106,7 @@ class Equipment{
       this.game.player.centerPoint.x - tileSize/2,
       this.game.player.centerPoint.y - tileSize/2
     ));
+    this.game.currentTown.updateFocus(this.game.player);
   }
 };
 

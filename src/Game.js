@@ -49,7 +49,9 @@ class Game extends State {
 
     this.equipment = new Equipment(this, 100);
     for (let i=0; i<5; i++){
-      this.equipment.put(new Item(`Apple${i}`, 'decoration-cactus-1x', 0, i, i+1, 0, 0));
+      this.equipment.put(new Item(`Apple`, 'decoration-cactus-1x', 0, 5, 0, 0, true));
+      this.equipment.put(new Item(`Whisky`,'decoration-small-stones-1', 0, 3, 0, 0, true));
+      this.equipment.put(new Item(`Revolver`,'decoration-stone-well', 0, 7, 0, 0, false));
     }
     this.equipmentDisplay = new EquipmentDisplay(this, this.equipment);
 

@@ -22,17 +22,27 @@ import Item from "./Item/Item.js";
 import DroppedItem from "./Item/DroppedItem.js";
 import tileSize from "./global/tileSize.js";
 
+class EquipmentRecord{
+  constructor (item, quantity, isStack){
+    this.item = item;
+    this.quantity = quantity;
+    this.isStack = isStack;
+  }
+  getWeight(){
+    return this.item.weight * this.quantity;
+  }
+};
+
 class Equipment{
   constructor (game, maxWeight){
     this.game = game;
     this.maxWeight = maxWeight;
-    this.sumWeight = 0;
-    this.items = [];
+    this.records = [];
     this.clear();
   }
   
   clear(){
-    this.items.splice(0, this.items.length);
+    this.records.splice(0, this.records.length);
   }
 
   printEq() {
@@ -40,7 +50,7 @@ class Equipment{
   }
   
   canFit(item){
-    if (this.sumWeight+item.weight>this.maxWeight){
+    if (this.sumWeight()+item.weight>this.maxWeight){
       console.log("Cannot fit!");
       return false;
     }
@@ -50,28 +60,52 @@ class Equipment{
   put(item){
     if (!this.canFit(item)) return false;
     
-    this.sumWeight += item.weight;
-    this.items.push(item);
+    if (!item.isStackable){
+      let record = new EquipmentRecord(item, 1, false);
+      this.records.push(record);
+    }
+    else {
+      let record = this.recordForName(item.name);
+      if (record != undefined) {
+        record.quantity += 1;
+      }
+      else {
+        let record = new EquipmentRecord(item, 1, true);
+        this.records.push(record);
+      }
+    }
     return true;
   }
 
-  sortByWeight(heavy_on_top){
-    if (heavy_on_top == true) this.items.sort((a, b) => b.weight - a.weight);
-    else this.items.sort((a, b) => a.weight - b.weight);
+  sumWeight(){
+    return this.records.reduce( (acc, currentRecord) => acc + currentRecord.getWeight(), 0 );
   }
 
-  drop(item){
-    ///console.log("Dropping item: ", item);
-    this.items = this.items.filter( (i) => i.id != item.id );
+  recordForName(itemName){
+    return this.records.find((rec) => rec.item.name == itemName);
+  }
+
+  sortByWeight(heavy_on_top){
+    if (heavy_on_top == true) this.records.sort((a, b) => b.getWeight() - a.getWeight());
+    else this.records.sort((a, b) => a.getWeight() - b.getWeight());
+  }
+
+  dropFrom(record){
+    let foundRecord = this.recordForName(record.item.name);
+    if (!foundRecord.item.isStackable){
+      this.records = this.records.filter( (rec) => rec.item.id != foundRecord.item.id );
+    }
+    else if (foundRecord.quantity == 1) {
+      this.records = this.records.filter( (rec) => rec.item.name != foundRecord.item.name );
+    }
+    else {
+      foundRecord.quantity -= 1;
+    }
     this.game.currentTown.droppedItems.push(new DroppedItem(
-      item,
+      foundRecord.item,
       this.game.player.centerPoint.x - tileSize/2,
       this.game.player.centerPoint.y - tileSize/2
     ));
-    this.game.currentTown.updateFocus(this.game.player);
-    //console.log("Dropped items: ", this.game.currentTown.droppedItems);
-    //console.log("Eq: ", this.items);
-    this.sumWeight -= item.weight;
   }
 };
 

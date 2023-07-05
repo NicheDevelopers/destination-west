@@ -1,3 +1,24 @@
+/*
+  file: src/EquipmentDisplay.js
+  purpose: Define the EquipmentDisplay class 
+  author: Oskar Kiliańczyk <https://gitlab.com/oskkil>
+  
+  This file is part of 'Destination West'.
+  
+  'Destination West' is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License,
+  or (at your option) any later version.
+
+  'Destination West' is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with
+  'Destination West'. If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import tileSize from "./global/tileSize.js";
 
 import { createDiv } from "./global/utilities.js";
@@ -71,13 +92,13 @@ class EquipmentDisplay extends State {
     sortDiv.style.textAlign = "center";
     sortDiv.innerText = "Sort by weight from";
     this.divEqList.appendChild(sortDiv);
-    for (let item of this.equipment.items) {
-      this.divEqList.appendChild(this.itemToListElement(item));
+    for (let record of this.equipment.records) {
+      this.divEqList.appendChild(this.recordToListElement(record));
     }
     let sumWeight = document.createElement("div");
     sumWeight.classList.add("list-element");
     sumWeight.style.textAlign = "center";
-    sumWeight.innerText = "Weight summary of all items: " + this.equipment.sumWeight;
+    sumWeight.innerText = "Weight summary of all items: " + this.equipment.sumWeight();
     this.divEqList.appendChild(sumWeight);
   }
   startHook() {
@@ -87,25 +108,30 @@ class EquipmentDisplay extends State {
   endHook() {
     this.div.style.display = "none";
   }
-  itemToListElement(item) {
+  recordToListElement(record) {
     let div = document.createElement("div");
     div.classList.add("list-element");
     div.style.display = "flex";
     let nameDiv = document.createElement("div");
-    nameDiv.innerText = item.name;
+    nameDiv.innerText = record.item.name;
     nameDiv.style.display = "inline-block";
     nameDiv.style.flex = 2;
     let weightDiv = document.createElement("div");
-    weightDiv.innerText = item.weight;
+    weightDiv.innerText = record.getWeight();
     weightDiv.style.display = "inline-block"; 
     weightDiv.style.flex = 2;
+    let quantityDiv = document.createElement("div");
+    quantityDiv.innerText = record.quantity;
+    quantityDiv.style.display = "inline-block"; 
+    quantityDiv.style.flex = 2;
     let dropButton = document.createElement("button");
     dropButton.classList.add("button", "eq-button");
-    dropButton.addEventListener("click", () => { this.equipment.drop(item); this.refresh() });
+    dropButton.addEventListener("click", () => { this.equipment.dropFrom(record); this.refresh() });
     dropButton.innerText = "Drop";
-    div.appendChild(item.sprite.img);
+    div.appendChild(record.item.sprite.img);
     div.appendChild(nameDiv);
     div.appendChild(weightDiv);
+    div.appendChild(quantityDiv);
     div.appendChild(dropButton);
     return div;
   }

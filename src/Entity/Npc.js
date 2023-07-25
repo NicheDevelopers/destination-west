@@ -1,19 +1,12 @@
-import AnimatedSprite from "../Sprite/AnimatedSprite.js";
-import Entity from "./Entity.js";
-import {animationSpeed} from "../global/consts.js";
+// import AnimatedSprite from "../Sprite/AnimatedSprite.js";
+// import Entity from "./Entity.js";
+// import {animationSpeed} from "../global/consts.js";
+import Interactible from "./Interactible.js";
 
-class Npc extends Entity {
+class Npc extends Interactible {
   constructor(game, name, x, y) {
     super(game, "player", x, y);
     this.name = name;
-    this.loadedFocusedSprite = false;
-    this.focusedSprite = new AnimatedSprite(
-      "player", { animationSpeed: animationSpeed,
-		  outline: true,
-		  callback:
-		  () => this.loadedFocusedSprite = true
-		});
-    this.focus = false;
   }
   update() {
     this.sprite.next();

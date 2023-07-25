@@ -33,7 +33,7 @@ class Entity {
     this.game = game;
     this.typeName = typeName;
     this.sprite = new AnimatedSprite(typeName, { animationSpeed: animationSpeed });
-    this.equipment = new Equipment(defaultEquipmentSize);
+    //this.equipment = new Equipment(defaultEquipmentSize);
     this.x = x;
     this.y = y;
     this.moveX = new Animation(this, "x", speed);
@@ -41,20 +41,20 @@ class Entity {
   }
   
   draw(x, y) {
-    if (this.focus && this.loadedFocusedSprite)
-      this.focusedSprite.draw(x, y);
-    else
+    // if (this.focus && this.loadedFocusedSprite)
+    //   this.focusedSprite.draw(x, y);
+    // else
       this.sprite.draw(x, y);
   }
   
-  dropItem(record) {
-    let droppedItem = this.equipment.dropFrom(record);
-    droppedItem.setPositionTo(
-      (this.centerPoint)? {x: this.centerPoint.x, y: this.centerPoint.y}
-	: {x: this.x, y: this.y});
-    this.game.currentTown.droppedItems.push(droppedItem);
-    this.game.currentTown.updateFocus(this.game.player);
-  }
+  // dropItem(record) {
+  //   let droppedItem = this.equipment.dropFrom(record);
+  //   droppedItem.setPositionTo(
+  //     (this.centerPoint)? {x: this.centerPoint.x, y: this.centerPoint.y}
+  //       : {x: this.x, y: this.y});
+  //   this.game.currentTown.droppedItems.push(droppedItem);
+  //   this.game.currentTown.updateFocus(this.game.player);
+  // }
   
 }
 

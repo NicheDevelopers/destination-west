@@ -19,7 +19,11 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import ctx, { getGameCanvasSizeX, getGameCanvasSizeY } from "./global/ctx.js";
+import ctx, { getGameCanvasSizeX,
+	      getGameCanvasSizeY } from "./global/ctx.js";
+import { camSettings } from "./global/consts.js";
+
+import time from "./global/time.js";
 
 function makeEven(x) {
   if (x % 2 == 1)
@@ -33,14 +37,15 @@ class Camera {
   constructor(game) {
     this.x = 0;
     this.y = 0;
-    this.zoom = 3;
-    this.zoomMin = 1.8;
-    this.zoomMax = 5;
+    this.zoom = camSettings.zoom;
+    this.zoomMin = camSettings.zoomMin;
+    this.zoomMax = camSettings.zoomMax;
+    this.zoomSpeed = camSettings.zoomSpeed;
     /* Browsers sometimes struggle to position scaled elements perfectly.
        In order to prevent leaving empty space around the canvas we
        scale it up more than should be needed.
        */
-    this.zoomSafetyMultiplier = 1.05;
+    this.zoomSafetyMultiplier = camSettings.zoomSafetyMultiplier;
     this.updateSize();
     window.addEventListener('resize', () => this.updateSize());
     window.addEventListener('fullscreenchange', () => this.updateSize());
@@ -62,7 +67,7 @@ class Camera {
       'Camera zoom in',
       () => {
         if (this.zoom < this.zoomMax) {
-          this.zoom += 0.05;
+          this.zoom += this.zoomSpeed * time.delta;
           this.updateSize();
         }
       }
@@ -71,7 +76,7 @@ class Camera {
       'Camera zoom out',
       () => {
         if (this.zoom > this.zoomMin) {
-          this.zoom -= 0.05;
+          this.zoom -= this.zoomSpeed * time.delta;
           this.updateSize();
         }
       }

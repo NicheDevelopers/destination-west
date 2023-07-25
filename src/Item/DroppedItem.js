@@ -53,9 +53,9 @@ class DroppedItem {
     }
   }
 
-  setPositionTo(entity) {
-    this.x = entity.x - tileSize/2;
-    this.y = entity.y - tileSize/2;
+  setPositionTo(pos) {
+    this.x = pos.x - tileSize/2;
+    this.y = pos.y - tileSize/2;
   }
   
 }

@@ -19,7 +19,7 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import tileSize from "../global/tileSize.js";
+import {tileSize} from "../global/consts.js";
 
 let img = (src, height = tileSize, width = tileSize, row = 0, col = 0) =>
   ({ src: src, height: height, width: width, row: row, col: col });
@@ -71,8 +71,8 @@ const imgInfo = new Map([
   ["pants", img("img/clothes.png", tileSize, tileSize, 0, 1)],
   ["player", {
     src: "img/player.png",
-    spriteHeight: 37,
-    spriteWidth: 50,
+    spriteHeight: 74,
+    spriteWidth: 100,
     defaultAnimation: "idle",
     animations: new Map([
       ["idle", {

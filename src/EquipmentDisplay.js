@@ -19,7 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import tileSize from "./global/tileSize.js";
+import {tileSize} from "./global/consts.js";
 
 import { createDiv } from "./global/utilities.js";
 import { stateManager, State } from "./global/stateManager.js"

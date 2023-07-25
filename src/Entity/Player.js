@@ -22,10 +22,10 @@
 */
 
 import Entity from "./Entity.js";
-import tileSize from "../global/tileSize.js";
 import ctx from "../global/ctx.js";
 
-import {defaultPlayerSpeed,
+import {tileSize,
+	defaultPlayerSpeed,
         defaultSprintMode,
         defaultSneakMode,
         defaultDiagonalOffset,
@@ -44,9 +44,9 @@ class Player extends Entity {
     this.actions = ['Move Right', 'Move Left', 'Move Up', 'Move Down', 'Toggle Sprint', 'Toggle Sneak'];
 
     // Cooridinates of the sprite's center point
-    this.spriteCenterPoint = { x: 24, y: 30 };
+    this.spriteCenterPoint = { x: 48, y: 60 };
     // Coordinates for calculating collisions
-    this.rootPoint = { x: 24, y: 35 };
+    this.rootPoint = { x: 48, y: 70 };
 
     //an object which contains info on how many pixels from the center point you want to detect collisions
     this.boundingDistance = {

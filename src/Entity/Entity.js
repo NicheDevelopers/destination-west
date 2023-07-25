@@ -49,7 +49,9 @@ class Entity {
   
   dropItem(record) {
     let droppedItem = this.equipment.dropFrom(record);
-    droppedItem.setPositionTo(this);
+    droppedItem.setPositionTo(
+      (this.centerPoint)? {x: this.centerPoint.x, y: this.centerPoint.y}
+	: {x: this.x, y: this.y});
     this.game.currentTown.droppedItems.push(droppedItem);
     this.game.currentTown.updateFocus(this.game.player);
   }

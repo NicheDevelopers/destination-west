@@ -19,7 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import ctx from "../global/ctx.js";
-import tileSize from "../global/tileSize.js";
+import {tileSize, spriteScale} from "../global/consts.js";
 import { createCanvas, randIntInRange } from "../global/utilities.js";
 import imgInfo from "../static/imgInfo.js";
 
@@ -28,7 +28,7 @@ function transparent(alpha) {
 }
 
 function toKey(name, rotation, outline) {
-  return name+'/'+(rotation===undefined? 'n' : rotation)+'/'+(outline? 'y' : 'n');
+  return name+'/'+(rotation === undefined? 'n' : rotation)+'/'+(outline? 'y' : 'n');
 }
 
 const cachedSprites = new Map(); // String -> Image
@@ -49,7 +49,7 @@ class Sprite {
     }
     this.typeName = typeName;
 
-    this.scale = options.scale ?? 1;
+    this.scale = options.scale ?? spriteScale;
     this.scaleX = options.scaleX ?? this.scale;
     this.scaleY = options.scaleY ?? this.scale;
 
@@ -59,6 +59,7 @@ class Sprite {
     this.width = this.sheetInfo.spriteWidth ?? tileSize;
     this.spriteSheetRow = this.sheetInfo.row ?? 0;
     this.spriteSheetCol = this.sheetInfo.col ?? 0;
+    
     if (this.sheetInfo.random) {
       this.spriteSheetRow = randIntInRange(0, this.sheetInfo.height);
       this.spriteSheetCol = randIntInRange(0, this.sheetInfo.width);

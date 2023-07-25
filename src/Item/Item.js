@@ -21,11 +21,24 @@
 
 import Sprite from "../Sprite/Sprite.js";
 import { generateID } from "../global/utilities.js";
+
 class Item {
-  constructor(itemName, spriteName, durability, weight, price, priceRetention, isStackable) {
-    this.name = itemName;
+  constructor(item, spriteName, durability, weight, price, priceRetention, isStackable) {
+    if (item instanceof Item){
+      this.name = item.name;
+      this.spriteName = item.spriteName;
+      this.sprite = new Sprite(item.spriteName, {crop: true, nocache: true});
+      this.durability = item.durability;
+      this.id = generateID(Item);
+      this.weight = item.weight;
+      this.price = item.price;
+      this.priceRetention = item.priceRetention;
+      this.isStackable = item.isStackable;
+      return;
+    }
+    this.name = item;
     this.spriteName = spriteName;
-    this.sprite = new Sprite(spriteName, {crop: true, nocache: !isStackable});
+    this.sprite = new Sprite(spriteName, {crop: true, nocache: true});
     this.durability = durability;
     this.id = generateID(Item);
     this.weight = weight;

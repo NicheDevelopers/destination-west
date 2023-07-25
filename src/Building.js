@@ -21,7 +21,7 @@
 */
 import Tile from "./Tile.js";
 import { randIntInRange } from "./global/utilities.js";
-import tileSize from "./global/tileSize.js";
+import {tileSize} from "./global/consts.js";
 
 class Building {
     constructor(xTiles, yTiles, buildingType) {

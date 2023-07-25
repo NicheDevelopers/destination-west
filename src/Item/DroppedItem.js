@@ -21,9 +21,10 @@
 
 import Sprite from "../Sprite/Sprite.js"
 import { generateID } from "../global/utilities.js";
+import { tileSize } from "../global/consts.js";
 
 class DroppedItem {
-  constructor(item, x, y) {
+  constructor(item) {
     this.item = item,
     this.sprite = new Sprite("decoration-big-bag-3x");
     this.loadedFocusedSprite = false;
@@ -31,8 +32,8 @@ class DroppedItem {
 				    { outline: true, callback:
 				      () => this.loadedFocusedSprite = true });
     this.focus = false;
-    this.x = x;
-    this.y = y;
+    this.x = null;
+    this.y = null;
     this.id = generateID(DroppedItem);
   }
   
@@ -45,12 +46,18 @@ class DroppedItem {
   }
   
   interact(who) {
-    if (who.game.equipment.put(this.item)) {
+    if (who.equipment.put(this.item)) {
       who.game.currentTown.droppedItems =
 	who.game.currentTown.droppedItems.filter(
 	  (i) => i.id !== this.id);
     }
   }
+
+  setPositionTo(entity) {
+    this.x = entity.x - tileSize/2;
+    this.y = entity.y - tileSize/2;
+  }
+  
 }
 
 export default DroppedItem;

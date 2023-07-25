@@ -146,7 +146,7 @@ buildings.forEach((building) => {
     imgInfo.set('building-' + building + '-' + buildingPart.name,
       {
         src: "img/bank.png",
-        height: 32, width: 32,
+        height: tileSize, width: tileSize,
         row: buildingPart.row,
         col: buildingPart.col
       }

@@ -128,6 +128,21 @@ canvas {
     background-color: rgb(121,70,20);
 }
 
+#transfer {
+    width: 1000px;
+    height: 500px;
+    position: absolute;
+    z-index: 1;
+    background-color: rgb(121, 70, 20);
+}
+
+#transfer-list {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
 #eq-list {
     position: absolute;
     width: 100%;

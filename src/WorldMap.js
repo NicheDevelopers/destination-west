@@ -151,7 +151,7 @@ function positionTowns(numOfLayers, width, height, towns) {
   }
 }
 
-
+import {mapParameters} from "./global/consts.js";
 /**
  * Class for creating a world map containing every town
  */
@@ -166,22 +166,16 @@ class WorldMap {
    @param {number} width - width of the map canvas
    @param {number} height - height of the map canvas
    */
-  constructor(numOfLayers,
-    chanceOfConnectionBetweenLayers,
-    chanceOfConnectionInLayer,
-    minTownsInLayer,
-    maxTownsInLayer,
-    width,
-    height
-  ) {
+  constructor() {
     while (true) {
-      this.townArray = this.createTowns(numOfLayers,
-        chanceOfConnectionBetweenLayers,
-        chanceOfConnectionInLayer,
-        minTownsInLayer,
-        maxTownsInLayer,
-        width,
-        height);
+      this.townArray = this.createTowns(
+        mapParameters.numOfLayers,
+        mapParameters.chanceOfConnectionBetweenLayers,
+        mapParameters.chanceOfConnectionInLayer,
+        mapParameters.minTownsInLayer,
+        mapParameters.maxTownsInLayer,
+        mapParameters.displayWidth,
+        mapParameters.displayHeight);
       if (this.isConnected()) break;
     }
   }

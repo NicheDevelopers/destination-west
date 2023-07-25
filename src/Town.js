@@ -25,10 +25,11 @@ import presets from "./static/townPresets.js";
 import { randIntInRange, compareDirectedPositions } from "./global/utilities.js";
 import Location from "./Location.js";
 import Building from "./Building.js";
+import {defaultTownHeight, defaultTownWidth} from "./global/consts.js";
 
 class Town extends Location {
   constructor(name, x, y, layer, ID, numBldInTown = {}) {
-    super(42, 20);
+    super(defaultTownWidth, defaultTownHeight);
     this.layer = layer;
     this.ID = ID;
     this.name = name;
@@ -43,7 +44,7 @@ class Town extends Location {
   createTown() {
     // see https://gitlab.com/niche-devs/destination-west/-/wikis/Technical-Documentation/Classes/Town/Town-Presets
     this.array = new Array(this.width);
-    for (let x = 0; x < 42; ++x) this.array[x] = new Array(this.height);
+    for (let x = 0; x < this.width; ++x) this.array[x] = new Array(this.height);
     let preset = presets[randIntInRange(0, presets.length)];
     this.placeStreets(preset);
     this.placeBuildings(preset);

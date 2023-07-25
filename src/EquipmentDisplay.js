@@ -42,26 +42,6 @@ class EquipmentDisplay extends State {
     this.divEqList.style.width = `${(tileSize+2)*7*2}px`;
     this.divEqList.style.height = `${(tileSize+2)*7*2}px`;
 
-    // /**
-    //  * A 2d array of div elements representing the equipment grid
-    //  */
-    // this.itemDivs = [];
-    // /**
-    //  * A 2d array of image elements representing the equipment grid
-    //  */
-    // this.itemImages = [];
-    
-    // for (let i=0; i<equipment.items.length; i++){
-    //   this.itemDivs.push(new Array(equipment.items.length));
-    //   this.itemImages.push(new Array(equipment.items.length));
-    // }
-
-    // let f1 = (e) => this.dragStart(e);
-    // let f2 = (e) => this.dragEnd(e);
-    // let f3 = (e) => this.dragDrop(e);
-    // this.dragStartWrapper = f1;
-    // this.dragEndWrapper = f2;
-    // this.dragDropWrapper = f3;
     this.div.appendChild(this.divEqList);
     gameContainer.appendChild(this.div);
   }
@@ -98,7 +78,7 @@ class EquipmentDisplay extends State {
     let sumWeight = document.createElement("div");
     sumWeight.classList.add("list-element");
     sumWeight.style.textAlign = "center";
-    sumWeight.innerText = "Weight summary of all items: " + this.equipment.sumWeight();
+    sumWeight.innerText = "Weight summary of all items: " + this.equipment.sumWeight()+ " / " + this.equipment.maxWeight ;
     this.divEqList.appendChild(sumWeight);
   }
   startHook() {
@@ -126,7 +106,7 @@ class EquipmentDisplay extends State {
     quantityDiv.style.flex = 2;
     let dropButton = document.createElement("button");
     dropButton.classList.add("button", "eq-button");
-    dropButton.addEventListener("click", () => { this.equipment.dropFrom(record); this.refresh() });
+    dropButton.addEventListener("click", () => { this.game.player.dropItem(record); this.refresh() });
     dropButton.innerText = "Drop";
     div.appendChild(record.item.sprite.img);
     div.appendChild(nameDiv);
@@ -142,80 +122,6 @@ class EquipmentDisplay extends State {
       { once: true }
     );
   }
-
-  dragStart(event) {
-    let x = event.target.pos.x;
-    let y = event.target.pos.y;
-    /* We need to use setTimeout here in order to delay hiding
-       the image. This enables the dataTransfer to generate
-       a drag image from the element that we are dragging (the
-       scaled-up image of an item). If we were to set the drag
-       image explicitly its width and height attributes would
-       be ignored, resulting in an image which is too small.
-       */
-    setTimeout(() => { this.itemImages[x][y].style.display = 'none' }, 0);
-  }
-
-  dragEnd(event) {
-    let x = event.target.pos.x;
-    let y = event.target.pos.y;
-    this.itemImages[x][y].style.display = 'block';
-    if (dropped) {
-      removeImage(this.itemDivs[x][y], this);
-    }
-    dropped = false;
-  }
-
-  dragOver(event) {
-    if (event.target.nodeName === 'DIV')
-      event.preventDefault();
-  }
-
-  dragEnter(event) {
-    event.preventDefault();
-    event.target.classList.add('hovered');
-  }
-
-  dragLeave(event) {
-    event.preventDefault();
-    event.target.classList.remove('hovered');
-  }
-
-  dragDrop(event) {
-    event.preventDefault();
-    let div = event.target;
-    div.classList.remove('hovered');
-    addImage(div, this);
-    dropped = true;
-  }
-}
-
-function preventDefault(e) {
-  e.preventDefault ? e.preventDefault() : e.returnValue = false;
-}
-
-function addImage(div, display) {
-  div.removeEventListener('drop', display.dragDropWrapper);
-  let img = display.itemImages[div.pos.x][div.pos.y];
-  img.className = 'draggable';
-  img.setAttribute('draggable', 'true');
-  img.addEventListener('dragstart', display.dragStartWrapper);
-  img.addEventListener('dragend', display.dragEndWrapper);
-  img.removeEventListener('mousedown', preventDefault);
-  img.src = 'img/sand.png';
-  img.style.display = 'block';
-}
-
-function removeImage(div, display) {
-  div.addEventListener('drop', display.dragDropWrapper);
-  let img = display.itemImages[div.pos.x][div.pos.y];
-  img.src = '';
-  img.style.display = 'none';
-  img.setAttribute('draggable', 'false');
-  img.addEventListener('mousedown', preventDefault);
-  img.removeEventListener('dragstart', display.dragStartWrapper);
-  img.removeEventListener('dragend', display.dragEndWrapper);
-}
-
+};
 
 export default EquipmentDisplay;

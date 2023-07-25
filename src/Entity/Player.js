@@ -22,49 +22,24 @@
 */
 
 import Entity from "./Entity.js";
-import imgInfo from "../static/imgInfo.js";
-
 import tileSize from "../global/tileSize.js";
-
 import ctx from "../global/ctx.js";
 
-/**
- * a constant representing the default player speed value
- */
-const defaultPlayerSpeed = 100;
+import {defaultPlayerSpeed,
+        defaultSprintMode,
+        defaultSneakMode,
+        defaultDiagonalOffset,
+        defaultSneakMultiplier,
+        defaultSprintMultiplier } from "../global/consts.js";
 
-/**
- * a constant representing the change in player's speed value while running on diagonals
- */
-const defaultDiagonalOffset = 0.71;
+import Transfer from "../Transfer.js";
+import Equipment from "../Equipment.js";
 
-/**
- * constants representing the width and height of the character sprite.
- */
 
-const playerWidth = imgInfo.get("player").width;
-const playerHeight = imgInfo.get("player").height;
-
-/**
- * constants representing the default speed multipliers for sneaking and sprinting
- */
-
-const defaultSprintMultiplier = 1.5;
-const defaultSneakMultiplier = 0.5;
-
-/**
- * variables containing information on whether sprint and sneak are handled by "hold"-ing the key down or "toggle"-ing the states by pressing the key once
- */
-const defaultSprintMode = 'hold';
-const defaultSneakMode = 'hold';
-
-/**
- * class for managing the player-controlled character
- */
+//class for managing the player-controlled character
 class Player extends Entity {
   constructor(game, x = 0, y = 0) {
-    super("player", x, y, defaultPlayerSpeed);
-    this.game = game;
+    super(game, "player", x, y, defaultPlayerSpeed);
     //register all actions that the player can do and bind them to correct keys
     this.actions = ['Move Right', 'Move Left', 'Move Up', 'Move Down', 'Toggle Sprint', 'Toggle Sneak'];
 
@@ -74,8 +49,7 @@ class Player extends Entity {
     this.rootPoint = { x: 24, y: 35 };
 
     //an object which contains info on how many pixels from the center point you want to detect collisions
-    this.boundingDistance =
-    {
+    this.boundingDistance = {
       up: -1,
       left: -5,
       right: 5,
@@ -106,6 +80,7 @@ class Player extends Entity {
     this.townWidth = this.game.currentTown.array[0].length;
     this.sprinting = false;
     this.sneaking = false;
+    this.transfer = new Transfer(this.equipment, new Equipment(0));
   }
 
   updateMovementMethod() {

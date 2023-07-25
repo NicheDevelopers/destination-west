@@ -21,26 +21,39 @@
 
 import AnimatedSprite from "../Sprite/AnimatedSprite.js";
 import Animation from "../Animation.js";
+import Equipment from "../Equipment.js";
+import {animationSpeed, defaultEquipmentSize} from "../global/consts.js";
 
 /**
  * The super class for entity classes to derive from
  @abstract
  */
 class Entity {
-  constructor(typeName, x = 0, y = 0, speed = 100) {
+  constructor(game, typeName, x = 0, y = 0, speed = 100) {
+    this.game = game;
     this.typeName = typeName;
-    this.sprite = new AnimatedSprite(typeName, { animationSpeed: 9 });
+    this.sprite = new AnimatedSprite(typeName, { animationSpeed: animationSpeed });
+    this.equipment = new Equipment(defaultEquipmentSize);
     this.x = x;
     this.y = y;
     this.moveX = new Animation(this, "x", speed);
     this.moveY = new Animation(this, "y", speed);
   }
+  
   draw(x, y) {
-     if (this.focus && this.loadedFocusedSprite)
+    if (this.focus && this.loadedFocusedSprite)
       this.focusedSprite.draw(x, y);
     else
       this.sprite.draw(x, y);
   }
+  
+  dropItem(record) {
+    let droppedItem = this.equipment.dropFrom(record);
+    droppedItem.setPositionTo(this);
+    this.game.currentTown.droppedItems.push(droppedItem);
+    this.game.currentTown.updateFocus(this.game.player);
+  }
+  
 }
 
 export default Entity;

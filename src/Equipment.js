@@ -18,15 +18,14 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import Item from "./Item/Item.js";
 import DroppedItem from "./Item/DroppedItem.js";
-import tileSize from "./global/tileSize.js";
+import { generateID } from "./global/utilities.js";
 
 class EquipmentRecord{
-  constructor (item, quantity, isStack){
+  constructor (item, quantity){
+    this.id = generateID(EquipmentRecord);
     this.item = item;
     this.quantity = quantity;
-    this.isStack = isStack;
   }
   getWeight(){
     return this.item.weight * this.quantity;
@@ -34,11 +33,9 @@ class EquipmentRecord{
 };
 
 class Equipment{
-  constructor (game, maxWeight){
-    this.game = game;
+  constructor (maxWeight){
     this.maxWeight = maxWeight;
     this.records = [];
-    this.clear();
   }
   
   clear(){
@@ -46,7 +43,7 @@ class Equipment{
   }
 
   printEq() {
-    console.log(this.items);
+    console.log(this.records);
   }
   
   canFit(item){
@@ -60,19 +57,13 @@ class Equipment{
   put(item){
     if (!this.canFit(item)) return false;
     
-    if (!item.isStackable){
-      let record = new EquipmentRecord(item, 1, false);
-      this.records.push(record);
+    let record = this.recordForName(item.name);
+    if (record != undefined && record.item.isStackable) {
+      record.quantity += 1;
     }
     else {
-      let record = this.recordForName(item.name);
-      if (record != undefined) {
-        record.quantity += 1;
-      }
-      else {
-        let record = new EquipmentRecord(item, 1, true);
-        this.records.push(record);
-      }
+      let record = new EquipmentRecord(item, 1);
+      this.records.push(record);
     }
     return true;
   }
@@ -85,28 +76,21 @@ class Equipment{
     return this.records.find((rec) => rec.item.name == itemName);
   }
 
+  recordForID(recordID){
+    return this.records.find((rec) => rec.id == recordID);
+  }
+
   sortByWeight(heavy_on_top){
     if (heavy_on_top == true) this.records.sort((a, b) => b.getWeight() - a.getWeight());
     else this.records.sort((a, b) => a.getWeight() - b.getWeight());
   }
 
-  dropFrom(record){
-    let foundRecord = this.recordForName(record.item.name);
-    if (!foundRecord.item.isStackable){
-      this.records = this.records.filter( (rec) => rec.item.id != foundRecord.item.id );
-    }
-    else if (foundRecord.quantity == 1) {
-      this.records = this.records.filter( (rec) => rec.item.name != foundRecord.item.name );
-    }
-    else {
-      foundRecord.quantity -= 1;
-    }
-    this.game.currentTown.droppedItems.push(new DroppedItem(
-      foundRecord.item,
-      this.game.player.centerPoint.x - tileSize/2,
-      this.game.player.centerPoint.y - tileSize/2
-    ));
-    this.game.currentTown.updateFocus(this.game.player);
+  dropFrom(record) {
+    if (!record.item.isStackable || record.quantity == 1)
+      this.records = this.records.filter((rec) => rec.item.id != record.item.id);
+    else
+      record.quantity -= 1;
+    return new DroppedItem(record.item);
   }
 };
 

@@ -33,6 +33,7 @@ const defaultKeybinds = [
   ['escape', 'Toggle Pause Menu'],
   ['e', 'Interact'],
   ['g', 'Toggle Equipment Display'],
+  ['x', 'Toggle Transfer Display'],
   ['shift', 'Toggle Sprint'],
   ['c', 'Toggle Sneak'],
   ['=', 'Camera zoom in'],

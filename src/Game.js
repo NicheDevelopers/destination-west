@@ -32,6 +32,9 @@ import Designer from "./Designer.js";
 import Item from "./Item/Item.js";
 import { State } from "./global/stateManager.js"
 import Npc from "./Entity/Npc.js";
+import Transfer from "./Transfer.js";
+import TransferDisplay from "./TransferDisplay.js";
+import { defaultEquipmentSize } from "./global/consts.js";
 
 class Game extends State {
   constructor(app) {
@@ -44,16 +47,8 @@ class Game extends State {
     this.designer = new Designer(this);
 
     this.testTile = new Tile("sand");
-    this.worldMap = new WorldMap(5, 0.5, 0.3, 2, 4, 1344, 576);
+    this.worldMap = new WorldMap();
     this.worldMapDisplay = new WorldMapDisplay(this);
-
-    this.equipment = new Equipment(this, 100);
-    for (let i=0; i<5; i++){
-      this.equipment.put(new Item(`Apple`, 'decoration-cactus-1x', 0, 5, 0, 0, true));
-      this.equipment.put(new Item(`Whisky`,'decoration-small-stones-1', 0, 3, 0, 0, true));
-      this.equipment.put(new Item(`Revolver`,'decoration-stone-well', 0, 7, 0, 0, false));
-    }
-    this.equipmentDisplay = new EquipmentDisplay(this, this.equipment);
 
     this.currentTown = this.worldMap.getByID(0);
     this.currentTown.visited = true;
@@ -64,14 +59,30 @@ class Game extends State {
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
     this.player = new Player(this, 350, 290);
-    this.currentTown.npcs.push(new Npc("Ol' Benjamin", 382, 290));
+    this.currentTown.npcs.push(new Npc(this, "Ol' Benjamin", 382, 290));
     this.camera = new Camera(this);
+
+    for (let i=0; i<5; i++){
+      this.player.equipment.put(new Item(`Apple`, 'decoration-cactus-1x', 0, 5, 0, 0, true));
+      this.player.equipment.put(new Item(`Whisky`,'decoration-small-stones-1', 0, 3, 0, 0, true));
+      this.player.equipment.put(new Item(`Revolver`,'decoration-stone-well', 0, 7, 0, 0, false));
+    }
+    this.equipmentDisplay = new EquipmentDisplay(this, this.player.equipment);
+
+    this.transferEquipment = new Equipment(defaultEquipmentSize);
+    for (let i=0; i<8; i++){
+      this.transferEquipment.put(new Item(`Apple`, 'decoration-cactus-1x', 0, 5, 0, 0, true));
+    }
+
+    this.player.transfer.changeTransferEquipment(this.transferEquipment);
+    this.transferDisplay = new TransferDisplay(this, this.player.transfer);
 
     this.slaves = [
       this.pauseMenu,
       this.designer,
       this.worldMapDisplay,
       this.equipmentDisplay,
+      this.transferDisplay,
     ]
   }
 

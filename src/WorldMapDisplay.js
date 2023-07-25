@@ -20,19 +20,20 @@
 */
 
 import { createCanvas, createDiv } from "./global/utilities.js";
-import { State, stateManager } from "./global/stateManager.js"
+import { State, stateManager } from "./global/stateManager.js";
+import {mapParameters, townSizes} from "./global/consts.js";
 
 class WorldMapDisplay extends State {
   constructor(game) {
     super(false);
     this.game = game;
     this.actions = ['Toggle Map Display'];
-    this.div = createDiv(1344, 576, ['map-canvas-div'], {
+    this.div = createDiv(mapParameters.displayWidth, mapParameters.displayHeight, ['map-canvas-div'], {
       position: 'absolute',
       display: 'none',
       zIndex: '1'
     });
-    this.mapCanvas = createCanvas(1344, 576).canvas;
+    this.mapCanvas = createCanvas(mapParameters.displayWidth, mapParameters.displayHeight).canvas;
     this.mapCanvas.style.background = 'rgb(150,130,100,0.8)';
     this.div.appendChild(this.mapCanvas);
     document.getElementById('game-container').appendChild(this.div);
@@ -98,11 +99,11 @@ class WorldMapDisplay extends State {
   computeTownSize(town) {
     // make the last town large
     if (town.ID === this.game.worldMap.townArray[this.game.worldMap.townArray.length - 1].ID) {
-      return 30;
+      return townSizes.large;
     }
-    if (town.connectedTowns.length < 3) return 10;
-    else if (town.connectedTowns.length < 5) return 20;
-    else if (town.connectedTowns.length < 10) return 30;
+    if (town.connectedTowns.length < 3) return townSizes.small;
+    else if (town.connectedTowns.length < 5) return townSizes.medium;
+    else if (town.connectedTowns.length < 10) return townSizes.large;
   }
 
   update() {

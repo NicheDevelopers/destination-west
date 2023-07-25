@@ -25,7 +25,7 @@ import Tile from "./Tile.js";
 import ctx from "./global/ctx.js";
 import { randIntInRange, distance } from "./global/utilities.js";
 import { createCanvas } from "./global/utilities.js";
-import tileSize from "./global/tileSize.js";
+import {tileSize} from "./global/consts.js";
 const variants = 2;
 
 /* pathInfo keys describe the presence of paths on adjacent squares.
@@ -275,6 +275,7 @@ class Location {
       droppedItem.draw(x, y);
     }
   }
+  
   drawRaw(x0 = 0, y0 = 0, context = ctx) {
     for (let x = 0; x < this.array.length; ++x)
       for (let y = 0; y < this.array[0].length; ++y) {

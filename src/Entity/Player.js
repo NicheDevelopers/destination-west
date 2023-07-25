@@ -32,9 +32,8 @@ import {tileSize,
         defaultSneakMultiplier,
         defaultSprintMultiplier } from "../global/consts.js";
 
-// import Transfer from "../Transfer.js";
-// import Equipment from "../Equipment.js";
-import {ContainerTrait} from "../ContainerTrait.js";
+import Transfer from "../Transfer.js";
+import Equipment from "../Equipment.js";
 
 
 //class for managing the player-controlled character
@@ -81,8 +80,7 @@ class Player extends Entity {
     this.townWidth = this.game.currentTown.array[0].length;
     this.sprinting = false;
     this.sneaking = false;
-    //this.transfer = new Transfer(this.equipment, new Equipment(0));
-    return Object.assign(this, ContainerTrait());
+    this.transfer = new Transfer(this.equipment, new Equipment(0));
   }
 
   updateMovementMethod() {

@@ -21,14 +21,13 @@
 
 import { State, stateManager } from "./global/stateManager.js";
 import {tileSize, equipmentSpriteSize} from "./global/consts.js";
-import Transfer from "./Transfer.js";
 
 class TransferDisplay extends State {
-    constructor(game){
+    constructor(game, transfer){
         super(false);
         this.game = game;
         this.actions = ['Toggle Transfer Display'];
-        this.transfer = null;
+        this.transfer = transfer;
         this.div = document.createElement("div");
         let gameContainer = document.querySelector("#game-container");
         this.div.id = "transfer";
@@ -144,9 +143,6 @@ class TransferDisplay extends State {
         div.appendChild(quantityDiv);
         div.appendChild(transferButton);
         return div;
-    }
-    setTransferWith(playerEq, transferEq) {
-      this.transfer = new Transfer(playerEq, transferEq);
     }
     update() {
         this.game.app.manageRequest(

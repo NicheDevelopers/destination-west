@@ -86,8 +86,6 @@ class Location {
     this.widthPx = this.width * tileSize;
     this.heightPx = this.height * tileSize;
     this.awaitAssets = 0;
-    //temporary
-    this.containers = new Array();
     this.droppedItems = new Array();
     this.npcs = new Array();
     this.focused = null;
@@ -241,7 +239,7 @@ class Location {
   }
 
   getInteractibles() {
-    return this.droppedItems.concat(this.npcs).concat(this.containers);
+    return this.droppedItems.concat(this.npcs);
   }
 
   /*
@@ -276,10 +274,6 @@ class Location {
     for (let droppedItem of this.droppedItems) {
       droppedItem.draw(x, y);
     }
-    for (let container of this.containers) {
-      container.draw(x, y);
-    }
-    this.npcs.forEach(npc => npc.draw(x, y));
   }
   
   drawRaw(x0 = 0, y0 = 0, context = ctx) {

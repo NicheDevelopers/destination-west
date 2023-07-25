@@ -32,7 +32,7 @@ import Designer from "./Designer.js";
 import Item from "./Item/Item.js";
 import { State } from "./global/stateManager.js"
 import Npc from "./Entity/Npc.js";
-import Container from "./Entity/Container.js";
+import Transfer from "./Transfer.js";
 import TransferDisplay from "./TransferDisplay.js";
 import { defaultEquipmentSize } from "./global/consts.js";
 
@@ -59,15 +59,6 @@ class Game extends State {
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
     this.player = new Player(this, 350, 290);
-    
-    let testContainer = new Container(this, "player", 350, 350);
-    for (let i=0; i<3; i++){
-      testContainer.equipment.put(new Item(`Whisky`,'decoration-small-stones-1', 0, 3, 0, 0, true));
-    }
-    console.log(testContainer);
-    
-    this.currentTown.containers.push(testContainer);
-    
     this.currentTown.npcs.push(new Npc(this, "Ol' Benjamin", 382, 290));
     this.camera = new Camera(this);
 
@@ -78,13 +69,13 @@ class Game extends State {
     }
     this.equipmentDisplay = new EquipmentDisplay(this, this.player.equipment);
 
-    // this.transferEquipment = new Equipment(defaultEquipmentSize);
-    // for (let i=0; i<8; i++){
-    //   this.transferEquipment.put(new Item(`Apple`, 'decoration-cactus-1x', 0, 5, 0, 0, true));
-    // }
+    this.transferEquipment = new Equipment(defaultEquipmentSize);
+    for (let i=0; i<8; i++){
+      this.transferEquipment.put(new Item(`Apple`, 'decoration-cactus-1x', 0, 5, 0, 0, true));
+    }
 
-    //this.player.transfer.changeTransferEquipment(this.transferEquipment);
-    this.transferDisplay = new TransferDisplay(this);
+    this.player.transfer.changeTransferEquipment(this.transferEquipment);
+    this.transferDisplay = new TransferDisplay(this, this.player.transfer);
 
     this.slaves = [
       this.pauseMenu,

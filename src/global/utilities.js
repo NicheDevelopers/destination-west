@@ -72,6 +72,9 @@ function generateID(objectName) {
   ids.set(objectName, ids.get(objectName) + 1 || 0);
   return ids.get(objectName);
 }
+export function resetIdFor(objectName) {
+  ids.delete(objectName);
+}
 
 function createDiv(w, h, classes = [], styles = {}, id) {
   let r = document.createElement('div');

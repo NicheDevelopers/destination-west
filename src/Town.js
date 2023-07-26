@@ -22,17 +22,17 @@
 */
 
 import presets from "./static/townPresets.js";
-import { randIntInRange, compareDirectedPositions } from "./global/utilities.js";
+import { randIntInRange, compareDirectedPositions, generateID } from "./global/utilities.js";
 import Location from "./Location.js";
 import Building from "./Building.js";
 import {defaultTownHeight, defaultTownWidth} from "./global/consts.js";
+import {genTownName} from "./nameGenerators.js";
 
 class Town extends Location {
-  constructor(name, x, y, layer, ID, numBldInTown = {}) {
+  constructor(x, y, numBldInTown = {}) {
     super(defaultTownWidth, defaultTownHeight);
-    this.layer = layer;
-    this.ID = ID;
-    this.name = name;
+    this.ID = generateID(Town);
+    this.name = genTownName(0.4);
     this.x = x;
     this.y = y;
     this.numBldInTown = numBldInTown;

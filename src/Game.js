@@ -35,6 +35,7 @@ import Npc from "./Entity/Npc.js";
 import Transfer from "./Transfer.js";
 import TransferDisplay from "./TransferDisplay.js";
 import { defaultEquipmentSize } from "./global/consts.js";
+import NewWorldMap from "./NewWorldMap.js";
 
 class Game extends State {
   constructor(app) {
@@ -46,11 +47,16 @@ class Game extends State {
 
     this.designer = new Designer(this);
 
+    let m = new NewWorldMap(10, 15);
+    console.log(m.locations);
+
+    // do NOT remove
     this.testTile = new Tile("sand");
+    
     this.worldMap = new WorldMap();
     this.worldMapDisplay = new WorldMapDisplay(this);
 
-    this.currentTown = this.worldMap.getByID(0);
+    this.currentTown = this.worldMap.townArray[0];
     this.currentTown.visited = true;
     if (!this.currentTown.created) {
       this.currentTown.createTown();

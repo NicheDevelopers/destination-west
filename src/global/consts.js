@@ -19,6 +19,11 @@ export const mapParameters = {
   maxTownsInLayer: 4,
   displayWidth: 1344,
   displayHeight: 576,
+  paddingX: 50,
+  paddingY: 30,
+  minDistanceBetweenLocations: 50,
+  minDistanceForConnection: 300
+  
 };
 export const townSizes = {
   small: 10,

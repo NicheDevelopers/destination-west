@@ -32,15 +32,16 @@ import {tileSize,
         defaultSneakMultiplier,
         defaultSprintMultiplier } from "../global/consts.js";
 
-// import Transfer from "../Transfer.js";
-// import Equipment from "../Equipment.js";
-import {ContainerTrait} from "../ContainerTrait.js";
+import {addTraits, InventoryTrait} from "../traits.js";
 
 
 //class for managing the player-controlled character
 class Player extends Entity {
   constructor(game, x = 0, y = 0) {
-    super(game, "player", x, y, defaultPlayerSpeed);
+    super(game, "player", x, y,
+	  {speed: defaultPlayerSpeed, animated: true});
+    addTraits(this, InventoryTrait());
+    
     //register all actions that the player can do and bind them to correct keys
     this.actions = ['Move Right', 'Move Left', 'Move Up', 'Move Down', 'Toggle Sprint', 'Toggle Sneak'];
 
@@ -82,7 +83,6 @@ class Player extends Entity {
     this.sprinting = false;
     this.sneaking = false;
     //this.transfer = new Transfer(this.equipment, new Equipment(0));
-    return Object.assign(this, ContainerTrait());
   }
 
   updateMovementMethod() {
@@ -246,6 +246,7 @@ class Player extends Entity {
   move() {
     this.moveX.next();
     this.moveY.next();
+
     if (this.moving) {
       if (this.sprite.animation.name !== "run")
         this.sprite.changeAnimation("run");

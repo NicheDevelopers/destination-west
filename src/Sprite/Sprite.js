@@ -20,7 +20,7 @@
 */
 import ctx from "../global/ctx.js";
 import {tileSize, spriteScale} from "../global/consts.js";
-import { createCanvas, randIntInRange } from "../global/utilities.js";
+import { createCanvas, randIntInRange, forbidProperty } from "../global/utilities.js";
 import imgInfo from "../static/imgInfo.js";
 
 function transparent(alpha) {
@@ -45,8 +45,10 @@ class Sprite {
   */
   constructor(typeName, options = {}, isColored = false) {
     if (!imgInfo.has(typeName)) {
-      	throw `Sprite: Type name is not recognized: ${typeName}`;
+      	throw `type name is not recognized: ${typeName}`;
     }
+    forbidProperty(this, "animation");
+    
     this.typeName = typeName;
 
     this.scale = options.scale ?? spriteScale;

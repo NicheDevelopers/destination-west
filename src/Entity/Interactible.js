@@ -3,8 +3,8 @@ import AnimatedSprite from "../Sprite/AnimatedSprite.js";
 import {defaultPlayerSpeed, animationSpeed} from "../global/consts.js"
 
 class Interactible extends Entity {
-  constructor(game, typeName, x=0, y=0, speed=defaultPlayerSpeed) {
-    super(game, typeName, x, y, speed);
+  constructor(game, typeName, x=0, y=0, options={}) {
+    super(game, typeName, x, y, options);
     this.loadedFocusedSprite = false;
     this.focusedSprite = new AnimatedSprite(
       typeName, { animationSpeed: animationSpeed,

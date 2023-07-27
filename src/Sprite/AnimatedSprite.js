@@ -20,10 +20,9 @@
 */
 
 import ctx from "../global/ctx.js";
-
 import Sprite from "./Sprite.js";
-
 import Animation from "../Animation.js";
+import { allowProperty} from "../global/utilities.js";
 
 /**
  * Create sprites to make display and animation simple
@@ -31,7 +30,8 @@ import Animation from "../Animation.js";
 class AnimatedSprite extends Sprite {
   constructor(spriteName, options) {
     super(spriteName, options);
-
+    allowProperty(this, "animation");
+    delete this.animation;
     this.animations = this.sheetInfo.animations;
     this.defaultAnimation = this.sheetInfo.defaultAnimation;
 

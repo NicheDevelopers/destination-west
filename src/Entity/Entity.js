@@ -19,25 +19,43 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+import Sprite from "../Sprite/Sprite.js";
 import AnimatedSprite from "../Sprite/AnimatedSprite.js";
 import Animation from "../Animation.js";
-import Equipment from "../Equipment.js";
 import {animationSpeed, defaultEquipmentSize} from "../global/consts.js";
+import {validateOptions} from "../global/utilities.js";
+
+const entityOptions = new Map([
+  ["animated",
+   "Boolean. Determines whether the entity has an animated sprite"],
+  ["speed",
+   "Number. Provides the speed for the entity's movement. " +
+    "Undefined means the entity is stationary"]
+]);
 
 /**
  * The super class for entity classes to derive from
  @abstract
  */
 class Entity {
-  constructor(game, typeName, x = 0, y = 0, speed = 100) {
+  constructor(game, typeName, x = 0, y = 0, options={}) {
+    validateOptions(options, entityOptions, "Entity");
+
     this.game = game;
     this.typeName = typeName;
-    this.sprite = new AnimatedSprite(typeName, { animationSpeed: animationSpeed });
-    //this.equipment = new Equipment(defaultEquipmentSize);
     this.x = x;
     this.y = y;
-    this.moveX = new Animation(this, "x", speed);
-    this.moveY = new Animation(this, "y", speed);
+       
+    if (!options.animated)
+      this.sprite = new Sprite(typeName);
+    else
+      this.sprite = new AnimatedSprite(
+	typeName, { animationSpeed: animationSpeed });
+
+    if (options.speed !== undefined) {
+      this.moveX = new Animation(this, "x", options.speed);
+      this.moveY = new Animation(this, "y", options.speed);
+    }
   }
   
   draw(x, y) {

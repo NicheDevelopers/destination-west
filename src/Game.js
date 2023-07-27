@@ -64,7 +64,7 @@ class Game extends State {
     for (let i=0; i<3; i++){
       testContainer.equipment.put(new Item(`Whisky`,'decoration-small-stones-1', 0, 3, 0, 0, true));
     }
-    console.log(testContainer);
+    //console.log(testContainer);
     
     this.currentTown.containers.push(testContainer);
     

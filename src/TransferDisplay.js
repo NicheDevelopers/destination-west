@@ -25,9 +25,9 @@ import Transfer from "./Transfer.js";
 
 class TransferDisplay extends State {
     constructor(game){
-        super(false);
+        super(true);
         this.game = game;
-        this.actions = ['Toggle Transfer Display'];
+        this.actions = ['Interact'];
         this.transfer = null;
         this.div = document.createElement("div");
         let gameContainer = document.querySelector("#game-container");
@@ -150,7 +150,7 @@ class TransferDisplay extends State {
     }
     update() {
         this.game.app.manageRequest(
-          'Toggle Transfer Display',
+          'Interact',
           () => stateManager.toggleState(this),
           { once: true }
         );

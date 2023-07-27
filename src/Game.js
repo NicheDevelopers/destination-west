@@ -60,7 +60,7 @@ class Game extends State {
     //this.testPants = new ColoredSprite('pants');
     this.player = new Player(this, 350, 290);
     
-    let testContainer = new Container(this, "player", 350, 350);
+    let testContainer = new Container(this, "barrel", 350, 350);
     for (let i=0; i<3; i++){
       testContainer.equipment.put(new Item(`Whisky`,'decoration-small-stones-1', 0, 3, 0, 0, true));
     }

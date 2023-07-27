@@ -1,13 +1,12 @@
 import Entity from "./Entity.js";
-import AnimatedSprite from "../Sprite/AnimatedSprite.js";
-import {defaultPlayerSpeed, animationSpeed} from "../global/consts.js"
+import Sprite from "../Sprite/Sprite.js";
 
 class Interactible extends Entity {
   constructor(game, typeName, x=0, y=0, options={}) {
     super(game, typeName, x, y, options);
     this.loadedFocusedSprite = false;
-    this.focusedSprite = new AnimatedSprite(
-      typeName, { animationSpeed: animationSpeed,
+    this.focusedSprite = new Sprite(
+      typeName, { 
 		  outline: true,
 		  callback:
 		  () => this.loadedFocusedSprite = true

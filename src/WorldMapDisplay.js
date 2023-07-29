@@ -34,10 +34,11 @@ class WorldMapDisplay extends State {
       zIndex: '1'
     });
     this.mapCanvas = createCanvas(mapParameters.displayWidth, mapParameters.displayHeight).canvas;
-    this.mapCanvas.style.background = 'rgb(150,130,100,0.8)';
+    this.mapCanvas.id = 'map-canvas';
+    //this.mapCanvas.style.background = 'rgba(150,130,100, 0.8)';
     this.div.appendChild(this.mapCanvas);
     document.getElementById('game-container').appendChild(this.div);
-    this.drawnDivs = new Array(this.game.worldMap.townArray.length).fill(false);
+    this.drawnDivs = new Array(this.game.worldMap.locations.length).fill(false);
   }
 
   draw() {
@@ -46,20 +47,25 @@ class WorldMapDisplay extends State {
     map_ctx.fillStyle = 'white';
     map_ctx.font = "20px Verdana";
     map_ctx.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
-    let visibleTowns = [...new Set(this.game.worldMap.townArray
-      .filter((t) => t.visited)
-      .map((m) => m.connectedTowns)
-      .flat()
-      .concat(this.game.worldMap.townArray
-        .filter((t) => t.visited)
-        .map((x) => x.ID)))];
+    //map.locations.map((t) => t.ID);
+    let visibleTowns =
+      [...new Set(
+        this.game.worldMap.locations
+          .filter((t) => t.visited)
+          .map((m) => m.connectedLocations)
+          .flat()
+          .concat(this.game.worldMap.locations
+            .filter((t) => t.visited)
+            .map((x) => x.ID)))];
 
-    for (let town of map.townArray) {
+    // Draw all connections so that they get completely overlapped by towns
+    
+    for (let town of map.locations) {
       map_ctx.fillStyle = 'white';
       let size = this.computeTownSize(town);
 
       // if the town has been visited, is the current town or can be reached from the current town, draw it
-      if (town.visited || this.game.worldMap.townArray.filter((t) => t.visited).map((m) => m.connectedTowns).some((e) => e.includes(town.ID))) {
+      if (town.visited || this.game.worldMap.locations.filter((t) => t.visited).map((m) => m.connectedLocations).some((e) => e.includes(town.ID))) {
         if (!this.drawnDivs[town.ID]) {
           let d = createDiv(80, 80, [`town-div`], {
             display: 'block',
@@ -77,7 +83,7 @@ class WorldMapDisplay extends State {
           this.div.appendChild(d);
           this.drawnDivs[town.ID] = true;
         }
-        for (let connection of town.connectedTowns) {
+        for (let connection of town.connectedLocations) {
           let town2 = this.game.worldMap.getByID(connection);
           if (town.visited && (town2.visited || visibleTowns.includes(town2.ID))) {
             drawLine(map_ctx, town.x, town.y, town2.x, town2.y, 'black', 3);
@@ -98,12 +104,12 @@ class WorldMapDisplay extends State {
   }
   computeTownSize(town) {
     // make the last town large
-    if (town.ID === this.game.worldMap.townArray[this.game.worldMap.townArray.length - 1].ID) {
+    if (town.ID === this.game.worldMap.locations[this.game.worldMap.locations.length - 1].ID) {
       return townSizes.large;
     }
-    if (town.connectedTowns.length < 3) return townSizes.small;
-    else if (town.connectedTowns.length < 5) return townSizes.medium;
-    else if (town.connectedTowns.length < 10) return townSizes.large;
+    if (town.connectedLocations.length < 3) return townSizes.small;
+    else if (town.connectedLocations.length < 5) return townSizes.medium;
+    else if (town.connectedLocations.length < 10) return townSizes.large;
   }
 
   update() {
@@ -123,14 +129,16 @@ class WorldMapDisplay extends State {
   }
 }
 
-function drawCircle(ctx, x, y, radius, strokeWidth) {
+function drawCircle(ctx, x, y, radius, strokeWidth, color) {
   ctx.beginPath()
   ctx.arc(x, y, radius, 0, 2 * Math.PI, false)
-  ctx.fillStyle = 'black'
+  ctx.fillStyle = color;
   ctx.fill()
   ctx.lineWidth = strokeWidth
-  ctx.strokeStyle = 'black'
-  ctx.stroke()
+  ctx.strokeStyle = color;
+  ctx.stroke();
+  ctx.strokeStyle = 'black';
+  ctx.fillStyle = 'black';
 }
 
 function drawLine(ctx, start_x, start_y, end_x, end_y, strokeStyle, lineWidth) {

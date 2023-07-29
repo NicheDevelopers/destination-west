@@ -23,7 +23,6 @@
 import Camera from "./Camera.js";
 import Tile from "./Tile.js";
 import Player from "./Entity/Player.js";
-import WorldMap from "./WorldMap.js";
 import WorldMapDisplay from "./WorldMapDisplay.js";
 import PauseMenu from "./PauseMenu.js";
 import EquipmentDisplay from "./EquipmentDisplay.js";
@@ -35,7 +34,7 @@ import Npc from "./Entity/Npc.js";
 import Transfer from "./Transfer.js";
 import TransferDisplay from "./TransferDisplay.js";
 import { defaultEquipmentSize } from "./global/consts.js";
-import NewWorldMap from "./NewWorldMap.js";
+import WorldMap from "./WorldMap.js";
 
 class Game extends State {
   constructor(app) {
@@ -47,16 +46,12 @@ class Game extends State {
 
     this.designer = new Designer(this);
 
-    let m = new NewWorldMap(10, 15);
-    console.log(m.locations);
-
-    // do NOT remove
     this.testTile = new Tile("sand");
     
-    this.worldMap = new WorldMap();
+    this.worldMap = new WorldMap(20, 25);
     this.worldMapDisplay = new WorldMapDisplay(this);
 
-    this.currentTown = this.worldMap.townArray[0];
+    this.currentTown = this.worldMap.locations[0];
     this.currentTown.visited = true;
     if (!this.currentTown.created) {
       this.currentTown.createTown();
@@ -93,7 +88,7 @@ class Game extends State {
   }
 
   travel(id) {
-    if (!this.currentTown.connectedTowns.includes(parseInt(id))) {
+    if (!this.currentTown.connectedLocations.includes(parseInt(id))) {
       return;
     }
     this.currentTown = this.worldMap.getByID(id);

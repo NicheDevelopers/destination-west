@@ -17,24 +17,25 @@ export const mapParameters = {
   chanceOfConnectionInLayer: 0.3,
   minTownsInLayer: 2,
   maxTownsInLayer: 4,
-  displayWidth: 1344,
-  displayHeight: 576,
+  //displayWidth: 1344,
+  displayWidth: 1800,
+  displayHeight: 900,
   paddingX: 50,
-  paddingY: 30,
-  minDistanceBetweenLocations: 50,
+  paddingY: 50,
+  minDistanceBetweenLocations: 150,
   minDistanceForConnection: 300
   
 };
 export const townSizes = {
-  small: 10,
-  medium: 20,
-  large: 30
+  small: 8,
+  medium: 16,
+  large: 20
 };
 
 export const camSettings = {
   zoom: 1.5,
   zoomMin: 0.85,
-  zoomMax: 5,
+  zoomMax: 50,
   zoomSafetyMultiplier: 1.05,
   zoomSpeed: 0.002
 };

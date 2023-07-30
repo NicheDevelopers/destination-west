@@ -21,7 +21,7 @@
 
 import { createCanvas, createDiv } from "./global/utilities.js";
 import { State, stateManager } from "./global/stateManager.js";
-import {mapParameters, townSizes} from "./global/consts.js";
+import { mapParameters, townSizes } from "./global/consts.js";
 
 class WorldMapDisplay extends State {
   constructor(game) {
@@ -47,7 +47,12 @@ class WorldMapDisplay extends State {
     map_ctx.fillStyle = 'white';
     map_ctx.font = "20px Verdana";
     map_ctx.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
-    //map.locations.map((t) => t.ID);
+    for (let i = this.div.childNodes.length - 1; i >= 0; i--) {
+      const childNode = this.div.childNodes[i];
+      if (childNode.tagName !== 'CANVAS') {
+        this.div.removeChild(childNode);
+      }
+    }
     let visibleTowns =
       [...new Set(
         this.game.worldMap.locations
@@ -59,14 +64,26 @@ class WorldMapDisplay extends State {
             .map((x) => x.ID)))];
 
     // Draw all connections so that they get completely overlapped by towns
-    
+    for (const location of map.locations) {
+      for (let connection of location.connectedLocations) {
+        let other = this.game.worldMap.getByID(connection);
+        if (location.visited && (other.visited || visibleTowns.includes(other.ID))) {
+          drawLine(map_ctx, location.x, location.y, other.x, other.y, 'black', 3);
+        }
+      }
+    }
+
     for (let town of map.locations) {
       map_ctx.fillStyle = 'white';
       let size = this.computeTownSize(town);
 
       // if the town has been visited, is the current town or can be reached from the current town, draw it
-      if (town.visited || this.game.worldMap.locations.filter((t) => t.visited).map((m) => m.connectedLocations).some((e) => e.includes(town.ID))) {
-        if (!this.drawnDivs[town.ID]) {
+      if (town.visited ||
+        this.game.worldMap.locations
+          .filter((t) => t.visited)
+          .map((m) => m.connectedLocations)
+          .some((e) => e.includes(town.ID))) {
+        if (this.game.currentTown.connectedLocations.includes(town.ID) && town.ID !== this.game.currentTown.ID) {
           let d = createDiv(80, 80, [`town-div`], {
             display: 'block',
             position: 'absolute',
@@ -74,59 +91,53 @@ class WorldMapDisplay extends State {
             width: size * 2 + 'px',
             left: town.x - size + 'px',
             top: town.y - size + 'px',
-            'border-radius': '100%',
+            'border-radius': '100%'
           });
           d.dataset.id = town.ID;
           d.addEventListener('click', (evt) => {
             this.game.travel(evt.target.dataset.id);
           })
           this.div.appendChild(d);
-          this.drawnDivs[town.ID] = true;
         }
-        for (let connection of town.connectedLocations) {
-          let town2 = this.game.worldMap.getByID(connection);
-          if (town.visited && (town2.visited || visibleTowns.includes(town2.ID))) {
-            drawLine(map_ctx, town.x, town.y, town2.x, town2.y, 'black', 3);
-          }
-        }
-        if (this.game.currentTown.ID == town.ID) {
-          drawCircle(map_ctx, town.x, town.y, size, 2, "green");
-        } else {
-          drawCircle(map_ctx, town.x, town.y, size, 2, "black");
-        }
+        //this.drawnDivs[town.ID] = true;
+        let townColor = 'black';
+        if (this.game.currentTown.ID == town.ID) townColor = 'green';
+        if (this.game.currentTown.connectedLocations.includes(town.ID)) townColor = 'red';
+        drawCircle(map_ctx, town.x, town.y, size, 2, townColor);
       }
+
     }
     for (let t of visibleTowns.map((r) => this.game.worldMap.getByID(r))) {
       map_ctx.fillStyle = 'white';
       map_ctx.fillText(t.name, t.x - 50, t.y + 40);
     }
-
-  }
-  computeTownSize(town) {
-    // make the last town large
-    if (town.ID === this.game.worldMap.locations[this.game.worldMap.locations.length - 1].ID) {
-      return townSizes.large;
-    }
-    if (town.connectedLocations.length < 3) return townSizes.small;
-    else if (town.connectedLocations.length < 5) return townSizes.medium;
-    else if (town.connectedLocations.length < 10) return townSizes.large;
   }
 
-  update() {
-    this.game.app.manageRequest(
-      'Toggle Map Display',
-      () => stateManager.toggleState(this),
-      { once: true }
-    );
+computeTownSize(town) {
+  // make the last town large
+  if (town.ID === this.game.worldMap.locations[this.game.worldMap.locations.length - 1].ID) {
+    return townSizes.large;
   }
+  if (town.connectedLocations.length < 3) return townSizes.small;
+  else if (town.connectedLocations.length < 5) return townSizes.medium;
+  else if (town.connectedLocations.length < 10) return townSizes.large;
+}
 
-  startHook() {
-    this.draw();
-    this.div.style.display = 'block';
-  }
-  endHook() {
-    this.div.style.display = 'none';
-  }
+update() {
+  this.game.app.manageRequest(
+    'Toggle Map Display',
+    () => stateManager.toggleState(this),
+    { once: true }
+  );
+}
+
+startHook() {
+  this.draw();
+  this.div.style.display = 'block';
+}
+endHook() {
+  this.div.style.display = 'none';
+}
 }
 
 function drawCircle(ctx, x, y, radius, strokeWidth, color) {

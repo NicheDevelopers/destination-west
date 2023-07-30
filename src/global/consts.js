@@ -12,16 +12,23 @@ export const defaultTownWidth = 42;
 export const defaultTownHeight = 20;
 export const equipmentSpriteSize = 7;
 export const mapParameters = {
-  numOfLayers: 5,
-  chanceOfConnectionBetweenLayers: 0.5,
-  chanceOfConnectionInLayer: 0.3,
-  minTownsInLayer: 2,
-  maxTownsInLayer: 4,
-  //displayWidth: 1344,
+  minLocations: 20,
+  maxLocations: 25,
   displayWidth: 1800,
   displayHeight: 900,
   paddingX: 50,
   paddingY: 50,
+  /*
+   minDistanceForConnection must be significantly greater than minDistanceBetweenLocations,
+    WorldMap.js creating coords of locations first search for locations which distance
+    to any other location is smaller than minDistanceBetweenLocations;
+    Doing connections nearby locations is location which distance to any other location
+    is smaller than minDistanceForConnection;
+    Therefore, if location will be generated on coords which distance to any location is greater
+    than minimum distance needed for connection there would generate multiple locations without connections
+    DFS method will never return true, so on contructor of WorldMap will never end.
+    For a slight difference between this two values time required to generate WorldMap will singificantly increase.
+  */
   minDistanceBetweenLocations: 150,
   minDistanceForConnection: 300
   

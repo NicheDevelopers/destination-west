@@ -7,9 +7,9 @@ function distance([x1, y1], [x2, y2]) {
 }
 
 class WorldMap {
-  constructor(minLocations, maxLocations) {
+  constructor() {
     while (true) {
-      this._generateLocations(minLocations, maxLocations);
+      this._generateLocations(mp.minLocations, mp.maxLocations);
       this._connectLocations();
       if (this._locationsConnected()) break;
     }

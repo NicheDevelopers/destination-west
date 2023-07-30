@@ -48,7 +48,7 @@ class Game extends State {
 
     this.testTile = new Tile("sand");
     
-    this.worldMap = new WorldMap(20, 25);
+    this.worldMap = new WorldMap();
     this.worldMapDisplay = new WorldMapDisplay(this);
 
     this.currentTown = this.worldMap.locations[0];

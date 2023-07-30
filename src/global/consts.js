@@ -2,6 +2,7 @@ export const tileSize = 64;
 export const defaultEquipmentSize = 100;
 export const animationSpeed = 9;
 export const defaultPlayerSpeed = 150;
+export const defaultNpcSpeed = 130;
 export const defaultDiagonalOffset = Math.sqrt(2)/2;
 export const defaultSprintMultiplier = 1.5;
 export const defaultSneakMultiplier = 0.5;

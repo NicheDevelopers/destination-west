@@ -96,10 +96,6 @@ class Camera {
 
     this.game.currentTown.draw(topLeftX, topLeftY, ctx,
       this.width, this.height);
-
-    this.game.currentTown.npcs.forEach(npc => npc.draw(
-      npc.x - topLeftX,
-      npc.y - topLeftY));
     
     this.game.player.draw(this.game.player.x - topLeftX,
       this.game.player.y - topLeftY);

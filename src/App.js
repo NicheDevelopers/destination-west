@@ -34,6 +34,7 @@ class App {
     this.game = new Game(this);
     stateManager.pushState(this.game)
 
+    this.animationFrameID = null;
     this.userFunctionsMap = new Map();
 
     this.debugging = false;
@@ -75,18 +76,25 @@ class App {
   }
 
   loop() {
-    window.requestAnimationFrame(() => this.loop());
-    time.update();
+    this.animationFrameID =
+      window.requestAnimationFrame(() => this.loop());
+    try {
+      time.update();
 
-    this.keyVisualizer.update();
-    this.browser.update();
-    this.testFPSCounter.next();
+      this.keyVisualizer.update();
+      this.browser.update();
+      this.testFPSCounter.next();
 
-    stateManager.updateStates();
+      stateManager.updateStates();
+
+      if (this.debugging)
+	this.debug();
+    }
+    catch(e) {
+      window.cancelAnimationFrame(this.animationFrameID);
+      throw e;
+    }
     
-    if (this.debugging)
-      this.debug();
-
     // ctx.font = "16px serif";
     // ctx.fillText(`FPS: ${this.game.app.fps}`, 606, 16);
   }

@@ -22,6 +22,7 @@
 */
 
 import Tile from "./Tile.js";
+import Entity from "./Entity/Entity.js";
 import ctx from "./global/ctx.js";
 import { randIntInRange, distance } from "./global/utilities.js";
 import { createCanvas } from "./global/utilities.js";
@@ -90,6 +91,7 @@ class Location {
     this.containers = new Array();
     this.droppedItems = new Array();
     this.npcs = new Array();
+    this.decorations = new Array();
     this.focused = null;
   }
 
@@ -141,22 +143,21 @@ class Location {
       ["big-bag-3x"],
     ];
 
-    let array = [];
-
     for (let i = 0; i < this.array.length; i++)
       for (let j = 0; j < this.array[0].length; j++) {
         if (this.array[i][j].typeName !== 'sand') continue;
 
+        let array = null;
         let rand = randIntInRange(0, 100);
-        if (this.nearToBuilding(i, j) && rand < town_percent) {
+        
+        if (this.nearToBuilding(i, j) && rand < town_percent)
           array = town_generic_decorations;
-          let idx = randIntInRange(0, array.length);
-          this.array[i][j] = new Tile("decoration-" + array[idx], i * tileSize, j * tileSize);
-        }
-        else if (!this.nearToBuilding(i, j) && rand < rural_percent) {
+        else if (!this.nearToBuilding(i, j) && rand < rural_percent)
           array = rural_generic_decorations;
+        
+        if (array) {
           let idx = randIntInRange(0, array.length);
-          this.array[i][j] = new Tile("decoration-" + array[idx], i * tileSize, j * tileSize);
+          this.decorations.push(new Entity("decoration-" + array[idx], i * tileSize, j * tileSize));
         }
       }
   }
@@ -270,16 +271,9 @@ class Location {
   draw(x = 0, y = 0, context = ctx, width = 672, height = 288) {
     if (!this.created)
       return;
-    //throw "Town: Attempt to draw before creating the town";
+
     context.drawImage(this.image, x, y, width, height,
-      0, 0, width, height);
-    for (let droppedItem of this.droppedItems) {
-      droppedItem.draw(x, y);
-    }
-    for (let container of this.containers) {
-      container.draw(x, y);
-    }
-    this.npcs.forEach(npc => npc.draw(x, y));
+                      0, 0, width, height);
   }
   
   drawRaw(x0 = 0, y0 = 0, context = ctx) {
@@ -295,6 +289,23 @@ class Location {
         let tile = this.array[x][y];
         tile.drawDebugInfo();
       }
+  }
+
+  /* Returns two arrays:
+     1. Entities that should be drawn first and depth doesn't matter.
+     2. Entities where depth matters, sorted in drawing order. */
+  entitiesByDepth(location, player) {
+    let arr = [
+      location.droppedItems,
+      location.containers,
+      location.npcs,
+      location.decorations,
+      player
+    ].flat().sort((e1, e2) => e1.y - e2.y);
+    return [
+      arr.filter(e => !e.ignoreDepth),
+      arr.filter(e => e.ignoreDepth)
+    ];
   }
 }
 

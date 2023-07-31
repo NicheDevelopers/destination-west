@@ -94,12 +94,17 @@ class Camera {
       playerY - this.height / 2,
       this.game.currentTown.heightPx - this.height));
 
-    this.game.currentTown.draw(topLeftX, topLeftY, ctx,
-      this.width, this.height);
-    
-    this.game.player.draw(this.game.player.x - topLeftX,
-      this.game.player.y - topLeftY);
+    let t = this.game.currentTown;
+    t.draw(topLeftX, topLeftY, ctx, this.width, this.height);
+    let [ignoringDepth, byDepth] = t.entitiesByDepth(t, this.game.player);
+    for (const e of ignoringDepth)
+      e.draw(topLeftX, topLeftY);
+    for (const e of byDepth)
+      e.draw(topLeftX, topLeftY);
   }
 }
 
 export default Camera;
+
+
+

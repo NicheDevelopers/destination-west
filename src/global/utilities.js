@@ -135,3 +135,10 @@ export function allowProperty(obj, prop) {
   // remove property with an error-provoking getter
   delete obj[prop];
 }
+
+Object.defineProperty(Array.prototype, "none", {
+  value: function (fn) {return !this.some(fn)},
+});
+Object.defineProperty(Array.prototype, "last", {
+  get: function () {return this[this.length - 1]},
+});

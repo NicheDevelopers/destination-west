@@ -61,53 +61,53 @@ class TransferDisplay extends State {
             this.divEqListTransfer.removeChild(this.divEqListTransfer.lastChild);
         }
         let sortDivPlayer = document.createElement("div");
-        sortDivPlayer.classList.add("list-element");
+        sortDivPlayer.classList.add("list-info");
         sortDivPlayer.style.border = 'none';
         sortDivPlayer.style.borderBottom = '2px solid black';
+        sortDivPlayer.style.textAlign = "center";
+        sortDivPlayer.innerText = "Sort by weight from";
         let buttonSortUpPlayer = document.createElement("button");
         buttonSortUpPlayer.classList.add("button", "eq-button");
         buttonSortUpPlayer.addEventListener("click", () => { this.transfer.playerEquipment.sortByWeight(true); this.refresh() });
         buttonSortUpPlayer.innerText = "Heavy";
-        this.divEqListPlayer.appendChild(buttonSortUpPlayer);
+        sortDivPlayer.appendChild(buttonSortUpPlayer);
         let buttonSortDownPlayer = document.createElement("button");
         buttonSortDownPlayer.classList.add("button", "eq-button");
         buttonSortDownPlayer.addEventListener("click", () => { this.transfer.playerEquipment.sortByWeight(false); this.refresh() });
         buttonSortDownPlayer.innerText = "Light";
-        this.divEqListPlayer.appendChild(buttonSortDownPlayer);
-        sortDivPlayer.style.textAlign = "center";
-        sortDivPlayer.innerText = "Sort by weight from";
+        sortDivPlayer.appendChild(buttonSortDownPlayer);
         this.divEqListPlayer.appendChild(sortDivPlayer);
         for (let record of this.transfer.playerEquipment.records) {
           this.divEqListPlayer.appendChild(this.recordToListElement(record, true));
         }
         let sumWeightPlayer = document.createElement("div");
-        sumWeightPlayer.classList.add("list-element");
+        sumWeightPlayer.classList.add("list-info");
         sumWeightPlayer.style.textAlign = "center";
         sumWeightPlayer.innerText = "Weight summary of all items: " + this.transfer.playerEquipment.sumWeight() + " / " + this.transfer.playerEquipment.maxWeight;
         this.divEqListPlayer.appendChild(sumWeightPlayer);
 
         let sortDivTransfer = document.createElement("div");
-        sortDivTransfer.classList.add("list-element");
+        sortDivTransfer.classList.add("list-info");
         sortDivTransfer.style.border = 'none';
         sortDivTransfer.style.borderBottom = '2px solid black';
+        sortDivTransfer.style.textAlign = "center";
+        sortDivTransfer.innerText = "Sort by weight from";
         let buttonSortUpTransfer = document.createElement("button");
         buttonSortUpTransfer.classList.add("button", "eq-button");
         buttonSortUpTransfer.addEventListener("click", () => { this.transfer.transferEquipment.sortByWeight(true); this.refresh() });
         buttonSortUpTransfer.innerText = "Heavy";
-        this.divEqListTransfer.appendChild(buttonSortUpTransfer);
+        sortDivTransfer.appendChild(buttonSortUpTransfer);
         let buttonSortDownTransfer = document.createElement("button");
         buttonSortDownTransfer.classList.add("button", "eq-button");
         buttonSortDownTransfer.addEventListener("click", () => { this.transfer.transferEquipment.sortByWeight(false); this.refresh() });
         buttonSortDownTransfer.innerText = "Light";
-        this.divEqListTransfer.appendChild(buttonSortDownTransfer);
-        sortDivTransfer.style.textAlign = "center";
-        sortDivTransfer.innerText = "Sort by weight from";
+        sortDivTransfer.appendChild(buttonSortDownTransfer);
         this.divEqListTransfer.appendChild(sortDivTransfer);
         for (let record of this.transfer.transferEquipment.records) {
           this.divEqListTransfer.appendChild(this.recordToListElement(record, false));
         }
         let sumWeightTransfer = document.createElement("div");
-        sumWeightTransfer.classList.add("list-element");
+        sumWeightTransfer.classList.add("list-info");
         sumWeightTransfer.style.textAlign = "center";
         sumWeightTransfer.innerText = "Weight summary of all items: " + this.transfer.transferEquipment.sumWeight() + " / " + this.transfer.transferEquipment.maxWeight;
         this.divEqListTransfer.appendChild(sumWeightTransfer);
@@ -116,6 +116,7 @@ class TransferDisplay extends State {
         let div = document.createElement("div");
         div.classList.add("list-element");
         div.style.display = "flex";
+        div.style.textAlign = "center";
         let nameDiv = document.createElement("div");
         nameDiv.innerText = record.item.name;
         nameDiv.style.display = "inline-block";

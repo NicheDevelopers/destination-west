@@ -139,9 +139,52 @@ export function allowProperty(obj, prop) {
 Object.defineProperty(Array.prototype, "none", {
   value: function (fn) {return !this.some(fn)},
 });
+
+Object.defineProperty(Array.prototype, "first", {
+  get: function () {return this[0]},
+});
+
 Object.defineProperty(Array.prototype, "last", {
   get: function () {return this[this.length - 1]},
 });
 
 import {Direction, directions} from "./Direction.js";
 export {Direction, directions};
+
+// percent chance (0 - 1)
+export function roll(chance){
+  if (chance < 0 || chance > 1){
+    throw `attempt to roll when chance of success (${chance}) was not between 0 and 1`;
+  }
+  if (randFloatInRange(0,1) < chance)
+    return true;
+  return false;
+}
+
+Object.defineProperty(Array.prototype, "randomElement", {
+  value: function () {return this[randIntInRange(0, this.length)]},
+});
+
+Object.defineProperty(Array.prototype, "max", {
+  value: function ( fn = ((a,b)=>a-b)) {
+    let max = undefined;
+    for (let element of this){
+      if (max == undefined) max = element;
+      if ( fn(element, max) > 0 )
+        max = element;
+    }
+    return max;
+  },
+});
+
+Object.defineProperty(Array.prototype, "min", {
+  value: function ( fn = ((a,b)=>b-a)) {
+    let min = undefined;
+    for (let element of this){
+      if (min == undefined) min = element;
+      if ( fn(min, element) < 0 )
+        min = element;
+    }
+    return min;
+  },
+});

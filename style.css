@@ -123,16 +123,24 @@ canvas {
 }
 
 #equipment {
-    width: 500px;
-    height: 500px;
+    width: 925px;
+    height: 925px;
     position:  absolute;
     z-index: 1;
-    background-color: rgb(121,70,20);
+    background-color: rgb(121, 70, 20);
+}
+
+#eq-list {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: scroll;
 }
 
 #transfer {
-    width: 1000px;
-    height: 500px;
+    width: 1500px;
+    height: 925px;
     position: absolute;
     z-index: 1;
     background-color: rgb(121, 70, 20);
@@ -145,25 +153,25 @@ canvas {
     overflow-y: scroll;
 }
 
-#eq-list {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    overflow-y: scroll;
+.list-info {
+    border: 2px solid black;
+    border-top: none;
+    font-size: 40px;
+    margin: auto;
+    /* display: table-row; */
 }
 
 .list-element {
     border: 2px solid black;
     border-top: none;
-    font-size: x-large;
+    font-size: xx-large;
     margin: auto;
     /* display: table-row; */
 }
 
 .eq-button {
-    height: 20px;
-    width: 50px;
+    height: 40px;
+    width: 60px;
     float: right;
     margin: 0;
 }

@@ -117,6 +117,7 @@ class TransferDisplay extends State {
         div.classList.add("list-element");
         div.style.display = "flex";
         div.style.textAlign = "center";
+        div.style.alignItems = "center";
         let nameDiv = document.createElement("div");
         nameDiv.innerText = record.item.name;
         nameDiv.style.display = "inline-block";
@@ -124,7 +125,9 @@ class TransferDisplay extends State {
         let weightDiv = document.createElement("div");
         weightDiv.innerText = record.getWeight();
         weightDiv.style.display = "inline-block"; 
-        weightDiv.style.flex = 2;
+      weightDiv.style.flex = 2;
+      nameDiv.style.textAlign = "left";
+      nameDiv.style.marginLeft = "5%";
         let quantityDiv = document.createElement("div");
         quantityDiv.innerText = record.quantity;
         quantityDiv.style.display = "inline-block"; 

@@ -68,6 +68,13 @@ canvas {
     z-index: 1;
 }
 
+div.list-element img {
+    margin-left: 2%;
+    width: 80px;
+    height: 80px;
+    image-rendering: crisp-edges;
+}
+
 #pause-menu {
     display: none;
     width: 672px;
@@ -170,10 +177,10 @@ canvas {
 }
 
 .eq-button {
+    margin-right: 2%;
     height: 40px;
     width: 60px;
     float: right;
-    margin: 0;
 }
 
 .window {

@@ -27,55 +27,36 @@ import ctx from "./global/ctx.js";
 import { randIntInRange, distance } from "./global/utilities.js";
 import { createCanvas } from "./global/utilities.js";
 import {tileSize} from "./global/consts.js";
-const variants = 2;
 
 /* pathInfo keys describe the presence of paths on adjacent squares.
    The first digit describes the top-left adjacent tile. If that tile
    is a path then we represet is as a 1, otherwise as 0.
    The next digit describes the tile over the top edge and so on.
    After checking a whole row we move to the next one.
-   The last numeral is the number that represent one of the 'variants' of the sprite that we have prepered.
 */
 
 const pathInfo = new Map([
   ["street", "street"],
-  ["001000100", "path-narrow-side-1"],
-  ["001000101", "path-narrow-side-2"],
-  ["001000110", "path-narrow-side-1"],
-  ["001000111", "path-narrow-side-2"],
-  ["011000100", "path-narrow-side-1"],
-  ["011000101", "path-narrow-side-2"],
-  ["011100100", "path-narrow-side-1"],
-  ["011100101", "path-narrow-side-2"],
-  ["000010100", "path-narrrow-corner-1"],
-  ["000010101", "path-narrrow-corner-2"],
-  ["000000100", "path-narrow-end-1"],
-  ["000000101", "path-narrow-end-2"],
-  ["100010100", "path-narrow-fork-1"],
-  ["100010101", "path-narrow-fork-2"],
-  ["101010100", "path-narrow-crossroad-1"],
-  ["101010101", "path-narrow-crossroad-2"],
-  ["111111110", "path-wide-full-1"],
-  ["111111111", "path-wide-full-2"],
-  ["111111100", "path-wide-inner-corner-1"],
-  ["111111101", "path-wide-inner-corner-2"],
-  ["001111100", "path-wide-side-1"],
-  ["001111101", "path-wide-side-2"],
-  ["011111100", "path-wide-side-1"],
-  ["011111101", "path-wide-side-2"],
-  ["001111110", "path-wide-side-1"],
-  ["001111111", "path-wide-side-2"],
-  ["000011100", "path-wide-corner-1"],
-  ["000011101", "path-wide-corner-2"],
+  ["00100010", ["path-narrow-side-1","path-narrow-side-2","path-narrow-side-3"]],
+  ["00100011", ["path-narrow-side-1","path-narrow-side-2","path-narrow-side-3"]],
+  ["01100010", ["path-narrow-side-1","path-narrow-side-2","path-narrow-side-3"]],
+  ["01110010", ["path-narrow-side-1","path-narrow-side-2","path-narrow-side-3"]], 
+  ["00001010", ["path-narrrow-corner-1","path-narrrow-corner-2"]],
+  ["00000010", ["path-narrow-end-1","path-narrow-end-2"]],
+  ["10001010", ["path-narrow-fork-1","path-narrow-fork-2"]],
+  ["10101010", ["path-narrow-crossroad-1","path-narrow-crossroad-2"]],
+  ["11111111", ["path-wide-full-1"]],
+  ["11111110", ["path-wide-inner-corner-1","path-wide-inner-corner-2"]],
+  ["00111110", ["path-wide-side-1","path-wide-side-2"]],
+  ["01111110", ["path-wide-side-1","path-wide-side-2"]],
+  ["00111111", ["path-wide-side-1","path-wide-side-2"]],
+  ["00001110", ["path-wide-corner-1","path-wide-corner-2"]],
   //path-wide-fork
-  //["111110100","path-wide-corner-1"],
-  //["111110100","path-wide-corner-2"],
+  //["11111010","path-wide-corner-1"],
   //path-wider-fork-left
-  //["111000100","path-wide-corner-1"],
-  //["111000101","path-wide-corner-2"],
+  //["11100010","path-wide-corner-1"],
   //path-wider-fork-right
-  //["101000110","path-wide-corner-1"],
-  //["101000111","path-wide-corner-2"],
+  //["10100011","path-wide-corner-1"],
 ]);
 
 class Location {
@@ -96,7 +77,6 @@ class Location {
   }
 
   prerender() {
-    //console.log(this.awaitAssets);
     if (this.awaitAssets > 0) {
       setTimeout(() => this.prerender(), 0);
       return;
@@ -201,9 +181,11 @@ class Location {
       }
     });
 
+    
+
     for (const element of [0, 90, 180, 270]) {
-      if (pathInfo.has(string + randIntInRange(0, variants)))
-        return [pathInfo.get(string + randIntInRange(0, variants)), element];
+      if (pathInfo.has(string)) 
+        return [pathInfo.get(string)[randIntInRange(pathInfo.get(string).length)], element];
       string = string.substring(2, 8) + string.substring(0, 2)
     }
 
@@ -222,7 +204,7 @@ class Location {
           pomArray[i][j] = 1;
         }
     });
-    //console.log(pomArray);
+
     preset.streets.forEach((street) => {
       for (let i = street.start.x; i < street.start.x + street.width; ++i) {
         for (let j = street.start.y; j < street.start.y + street.height; ++j) {

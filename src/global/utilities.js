@@ -142,3 +142,6 @@ Object.defineProperty(Array.prototype, "none", {
 Object.defineProperty(Array.prototype, "last", {
   get: function () {return this[this.length - 1]},
 });
+
+import {Direction, directions} from "./Direction.js";
+export {Direction, directions};

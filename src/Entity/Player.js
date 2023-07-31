@@ -33,6 +33,7 @@ import {tileSize,
         defaultSprintMultiplier } from "../global/consts.js";
 
 import {addTraits, InventoryTrait} from "../traits.js";
+import {Direction, directions} from "../global/utilities.js";
 
 
 //class for managing the player-controlled character
@@ -50,6 +51,9 @@ class Player extends Entity {
     this.spriteCenterPoint = { x: 48, y: 60 };
     // Coordinates for calculating collisions
     this.rootPoint = { x: 48, y: 70 };
+    
+    this.movingDirection = new Direction(directions.none);
+    this.direction = new Direction(directions.right);
 
     //an object which contains info on how many pixels from the center point you want to detect collisions
     this.boundingDistance = {
@@ -76,14 +80,13 @@ class Player extends Entity {
       [0, this.boundingDistance.down],
       [this.boundingDistance.right, this.boundingDistance.down]];
 
-    this.default_direction = 4; //the default direction being staying idle, on index 4 in the state array
+    this.default_direction = new Direction(directions.none); //the default direction being staying idle, on index 4 in the state array
     this.sprintMode = defaultSprintMode;
     this.sneakMode = defaultSneakMode;
     this.townLength = this.game.currentTown.array.length;
     this.townWidth = this.game.currentTown.array[0].length;
     this.sprinting = false;
     this.sneaking = false;
-    //this.transfer = new Transfer(this.equipment, new Equipment(0));
   }
 
   updateMovementMethod() {
@@ -105,10 +108,10 @@ class Player extends Entity {
 
     if (this.sprinting && this.sneaking)
       this.sprinting = false, this.sneaking = false;
-
   }
+  
   update() {
-    this.direction = this.default_direction;
+    this.movingDirection.set(directions.none);
     this.updateMovementMethod();
 
     this.centerPoint.x = this.x + this.rootPoint.x;
@@ -130,54 +133,54 @@ class Player extends Entity {
     this.game.app.manageRequest('Interact', () => this.interact(), { once: true });
     
     if (this.game.app.isActionRequested('Move Right')) {
-      this.direction += 1;
+      this.movingDirection.moveRight();
       speedX += baseSpeed;
     }
     if (this.game.app.isActionRequested('Move Left')) {
-      this.direction -= 1;
+      this.movingDirection.moveLeft();
       speedX -= baseSpeed;
     }
     if (this.game.app.isActionRequested('Move Up')) {
-      this.direction -= 3;
+      this.movingDirection.moveUp()
       speedY -= baseSpeed;
     }
     if (this.game.app.isActionRequested('Move Down')) {
-      this.direction += 3;
+      this.movingDirection.moveDown();
       speedY += baseSpeed;
     }
 
-    if (this.direction % 3 === 0) {
+    if (this.movingDirection.facesLeft()) {
       this.sprite.mirrored = true;
     }
-    if (this.direction % 3 === 2) {
+    if (this.movingDirection.facesRight()) {
       this.sprite.mirrored = false;
     }
 
     this.speedForDebug = baseSpeed;
 
     // Collisions
-    if (this.direction < 3 && this.willCollide(1, baseSpeed)) {
-      this.direction += 3;
+    if (this.movingDirection.facesUp() && this.willCollide(directions.up, baseSpeed)) {
+      this.movingDirection.moveDown();
       speedX *= defaultDiagonalOffset;
       speedY = 0;
     }
-    if (this.direction > 5 && this.willCollide(7, baseSpeed)) {
-      this.direction -= 3;
+    if (this.movingDirection.facesDown() && this.willCollide(directions.down, baseSpeed)) {
+      this.movingDirection.moveUp();
       speedX *= defaultDiagonalOffset;
       speedY = 0;
     }
-    if (this.direction % 3 === 0 && this.willCollide(3, baseSpeed)) {
-      this.direction += 1;
+    if (this.movingDirection.facesLeft() && this.willCollide(directions.left, baseSpeed)) {
+      this.movingDirection.moveRight();
       speedX = 0;
       speedY *= defaultDiagonalOffset;
     }
-    if (this.direction % 3 === 2 && this.willCollide(5, baseSpeed)) {
-      this.direction -= 1;
+    if (this.movingDirection.facesRight() && this.willCollide(directions.right, baseSpeed)) {
+      this.movingDirection.moveLeft();
       speedX = 0;
       speedY *= defaultDiagonalOffset;
     }
 
-    if (this.direction % 2 == 0 && this.direction !== 4) {
+    if (this.movingDirection.isDiagonal()) {
       speedX *= defaultDiagonalOffset;
       speedY *= defaultDiagonalOffset;
     }
@@ -189,9 +192,11 @@ class Player extends Entity {
 
     this.move();
     if (!this.game.currentTown.array[~~(this.centerPoint.x / tileSize)][~~(this.centerPoint.y / tileSize)].walkable) {
-      console.log(`STUTTER on direction: ${this.direction}`);
+      console.log(`STUTTER on direction: ${this.movingDirection.toString()}`);
     }
     this.sprite.next();
+    if (!this.movingDirection.is(directions.none))
+      this.direction.set(this.movingDirection._value);
   }
 
   interact() {
@@ -226,16 +231,18 @@ class Player extends Entity {
     let xTile =
       ~~((this.centerPoint.x + this.boundaries[direction][0] + tileSize
         + moveX * ((direction % 3 === 0) ? -1 : (direction % 3 === 2) ? 1 : 0)) / tileSize) - 1;
+    
     let yTile = ~~((this.centerPoint.y + this.boundaries[direction][1] + tileSize
       + moveY * ((direction < 3) ? -1 : (direction > 5) ? 1 : 0)) / tileSize) - 1;
 
     if (xTile < 0 || xTile >= this.game.currentTown.width ||
-      yTile < 1 || yTile >= this.game.currentTown.height)
-      return 1;
-    if ((this.game.currentTown.array[xTile][yTile].walkable)) {
-      return 0;
+      yTile < 1 || yTile >= this.game.currentTown.height) {
+      return true;
     }
-    return 1;
+    if ((this.game.currentTown.array[xTile][yTile].walkable)) {
+      return false;
+    }
+    return true;
   }
   toggleSprint() {
     this.sprinting = !this.sprinting;

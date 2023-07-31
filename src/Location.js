@@ -231,21 +231,24 @@ class Location {
     Assign true to property `focus` of the element which is
     the closest to `point`.
   */
-  updateFocus(point) {
+  updateFocus(player) {
     if (this.focused) {
       this.focused.focus = false;
       this.focused = null;
     }
     let minDist = 50.0;
     
-    for (let item of this.getInteractibles()) {
-      let d = distance(item, point);
+    let testFn = player.direction.facesLeft() ? (e) => e.x <= player.x : (e) => e.x >= player.x ;
+    let entities = this.getInteractibles().filter(testFn);
+    
+    for (let item of entities) {
+      let d = distance(item, player);
       if (d < minDist) {
 	minDist = d;
 	this.focused = item;
       }
     }
-    
+
     if (!this.focused) return;
     this.focused.focus = true;
   }

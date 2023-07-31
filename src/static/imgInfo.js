@@ -66,7 +66,6 @@ class Spritesheet {
 }
 
 const imgInfo = new Map([
-  ["path-wide-full-2", img("img/path.png", tileSize, tileSize, 0, 11)], //fix this @leszmak
   ["jacket", img("img/clothes.png", tileSize, tileSize, 0, 0)],
   ["pants", img("img/clothes.png", tileSize, tileSize, 0, 1)],
   ["barrel", img("img/barrel.png")],

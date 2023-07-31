@@ -56,27 +56,27 @@ class EquipmentDisplay extends State {
     // mainDiv.innerText = "Item name" + "Weight" + "Drop";
     // this.divEqList.appendChild(mainDiv);
     let sortDiv = document.createElement("div");
-    sortDiv.classList.add("list-element");
+    sortDiv.classList.add("list-info");
     sortDiv.style.border = 'none';
     sortDiv.style.borderBottom = '2px solid black';
+    sortDiv.style.textAlign = "center";
+    sortDiv.innerText = "Sort by weight from";
     let buttonSortUp = document.createElement("button");
     buttonSortUp.classList.add("button", "eq-button");
     buttonSortUp.addEventListener("click", () => { this.equipment.sortByWeight(true); this.refresh() });
     buttonSortUp.innerText = "Heavy";
-    this.divEqList.appendChild(buttonSortUp);
+    sortDiv.appendChild(buttonSortUp);
     let buttonSortDown = document.createElement("button");
     buttonSortDown.classList.add("button", "eq-button");
     buttonSortDown.addEventListener("click", () => { this.equipment.sortByWeight(false); this.refresh() });
     buttonSortDown.innerText = "Light";
-    this.divEqList.appendChild(buttonSortDown);
-    sortDiv.style.textAlign = "center";
-    sortDiv.innerText = "Sort by weight from";
+    sortDiv.appendChild(buttonSortDown);
     this.divEqList.appendChild(sortDiv);
     for (let record of this.equipment.records) {
       this.divEqList.appendChild(this.recordToListElement(record));
     }
     let sumWeight = document.createElement("div");
-    sumWeight.classList.add("list-element");
+    sumWeight.classList.add("list-info");
     sumWeight.style.textAlign = "center";
     sumWeight.innerText = "Weight summary of all items: " + this.equipment.sumWeight()+ " / " + this.equipment.maxWeight ;
     this.divEqList.appendChild(sumWeight);
@@ -92,6 +92,7 @@ class EquipmentDisplay extends State {
     let div = document.createElement("div");
     div.classList.add("list-element");
     div.style.display = "flex";
+    div.style.textAlign = "center";
     let nameDiv = document.createElement("div");
     nameDiv.innerText = record.item.name;
     nameDiv.style.display = "inline-block";

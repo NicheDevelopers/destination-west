@@ -30,7 +30,10 @@ const entityOptions = new Map([
    "Boolean. Determines whether the entity has an animated sprite"],
   ["speed",
    "Number. Provides the speed for the entity's movement. " +
-    "Undefined means the entity is stationary"]
+    "Undefined means the entity is stationary"],
+  ["ignoreDepth",
+   "Boolean. Determines whether the entity should be considered when " +
+    "calculating depth. For example, small rocks should always be drawn first so they don't get overlayed on a barrel."]
 ]);
 
 /**
@@ -38,10 +41,9 @@ const entityOptions = new Map([
  @abstract
  */
 class Entity {
-  constructor(game, typeName, x = 0, y = 0, options={}) {
+  constructor(typeName, x = 0, y = 0, options={}) {
     validateOptions(options, entityOptions, "Entity");
 
-    this.game = game;
     this.typeName = typeName;
     this.x = x;
     this.y = y;
@@ -56,24 +58,13 @@ class Entity {
       this.moveX = new Animation(this, "x", options.speed);
       this.moveY = new Animation(this, "y", options.speed);
     }
+
+    this.ignoreDepth = Boolean(options.ignoreDepth);
   }
   
-  draw(x, y) {
-    // if (this.focus && this.loadedFocusedSprite)
-    //   this.focusedSprite.draw(x, y);
-    // else
-      this.sprite.draw(x, y);
+  draw(cameraX, cameraY) {
+    this.sprite.draw(this.x - cameraX, this.y -cameraY);
   }
-  
-  // dropItem(record) {
-  //   let droppedItem = this.equipment.dropFrom(record);
-  //   droppedItem.setPositionTo(
-  //     (this.centerPoint)? {x: this.centerPoint.x, y: this.centerPoint.y}
-  //       : {x: this.x, y: this.y});
-  //   this.game.currentTown.droppedItems.push(droppedItem);
-  //   this.game.currentTown.updateFocus(this.game.player);
-  // }
-  
 }
 
 export default Entity;

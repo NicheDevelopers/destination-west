@@ -3,7 +3,8 @@ import Sprite from "../Sprite/Sprite.js";
 
 class Interactible extends Entity {
   constructor(game, typeName, x=0, y=0, options={}) {
-    super(game, typeName, x, y, options);
+    super(typeName, x, y, options);
+    this.game = game;
     this.loadedFocusedSprite = false;
     this.focusedSprite = new Sprite(
       typeName, { 
@@ -19,10 +20,6 @@ class Interactible extends Entity {
       return;
     }
     this.sprite.draw(this.x - cameraX, this.y - cameraY);
-    // if (this.focus && this.loadedFocusedSprite)
-    //   this.focusedSprite.draw(x, y);
-    // else
-    //   this.sprite.draw(x, y);
   }
 }
 

@@ -4,13 +4,14 @@
 import Interactible from "./Interactible.js";
 import {defaultNpcSpeed} from "../global/consts.js";
 import {addTraits, InventoryTrait} from "../traits.js";
+import { genNpcName } from "../nameGenerators.js";
 
 class Npc extends Interactible {
-  constructor(game, name, x, y) {
+  constructor(game, x, y, name) {
     super(game, "player", x, y,
 	  {speed: defaultNpcSpeed, animated: true});
+    this.name = name ?? genNpcName(true, true);
     addTraits(this, InventoryTrait());
-    this.name = name;
   }
   update() {
     this.sprite.next();

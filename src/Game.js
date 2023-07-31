@@ -61,7 +61,7 @@ class Game extends State {
     //this.testPants = new ColoredSprite('pants');
     this.player = new Player(this, 350, 290);
     
-    let testContainer = new Container(this, "barrel", 350, 350);
+    let testContainer = new Container(this, "barrel", 250, 250);
     for (let i=0; i<3; i++){
       testContainer.equipment.put(new Item(`Whisky`,'decoration-small-stones-1', 0, 3, 0, 0, true));
     }
@@ -69,7 +69,7 @@ class Game extends State {
     
     this.currentTown.containers.push(testContainer);
     
-    this.currentTown.npcs.push(new Npc(this, "Ol' Benjamin", 382, 290));
+    this.currentTown.npcs.push(new Npc(this, 382, 290, "Ol' Benjamin"));
     this.camera = new Camera(this);
 
     for (let i=0; i<5; i++){

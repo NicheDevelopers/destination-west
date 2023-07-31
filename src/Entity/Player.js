@@ -38,9 +38,10 @@ import {addTraits, InventoryTrait} from "../traits.js";
 //class for managing the player-controlled character
 class Player extends Entity {
   constructor(game, x = 0, y = 0) {
-    super(game, "player", x, y,
+    super("player", x, y,
 	  {speed: defaultPlayerSpeed, animated: true});
     addTraits(this, InventoryTrait());
+    this.game = game;
     
     //register all actions that the player can do and bind them to correct keys
     this.actions = ['Move Right', 'Move Left', 'Move Up', 'Move Down', 'Toggle Sprint', 'Toggle Sneak'];

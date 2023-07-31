@@ -93,10 +93,13 @@ class EquipmentDisplay extends State {
     div.classList.add("list-element");
     div.style.display = "flex";
     div.style.textAlign = "center";
+    div.style.alignItems = "center";
     let nameDiv = document.createElement("div");
     nameDiv.innerText = record.item.name;
     nameDiv.style.display = "inline-block";
     nameDiv.style.flex = 2;
+    nameDiv.style.textAlign = "left";
+    nameDiv.style.marginLeft = "5%";
     let weightDiv = document.createElement("div");
     weightDiv.innerText = record.getWeight();
     weightDiv.style.display = "inline-block"; 

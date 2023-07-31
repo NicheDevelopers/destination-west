@@ -99,6 +99,10 @@ const townPropList = [
 ];
 const townPropSheet = new Spritesheet("img/town-props.png", 3, 3, townPropList);
 
+const itemsList = ["apple", "cigar", "revolver-1", "revolver-2", "broken-bottle",
+		   "whisky"];
+const itemsSheet = new Spritesheet("img/items.png", 6, 1, itemsList);
+
 const pathTypeList = [
   "path-narrow-side-1", "path-narrow-side-2", "path-narrow-side-3", "path-narrrow-corner-1",
   "path-narrrow-corner-2", "path-narrow-end-1", "path-narrow-end-2", "path-narrow-fork-1",
@@ -110,6 +114,7 @@ const pathSheet = new Spritesheet("img/path.png", 18, 1, pathTypeList);
 
 townPropSheet.saveToMap(imgInfo);
 pathSheet.saveToMap(imgInfo);
+itemsSheet.saveToMap(imgInfo);
 
 let newBuildingPart = (name, col, row) => ({ name: name, row: row, col: col });
 let buildingParts = [

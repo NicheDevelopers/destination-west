@@ -63,7 +63,7 @@ class Game extends State {
     
     let testContainer = new Container(this, "barrel", 250, 250);
     for (let i=0; i<3; i++){
-      testContainer.equipment.put(new Item(`Whisky`,'decoration-small-stones-1', 0, 3, 0, 0, true));
+      testContainer.equipment.put(new Item(`Whisky`,'whisky', 0, 3, 0, 0, true));
     }
     //console.log(testContainer);
     
@@ -72,11 +72,15 @@ class Game extends State {
     this.currentTown.npcs.push(new Npc(this, 382, 290, "Ol' Benjamin"));
     this.camera = new Camera(this);
 
+    this.player.equipment.put(new Item(`Cigar`,'cigar', 0, 1, 0, 0, false));
     for (let i=0; i<5; i++){
-      this.player.equipment.put(new Item(`Apple`, 'decoration-cactus-1x', 0, 5, 0, 0, true));
-      this.player.equipment.put(new Item(`Whisky`,'decoration-small-stones-1', 0, 3, 0, 0, true));
-      this.player.equipment.put(new Item(`Revolver`,'decoration-stone-well', 0, 7, 0, 0, false));
+      this.player.equipment.put(new Item(`Apple`, 'apple', 0, 5, 0, 0, true));
+      this.player.equipment.put(new Item(`Whisky`,'whisky', 0, 3, 0, 0, true));
+      this.player.equipment.put(new Item(`Revolver`,
+					 'revolver-'+(i%2+1),
+					 0, 7, 0, 0, false));
     }
+    this.player.equipment.put(new Item(`Broken Bottle`,'broken-bottle', 0, 1, 0, 0, false));
     this.equipmentDisplay = new EquipmentDisplay(this, this.player.equipment);
 
     // this.transferEquipment = new Equipment(defaultEquipmentSize);

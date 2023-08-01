@@ -138,7 +138,7 @@ class Location {
         if (array) {
           let idx = randIntInRange(0, array.length);
           this.decorations.push(new Entity("decoration-" + array[idx], i * tileSize, j * tileSize));
-        }
+	}
       }
   }
 
@@ -256,7 +256,6 @@ class Location {
   draw(x = 0, y = 0, context = ctx, width = 672, height = 288) {
     if (!this.created)
       return;
-
     context.drawImage(this.image, x, y, width, height,
                       0, 0, width, height);
   }

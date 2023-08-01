@@ -1,6 +1,6 @@
 /*
-  file: src/Game.js
-  purpose: define the Game class
+  file: src/Camera.js
+  purpose: define the Camera class
   author: Artur Gulik <https://gitlab.com/ArturGulik>
     
   This file is part of 'Destination West'.
@@ -50,7 +50,25 @@ class Camera {
     window.addEventListener('resize', () => this.updateSize());
     window.addEventListener('fullscreenchange', () => this.updateSize());
     this.game = game;
+
+    // Array of draw functions to be run after drawing everything else
+    this.debugDraws = [];
+    
+    // Array of draw functions to be run after drawing everything else
+    // elements are deleted after drawing
+    this.singleDebugDraws = [];
   }
+  addDebugDraw(fun, options={}) {
+    if (options.once) {
+      this.singleDebugDraws.push(fun);
+      return;
+    }
+    this.debugDraws.push(fun);
+  }
+  removeDebugDraw(index) {
+    this.debugDraws.splice(index, 1);
+  }
+  
   updateSize() {
     const gcon = document.querySelector("#game-container");
     const gc = document.querySelector("#game-canvas");
@@ -62,7 +80,7 @@ class Camera {
     this.centerX = this.width / 2;
     this.centerY = this.height / 2;
   }
-  render() {
+  render(options={}) {
     this.game.app.manageRequest(
       'Camera zoom in',
       () => {
@@ -97,10 +115,23 @@ class Camera {
     let t = this.game.currentTown;
     t.draw(topLeftX, topLeftY, ctx, this.width, this.height);
     let [ignoringDepth, byDepth] = t.entitiesByDepth(t, this.game.player);
-    for (const e of ignoringDepth)
+    for (const e of ignoringDepth) {
       e.draw(topLeftX, topLeftY);
-    for (const e of byDepth)
+      if (options.debug) e.drawDebugInfo(topLeftX, topLeftY);
+    }
+    for (const e of byDepth) {
       e.draw(topLeftX, topLeftY);
+      if (options.debug) e.drawDebugInfo(topLeftX, topLeftY);
+    }
+    if (this.game.app.debugging) {
+      this.debugDraws.forEach((draw, ix) => {
+	draw(topLeftX, topLeftY);
+      });
+      this.singleDebugDraws.forEach((draw) => {
+	draw(topLeftX, topLeftY);
+      });
+      this.singleDebugDraws.length = 0;
+    }
   }
 }
 

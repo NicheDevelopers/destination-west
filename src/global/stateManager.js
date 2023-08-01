@@ -69,9 +69,6 @@ class StateManager {
     (this.currentState().id === state.id) ?
       this.popState() : this.pushState(state)
   }
-  print() {
-    console.log(this.stateStack.map((s) => s.id));
-  }
 }
 
 let stateManager = new StateManager();

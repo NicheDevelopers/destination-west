@@ -22,7 +22,7 @@
 import Sprite from "../Sprite/Sprite.js";
 import AnimatedSprite from "../Sprite/AnimatedSprite.js";
 import Animation from "../Animation.js";
-import {animationSpeed, defaultEquipmentSize} from "../global/consts.js";
+import {animationSpeed, defaultEquipmentSize, tileSize} from "../global/consts.js";
 import {validateOptions} from "../global/utilities.js";
 
 const entityOptions = new Map([
@@ -47,7 +47,7 @@ class Entity {
     this.typeName = typeName;
     this.x = x;
     this.y = y;
-       
+    
     if (!options.animated)
       this.sprite = new Sprite(typeName);
     else
@@ -58,12 +58,20 @@ class Entity {
       this.moveX = new Animation(this, "x", options.speed);
       this.moveY = new Animation(this, "y", options.speed);
     }
-
+    this.relativeCenterPoint = {x: ~~(tileSize/2), y: ~~(tileSize/2)};
     this.ignoreDepth = Boolean(options.ignoreDepth);
+  }
+
+  drawDebugInfo(cameraX, cameraY) {
   }
   
   draw(cameraX, cameraY) {
     this.sprite.draw(this.x - cameraX, this.y -cameraY);
+  }
+
+  getCenterPoint() {
+    return {x: this.x + this.relativeCenterPoint.x,
+	    y: this.y + this.relativeCenterPoint.y};
   }
 }
 

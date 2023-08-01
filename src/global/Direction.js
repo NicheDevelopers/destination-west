@@ -11,7 +11,7 @@ export const directions = {
 }
 
 export class Direction {
-  constructor(value) {
+  constructor(value=directions.none) {
     this._value = value;
   }
   facesRight() { return this._value % 3 === 2 }
@@ -20,6 +20,15 @@ export class Direction {
   facesLeft() { return this._value % 3 === 0 }
   isDiagonal() { return this._value % 2 === 0 && this._value !== 4 }
   set(dir) { this._value = dir}
+  fromChangeInXAndY(dx, dy) {
+    this._value = directions.none;
+    if (dx > 0) this.moveRight();
+    else if (dx < 0) this.moveLeft();
+
+    if (dy > 0) this.moveDown();
+    else if (dy < 0) this.moveUp();
+    return this;
+  }
   moveUp() {
     if (this.facesUp()) throw "Direction: Invalid move up";
     this._value -= 3;
@@ -40,4 +49,10 @@ export class Direction {
     return Object.entries(directions).filter(([_, v]) => v == this._value)[0][0];
   }
   is(dir) {return this._value === dir}
+  xAxisMultiplier() {
+    return this.facesRight()-this.facesLeft();
+  }
+  yAxisMultiplier() {
+    return this.facesDown()-this.facesUp();
+  }
 }

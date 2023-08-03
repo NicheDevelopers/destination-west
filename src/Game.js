@@ -31,6 +31,8 @@ import Designer from "./Designer.js";
 import Item from "./Item/Item.js";
 import { State } from "./global/stateManager.js"
 import Npc from "./Entity/Npc.js";
+import Dialogue from "./Dialogue/Dialogue.js";
+import DialogueDisplay from "./Dialogue/DialogueDisplay.js";
 import Container from "./Entity/Container.js";
 import TransferDisplay from "./TransferDisplay.js";
 import { defaultEquipmentSize } from "./global/consts.js";
@@ -71,7 +73,7 @@ class Game extends State {
     
     this.currentTown.npcs.push(new Npc(this, 382, 290, "Ol' Benjamin"));
     this.camera = new Camera(this);
-
+    
     this.player.equipment.put(new Item(`Cigar`,'cigar', 0, 1, 0, 0, false));
     for (let i=0; i<5; i++){
       this.player.equipment.put(new Item(`Apple`, 'apple', 0, 5, 0, 0, true));
@@ -82,6 +84,8 @@ class Game extends State {
     }
     this.player.equipment.put(new Item(`Broken Bottle`,'broken-bottle', 0, 1, 0, 0, false));
     this.equipmentDisplay = new EquipmentDisplay(this, this.player.equipment);
+
+    this.dialogueDisplay = new DialogueDisplay(this)
 
     // this.transferEquipment = new Equipment(defaultEquipmentSize);
     // for (let i=0; i<8; i++){
@@ -128,7 +132,7 @@ class Game extends State {
   update() {
     this.player.update();
     this.currentTown.update(this.player);
-    this.camera.render();
+    this.camera.render();          
   }
 
   togglePause() {

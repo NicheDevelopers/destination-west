@@ -20,7 +20,7 @@
 */
 
 import { State, stateManager } from "./global/stateManager.js";
-import {tileSize, equipmentSpriteSize} from "./global/consts.js";
+import { tileSize, equipmentSpriteSize } from "./global/consts.js";
 import Transfer from "./Transfer.js";
 
 class TransferDisplay extends State {

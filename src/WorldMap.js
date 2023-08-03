@@ -76,7 +76,7 @@ class WorldMap {
     while (true) {
       let [x, y] = [randIntInRange(mp.paddingX, mp.displayWidth - mp.paddingX),
       randIntInRange(mp.paddingY, mp.displayHeight - mp.paddingY)];
-      if (!existingLocations.some((t) =>
+      if (existingLocations.none((t) =>
         distance([t.x, t.y], [x, y]) < mp.minDistanceBetweenLocations)) {
         return [x, y];
       }

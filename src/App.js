@@ -88,7 +88,7 @@ class App {
       stateManager.updateStates();
 
       if (this.debugging)
-	this.debug();
+	      this.debug();
     }
     catch(e) {
       window.cancelAnimationFrame(this.animationFrameID);

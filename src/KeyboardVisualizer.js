@@ -20,6 +20,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { keyboardVisualizerPosition as kp} from "./global/consts.js";
+
 function createButton(width, height, offsetX = 0, offsetY = 0) {
   let o = document.createElement('div');
   o.style.width = `${width}px`;
@@ -122,7 +124,7 @@ position: absolute; left: 0; bottom: 0;`);
       ['None', () => {}]
     ]);
 
-    let { form, select } = createForm(100, 20, 0, 0, 'Input mode',
+    let { form, select } = createForm(kp.width, kp.height, kp.offsetX, kp.offsetY, 'Input mode',
       Array.from(this.inputModes.keys()));
     form.onchange = () => {
       let mode = select.options[select.selectedIndex].value;
@@ -133,10 +135,10 @@ position: absolute; left: 0; bottom: 0;`);
     this.div.appendChild(form);
 
     this.buttons = new Map([
-      ['Move Left', { element: createButton(50, 40, 50, 100), listeners: [] }],
-      ['Move Up', { element: createButton(50, 40, 105, 55), listeners: [] }],
-      ['Move Right', { element: createButton(50, 40, 160, 100), listeners: [] }],
-      ['Move Down', { element: createButton(50, 40, 105, 100), listeners: [] }]
+      ['Move Left', { element: createButton(kp.buttonWidth, kp.buttonHeight, kp.buttonLeft.offsetX, kp.buttonLeft.offsetY), listeners: [] }],
+      ['Move Up', { element: createButton(kp.buttonWidth, kp.buttonHeight, kp.buttonUp.offsetX, kp.buttonUp.offsetY), listeners: [] }],
+      ['Move Right', { element: createButton(kp.buttonWidth, kp.buttonHeight, kp.buttonRight.offsetX, kp.buttonRight.offsetY), listeners: [] }],
+      ['Move Down', { element: createButton(kp.buttonWidth, kp.buttonHeight, kp.buttonDown.offsetX, kp.buttonDown.offsetY), listeners: [] }]
     ]);
 
     this.buttons.forEach((button) => {

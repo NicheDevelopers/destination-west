@@ -1,17 +1,23 @@
 export const tileSize = 64;
 export const defaultEquipmentSize = 100;
 export const animationSpeed = 9;
-export const defaultPlayerSpeed = 150;
 export const defaultNpcSpeed = 130;
-export const defaultDiagonalOffset = Math.sqrt(2)/2;
-export const defaultSprintMultiplier = 1.5;
-export const defaultSneakMultiplier = 0.5;
-export const defaultSprintMode = 'hold';
-export const defaultSneakMode = 'hold';
 export const spriteScale = 1;
 export const defaultTownWidth = 42;
 export const defaultTownHeight = 20;
 export const equipmentSpriteSize = 7;
+export const percentageOfTwoNameTown = 0.4;
+export const transparencyAlphaTolerance = 5;
+
+export const playerParameters = {
+  defaultPlayerSpeed : 150,
+  defaultDiagonalOffset : Math.sqrt(2)/2,
+  defaultSprintMultiplier : 1.5,
+  defaultSneakMultiplier : 0.5,
+  defaultSprintMode : 'hold',
+  defaultSneakMode : 'hold'
+};
+
 export const mapParameters = {
   minLocations: 20,
   maxLocations: 25,
@@ -34,6 +40,7 @@ export const mapParameters = {
   minDistanceForConnection: 300
   
 };
+
 export const townSizes = {
   small: 8,
   medium: 16,
@@ -47,4 +54,61 @@ export const camSettings = {
   zoomSafetyMultiplier: 1.05,
   zoomSpeed: 0.002
 };
+
+export const keyboardVisualizerPosition = {
+  width: 100,
+  height: 20,
+  offsetX: 0,
+  offsetY: 0,
+  buttonWidth: 50,
+  buttonHeight: 40,
+  buttonLeft : {
+    offsetX: 50,
+    offsetY: 100,
+  },
+  buttonRight : {
+    offsetX: 160,
+    offsetY: 100,
+  },
+  buttonUp : {
+    offsetX: 105,
+    offsetY: 55,
+  },
+  buttonDown : {
+    offsetX: 105,
+    offsetY: 100,
+  }
+};
+
+export const percentageOfGenericDecoration = {
+  rural_percentage : 0.2,
+  town_percentage : 0.05
+};
+
+export const worldMapDisplay = {
+  townNameOffsetX : -50,
+  townNameOffsetY : 40,
+  lowConnection : 3,
+  mediumConnection : 5,
+  highConnection : 10
+};
+
+export const animatedSprite = {
+  defaultIntervalTime : 110,
+  defaultFramesPerInterval : 1,
+  defaultAnimationSpeed : 8,
+  defaultFrameCount : 1
+};
+
+export const directions = {
+  upLeft: 0,
+  up: 1,
+  upRight: 2,
+  left: 3,
+  none: 4,
+  right: 5,
+  downLeft: 6,
+  down: 7,
+  downRight: 8,
+}
 

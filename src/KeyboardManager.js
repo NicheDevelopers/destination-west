@@ -76,8 +76,7 @@ class KeyboardManager {
 
     let i = actions.indexOf(action);
     if (i === -1) return false;
-
-    actions[i] = actions[actions.length - 1];
+    actions[i] = actions.last;
     actions.pop();
     return true;
   }

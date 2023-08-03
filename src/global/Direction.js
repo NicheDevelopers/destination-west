@@ -32,17 +32,8 @@
          S
       
 */
-export const directions = {
-  upLeft: 0,
-  up: 1,
-  upRight: 2,
-  left: 3,
-  none: 4,
-  right: 5,
-  downLeft: 6,
-  down: 7,
-  downRight: 8,
-}
+
+import { directions } from "./consts.js";
 
 class Direction {
   constructor(value=directions.none) {

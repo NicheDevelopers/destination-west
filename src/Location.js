@@ -26,7 +26,7 @@ import Entity from "./Entity/Entity.js";
 import ctx from "./global/ctx.js";
 import { distance, roll } from "./global/utilities.js";
 import { createCanvas } from "./global/utilities.js";
-import { tileSize, percentageOfGenericDecoration as pGD, playerParameters as pp } from "./global/consts.js";
+import { tileSize, percentageOfGenericDecoration as pGD } from "./global/consts.js";
 
 /* pathInfo keys describe the presence of paths on adjacent squares.
    The first digit describes the top-left adjacent tile. If that tile

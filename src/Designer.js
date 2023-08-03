@@ -21,33 +21,12 @@
 */
 
 import ColoredSprite from "./Sprite/ColoredSprite.js";
-import { createDiv, createCanvas } from "./global/utilities.js";
+import { createDiv, createCanvas, hex_to_rgb, rgb_to_hex } from "./global/utilities.js";
 import { State, stateManager } from "./global/stateManager.js";
 
 /**
  * Create an interface for designing colored sprites
  */
-
-function hex_to_rgb(colorHex){ //this may not be elegant, but at least it's fast
-  let rgb = [0, 0, 0];
-  for(let i = 0; i < 3; i += 1){
-    rgb[i] = parseInt(colorHex.slice(2*i + 1, 2*i + 3), 16)
-  }
-  return rgb;
-}
-
-function rgb_to_hex(colorRgb){
-  let hex = "#";
-  for(const element of colorRgb){
-    let intElement = element
-    if(Object.getPrototypeOf("") === Object.getPrototypeOf(element))
-      intElement = parseInt(element, 10);
-    if(intElement < 15)
-      hex += "0";
-    hex += intElement.toString(16);
-  }
-  return hex.toUpperCase();
-}
 
 class Designer extends State {
   constructor(game) {

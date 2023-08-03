@@ -21,7 +21,8 @@
 
 // arrays holding parts of string to generate full name of the Town
 
-const arr1 = ["Copper",
+const arr1 = [
+  "Copper",
   "Wide",
   "Lead",
   "Torn",

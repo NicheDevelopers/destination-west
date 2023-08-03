@@ -1,16 +1,4 @@
-export const directions = {
-  upLeft: 0,
-  up: 1,
-  upRight: 2,
-  left: 3,
-  none: 4,
-  right: 5,
-  downLeft: 6,
-  down: 7,
-  downRight: 8,
-}
-
-export class Direction {
+class Direction {
   constructor(value) {
     this._value = value;
   }
@@ -41,3 +29,5 @@ export class Direction {
   }
   is(dir) {return this._value === dir}
 }
+
+export default Direction;

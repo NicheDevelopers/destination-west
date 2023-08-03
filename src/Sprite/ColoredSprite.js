@@ -20,7 +20,7 @@
 */
 import ctx from "../global/ctx.js";
 import Sprite from "./Sprite.js";
-import { createCanvas } from "../global/utilities.js";
+import { createCanvas, hex_to_rgb } from "../global/utilities.js";
 
 /**
  * Create sprites to display grayscale-source sprites in color
@@ -51,21 +51,18 @@ class ColoredSprite extends Sprite {
     this.setColor('#00FF00');
   }
   setColor(colorHex, areaID = 0) {
-    this.color = colorHex;
-    colorHex = colorHex.toString().substring(1);
-    let r = parseInt(colorHex.substring(0, 2), 16);
-    let g = parseInt(colorHex.substring(2, 4), 16);
-    let b = parseInt(colorHex.substring(4, 6), 16);
+    let rgb = hex_to_rgb(colorHex);
 
     //    console.log(r,g,b);
     for (let x = 0; x < this.image.data.length; x += 4) {
       if (this.image.data[x + 3] === 0) continue;
       let pixel = x / 4 | 0;
       let br = this.brightness[pixel];
-      //      console.log(br, this.alpha[x]);
-      this.image.data[x] = r - br;
-      this.image.data[x + 1] = g - br;
-      this.image.data[x + 2] = b - br;
+      
+      this.image.data[x] = rgb[0] - br;
+      this.image.data[x + 1] = rgb[1] - br;
+      this.image.data[x + 2] = rgb[2] - br;
+
       this.image.data[x + 3] = this.alpha[pixel];
     }
     this.offCtx.clearRect(0, 0, this.width, this.height);

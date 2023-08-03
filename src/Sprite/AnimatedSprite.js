@@ -22,7 +22,8 @@
 import ctx from "../global/ctx.js";
 import Sprite from "./Sprite.js";
 import Animation from "../Animation.js";
-import { allowProperty} from "../global/utilities.js";
+import { allowProperty } from "../global/utilities.js";
+import { animatedSprite as as } from "../global/consts.js";
 
 /**
  * Create sprites to make display and animation simple
@@ -46,11 +47,11 @@ class AnimatedSprite extends Sprite {
     this.autoAnimation = options.autoAnimation ?? false;
     if (this.autoAnimation) {
       this.intervalID = false;
-      this.interval = options.interval ?? 110;
-      this.framesPerInterval = options.framesPerInterval ?? 1;
+      this.interval = options.interval ?? as.defaultIntervalTime;
+      this.framesPerInterval = options.framesPerInterval ?? as.defaultFramesPerInterval;
       return;
     }
-    this.animationSpeed = options.animationSpeed ?? 8;
+    this.animationSpeed = options.animationSpeed ?? as.defaultAnimationSpeed;
     this.animationController = new Animation(this, '()alterFrame', this.animationSpeed);
   }
 
@@ -79,10 +80,10 @@ class AnimatedSprite extends Sprite {
   }
   /**
    * Start animating the current animation in intervals
-   @param {number} [interval=110] - The time between intervals in miliseconds
-   @param {number} [framesPerInterval=1] - The number of frames to cycle through after each interval
+   @param {number} [interval=as.defaultIntervalTime] - The time between intervals in miliseconds
+   @param {number} [framesPerInterval=as.defaultFramesPerInterval] - The number of frames to cycle through after each interval
    */
-  animate(interval = 110, framesPerInterval = 1) {
+  animate(interval = as.defaultIntervalTime, framesPerInterval = as.defaultFramesPerInterval) {
     this.animating = true;
     this.intervalID = setInterval(
       () => this.alterFrame(framesPerInterval),
@@ -91,9 +92,9 @@ class AnimatedSprite extends Sprite {
 
   /**
    * Switch the current frame of an animation
-   @param {number} [frameCount=1] - The number of frames to cycle through
+   @param {number} [frameCount=as.defaultFrameCount] - The number of frames to cycle through
    */
-  alterFrame(frameCount = 1) {
+  alterFrame(frameCount = as.defaultFrameCount) {
     if (!this.animation)
       throw ('Sprite: Attempted to cycle an animation' +
         ' which was not defined');

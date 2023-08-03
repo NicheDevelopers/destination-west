@@ -21,7 +21,7 @@
 
 import { createCanvas, createDiv } from "./global/utilities.js";
 import { State, stateManager } from "./global/stateManager.js";
-import { mapParameters, townSizes } from "./global/consts.js";
+import { mapParameters, townSizes, worldMapDisplay as wmd } from "./global/consts.js";
 
 class WorldMapDisplay extends State {
   constructor(game) {
@@ -109,18 +109,17 @@ class WorldMapDisplay extends State {
     }
     for (let t of visibleTowns.map((r) => this.game.worldMap.getByID(r))) {
       map_ctx.fillStyle = 'white';
-      map_ctx.fillText(t.name, t.x - 50, t.y + 40);
+      map_ctx.fillText(t.name, t.x + wmd.townNameOffsetX, t.y + wmd.townNameOffsetY);
     }
   }
 
 computeTownSize(town) {
   // make the last town large
-  if (town.ID === this.game.worldMap.locations[this.game.worldMap.locations.length - 1].ID) {
+  if (town.ID === this.game.worldMap.locations.last.ID)
     return townSizes.large;
-  }
-  if (town.connectedLocations.length < 3) return townSizes.small;
-  else if (town.connectedLocations.length < 5) return townSizes.medium;
-  else if (town.connectedLocations.length < 10) return townSizes.large;
+  if (town.connectedLocations.length < wmd.lowConnection) return townSizes.small;
+  else if (town.connectedLocations.length < wmd.mediumConnection) return townSizes.medium;
+  else if (town.connectedLocations.length < wmd.highConnection) return townSizes.large;
 }
 
 update() {

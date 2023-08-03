@@ -20,8 +20,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import Tile from "./Tile.js";
-import { randIntInRange } from "./global/utilities.js";
-import {tileSize} from "./global/consts.js";
+import { roll } from "./global/utilities.js";
+import { tileSize } from "./global/consts.js";
 
 class Building {
     constructor(xTiles, yTiles, buildingType) {
@@ -47,16 +47,13 @@ class Building {
         y: this.yTiles - 1
       };
       let pedestal = false;
-      if (max.y > 1) {
-        //pedestal = true;
-        //max.y--;
-      }
       this.createTile('leftwall', min.x, max.y);
       this.createTile('rightwall', max.x, max.y);
       this.createTile('door', max.x / 2 | 0, max.y);
       for (let x = 1; x < max.x; x++) {
         if (this.array[x][max.y] !== undefined) continue;
-        if (randIntInRange(0, 6) === 1) {
+
+        if (roll(0.16)) {
           this.createTile('window', x, max.y);
           continue;
         }
@@ -77,12 +74,8 @@ class Building {
         this.createTile('uprightwall', max.x, y);
         for (let x = 1; x < max.x; x++) {
           if (this.array[x][y] !== undefined) continue;
-          let r = randIntInRange(0, 6);
-          if (r === 4) {
-            this.createTile('upwindow', x, y);
-            continue;
-          }
-          if (r === 5) {
+
+          if (roll(0.33)) {
             this.createTile('upwindow', x, y);
             continue;
           }

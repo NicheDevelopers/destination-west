@@ -1,4 +1,4 @@
-import {State, stateManager} from "../global/stateManager.js";
+import { State, stateManager } from "../global/stateManager.js";
 
 class DialogueDisplay extends State {
   constructor(game) {

@@ -19,7 +19,7 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import {tileSize} from "../global/consts.js";
+import { tileSize } from "../global/consts.js";
 
 let img = (src, height = tileSize, width = tileSize, row = 0, col = 0) =>
   ({ src: src, height: height, width: width, row: row, col: col });
@@ -44,23 +44,23 @@ class Spritesheet {
     this.options = options;
   }
   saveToMap(map) {
-    let x=-1, y=0;
-    for (const e of this.elements) {
-      ++x;
-      if (x === this.width) {
-	x = 0;
-	++y;
-      }
+    let x=0, y=0;
+    for (const e of this.elements){
       map.set(e, {
-	src: this.path,
-	width: this.spriteWidth,
-	height: this.spriteHeight,
-	row: y,
-	col: x,
-	defaultAnimation: this.options.defaultAnimation,
-	animations: this.options.animations,
-	random: this.options.random
+        src: this.path,
+        width: this.spriteWidth,
+        height: this.spriteHeight,
+        row: y,
+        col: x,
+        defaultAnimation: this.options.defaultAnimation,
+        animations: this.options.animations,
+        random: this.options.random
       });
+      x++;
+      if (x === this.width) {
+        x = 0;
+        y++;
+      }
     }
   }
 }

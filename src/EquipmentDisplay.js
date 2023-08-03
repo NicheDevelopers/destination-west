@@ -19,7 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {tileSize} from "./global/consts.js";
+import {equipmentSpriteSize, tileSize} from "./global/consts.js";
 
 import { createDiv } from "./global/utilities.js";
 import { stateManager, State } from "./global/stateManager.js"
@@ -39,8 +39,8 @@ class EquipmentDisplay extends State {
     this.divEqList = document.createElement("div");
     this.divEqList.id = "eq-list";
     // '7' to change - constant value of equipment display width 
-    this.divEqList.style.width = `${(tileSize+2)*7*2}px`;
-    this.divEqList.style.height = `${(tileSize+2)*7*2}px`;
+    this.divEqList.style.width = `${(tileSize+2)*equipmentSpriteSize*2}px`;
+    this.divEqList.style.height = `${(tileSize+2)*equipmentSpriteSize*2}px`;
 
     this.div.appendChild(this.divEqList);
     gameContainer.appendChild(this.div);

@@ -24,9 +24,10 @@
 import Tile from "./Tile.js";
 import Entity from "./Entity/Entity.js";
 import ctx from "./global/ctx.js";
-import { randIntInRange, distance } from "./global/utilities.js";
-import { createCanvas } from "./global/utilities.js";
-import {tileSize} from "./global/consts.js";
+import { randIntInRange, distance,
+	 createCanvas } from "./global/utilities.js";
+
+import {tileSize, playerRcp} from "./global/consts.js";
 
 /* pathInfo keys describe the presence of paths on adjacent squares.
    The first digit describes the top-left adjacent tile. If that tile
@@ -284,11 +285,20 @@ class Location {
       location.containers,
       location.npcs,
       location.decorations,
-      player
-    ].flat().sort((e1, e2) => e1.y - e2.y);
+      player,
+    ].flat();
+
+    let sorted = arr.filter(e => !e.ignoreDepth)
+      .sort((e1, e2) => {
+	const y1 = (e1.y + e1?.relativeCenterPoint?.y) || e1.y+64;
+	const y2 = (e2.y + e2?.relativeCenterPoint?.y) || e2.y+64;
+	
+	return y1-y2;
+      });
+    
     return [
-      arr.filter(e => !e.ignoreDepth),
-      arr.filter(e => e.ignoreDepth)
+      arr.filter(e => e.ignoreDepth),
+      sorted
     ];
   }
 }

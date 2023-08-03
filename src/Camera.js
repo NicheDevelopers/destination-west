@@ -21,7 +21,8 @@
 
 import ctx, { getGameCanvasSizeX,
 	      getGameCanvasSizeY } from "./global/ctx.js";
-import { camSettings } from "./global/consts.js";
+import { camSettings,
+	 playerCenterPoint} from "./global/consts.js";
 
 import time from "./global/time.js";
 
@@ -100,10 +101,9 @@ class Camera {
       }
     );
     ctx.clearRect(0, 0, this.width, this.height);
-    const playerX = this.game.player.x
-      + this.game.player.spriteCenterPoint.x;
-    const playerY = this.game.player.y
-      + this.game.player.spriteCenterPoint.y - 5;
+    
+    const playerX = this.game.player.x + playerCenterPoint.x;
+    const playerY = this.game.player.y + playerCenterPoint.y - 5;
 
     const topLeftX = this.x + Math.max(0, Math.min(
       playerX - this.width / 2,

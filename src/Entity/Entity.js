@@ -58,7 +58,6 @@ class Entity {
       this.moveX = new Animation(this, "x", options.speed);
       this.moveY = new Animation(this, "y", options.speed);
     }
-    this.relativeCenterPoint = {x: ~~(tileSize/2), y: ~~(tileSize/2)};
     this.ignoreDepth = Boolean(options.ignoreDepth);
   }
 
@@ -67,11 +66,6 @@ class Entity {
   
   draw(cameraX, cameraY) {
     this.sprite.draw(this.x - cameraX, this.y -cameraY);
-  }
-
-  getCenterPoint() {
-    return {x: this.x + this.relativeCenterPoint.x,
-	    y: this.y + this.relativeCenterPoint.y};
   }
 }
 

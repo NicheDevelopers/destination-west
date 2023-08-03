@@ -22,7 +22,6 @@
 */
 
 import Entity from "./Entity.js";
-import ctx from "../global/ctx.js";
 
 import {tileSize,
 	defaultPlayerSpeed,
@@ -30,65 +29,39 @@ import {tileSize,
         defaultSneakMode,
         defaultDiagonalOffset,
         defaultSneakMultiplier,
-        defaultSprintMultiplier } from "../global/consts.js";
+        defaultSprintMultiplier,
+	playerRcp,
+	playerBd } from "../global/consts.js";
 
-import {addTraits, InventoryTrait} from "../traits.js";
+import {addTraits, HitboxTrait, InventoryTrait} from "../traits.js";
 import {Direction, directions} from "../global/utilities.js";
-import Hitbox from "../Hitbox.js";
 
-//class for managing the player-controlled character
+/**
+   Class for managing the player-controlled character
+*/
 class Player extends Entity {
   constructor(game, x = 0, y = 0) {
     super("player", x, y,
 	  {speed: defaultPlayerSpeed, animated: true});
-    addTraits(this, InventoryTrait());
+    addTraits(this,
+	      InventoryTrait(),
+	      HitboxTrait(this, playerRcp, playerBd));
     this.game = game;
     
-    //register all actions that the player can do and bind them to correct keys
-    this.actions = ['Move Right', 'Move Left', 'Move Up', 'Move Down', 'Toggle Sprint', 'Toggle Sneak'];
+    // register all actions that the player can do and bind
+    // them to correct keys
+    this.actions = ['Move Right', 'Move Left', 'Move Up', 'Move Down',
+		    'Toggle Sprint', 'Toggle Sneak'];
 
-    // Cooridinates of the sprite's center point
-    this.spriteCenterPoint = { x: 48, y: 60 };
-    // Coordinates for calculating collisions
-    this.relativeCenterPoint = { x: 48, y: 70 };
-    
     this.movingDirection = new Direction(directions.none);
     this.direction = new Direction(directions.right);
 
-    //an object which contains info on how many pixels from the center point you want to detect collisions
-    this.boundingDistance = {
-      up: 1,
-      left: 5,
-      right: 5,
-      down: 1
-    }
-    this.hitbox = new Hitbox(this, this.boundingDistance);
     this.hitbox.visualizeCollisions(
       (f) => this.game.camera.addDebugDraw(f, {once: true}));
     
-    //an object containing appropriate center point deviation so that the player's model doesn't go out of bounds.
-    this.centerPoint = {
-      x: this.x + this.relativeCenterPoint.x,
-      y: this.y + this.relativeCenterPoint.y
-    };
-
-    //array of information on which pixels should be checked for colliding objects
-    this.boundaries = [
-      [-this.boundingDistance.left, -this.boundingDistance.up],
-      [0, -this.boundingDistance.up],
-      [this.boundingDistance.right, -this.boundingDistance.up],
-      [-this.boundingDistance.left, 0],
-      [0, 0],
-      [this.boundingDistance.right, 0],
-      [-this.boundingDistance.left, this.boundingDistance.down],
-      [0, this.boundingDistance.down],
-      [this.boundingDistance.right, this.boundingDistance.down]];
-
-    this.default_direction = new Direction(directions.none); //the default direction being staying idle, on index 4 in the state array
+    this.default_direction = new Direction(directions.none);
     this.sprintMode = defaultSprintMode;
     this.sneakMode = defaultSneakMode;
-    this.townLength = this.game.currentTown.array.length;
-    this.townWidth = this.game.currentTown.array[0].length;
     this.sprinting = false;
     this.sneaking = false;
   }
@@ -118,23 +91,14 @@ class Player extends Entity {
     this.movingDirection.set(directions.none);
     this.updateMovementMethod();
 
-    this.centerPoint.x = this.x + this.relativeCenterPoint.x;
-    this.centerPoint.y = this.y + this.relativeCenterPoint.y;
-
-    //calculate the direction in which the player should move, according to this diagram:
-    //       N
-    //    0  1  2
-    // W  3  4  5  E
-    //    6  7  8
-    //       S
-
     let speedX = 0, speedY = 0;
 
     let baseSpeed = // the highest speed possible in this tick
       defaultPlayerSpeed * ((this.sprinting) ? defaultSprintMultiplier :
         (this.sneaking) ? defaultSneakMultiplier : 1);
 
-    this.game.app.manageRequest('Interact', () => this.interact(), { once: true });
+    this.game.app.manageRequest('Interact',
+				() => this.interact(), { once: true });
     
     if (this.game.app.isActionRequested('Move Right')) {
       this.movingDirection.moveRight();
@@ -195,9 +159,6 @@ class Player extends Entity {
     this.moving = (speedX !== 0 || speedY !== 0);
 
     this.move();
-    if (!this.game.currentTown.array[~~(this.centerPoint.x / tileSize)][~~(this.centerPoint.y / tileSize)].walkable) {
-      console.log(`STUTTER on direction: ${this.movingDirection.toString()}`);
-    }
     this.sprite.next();
     if (!this.movingDirection.is(directions.none))
       this.direction.set(this.movingDirection._value);
@@ -220,11 +181,6 @@ class Player extends Entity {
     };
   }
 
-  getCenterPoint() {
-    return {x: this.x + this.relativeCenterPoint.x,
-	    y: this.y + this.relativeCenterPoint.y};
-  }
-  
   drawDebugInfo(cameraX, cameraY) {
     let {x, y} = this.getMovementChange(this.speedForDebug);
         

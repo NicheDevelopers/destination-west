@@ -23,6 +23,11 @@ import ctx from "./global/ctx.js";
 import {roundToTile} from "./global/utilities.js";
 import {directions, Direction} from "./global/utilities.js";
 
+
+export function distances(left, right, up, down) {
+  return {left: left, right: right, up: up, down: down};
+}
+
 /**
    A class describing rectangles in absolute coordinate values
    (relative to the whole game world / location)

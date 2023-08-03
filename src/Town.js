@@ -22,17 +22,17 @@
 */
 
 import presets from "./static/townPresets.js";
-import { randIntInRange, compareDirectedPositions, generateID } from "./global/utilities.js";
+import { compareDirectedPositions, generateID } from "./global/utilities.js";
 import Location from "./Location.js";
 import Building from "./Building.js";
-import {defaultTownHeight, defaultTownWidth} from "./global/consts.js";
-import {genTownName} from "./nameGenerators.js";
+import { defaultTownHeight, defaultTownWidth } from "./global/consts.js";
+import { genTownName } from "./nameGenerators.js";
 
 class Town extends Location {
   constructor(x, y, numBldInTown = {}) {
     super(defaultTownWidth, defaultTownHeight);
     this.ID = generateID(Town);
-    this.name = genTownName(0.4);
+    this.name = genTownName();
     this.x = x;
     this.y = y;
     this.numBldInTown = numBldInTown;
@@ -45,7 +45,7 @@ class Town extends Location {
     // see https://gitlab.com/niche-devs/destination-west/-/wikis/Technical-Documentation/Classes/Town/Town-Presets
     this.array = new Array(this.width);
     for (let x = 0; x < this.width; ++x) this.array[x] = new Array(this.height);
-    let preset = presets[randIntInRange(0, presets.length)];
+    let preset = presets.randomElement();
     this.placeStreets(preset);
     this.placeBuildings(preset);
     this.placeBackground('sand');
@@ -59,13 +59,14 @@ class Town extends Location {
     // building positions and sizes
     let numBlds = buildings.length;
     let requiredNumBlds = 0;
-    if (this.numBldInTown.saloon !== undefined) requiredNumBlds +=
-      this.numBldInTown.saloon;
-    if (this.numBldInTown.sheriff !== undefined) requiredNumBlds +=
-      this.numBldInTown.sheriff;
-    if (this.numBldInTown.house !== undefined) requiredNumBlds +=
-      this.numBldInTown.house;
-    if (requiredNumBlds > numBlds) requiredNumBlds = numBlds;
+    if (this.numBldInTown.saloon !== undefined) 
+      requiredNumBlds += this.numBldInTown.saloon;
+    if (this.numBldInTown.sheriff !== undefined) 
+      requiredNumBlds += this.numBldInTown.sheriff;
+    if (this.numBldInTown.house !== undefined) 
+      requiredNumBlds += this.numBldInTown.house;
+    if (requiredNumBlds > numBlds) 
+      requiredNumBlds = numBlds;
     let counter = 0;
     let toPlace;
 

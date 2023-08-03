@@ -22,8 +22,8 @@
 import Sprite from "../Sprite/Sprite.js";
 import AnimatedSprite from "../Sprite/AnimatedSprite.js";
 import Animation from "../Animation.js";
-import {animationSpeed, defaultEquipmentSize, tileSize} from "../global/consts.js";
-import {validateOptions} from "../global/utilities.js";
+import { animationSpeed } from "../global/consts.js";
+import { validateOptions } from "../global/utilities.js";
 
 const entityOptions = new Map([
   ["animated",
@@ -52,7 +52,9 @@ class Entity {
       this.sprite = new Sprite(typeName);
     else
       this.sprite = new AnimatedSprite(
-	typeName, { animationSpeed: animationSpeed });
+        typeName, { 
+        animationSpeed: animationSpeed 
+      });
 
     if (options.speed !== undefined) {
       this.moveX = new Animation(this, "x", options.speed);

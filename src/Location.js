@@ -24,10 +24,9 @@
 import Tile from "./Tile.js";
 import Entity from "./Entity/Entity.js";
 import ctx from "./global/ctx.js";
-import { randIntInRange, distance,
-	 createCanvas } from "./global/utilities.js";
-
-import {tileSize, playerRcp} from "./global/consts.js";
+import { distance, roll } from "./global/utilities.js";
+import { createCanvas } from "./global/utilities.js";
+import { tileSize, percentageOfGenericDecoration as pGD, playerParameters as pp } from "./global/consts.js";
 
 /* pathInfo keys describe the presence of paths on adjacent squares.
    The first digit describes the top-left adjacent tile. If that tile
@@ -110,14 +109,12 @@ class Location {
    * Tiles within a 5x5 square of a building are considered to be close to it.
    */
   placeGenericDecoration() {
-    let rural_percent = 20;
     let rural_generic_decorations = [
       ["cactus-1x"],
       ["small-stones-1"],
       ["green-bush-1"]
     ];
 
-    let town_percent = 5;
     let town_generic_decorations = [
       //["roadsign", 1],
       //["stone-well", 1],
@@ -127,19 +124,15 @@ class Location {
     for (let i = 0; i < this.array.length; i++)
       for (let j = 0; j < this.array[0].length; j++) {
         if (this.array[i][j].typeName !== 'sand') continue;
-
         let array = null;
-        let rand = randIntInRange(0, 100);
         
-        if (this.nearToBuilding(i, j) && rand < town_percent)
+        if (this.nearToBuilding(i, j) && roll(pGD.town_percentage))
           array = town_generic_decorations;
-        else if (!this.nearToBuilding(i, j) && rand < rural_percent)
+        else if (!this.nearToBuilding(i, j) && roll(pGD.rural_percentage))
           array = rural_generic_decorations;
         
-        if (array) {
-          let idx = randIntInRange(0, array.length);
-          this.decorations.push(new Entity("decoration-" + array[idx], i * tileSize, j * tileSize));
-	}
+        if (array)
+          this.decorations.push(new Entity("decoration-" + array.randomElement(), i * tileSize, j * tileSize));
       }
   }
 
@@ -166,16 +159,19 @@ class Location {
       }
   }
 
-  chooseStreet(pomArray, x, y) {
+  chooseStreet(streetArray, x, y) {
     let string = '';
 
-    console.assert(pomArray != undefined, "pomArray is undefined");
-    const surrounding = [[0, -1], [1, -1],
-    [1, 0], [1, 1], [0, 1],
-    [-1, 1], [-1, 0], [-1, -1]];
+    console.assert(streetArray != undefined, "streetArray is undefined");
+    const surrounding = [
+      [0, -1], [1, -1],
+      [1, 0], [1, 1], 
+      [0, 1], [-1, 1], 
+      [-1, 0], [-1, -1]
+    ];
     surrounding.forEach(place => {
       try {
-        pomArray[x + place[0]][y + place[1]] === 1 ? string += '1' : string += '0';
+        streetArray[x + place[0]][y + place[1]] === 1 ? string += '1' : string += '0';
       }
       catch (e) {
         if (e instanceof TypeError) string += '1'; else throw e;
@@ -186,7 +182,7 @@ class Location {
 
     for (const element of [0, 90, 180, 270]) {
       if (pathInfo.has(string)) 
-        return [pathInfo.get(string)[randIntInRange(pathInfo.get(string).length)], element];
+        return [pathInfo.get(string).randomElement(), element];
       string = string.substring(2, 8) + string.substring(0, 2)
     }
 
@@ -196,13 +192,13 @@ class Location {
 
   placeStreets(preset) {
 
-    let pomArray = new Array(this.width);
-    for (let x = 0; x < this.width; ++x) pomArray[x] = new Array(this.height);
+    let streetArray = new Array(this.width);
+    for (let x = 0; x < this.width; ++x) streetArray[x] = new Array(this.height);
 
     preset.streets.forEach((street) => {
       for (let i = street.start.x; i < street.start.x + street.width; ++i)
         for (let j = street.start.y; j < street.start.y + street.height; ++j) {
-          pomArray[i][j] = 1;
+          streetArray[i][j] = 1;
         }
     });
 
@@ -210,8 +206,8 @@ class Location {
       for (let i = street.start.x; i < street.start.x + street.width; ++i) {
         for (let j = street.start.y; j < street.start.y + street.height; ++j) {
           this.awaitAssets++;
-          let nameAndDegree = this.chooseStreet(pomArray, i, j);
-          if (pomArray[i][j] == 1) this.array[i][j] = new Tile(
+          let nameAndDegree = this.chooseStreet(streetArray, i, j);
+          if (streetArray[i][j] == 1) this.array[i][j] = new Tile(
 	    nameAndDegree[0], i * tileSize, j * tileSize,
 	    {
               rotation: nameAndDegree[1],
@@ -245,8 +241,8 @@ class Location {
     for (let item of entities) {
       let d = distance(item, player);
       if (d < minDist) {
-	minDist = d;
-	this.focused = item;
+        minDist = d;
+        this.focused = item;
       }
     }
 

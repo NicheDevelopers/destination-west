@@ -1,13 +1,12 @@
 import Equipment from "./Equipment.js";
-import {defaultEquipmentSize} from "./global/consts.js";
+import { defaultEquipmentSize } from "./global/consts.js";
 import Hitbox, {distances} from "./Hitbox.js";
 
 export function addTraits(obj, ...traits) {
   for (const trait of traits) {
     for (const prop in trait) {
       if (obj[prop] !== undefined)
-	throw `adding trait would override property ${prop} ` +
-	`of ${obj.constructor.name}`;
+	throw `adding trait would override property ${prop} of ${obj.constructor.name}`;
       obj[prop] = trait[prop];
     }
   }

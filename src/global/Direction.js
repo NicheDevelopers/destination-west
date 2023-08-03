@@ -44,7 +44,7 @@ export const directions = {
   downRight: 8,
 }
 
-export class Direction {
+class Direction {
   constructor(value=directions.none) {
     this._value = value;
   }
@@ -90,3 +90,5 @@ export class Direction {
     return this.facesDown()-this.facesUp();
   }
 }
+
+export default Direction;

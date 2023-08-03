@@ -37,6 +37,7 @@ const defaultKeybinds = [
   ['shift', 'Toggle Sprint'],
   ['c', 'Toggle Sneak'],
   ['=', 'Camera zoom in'],
-  ['-', 'Camera zoom out']
+  ['-', 'Camera zoom out'],
+  ['e', 'Next Dialogue Line']
 ];
 export default defaultKeybinds;

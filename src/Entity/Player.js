@@ -23,18 +23,10 @@
 
 import Entity from "./Entity.js";
 
-import {tileSize,
-	defaultPlayerSpeed,
-        defaultSprintMode,
-        defaultSneakMode,
-        defaultDiagonalOffset,
-        defaultSneakMultiplier,
-        defaultSprintMultiplier,
-	playerRcp,
-	playerBd } from "../global/consts.js";
+import { tileSize, playerParameters as pp } from "../global/consts.js";
 
-import {addTraits, HitboxTrait, InventoryTrait} from "../traits.js";
-import {Direction, directions} from "../global/utilities.js";
+import { addTraits, HitboxTrait, InventoryTrait } from "../traits.js";
+import { Direction, directions } from "../global/utilities.js";
 
 /**
    Class for managing the player-controlled character
@@ -42,10 +34,11 @@ import {Direction, directions} from "../global/utilities.js";
 class Player extends Entity {
   constructor(game, x = 0, y = 0) {
     super("player", x, y,
-	  {speed: defaultPlayerSpeed, animated: true});
-    addTraits(this,
-	      InventoryTrait(),
-	      HitboxTrait(this, playerRcp, playerBd));
+	  {speed: pp.defaultPlayerSpeed, animated: true});
+    addTraits(
+      this,
+      InventoryTrait(),
+      HitboxTrait(this, pp.playerRcp, pp.playerBd));
     this.game = game;
     
     // register all actions that the player can do and bind
@@ -60,8 +53,8 @@ class Player extends Entity {
       (f) => this.game.camera.addDebugDraw(f, {once: true}));
     
     this.default_direction = new Direction(directions.none);
-    this.sprintMode = defaultSprintMode;
-    this.sneakMode = defaultSneakMode;
+    this.sprintMode = pp.defaultSprintMode;
+    this.sneakMode = pp.defaultSneakMode;
     this.sprinting = false;
     this.sneaking = false;
   }
@@ -94,11 +87,13 @@ class Player extends Entity {
     let speedX = 0, speedY = 0;
 
     let baseSpeed = // the highest speed possible in this tick
-      defaultPlayerSpeed * ((this.sprinting) ? defaultSprintMultiplier :
-        (this.sneaking) ? defaultSneakMultiplier : 1);
+      pp.defaultPlayerSpeed * ((this.sprinting) ? pp.defaultSprintMultiplier :
+        (this.sneaking) ? pp.defaultSneakMultiplier : 1);
 
-    this.game.app.manageRequest('Interact',
-				() => this.interact(), { once: true });
+    this.game.app.manageRequest(
+      'Interact',
+      () => this.interact(),
+      { once: true });
     
     if (this.game.app.isActionRequested('Move Right')) {
       this.movingDirection.moveRight();
@@ -129,28 +124,28 @@ class Player extends Entity {
     // Collisions
     if (this.movingDirection.facesUp() && this.willCollide(directions.up, baseSpeed)) {
       this.movingDirection.moveDown();
-      speedX *= defaultDiagonalOffset;
+      speedX *= pp.defaultDiagonalOffset;
       speedY = 0;
     }
     if (this.movingDirection.facesDown() && this.willCollide(directions.down, baseSpeed)) {
       this.movingDirection.moveUp();
-      speedX *= defaultDiagonalOffset;
+      speedX *= pp.defaultDiagonalOffset;
       speedY = 0;
     }
     if (this.movingDirection.facesLeft() && this.willCollide(directions.left, baseSpeed)) {
       this.movingDirection.moveRight();
       speedX = 0;
-      speedY *= defaultDiagonalOffset;
+      speedY *= pp.defaultDiagonalOffset;
     }
     if (this.movingDirection.facesRight() && this.willCollide(directions.right, baseSpeed)) {
       this.movingDirection.moveLeft();
       speedX = 0;
-      speedY *= defaultDiagonalOffset;
+      speedY *= pp.defaultDiagonalOffset;
     }
 
     if (this.movingDirection.isDiagonal()) {
-      speedX *= defaultDiagonalOffset;
-      speedY *= defaultDiagonalOffset;
+      speedX *= pp.defaultDiagonalOffset;
+      speedY *= pp.defaultDiagonalOffset;
     }
 
     this.moveX.speed = speedX;

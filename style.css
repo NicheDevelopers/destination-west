@@ -68,6 +68,26 @@ canvas {
     z-index: 1;
 }
 
+#dialogue-div {
+    position: absolute;
+    width: 90%;
+    height: 20%;
+    bottom: 5%;
+    background-color: whitesmoke;
+    z-index: 3;
+    border-radius: 1cm;
+    border: solid 6px black;
+    font-size: 42px;
+    padding: 42px;
+
+    /* -webkit-animation: fadein 2s; /\* Safari, Chrome and Opera > 12.1 *\/ */
+    /* -moz-animation: fadein 2s; /\* Firefox < 16 *\/ */
+    /* -ms-animation: fadein 2s; /\* Internet Explorer *\/ */
+    /* -o-animation: fadein 2s; /\* Opera < 12.1 *\/ */
+    /* animation: fadein 2s; */
+
+}
+
 div.list-element img {
     margin-left: 2%;
     width: 80px;
@@ -260,4 +280,18 @@ div.list-element img {
 
 .town-div:hover {
     background-color: red;
+}
+
+/* fade in */
+.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.3s linear;
+}
+
+/* fase out */
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.3s, opacity 0.3s linear;
 }

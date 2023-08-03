@@ -19,18 +19,12 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import ctx, { getGameCanvasSizeX,
-	      getGameCanvasSizeY } from "./global/ctx.js";
-import { camSettings,
-	 playerCenterPoint} from "./global/consts.js";
+import ctx, { getGameCanvasSizeX, getGameCanvasSizeY } from "./global/ctx.js";
+import { camSettings, playerCenterPoint } from "./global/consts.js";
+import { makeEven } from "./global/utilities.js";
 
 import time from "./global/time.js";
 
-function makeEven(x) {
-  if (x % 2 == 1)
-    x++;
-  return x;
-}
 /*
  * Render fragments of the world easily
  */

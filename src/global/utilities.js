@@ -142,6 +142,33 @@ export function allowProperty(obj, prop) {
   delete obj[prop];
 }
 
+export function makeEven(x) {
+  if (x % 2 == 1)
+    x++;
+  return x;
+}
+
+export function hex_to_rgb(colorHex){
+  let rgb = [0, 0, 0];
+  for(let i = 0; i < 3; i++){
+    rgb[i] = parseInt(colorHex.slice(2*i + 1, 2*i + 3), 16)
+  }
+  return rgb;
+}
+
+export function rgb_to_hex(colorRgb){
+  let hex = "#";
+  for(const element of colorRgb){
+    let intElement = element
+    if(Object.getPrototypeOf("") === Object.getPrototypeOf(element))
+      intElement = parseInt(element, 10);
+    if(intElement < 15)
+      hex += "0";
+    hex += intElement.toString(16);
+  }
+  return hex.toUpperCase();
+}
+
 Object.defineProperty(Array.prototype, "none", {
   value: function (fn) {return !this.some(fn)},
 });
@@ -154,7 +181,17 @@ Object.defineProperty(Array.prototype, "last", {
   get: function () {return this[this.length - 1]},
 });
 
-import {Direction, directions} from "./Direction.js";
+Object.defineProperty(Array.prototype, "lastNthElement", {
+  value: function (n){
+    if (n < 0 || n > this.length - 1){
+      throw `attempt to get lastNthElement (${n}) of array, when array's last index is ${this.length - 1}`;
+    }
+    return this[this.length - 1 - n];
+  }
+});
+
+import { directions } from "./consts.js";
+import Direction from "./Direction.js";
 export {Direction, directions};
 
 // percent chance (0 - 1)
@@ -184,7 +221,7 @@ Object.defineProperty(Array.prototype, "max", {
 });
 
 Object.defineProperty(Array.prototype, "min", {
-  value: function ( fn = ((a,b)=>b-a)) {
+  value: function ( fn = ((a,b)=>b-a) ) {
     let min = undefined;
     for (let element of this){
       if (min == undefined) min = element;
@@ -194,3 +231,7 @@ Object.defineProperty(Array.prototype, "min", {
     return min;
   },
 });
+
+Number.prototype.clamp = function(min, max) {
+  return Math.min(Math.max(this, min), max);
+};

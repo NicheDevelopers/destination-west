@@ -45,10 +45,10 @@ class StateManager {
     this.stateStack.pop();
   }
   currentState() {
-    return this.stateStack[this.stateStack.length - 1];
+    return this.stateStack.last;
   }
   nthUnderCurrent(n) {
-    return this.stateStack[this.stateStack.length - 1 - n];
+    return this.stateStack.lastNthElement(n);
   }
   stateChanged() {
     return (this.currentState() !== this.previous)

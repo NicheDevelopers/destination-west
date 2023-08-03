@@ -26,14 +26,14 @@ import Player from "./Entity/Player.js";
 import WorldMapDisplay from "./WorldMapDisplay.js";
 import PauseMenu from "./PauseMenu.js";
 import EquipmentDisplay from "./EquipmentDisplay.js";
-import Equipment from "./Equipment.js";
 import Designer from "./Designer.js";
 import Item from "./Item/Item.js";
 import { State } from "./global/stateManager.js"
 import Npc from "./Entity/Npc.js";
+import Dialogue from "./Dialogue/Dialogue.js";
+import DialogueDisplay from "./Dialogue/DialogueDisplay.js";
 import Container from "./Entity/Container.js";
 import TransferDisplay from "./TransferDisplay.js";
-import { defaultEquipmentSize } from "./global/consts.js";
 import WorldMap from "./WorldMap.js";
 
 class Game extends State {
@@ -84,12 +84,8 @@ class Game extends State {
     this.player.equipment.put(new Item(`Broken Bottle`,'broken-bottle', 0, 1, 0, 0, false));
     this.equipmentDisplay = new EquipmentDisplay(this, this.player.equipment);
 
-    // this.transferEquipment = new Equipment(defaultEquipmentSize);
-    // for (let i=0; i<8; i++){
-    //   this.transferEquipment.put(new Item(`Apple`, 'decoration-cactus-1x', 0, 5, 0, 0, true));
-    // }
+    this.dialogueDisplay = new DialogueDisplay(this)
 
-    //this.player.transfer.changeTransferEquipment(this.transferEquipment);
     this.transferDisplay = new TransferDisplay(this);
 
     this.slaves = [

@@ -1,6 +1,6 @@
-import {addTraits, InventoryTrait} from "../traits.js";
+import { addTraits, InventoryTrait } from "../traits.js";
 import Interactible from "./Interactible.js";
-import {stateManager} from "../global/stateManager.js";
+import { stateManager } from "../global/stateManager.js";
 
 class Container extends Interactible {
   constructor(game, typeName, x, y, options={}) {

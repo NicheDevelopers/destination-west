@@ -22,11 +22,14 @@
 import Sprite from "./Sprite/Sprite.js";
 
 import ctx from "./global/ctx.js";
+import {addTraits, HitboxTrait} from "./traits.js";
+
 /**
  * Class for creating tiles - the base of the game world structure
  */
 class Tile {
   constructor(typeName, x = 0, y = 0, options = {}) {
+    addTraits(this, HitboxTrait(this));
     this.typeName = typeName;
     this.options = options;
     if (typeName.substring(0, 9) === 'building-' ||
@@ -35,6 +38,8 @@ class Tile {
     this.sprite = new Sprite(typeName, options);
     this.x = x;
     this.y = y;
+    this.width = this.sprite.width;
+    this.height = this.sprite.height;
     this.walkable = true;
     this.items = [];
   }
@@ -42,11 +47,8 @@ class Tile {
     this.background?.draw(x, y, context);
     this.sprite.draw(x, y, context);
   }
-  drawDebugInfo(context = ctx) {
-    context.fillRect(this.x, this.y, this.sprite.width, 1);
-    context.fillRect(this.x, this.y, 1, this.sprite.height);
-    context.fillRect(this.x + this.sprite.width, this.y, 1, this.sprite.height);
-    context.fillRect(this.x, this.y + this.sprite.height, this.sprite.width, 1);
+  drawDebugInfo(cameraX, cameraY, context = ctx, options={}) {
+    this.hitbox.draw(cameraX, cameraY, context, options);
   }
 }
 

@@ -22,63 +22,39 @@
 */
 
 import Entity from "./Entity.js";
-import ctx from "../global/ctx.js";
 
 import { tileSize, playerParameters as pp } from "../global/consts.js";
 
-import { addTraits, InventoryTrait } from "../traits.js";
+import { addTraits, HitboxTrait, InventoryTrait } from "../traits.js";
 import { Direction, directions } from "../global/utilities.js";
 
-
-//class for managing the player-controlled character
+/**
+   Class for managing the player-controlled character
+*/
 class Player extends Entity {
   constructor(game, x = 0, y = 0) {
     super("player", x, y,
 	  {speed: pp.defaultPlayerSpeed, animated: true});
-    addTraits(this, InventoryTrait());
+    addTraits(
+      this,
+      InventoryTrait(),
+      HitboxTrait(this, pp.playerRcp, pp.playerBd));
     this.game = game;
     
-    //register all actions that the player can do and bind them to correct keys
-    this.actions = ['Move Right', 'Move Left', 'Move Up', 'Move Down', 'Toggle Sprint', 'Toggle Sneak'];
+    // register all actions that the player can do and bind
+    // them to correct keys
+    this.actions = ['Move Right', 'Move Left', 'Move Up', 'Move Down',
+		    'Toggle Sprint', 'Toggle Sneak'];
 
-    // Cooridinates of the sprite's center point
-    this.spriteCenterPoint = { x: 48, y: 60 };
-    // Coordinates for calculating collisions
-    this.rootPoint = { x: 48, y: 70 };
-    
     this.movingDirection = new Direction(directions.none);
     this.direction = new Direction(directions.right);
 
-    //an object which contains info on how many pixels from the center point you want to detect collisions
-    this.boundingDistance = {
-      up: -1,
-      left: -5,
-      right: 5,
-      down: 1
-    }
-    //an object containing appropriate center point deviation so that the player's model doesn't go out of bounds.
-    this.centerPoint = {
-      x: this.x + this.rootPoint.x,
-      y: this.y + this.rootPoint.y
-    };
-
-    //array of information on which pixels should be checked for colliding objects
-    this.boundaries = [
-      [this.boundingDistance.left, this.boundingDistance.up],
-      [0, this.boundingDistance.up],
-      [this.boundingDistance.right, this.boundingDistance.up],
-      [this.boundingDistance.left, 0],
-      [0, 0],
-      [this.boundingDistance.right, 0],
-      [this.boundingDistance.left, this.boundingDistance.down],
-      [0, this.boundingDistance.down],
-      [this.boundingDistance.right, this.boundingDistance.down]];
-
-    this.default_direction = new Direction(directions.none); //the default direction being staying idle, on index 4 in the state array
+    this.hitbox.visualizeCollisions(
+      (f) => this.game.camera.addDebugDraw(f, {once: true}));
+    
+    this.default_direction = new Direction(directions.none);
     this.sprintMode = pp.defaultSprintMode;
     this.sneakMode = pp.defaultSneakMode;
-    this.townLength = this.game.currentTown.array.length;
-    this.townWidth = this.game.currentTown.array[0].length;
     this.sprinting = false;
     this.sneaking = false;
   }
@@ -107,16 +83,6 @@ class Player extends Entity {
   update() {
     this.movingDirection.set(directions.none);
     this.updateMovementMethod();
-
-    this.centerPoint.x = this.x + this.rootPoint.x;
-    this.centerPoint.y = this.y + this.rootPoint.y;
-
-    //calculate the direction in which the player should move, according to this diagram:
-    //       N
-    //    0  1  2
-    // W  3  4  5  E
-    //    6  7  8
-    //       S
 
     let speedX = 0, speedY = 0;
 
@@ -188,9 +154,6 @@ class Player extends Entity {
     this.moving = (speedX !== 0 || speedY !== 0);
 
     this.move();
-    if (!this.game.currentTown.array[~~(this.centerPoint.x / tileSize)][~~(this.centerPoint.y / tileSize)].walkable) {
-      console.log(`STUTTER on direction: ${this.movingDirection.toString()}`);
-    }
     this.sprite.next();
     if (!this.movingDirection.is(directions.none))
       this.direction.set(this.movingDirection._value);
@@ -201,45 +164,49 @@ class Player extends Entity {
     focused?.interact(this);
     this.game.updateFocus();
   }
-  
-  drawDebugInfo() {
-    let moveX = Math.abs(this.moveX.getChangeInThisTick('x', this.speedForDebug));
-    let moveY = Math.abs(this.moveY.getChangeInThisTick('y', this.speedForDebug));
-    //console.log(moveX, moveY);
-    ctx.fillStyle = 'black';
-    let cp = this.centerPoint;
-    ctx.fillRect(cp.x, cp.y, 1, 1);
-    this.boundaries.forEach((boundary, ix) => {
-      let mX = moveX * ((ix % 3 === 0) ? -1 : (ix % 3 === 2) ? 1 : 0);
-      let mY = moveY * ((ix < 3) ? -1 : (ix > 5) ? 1 : 0);
-      ctx.fillRect(cp.x + boundary[0] + mX,
-        cp.y + boundary[1] + mY, 1, 1);
-    });
-
+  /** returns the change in player's position (that would be applied if no
+      collisions were deteceted
+  */
+  getMovementChange(speed, direction=this.movingDirection) {
+    return {
+      x: Math.abs(this.moveX.getChangeInThisTick('x', speed))
+	* direction.xAxisMultiplier(),
+      y: Math.abs(this.moveY.getChangeInThisTick('y', speed))
+	* direction.yAxisMultiplier()
+    };
   }
+
+  drawDebugInfo(cameraX, cameraY) {
+    let {x, y} = this.getMovementChange(this.speedForDebug);
+        
+    this.hitbox.draw(cameraX, cameraY);
+    this.hitbox.drawExpected(cameraX, cameraY, x, y);
+  }
+  
   willCollide(direction, speed) {
     /* xTile and yTile represent the coordinates of the tile that
        the player would start colliding with if he moved in its
        direction with defaultPlayerSpeed in this tick
     */
-    let moveX = Math.abs(this.moveX.getChangeInThisTick('x', speed));
-    let moveY = Math.abs(this.moveY.getChangeInThisTick('y', speed));
+    let {x: moveX, y: moveY} = this.getMovementChange(speed, new Direction(direction));
 
-    let xTile =
-      ~~((this.centerPoint.x + this.boundaries[direction][0] + tileSize
-        + moveX * ((direction % 3 === 0) ? -1 : (direction % 3 === 2) ? 1 : 0)) / tileSize) - 1;
-    
-    let yTile = ~~((this.centerPoint.y + this.boundaries[direction][1] + tileSize
-      + moveY * ((direction < 3) ? -1 : (direction > 5) ? 1 : 0)) / tileSize) - 1;
+    /*
+      //Highlight player tile
+    this.game.camera.addDebugDraw((cx, cy) => {
+      this.game.currentTown.array[xTile][yTile]
+	.drawDebugInfo(cx,cy,ctx, {color: "white"});
+      }, {once: true});
+    //  */
 
+    /*
     if (xTile < 0 || xTile >= this.game.currentTown.width ||
       yTile < 1 || yTile >= this.game.currentTown.height) {
       return true;
-    }
-    if ((this.game.currentTown.array[xTile][yTile].walkable)) {
-      return false;
-    }
-    return true;
+      }
+      */
+    return this.hitbox.willCollideWithTiles(
+      moveX, moveY,
+      this.game.currentTown.array);
   }
   toggleSprint() {
     this.sprinting = !this.sprinting;

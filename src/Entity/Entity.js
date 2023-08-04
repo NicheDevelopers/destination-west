@@ -47,7 +47,7 @@ class Entity {
     this.typeName = typeName;
     this.x = x;
     this.y = y;
-       
+    
     if (!options.animated)
       this.sprite = new Sprite(typeName);
     else
@@ -60,8 +60,10 @@ class Entity {
       this.moveX = new Animation(this, "x", options.speed);
       this.moveY = new Animation(this, "y", options.speed);
     }
-
     this.ignoreDepth = Boolean(options.ignoreDepth);
+  }
+
+  drawDebugInfo(cameraX, cameraY) {
   }
   
   draw(cameraX, cameraY) {

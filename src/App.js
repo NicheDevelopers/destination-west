@@ -32,7 +32,7 @@ import { stateManager } from "./global/stateManager.js"
 class App {
   constructor(keybinds = []) {
     this.game = new Game(this);
-    stateManager.pushState(this.game)
+    stateManager.pushState(this.game);
 
     this.animationFrameID = null;
     this.userFunctionsMap = new Map();
@@ -70,11 +70,6 @@ class App {
     this.keyman.manageRequest(...args);
   }
 
-  debug() {
-    this.game.debug();
-    stateManager.print();
-  }
-
   loop() {
     this.animationFrameID =
       window.requestAnimationFrame(() => this.loop());
@@ -86,9 +81,6 @@ class App {
       this.testFPSCounter.next();
 
       stateManager.updateStates();
-
-      if (this.debugging)
-	      this.debug();
     }
     catch(e) {
       window.cancelAnimationFrame(this.animationFrameID);

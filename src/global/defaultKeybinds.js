@@ -27,6 +27,7 @@ const defaultKeybinds = [
   ['d', 'Move Right'],
   ['w', 'Move Up'],
   ['s', 'Move Down'],
+  ['n', 'Toggle Debug Mode'],
   ['m', 'Toggle Map Display'],
   ['h', 'Toggle Designer Display'],
   ['l', 'Toggle Keyboard Visualization'],

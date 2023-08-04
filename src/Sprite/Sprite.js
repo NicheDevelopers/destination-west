@@ -219,13 +219,18 @@ class Sprite {
   @param {number} x - Position x of the draw location
   @param {number} y - Position y of the draw location
   */
-  draw(x, y, context = ctx) {
+  draw(x, y, context = ctx, options = {}) {
     context.drawImage(
       this.img,
       this.spriteSheetCol * this.width,
       this.spriteSheetRow * this.height,
       this.width, this.height, x, y,
-      this.width * this.scaleX, this.height * this.scaleY);
+		      this.width * this.scaleX, this.height * this.scaleY);
+    if (options.innerOutline) {
+      context.fillStyle = "black";
+      context.fillRect(x, y,
+		       this.width * this.scaleX, 1);
+    }
   }
 }
 

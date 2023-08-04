@@ -20,6 +20,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+import {tileSize} from "./consts.js";
+
 /**
  * Return a random float.
  # Two arguments provided: Return a float from range <`min`, `max`)
@@ -102,6 +104,10 @@ export function distance({x: x1, y: y1}, {x: x2, y: y2}) {
 export function directedDistance({x: x1, y: y1, direction: dir1},
 			  {x: x2, y: y2, direction: dir2}) {
   return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+}
+
+export function roundToTile(value) {
+  return ~~(value/tileSize);
 }
 
 export function comparePositions({x: x1, y: y1}, {x: x2, y: y2}) {

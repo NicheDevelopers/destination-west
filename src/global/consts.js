@@ -6,6 +6,8 @@ export const spriteScale = 1;
 export const defaultTownWidth = 42;
 export const defaultTownHeight = 20;
 export const equipmentSpriteSize = 7;
+// Cooridinates of the sprite's center point (useful for rendering)
+export const playerCenterPoint = { x: 48, y: 60 };
 export const percentageOfTwoNameTown = 0.4;
 export const transparencyAlphaTolerance = 5;
 
@@ -15,7 +17,14 @@ export const playerParameters = {
   defaultSprintMultiplier : 1.5,
   defaultSneakMultiplier : 0.5,
   defaultSprintMode : 'hold',
-  defaultSneakMode : 'hold'
+  defaultSneakMode : 'hold',
+  playerBd: {
+    up: 2,
+    left: 14,
+    right: 14,
+    down: 2
+  },
+  playerRcp: { x: 48, y: 70 }
 };
 
 export const mapParameters = {
@@ -34,7 +43,7 @@ export const mapParameters = {
     Therefore, if location will be generated on coords which distance to any location is greater
     than minimum distance needed for connection there would generate multiple locations without connections
     DFS method will never return true, so on contructor of WorldMap will never end.
-    For a slight difference between this two values time required to generate WorldMap will singificantly increase.
+    For a slight difference between these two values time required to generate WorldMap will singificantly increase.
   */
   minDistanceBetweenLocations: 150,
   minDistanceForConnection: 300
@@ -110,5 +119,4 @@ export const directions = {
   downLeft: 6,
   down: 7,
   downRight: 8,
-}
-
+};

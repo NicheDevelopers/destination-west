@@ -59,7 +59,9 @@ class Game extends State {
 
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
-    this.player = new Player(this, 350, 290);
+    this.camera = new Camera(this);
+    
+    this.player = new Player(this, 250, 390);
     
     let testContainer = new Container(this, "barrel", 250, 250);
     for (let i=0; i<3; i++){
@@ -69,8 +71,7 @@ class Game extends State {
     
     this.currentTown.containers.push(testContainer);
     
-    this.currentTown.npcs.push(new Npc(this, 382, 290, "Ol' Benjamin"));
-    this.camera = new Camera(this);
+    this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));
     
     this.player.equipment.put(new Item(`Cigar`,'cigar', 0, 1, 0, 0, false));
     for (let i=0; i<5; i++){
@@ -116,15 +117,13 @@ class Game extends State {
     this.currentTown.updateFocus(this.player);
   }
   
-  debug() {
-    this.player.drawDebugInfo();
-    this.currentTown.drawDebugInfo();
-  }
-
   update() {
+    this.app.manageRequest('Toggle Debug Mode',
+			   () => this.app.debugging =
+      !this.app.debugging, { once: true });
     this.player.update();
     this.currentTown.update(this.player);
-    this.camera.render();          
+    this.camera.render({debug: this.app.debugging});
   }
 
   togglePause() {

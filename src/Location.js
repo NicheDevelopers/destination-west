@@ -253,7 +253,6 @@ class Location {
   draw(x = 0, y = 0, context = ctx, width = 672, height = 288) {
     if (!this.created)
       return;
-
     context.drawImage(this.image, x, y, width, height,
                       0, 0, width, height);
   }
@@ -282,11 +281,20 @@ class Location {
       location.containers,
       location.npcs,
       location.decorations,
-      player
-    ].flat().sort((e1, e2) => e1.y - e2.y);
+      player,
+    ].flat();
+
+    let sorted = arr.filter(e => !e.ignoreDepth)
+      .sort((e1, e2) => {
+	const y1 = (e1.y + e1?.relativeCenterPoint?.y) || e1.y+64;
+	const y2 = (e2.y + e2?.relativeCenterPoint?.y) || e2.y+64;
+	
+	return y1-y2;
+      });
+    
     return [
-      arr.filter(e => !e.ignoreDepth),
-      arr.filter(e => e.ignoreDepth)
+      arr.filter(e => e.ignoreDepth),
+      sorted
     ];
   }
 }

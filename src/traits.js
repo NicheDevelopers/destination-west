@@ -1,6 +1,6 @@
 import Equipment from "./Equipment.js";
-import { defaultEquipmentSize } from "./global/consts.js";
-import Hitbox, {distances} from "./Hitbox.js";
+import { defaultEquipmentSize, defaultRcp, defaultBd } from "./global/consts.js";
+import Hitbox from "./Hitbox.js";
 
 export function addTraits(obj, ...traits) {
   for (const trait of traits) {
@@ -27,10 +27,9 @@ export function InventoryTrait(equipmentSize=defaultEquipmentSize) {
   }
 }
 
-export function HitboxTrait(self, rcp={x:32,y:32},
-			    bd=distances
-			    (rcp.x-1,64-rcp.x,rcp.y-1,64-rcp.y),
-			   ) {
+
+   
+export function HitboxTrait(self, rcp=defaultRcp, bd=defaultBd) {
   return {
     boundingDistance: bd,
     relativeCenterPoint: rcp,

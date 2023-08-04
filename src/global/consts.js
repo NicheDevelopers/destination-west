@@ -10,7 +10,22 @@ export const equipmentSpriteSize = 7;
 export const playerCenterPoint = { x: 48, y: 60 };
 export const percentageOfTwoNameTown = 0.4;
 export const transparencyAlphaTolerance = 5;
-
+export function distances(left, right, up, down) {
+  return {left: left, right: right, up: up, down: down};
+}
+/**
+   relativeCenterPoint - an object with x and y properties,
+   describing the position of a visual base center point of
+   a sprite, relative to the top-left corner of the sprite.
+*/
+export const defaultRcp = { x: tileSize/2, y: tileSize/2 };
+/**
+   boundingDistance - an object with properties: left,
+   right, up, down. It describes distances to the hitbox boundaries
+   from the absolute position of the relativeCenterPoint.
+*/
+export const defaultBd =
+  distances((tileSize/2)-1,tileSize/2,(tileSize/2)-1, tileSize/2);
 export const playerParameters = {
   defaultPlayerSpeed : 150,
   defaultDiagonalOffset : Math.sqrt(2)/2,

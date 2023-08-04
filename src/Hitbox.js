@@ -20,19 +20,15 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import ctx from "./global/ctx.js";
-import {roundToTile} from "./global/utilities.js";
-import {directions, Direction} from "./global/utilities.js";
-
-
-export function distances(left, right, up, down) {
-  return {left: left, right: right, up: up, down: down};
-}
+import { roundPointToTile,
+	 hashToPoint,
+	 pointToHash } from "./global/utilities.js";
+import { directions, Direction } from "./global/utilities.js";
 
 /**
    A class describing rectangles in absolute coordinate values
    (relative to the whole game world / location)
 */
-
 class Box {
   constructor(left, right, top, bottom) {
     this.left = left;
@@ -78,9 +74,8 @@ class Box {
     if (moveDir.facesLeft())
       corners.add(directions.upLeft).add(directions.downLeft);
 
-    corners = Array.from(corners).map(c =>
-      cornerMap.get(c)
-    );
+    corners = Array.from(corners)
+      .map(c => cornerMap.get(c));
     
     return corners;
   }
@@ -110,35 +105,34 @@ export default class Hitbox {
     let tileCoordinates = new Set();
     this.getBoundingBox(dx, dy).getCorners().forEach((corner) => {
       tileCoordinates.add(
-	roundToTile(corner.x)+roundToTile(corner.y)*10000);
+	pointToHash(roundPointToTile(corner)));
     });
     return Array.from(tileCoordinates).map
-    (e => ({x: e%10000, y: ~~(e/10000)}));
+    (e => hashToPoint(e));
   }
 
   getPossiblyCollidingTileCoordinates(dx=0, dy=0) {
     let tileCoordinates = new Set();
     this.getBoundingBox(dx, dy).getImportantCorners(dx, dy)
       .forEach((corner) => {
-      tileCoordinates.add(
-	roundToTile(corner.x)+roundToTile(corner.y)*10000);
-    });
+	tileCoordinates.add(
+	  pointToHash(roundPointToTile(corner)));
+      });
     return Array.from(tileCoordinates).map
-    (e => ({x: e%10000, y: ~~(e/10000)}));
+    (e => hashToPoint(e));
   }
   
   willCollideWithTiles(dx, dy, arr) {
-    let tiles = this.getPossiblyCollidingTileCoordinates(dx, dy).map(p => {
-      return arr[p.x][p.y];
-    });
+    let tiles = this.getPossiblyCollidingTileCoordinates(dx, dy)
+      .map(p => {
+	return arr[p.x][p.y];
+      });
     
     for (const tile of tiles) {
-      /*
-	this.visualizationFunction(
+      this.visualizationFunction(
 	(cx, cy) =>
 	  tile.hitbox.draw(cx,cy,ctx,{color: "transparent"})
-	  );
-	  */
+      );
       if (this.willCollide(dx, dy, tile.hitbox))
 	return true;
     }

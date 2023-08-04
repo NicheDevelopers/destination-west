@@ -110,6 +110,25 @@ export function roundToTile(value) {
   return ~~(value/tileSize);
 }
 
+export function roundPointToTile(p) {
+  return {
+    x: roundToTile(p.x),
+    y: roundToTile(p.y)
+  };
+}
+
+/**
+   Get a single Number which represents a point
+   (assuming x value is never greater than maxX)
+*/
+export function pointToHash(point, maxX = 10000) {
+  return point.x+point.y*(maxX+1);
+}
+
+export function hashToPoint(hash, maxX = 10000) {
+  return {x: hash % (maxX+1), y: ~~(hash/(maxX+1))};
+}
+
 export function comparePositions({x: x1, y: y1}, {x: x2, y: y2}) {
   return x1===x2 && y1===y2;
 }
@@ -120,7 +139,7 @@ export function compareDirectedPositions({x: x1, y: y1, direction: dir1},
 }
 
 export function validateOptions(givenOptions, allowedOptions,
-			       name = "") {
+				name = "") {
   Object.keys(givenOptions).forEach(option => {
     if (!allowedOptions.has(option))
       throw `Unrecognized ${name} construction option: ${option}`

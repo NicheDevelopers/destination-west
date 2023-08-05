@@ -73,6 +73,7 @@ class Location {
     this.droppedItems = new Array();
     this.npcs = new Array();
     this.decorations = new Array();
+    this.portals = new Array();
     this.focused = null;
   }
 
@@ -178,8 +179,6 @@ class Location {
       }
     });
 
-    
-
     for (const element of [0, 90, 180, 270]) {
       if (pathInfo.has(string)) 
         return [pathInfo.get(string).randomElement(), element];
@@ -191,7 +190,6 @@ class Location {
   }
 
   placeStreets(preset) {
-
     let streetArray = new Array(this.width);
     for (let x = 0; x < this.width; ++x) streetArray[x] = new Array(this.height);
 
@@ -221,7 +219,7 @@ class Location {
   }
 
   getInteractibles() {
-    return this.droppedItems.concat(this.npcs).concat(this.containers);
+    return this.droppedItems.concat(this.npcs).concat(this.containers).concat(this.portals);
   }
 
   /*
@@ -281,6 +279,7 @@ class Location {
       location.containers,
       location.npcs,
       location.decorations,
+      location.portals,
       player,
     ].flat();
 

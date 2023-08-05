@@ -33,6 +33,7 @@ import Npc from "./Entity/Npc.js";
 import Dialogue from "./Dialogue/Dialogue.js";
 import DialogueDisplay from "./Dialogue/DialogueDisplay.js";
 import Container from "./Entity/Container.js";
+import Portal from "./Entity/Portal.js";
 import TransferDisplay from "./TransferDisplay.js";
 import WorldMap from "./WorldMap.js";
 
@@ -68,6 +69,8 @@ class Game extends State {
       testContainer.equipment.put(new Item(`Whisky`,'whisky', 0, 3, 0, 0, true));
     }
     //console.log(testContainer);
+    
+    this.currentTown.portals.push(new Portal(this, "decoration-roadsign", 64*4, 64*5));
     
     this.currentTown.containers.push(testContainer);
     

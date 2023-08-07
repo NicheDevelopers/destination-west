@@ -94,8 +94,8 @@ class Location {
 
   // check if there's a builing in the 5x5 square surrounding a tile
   nearToBuilding(xPos, yPos) {
-    for (let i = -2; i <= 2; i++)
-      for (let j = -2; j <= 2; j++) {
+    for (let i = -1; i <= 1; i++)
+      for (let j = -1; j <= 1; j++) {
         if (xPos + i < 0 || xPos + i >= this.array.length) continue;
         if (yPos + j < 0 || yPos + j >= this.array[0].length) continue;
         if (this.array[xPos + i][yPos + j].typeName.substring(0, 9) == 'building-') return true;
@@ -127,7 +127,7 @@ class Location {
         if (this.array[i][j].typeName !== 'sand') continue;
         let array = null;
         
-        if (this.nearToBuilding(i, j) && roll(pGD.town_percentage))
+        if (!this.nearToBuilding(i, j) && roll(pGD.town_percentage))
           array = town_generic_decorations;
         else if (!this.nearToBuilding(i, j) && roll(pGD.rural_percentage))
           array = rural_generic_decorations;

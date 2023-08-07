@@ -10,14 +10,13 @@ class Portal extends Interactible {
   }
   matchInteraction(target) {
     let roadsignInteraction = (who) => {
-      //stateManager.toggleState(this.game.worldMapDisplay);
-      this.game.travel(target);
+      stateManager.toggleState(this.game.worldMapDisplay);
     }
     let doorInteraction = (who) => {
-      this.game.currentTown = target;
+      this.game.currentLocation = target;
     }
-    return roadsignInteraction;
-    //if (target instanceof Building) return doorInteraction; // change later
+    if (!target) return roadsignInteraction;
+    if (target instanceof Building) return doorInteraction; // change later
     throw `attempt to generate a portal interaction for ${typeof target}`;
   }
 }

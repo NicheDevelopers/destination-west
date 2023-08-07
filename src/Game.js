@@ -36,10 +36,6 @@ import Container from "./Entity/Container.js";
 import Portal from "./Entity/Portal.js";
 import TransferDisplay from "./TransferDisplay.js";
 import WorldMap from "./WorldMap.js";
-import Travel from "./Travel.js";
-import Town from "./Town.js";
-import { distance } from "./global/utilities.js";
-import { tileSize } from "./global/consts.js";
 
 class Game extends State {
   constructor(app) {
@@ -56,7 +52,6 @@ class Game extends State {
     this.worldMap = new WorldMap();
     this.worldMapDisplay = new WorldMapDisplay(this);
 
-    //this.currentTown = new Travel(20,16,5);
     this.currentTown = this.worldMap.locations[0];
     this.currentTown.visited = true;
     if (!this.currentTown.created) {
@@ -67,13 +62,15 @@ class Game extends State {
     //this.testPants = new ColoredSprite('pants');
     this.camera = new Camera(this);
     
-    this.player = new Player(this, this.currentTown.widthPx - 3*tileSize, this.currentTown.heightPx/2);
+    this.player = new Player(this, 250, 390);
     
     let testContainer = new Container(this, "barrel", 250, 250);
     for (let i=0; i<3; i++){
       testContainer.equipment.put(new Item(`Whisky`,'whisky', 0, 3, 0, 0, true));
     }
     //console.log(testContainer);
+    
+    this.currentTown.portals.push(new Portal(this, "decoration-roadsign", 64*4, 64*5));
     
     this.currentTown.containers.push(testContainer);
     
@@ -104,28 +101,13 @@ class Game extends State {
   }
 
   travel(id) {
-
-    if(this.currentTown instanceof Town ){
-      if (!this.currentTown.connectedLocations.includes(parseInt(id))) {
-        console.log("Trying to go to town that is not connected with");
-        return;
-      }
-      let pos1 = {x: this.currentTown.x, y: this.currentTown.y};
-      let pos2 = {x: this.worldMap.getByID(id).x, y: this.worldMap.getByID(id).y};
-      let length = distance(pos1, pos2);
-      this.currentTown = new Travel(length, id, this.currentTown.ID, this);
-      this.player.x = this.currentTown.widthPx - 3*tileSize;
-      this.player.y = this.currentTown.heightPx - 3*tileSize;
+    if (!this.currentTown.connectedLocations.includes(parseInt(id))) {
+      return;
     }
-
-    else if(this.currentTown instanceof Travel ){
-      this.currentTown = this.worldMap.getByID(id);
-      this.currentTown.visited = true;
-      if (!this.currentTown.created) {
-        this.currentTown.createTown();
-      }
-      this.player.x = this.currentTown.widthPx - 3*tileSize;
-      this.player.y = this.currentTown.heightPx - 3*tileSize;
+    this.currentTown = this.worldMap.getByID(id);
+    this.currentTown.visited = true;
+    if (!this.currentTown.created) {
+      this.currentTown.createTown();
     }
     this.worldMapDisplay.draw();
   }
@@ -143,7 +125,7 @@ class Game extends State {
 			   () => this.app.debugging =
       !this.app.debugging, { once: true });
     this.player.update();
-    //this.currentTown.update(this.player);
+    this.currentTown.update(this.player);
     this.camera.render({debug: this.app.debugging});
   }
 

@@ -83,7 +83,7 @@ class WorldMapDisplay extends State {
           .filter((t) => t.visited)
           .map((m) => m.connectedLocations)
           .some((e) => e.includes(town.ID))) {
-        if (this.game.currentTown.connectedLocations.includes(town.ID) && town.ID !== this.game.currentTown.ID) {
+        if (this.game.currentTown.connectedLocations?.includes(town.ID) && town.ID !== this.game.currentTown.ID) {
           let d = createDiv(80, 80, [`town-div`], {
             display: 'block',
             position: 'absolute',
@@ -102,7 +102,7 @@ class WorldMapDisplay extends State {
         //this.drawnDivs[town.ID] = true;
         let townColor = 'black';
         if (this.game.currentTown.ID == town.ID) townColor = 'green';
-        if (this.game.currentTown.connectedLocations.includes(town.ID)) townColor = 'red';
+        if (this.game.currentTown.connectedLocations?.includes(town.ID)) townColor = 'red';
         drawCircle(map_ctx, town.x, town.y, size, 2, townColor);
       }
 

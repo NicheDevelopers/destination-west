@@ -282,6 +282,20 @@ div.list-element img {
     background-color: red;
 }
 
+.notification {
+    display: flex;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    height: 1%;
+    top: 5%;
+    background-color: whitesmoke;
+    z-index: 3;
+    border-radius: 1cm;
+    font-size: 24px;
+    padding: 24px;    
+}
+
 /* fade in */
 .visible {
     visibility: visible;
@@ -295,3 +309,30 @@ div.list-element img {
     opacity: 0;
     transition: visibility 0s 0.3s, opacity 0.3s linear;
 }
+
+.slide-up {
+    transform: translateY(-1000%);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(0);
+        scale: 100%;
+    }
+    to {
+        transform: translateY(-1000%);
+        scale: 20%;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-1000%);
+        scale: 20%;
+    }
+    to {
+        transform: translateY(0);
+        scale: 100%;
+    }
+}
+

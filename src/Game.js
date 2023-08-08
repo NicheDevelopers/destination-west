@@ -36,6 +36,8 @@ import Container from "./Entity/Container.js";
 import Portal from "./Entity/Portal.js";
 import TransferDisplay from "./TransferDisplay.js";
 import WorldMap from "./WorldMap.js";
+import {Notification, notifier} from "./global/notifier.js";
+
 
 class Game extends State {
   constructor(app) {

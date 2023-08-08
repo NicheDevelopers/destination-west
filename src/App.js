@@ -28,6 +28,7 @@ import KeyboardVisualizer from "./KeyboardVisualizer.js";
 import Animation from "./Animation.js";
 import Game from "./Game.js";
 import { stateManager } from "./global/stateManager.js"
+import { notifier } from "./global/notifier.js";
 
 class App {
   constructor(keybinds = []) {
@@ -81,6 +82,7 @@ class App {
       this.testFPSCounter.next();
 
       stateManager.updateStates();
+      notifier.update();
     }
     catch(e) {
       window.cancelAnimationFrame(this.animationFrameID);

@@ -22,6 +22,7 @@
 import Sprite from "../Sprite/Sprite.js"
 import { generateID } from "../global/utilities.js";
 import { tileSize } from "../global/consts.js";
+import { notifier, Notification } from "../global/notifier.js";
 
 class DroppedItem {
   constructor(item) {
@@ -51,6 +52,7 @@ class DroppedItem {
 	who.game.currentTown.droppedItems.filter(
 	  (i) => i.id !== this.id);
     }
+    notifier.send(new Notification(`Picked up ${this.item.name}`, this.item.sprite.img));
   }
 
   setPositionTo(pos) {

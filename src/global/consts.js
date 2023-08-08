@@ -135,3 +135,5 @@ export const directions = {
   down: 7,
   downRight: 8,
 };
+
+export const defaultNotificationTimeout = 2;

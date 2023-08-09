@@ -24,8 +24,7 @@
 import Tile from "./Tile.js";
 import Entity from "./Entity/Entity.js";
 import ctx from "./global/ctx.js";
-import { distance, roll } from "./global/utilities.js";
-import { createCanvas } from "./global/utilities.js";
+import { createCanvas, distance, roll, compareDirectedPositions } from "./global/utilities.js";
 import { tileSize, percentageOfGenericDecoration as pGD } from "./global/consts.js";
 
 /* pathInfo keys describe the presence of paths on adjacent squares.
@@ -68,6 +67,7 @@ class Location {
     this.widthPx = this.width * tileSize;
     this.heightPx = this.height * tileSize;
     this.awaitAssets = 0;
+    this.playerSpawn = {x: 0, y: 0 };
     //temporary
     this.containers = new Array();
     this.droppedItems = new Array();
@@ -94,8 +94,8 @@ class Location {
 
   // check if there's a builing in the 5x5 square surrounding a tile
   nearToBuilding(xPos, yPos) {
-    for (let i = -2; i <= 2; i++)
-      for (let j = -2; j <= 2; j++) {
+    for (let i = -1; i <= 1; i++)
+      for (let j = -1; j <= 1; j++) {
         if (xPos + i < 0 || xPos + i >= this.array.length) continue;
         if (yPos + j < 0 || yPos + j >= this.array[0].length) continue;
         if (this.array[xPos + i][yPos + j].typeName.substring(0, 9) == 'building-') return true;
@@ -127,7 +127,7 @@ class Location {
         if (this.array[i][j].typeName !== 'sand') continue;
         let array = null;
         
-        if (this.nearToBuilding(i, j) && roll(pGD.town_percentage))
+        if (!this.nearToBuilding(i, j) && roll(pGD.town_percentage))
           array = town_generic_decorations;
         else if (!this.nearToBuilding(i, j) && roll(pGD.rural_percentage))
           array = rural_generic_decorations;
@@ -295,6 +295,16 @@ class Location {
       arr.filter(e => e.ignoreDepth),
       sorted
     ];
+  }
+
+  update(player) {
+    this.npcs.forEach(npc => npc.update());
+
+    if (this.lastPlayerPos && compareDirectedPositions(player, this.lastPlayerPos))
+      return;
+    
+    this.updateFocus(player);
+    this.lastPlayerPos = { x: player.x, y: player.y, direction: player.direction };
   }
 }
 

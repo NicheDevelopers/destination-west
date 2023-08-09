@@ -33,11 +33,14 @@ import Npc from "./Entity/Npc.js";
 import Dialogue from "./Dialogue/Dialogue.js";
 import DialogueDisplay from "./Dialogue/DialogueDisplay.js";
 import Container from "./Entity/Container.js";
-import Portal from "./Entity/Portal.js";
+import Portal, {PortalType} from "./Entity/Portal.js";
 import TransferDisplay from "./TransferDisplay.js";
 import WorldMap from "./WorldMap.js";
+import Travel from "./Travel.js";
+import Town from "./Town.js";
+import { distance } from "./global/utilities.js";
+import { tileSize } from "./global/consts.js";
 import {Notification, notifier} from "./global/notifier.js";
-
 
 class Game extends State {
   constructor(app) {
@@ -53,7 +56,7 @@ class Game extends State {
     
     this.worldMap = new WorldMap();
     this.worldMapDisplay = new WorldMapDisplay(this);
-
+    
     this.currentTown = this.worldMap.locations[0];
     this.currentTown.visited = true;
     if (!this.currentTown.created) {
@@ -64,7 +67,7 @@ class Game extends State {
     //this.testPants = new ColoredSprite('pants');
     this.camera = new Camera(this);
     
-    this.player = new Player(this, 250, 390);
+    this.player = new Player(this, this.currentTown.playerSpawn.x, this.currentTown.playerSpawn.y);
     
     let testContainer = new Container(this, "barrel", 250, 250);
     for (let i=0; i<3; i++){
@@ -72,8 +75,7 @@ class Game extends State {
     }
     //console.log(testContainer);
     
-    this.currentTown.portals.push(new Portal(this, "decoration-roadsign", 64*4, 64*5));
-    
+    this.currentTown.portals.push(new Portal(this, "decoration-roadsign", 64*4, 64*5, PortalType.openMap()));
     this.currentTown.containers.push(testContainer);
     
     this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));
@@ -103,14 +105,26 @@ class Game extends State {
   }
 
   travel(id) {
-    if (!this.currentTown.connectedLocations.includes(parseInt(id))) {
-      return;
+    if(this.currentTown instanceof Town ){
+      if (!this.currentTown.connectedLocations.includes(parseInt(id))) {
+        throw "attempt to travel to a location not connected to the current one"
+      }
+      let pos1 = {x: this.currentTown.x, y: this.currentTown.y};
+      let pos2 = {x: this.worldMap.getByID(id).x, y: this.worldMap.getByID(id).y};
+      let length = distance(pos1, pos2);
+      this.currentTown = new Travel(this, length, this.currentTown.ID, id);
     }
-    this.currentTown = this.worldMap.getByID(id);
-    this.currentTown.visited = true;
-    if (!this.currentTown.created) {
-      this.currentTown.createTown();
+
+    else if(this.currentTown instanceof Travel ){
+      this.currentTown = this.worldMap.getByID(id);
+      this.currentTown.visited = true;
+      if (!this.currentTown.created) {
+        this.currentTown.createTown();
+      }
     }
+
+    this.player.x = this.currentTown.playerSpawn.x;
+    this.player.y = this.currentTown.playerSpawn.y;
     this.worldMapDisplay.draw();
   }
 

@@ -22,11 +22,12 @@
 */
 
 import presets from "./static/townPresets.js";
-import { compareDirectedPositions, generateID } from "./global/utilities.js";
+import { generateID } from "./global/utilities.js";
 import Location from "./Location.js";
 import Building from "./Building.js";
 import { defaultTownHeight, defaultTownWidth } from "./global/consts.js";
 import { genTownName } from "./nameGenerators.js";
+import {tileSize} from "./global/consts.js";
 
 class Town extends Location {
   constructor(x, y, numBldInTown = {}) {
@@ -39,6 +40,7 @@ class Town extends Location {
     this.visited = false;
     this.connectedTowns = new Array();
     this.lastPlayerPos = null;
+    this.playerSpawn = {x: 3*tileSize, y: 5*tileSize};
   }
   
   createTown() {
@@ -87,16 +89,6 @@ class Town extends Location {
         counter++;
       }
     });
-  }
-
-  update(player) {
-    this.npcs.forEach(npc => npc.update());
-
-    if (this.lastPlayerPos && compareDirectedPositions(player, this.lastPlayerPos))
-      return;
-    
-    this.updateFocus(player);
-    this.lastPlayerPos = { x: player.x, y: player.y, direction: player.direction };
   }
 
 }

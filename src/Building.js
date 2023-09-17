@@ -22,83 +22,15 @@
 import Tile from "./Tile.js";
 import { roll } from "./global/utilities.js";
 import { tileSize } from "./global/consts.js";
+import Entity from "./Entity/Entity.js";
 
-class Building {
-    constructor(xTiles, yTiles, buildingType) {
-      this.xTiles = xTiles;
-      this.yTiles = yTiles;
-      this.buildingType = buildingType;
-      this.array = new Array(this.xTiles);
-      for (let x = 0; x < this.xTiles; ++x) this.array[x] = new Array(this.yTiles);
-      this.create();
-    }
-    createTile(name, x, y) {
-      this.array[x][y] = new Tile('building-' + this.buildingType +
-        "-" + name, x * tileSize, y * tileSize);
-      this.array[x][y].walkable = false;
-    }
-    create() {
-      let min = {
-        x: 0,
-        y: 0
-      };
-      let max = {
-        x: this.xTiles - 1,
-        y: this.yTiles - 1
-      };
-      let pedestal = false;
-      this.createTile('leftwall', min.x, max.y);
-      this.createTile('rightwall', max.x, max.y);
-      this.createTile('door', max.x / 2 | 0, max.y);
-      for (let x = 1; x < max.x; x++) {
-        if (this.array[x][max.y] !== undefined) continue;
-
-        if (roll(0.16)) {
-          this.createTile('window', x, max.y);
-          continue;
-        }
-        this.createTile('wall', x, max.y);
-      }
-      if (pedestal) {
-        max.y++;
-        this.createTile('leftpedestal', min.x, max.y);
-        this.createTile('rightpedestal', max.x, max.y);
-        this.createTile('doorpedestal', max.x / 2 | 0, max.y);
-        for (let x = 1; x < max.x; x++) {
-          if (this.array[x][max.y] !== undefined) continue;
-          this.createTile('pedestal', x, max.y);
-        }
-      }
-      for (let y = 1; y < max.y; y++) {
-        this.createTile('upleftwall', min.x, y);
-        this.createTile('uprightwall', max.x, y);
-        for (let x = 1; x < max.x; x++) {
-          if (this.array[x][y] !== undefined) continue;
-
-          if (roll(0.33)) {
-            this.createTile('upwindow', x, y);
-            continue;
-          }
-          this.createTile('upwall', x, y);
-        }
-      }
-  
-      this.createTile('leftroof', min.x, min.y);
-      this.createTile('rightroof', max.x, min.y);
-      if (max.x === 2) {
-        this.createTile('sign', 1, min.y);
-        return;
-      }
-      this.createTile('roof', min.x + 1, min.y);
-      this.createTile('roof', max.x - 1, min.y);
-      if (max.x === 3) return;
-      if (max.x === 4) {
-        this.createTile('sign', 2, min.y);
-        return;
-      }
-      this.createTile('roof', min.x + 2, min.y);
-      this.createTile('roof', max.x - 2, min.y);
-    }
+class Building extends Entity {
+  constructor(x, y, xTiles, yTiles, buildingType, options = {}) {
+    super(`bank-${xTiles}x${yTiles}`, x, y, options);
+    this.xTiles = xTiles;
+    this.yTiles = yTiles;
+    this.buildingType = buildingType;
+  }
 }
 
 export default Building;

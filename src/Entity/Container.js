@@ -1,10 +1,13 @@
 import { addTraits, InventoryTrait } from "../traits.js";
 import Interactible from "./Interactible.js";
 import { stateManager } from "../global/stateManager.js";
+import { HitboxTrait } from "../traits.js";
 
 class Container extends Interactible {
   constructor(game, typeName, x, y, options={}) {
-    super(game, typeName, x, y, options);
+    super(game, typeName, x, y,
+	  Object.assign(options,
+			{hitbox: game.currentTown.array}));
     addTraits(this, InventoryTrait());
   }
   interact(who) {

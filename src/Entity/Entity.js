@@ -21,19 +21,36 @@
 
 import Sprite from "../Sprite/Sprite.js";
 import AnimatedSprite from "../Sprite/AnimatedSprite.js";
-import Animation from "../Animation.js";
 import { animationSpeed } from "../global/consts.js";
 import { validateOptions } from "../global/utilities.js";
+import { addTraits, centerPointTrait, HitboxTrait, MovementTrait } from "../traits.js";
+import imgInfo from "../static/imgInfo.js";
 
 const entityOptions = new Map([
   ["animated",
    "Boolean. Determines whether the entity has an animated sprite"],
-  ["speed",
-   "Number. Provides the speed for the entity's movement. " +
-    "Undefined means the entity is stationary"],
-  ["ignoreDepth",
-   "Boolean. Determines whether the entity should be considered when " +
-    "calculating depth. For example, small rocks should always be drawn first so they don't get overlayed on a barrel."]
+  ["movement",
+   "Boolean or {speed, sprintMultiplier, sneakMultiplier} object. " +
+    "Falsy value means the entity is stationary, any truthy value " +
+    "means the entity has movement. Movement construction arguments " +
+    "If an object is passed, it provides the arguments for the entity's " +
+    "Movement constructor."],
+  ["callback",
+   "function(). Callback function passed to the created Sprite"],
+  ["hitbox",
+   "array[][]. A 2d array of the location the entity is in. If passed," +
+    " the entity will have a hitbox and its position will be stored" +
+    " on the tiles that intersect with its hitbox (in tile.entities[])"],
+  ["relativeCenterPoint",
+   "{x, y}. Only has effect if provided `hitbox` option" +
+    " is truthy. Provides the relativeCenterPoint for the Hitbox" +
+    " constructor. By default getSpriteRelativeCenterPoint is run on the" +
+    " Entity's Sprite to get this value"],
+  ["boundingDistance",
+   "{left, right, up, down}. Only has effect if provided `hitbox` option" +
+    " is truthy. Provides the boundingDistance for the Hitbox constructor." +
+    " By default getSpriteBoundingDistance is run on the Entity's Sprite" +
+    " to get this value"]
 ]);
 
 /**
@@ -42,28 +59,53 @@ const entityOptions = new Map([
  */
 class Entity {
   constructor(typeName, x = 0, y = 0, options={}) {
-    validateOptions(options, entityOptions, "Entity");
-
+    validateOptions(options, entityOptions, `Entity (${typeName})`);
     this.typeName = typeName;
     this.x = x;
     this.y = y;
-    
+
     if (!options.animated)
-      this.sprite = new Sprite(typeName);
+      this.sprite = new Sprite(typeName, { callback: options.callback });
     else
       this.sprite = new AnimatedSprite(
         typeName, { 
-        animationSpeed: animationSpeed 
+          animationSpeed: animationSpeed,
+	  callback: options.callback
       });
 
-    if (options.speed !== undefined) {
-      this.moveX = new Animation(this, "x", options.speed);
-      this.moveY = new Animation(this, "y", options.speed);
+    this.ignoreDepth = imgInfo.get(typeName).nodepth;
+    
+    if (options.hitbox && !imgInfo.get(typeName).nocollision) {
+      let { relativeCenterPoint: spriteRcp, boundingDistance: spriteBd }
+	= this.sprite.getSpriteHitboxInfo();
+      let rcp = options.relativeCenterPoint ?? spriteRcp;
+      let bd = options.boundingDistance ?? spriteBd;
+      addTraits(this, HitboxTrait(this, options.hitbox, rcp, bd));
     }
-    this.ignoreDepth = Boolean(options.ignoreDepth);
+    else if (!this.ignoreDepth){
+      // Entity does not have a hitbox, but it should have a centerPoint
+      // for depth sorting
+      let rcp = options.relativeCenterPoint ??
+	this.sprite.getSpriteHitboxInfo({getBaselineRcp: true});
+      addTraits(this, centerPointTrait(rcp));
+    }
+
+    if (!options.movement) return;
+
+    let mOpts = options.movement;
+    addTraits(this,
+	      MovementTrait(this, mOpts?.speed,
+			    mOpts?.sprintMultiplier,
+			    mOpts?.sneakMultiplier,
+			    {playerControlled: mOpts?.playerControlled}
+			   ));
   }
 
   drawDebugInfo(cameraX, cameraY) {
+  }
+
+  drawRaw(x, y, context) {
+    this.sprite.draw(x, y, context);
   }
   
   draw(cameraX, cameraY) {

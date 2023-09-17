@@ -110,7 +110,12 @@ export function roundToTile(value) {
   return ~~(value/tileSize);
 }
 
-export function roundPointToTile(p) {
+/**
+   Return an {x, y} object which represents
+   the coordinates of a tile that contains
+   the point given as the arguemnt.
+*/
+export function pointToTileCoord(p) {
   return {
     x: roundToTile(p.x),
     y: roundToTile(p.y)
@@ -118,15 +123,11 @@ export function roundPointToTile(p) {
 }
 
 /**
-   Get a single Number which represents a point
-   (assuming x value is never greater than maxX)
+   Return a tile at given tile coordinates
+   from a given tile array
 */
-export function pointToHash(point, maxX = 10000) {
-  return point.x+point.y*(maxX+1);
-}
-
-export function hashToPoint(hash, maxX = 10000) {
-  return {x: hash % (maxX+1), y: ~~(hash/(maxX+1))};
+export function tileAt(array, t) {
+  return array[t.x][t.y];
 }
 
 export function comparePositions({x: x1, y: y1}, {x: x2, y: y2}) {
@@ -188,8 +189,100 @@ export function rgb_to_hex(colorRgb){
   return hex.toUpperCase();
 }
 
+/**
+   A class similar to the built-in Set object,
+   created for storing objects and comparing
+   them based on properties instead of references.
+*/
+export class ObjectSet {
+  constructor(initialObjectsArray) {
+    this.elements = [];
+    if (initialObjectsArray === undefined) return;
+    for (const obj of initialObjectsArray) {
+      this.add(obj);
+    }
+  }
+  /**
+     Adds the provided objects to the set. Objects equal
+     (according to the areObjectsEqual function) to any
+     already present in the ObjectSet, are not added.
+  */
+  add(...objs) {
+    for (const obj of objs) {
+      if (!this.has(obj))
+	this.elements.push(obj);
+    }
+  }
+  /**
+     Deletes an object from the ObjectSet, comparing
+     the argument with stored objects according to
+     the areObjectsEqual function.
+     Returns true if an object was deleted and false
+     if no matching objects were found.
+  */
+  delete(obj) {
+    let index = 0;
+    for (const e of this.elements) {
+      if (this.areObjectsEqual(obj, e)) {
+	this.elements.splice(index, 1);
+	return true;
+      }
+      index++;
+    }
+    return false;
+  }
+  /**
+     Returns true if the ObjectSet contains an equal
+     (according to the areObjectsEqual function) object
+     to the one provided as the argument
+  */
+  has(obj) {
+    for (const e of this.elements) {
+      if (this.areObjectsEqual(obj, e))
+	return true;
+    }
+    return false;
+  }
+  /**
+     areObjectEqual uses a property comparison which
+     strictly compares values of own properties and always
+     returns false if one of the objects has an own property
+     which the other does not.
+  */
+  areObjectsEqual(obj1, obj2) {
+    if (typeof obj1 !== "object"
+      || typeof obj2 !== "object")
+      return false;
+    for (const prop of Object.getOwnPropertyNames(obj1)) {
+      if (obj1[prop] !== obj2[prop])
+	return false;
+    }
+    for (const prop of Object.getOwnPropertyNames(obj2)) {
+      if (!Object.hasOwn(obj1, prop))
+	return false;
+    }
+    return true;
+  }
+  /**
+     Returns an array of the objects stored in the ObjectSet
+  */
+  entries() {
+    return this.elements;
+  }
+  /**
+     Removes all objects stored in the ObjectSet
+  */
+  clear() {
+    this.elements.length = 0;
+  }
+}
+
 Object.defineProperty(Array.prototype, "none", {
   value: function (fn) {return !this.some(fn)},
+});
+
+Object.defineProperty(Array.prototype, "lastIndex", {
+  get: function () {return this.length-1;},
 });
 
 Object.defineProperty(Array.prototype, "first", {
@@ -227,12 +320,31 @@ Object.defineProperty(Array.prototype, "randomElement", {
   value: function () {return this[randIntInRange(0, this.length)]},
 });
 
+/* The comparison functions in `min` and `max` act like
+   the comparison function passed to Array.prototype.sort().
+   
+   Min returns what would be the first element after such sort
+   and max returns what would be the last element.
+   
+   This means that a function which provides ascending sort
+   of the elements should be passed to `min` and `max` to
+   get expected results.
+   
+   In max: fn(element, currentMax) return value:
+   >  0 - element becomes the new currentMax
+   <= 0 - currentMax remains
+   
+   In min: fn(element, currentMin) return value:
+   >= 0 - currentMin remains
+   <  0 - element becomes the new currentMin
+*/
+
 Object.defineProperty(Array.prototype, "max", {
   value: function ( fn = ((a,b)=>a-b)) {
     let max = undefined;
     for (let element of this){
       if (max == undefined) max = element;
-      if ( fn(element, max) > 0 )
+      if (fn(element, max) > 0)
         max = element;
     }
     return max;
@@ -240,16 +352,41 @@ Object.defineProperty(Array.prototype, "max", {
 });
 
 Object.defineProperty(Array.prototype, "min", {
-  value: function ( fn = ((a,b)=>b-a) ) {
+  value: function ( fn = ((a,b)=>a-b) ) {
     let min = undefined;
     for (let element of this){
       if (min == undefined) min = element;
-      if ( fn(min, element) < 0 )
+      if (fn(element, min) < 0)
         min = element;
     }
     return min;
   },
 });
+
+Object.defineProperty(Array.prototype, "maxBy", {
+  value: function (prop) {
+    let max = undefined;
+    for (let element of this){
+      if (max == undefined) max = element;
+      if (element[prop]-max[prop] > 0)
+        max = element;
+    }
+    return max;
+  },
+});
+  
+Object.defineProperty(Array.prototype, "minBy", {
+  value: function (prop) {
+    let min = undefined;
+    for (let element of this){
+      if (min == undefined) min = element;
+      if (element[prop]-min[prop] < 0)
+        min = element;
+    }
+    return min;
+  },
+});
+
 
 Number.prototype.clamp = function(min, max) {
   return Math.min(Math.max(this, min), max);

@@ -26,6 +26,20 @@ export const defaultRcp = { x: tileSize/2, y: tileSize/2 };
 */
 export const defaultBd =
   distances((tileSize/2)-1,tileSize/2,(tileSize/2)-1, tileSize/2);
+export const defaultHitboxHeight = 4;
+/**
+   horizontal sprite-detected boundary looseness;
+   Describes how much smaller in the x axis should
+   a sprite-detected hitbox be.
+
+   For example: 0.2 means that 20% of the original
+   detected width will not be used for the hitbox
+   (the remaining 80% will be its width).
+
+   Introduced to make hitboxes less strict and
+   more intuitive to the player.
+*/
+export const autoBoundaryXLooseness = 0.2;
 export const playerParameters = {
   defaultPlayerSpeed : 150,
   defaultDiagonalOffset : Math.sqrt(2)/2,

@@ -15,7 +15,8 @@ class Interactible extends Entity {
     this.focus = false;
   }
   draw(cameraX, cameraY) {
-    if (this.focus && this.loadedFocusedSprite) {
+    if (this.focus && this.loadedFocusedSprite
+      && !this.typeName === "player" /* temp to disable npc outline */) {
       this.focusedSprite.draw(this.x - cameraX, this.y - cameraY);
       return;
     }

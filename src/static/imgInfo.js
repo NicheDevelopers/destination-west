@@ -21,13 +21,15 @@
 */
 import { tileSize } from "../global/consts.js";
 
-let img = (src, height = tileSize, width = tileSize, row = 0, col = 0) =>
-  ({ src: src, height: height, width: width, row: row, col: col });
+let img = (src, height = tileSize, width = tileSize, row = 0, col = 0,
+	   spriteHeight, spriteWidth) =>
+  ({ src: src, height: height, width: width, row: row, col: col,
+     spriteHeight: spriteHeight, spriteWidth: spriteWidth });
 
-/**
- * Map describing spritesheets that come with the game
- */
-
+const spriteSheetOptions = new Map([
+  ["nc", "no collisions"],
+  ["nd", "no depth"]
+]);
 class Spritesheet {
   constructor(path, width, height, elements, options = {}) {
     if (width*height < elements.length)
@@ -40,12 +42,28 @@ class Spritesheet {
     this.height = height;
     this.spriteWidth = options.spriteWidth ?? tileSize;
     this.spriteHeight = options.spriteHeight ?? tileSize;
+    /**
+       Array of strings created according to the following format:
+       "spriteName"[_nc][_nd]
+       
+       Legend:
+       "value" - user provided, nonliteral value
+       [value] - optional flag, literally named value
+    */
     this.elements = elements;
     this.options = options;
   }
   saveToMap(map) {
     let x=0, y=0;
-    for (const e of this.elements){
+    for (let e of this.elements){
+      let args = 
+	Array.from(spriteSheetOptions.keys())
+	  .map((arg) => ({argument: arg, position: e.indexOf(`_${arg}`)}))
+	  .filter((arg) => arg.position !== -1);
+
+      let argumentStartIndex = args.minBy("position")?.position ?? Infinity;
+      
+      e = e.substring(0, argumentStartIndex);
       map.set(e, {
         src: this.path,
         width: this.spriteWidth,
@@ -54,7 +72,9 @@ class Spritesheet {
         col: x,
         defaultAnimation: this.options.defaultAnimation,
         animations: this.options.animations,
-        random: this.options.random
+        random: this.options.random,
+	nocollision: args.some((arg) => arg.argument === "nc"),
+	nodepth: args.some((arg) => arg.argument === "nd")
       });
       x++;
       if (x === this.width) {
@@ -65,10 +85,23 @@ class Spritesheet {
   }
 }
 
+/**
+ Map describing spritesheets that come with the game
+*/
 const imgInfo = new Map([
   ["jacket", img("img/clothes.png", tileSize, tileSize, 0, 0)],
   ["pants", img("img/clothes.png", tileSize, tileSize, 0, 1)],
   ["barrel", img("img/barrel.png")],
+  ["bank-3x2", img("img/bank-3x2.png", tileSize*2, tileSize*3, 0, 0,
+		tileSize*2, tileSize*3)],
+  ["bank-4x2", img("img/bank-4x2.png", tileSize*2, tileSize*4, 0, 0,
+		   tileSize*2, tileSize*4)],
+  ["bank-3x3", img("img/bank-3x3.png", tileSize*3, tileSize*3, 0, 0,
+		   tileSize*3, tileSize*3)],
+  ["bank-4x3", img("img/bank-4x3.png", tileSize*3, tileSize*4, 0, 0,
+		tileSize*3, tileSize*4)],
+  ["bank-5x3", img("img/bank-5x3.png", tileSize*3, tileSize*5, 0, 0,
+		tileSize*3, tileSize*5)],
   ["player", {
     src: "img/player.png",
     spriteHeight: 74,
@@ -93,9 +126,9 @@ const imgInfo = new Map([
 ]);
 
 const townPropList = [
-  "street", "sand", "decoration-small-stones-1", "decoration-cactus-1x",
+  "street", "sand", "decoration-small-stones-1_nc_nd", "decoration-cactus-1x",
   "decoration-roadsign", "decoration-stone-well", "decoration-big-bag-3x",
-  "decoration-green-bush-1"
+  "decoration-green-bush-1_nc"
 ];
 const townPropSheet = new Spritesheet("img/town-props.png", 3, 3, townPropList);
 

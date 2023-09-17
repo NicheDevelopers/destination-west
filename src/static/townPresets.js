@@ -51,7 +51,7 @@ const preset2 = {
   buildings: [
     newBuilding(19, 2, 5, 3),
     newBuilding(15, 10, 4, 3),
-    newBuilding(22, 12, 5, 2),
+    //newBuilding(22, 12, 5, 2),
     newBuilding(16, 5, 3, 3),
     newBuilding(24, 3, 3, 2),
     newBuilding(22, 8, 3, 2),
@@ -118,20 +118,20 @@ const preset4 = {
 const preset5 = {
   buildings: [
 
-    newBuilding(16, 11, 5, 2),
-    newBuilding(21, 11, 5, 2),
+    //newBuilding(16, 11, 5, 2),
+    //newBuilding(21, 11, 5, 2),
     newBuilding(11, 6, 3, 3),
     newBuilding(28, 6, 3, 3),
     newBuilding(28, 11, 3, 2),
     newBuilding(16, 6, 3, 3),
     newBuilding(5, 6, 3, 3),
-    newBuilding(7, 2, 5, 2),
-    newBuilding(7, 11, 5, 2),
+    //newBuilding(7, 2, 5, 2),
+    //newBuilding(7, 11, 5, 2),
     newBuilding(16, 1, 3, 3),
-    newBuilding(31, 7, 5, 2),
+    //newBuilding(31, 7, 5, 2),
     newBuilding(36, 11, 3, 2),
     newBuilding(36, 6, 3, 3),
-    newBuilding(31, 2, 5, 2)
+    //newBuilding(31, 2, 5, 2)
   ],
   streets: [
     newStreet(6, 4, 21, 1),
@@ -174,7 +174,7 @@ const preset7 = {
     newBuilding(27, 7, 3, 3),
     newBuilding(20, 14, 5, 3),
     newBuilding(14, 8, 4, 2),
-    newBuilding(15, 3, 5, 2),
+    //newBuilding(15, 3, 5, 2),
     newBuilding(16, 14, 4, 3),
     newBuilding(26, 15, 4, 2),
     newBuilding(30, 14, 3, 3),

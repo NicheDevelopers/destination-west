@@ -20,10 +20,24 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import ctx from "./global/ctx.js";
-import { roundPointToTile,
-	 hashToPoint,
-	 pointToHash } from "./global/utilities.js";
+import { tileSize } from "./global/consts.js";
+import { pointToTileCoord, ObjectSet } from "./global/utilities.js";
 import { directions, Direction } from "./global/utilities.js";
+
+function fillTileArea(tileCoords) {
+  let startX = tileCoords.minBy("x").x;
+  let endX = tileCoords.maxBy("x").x;
+  let startY = tileCoords.minBy("y").y;
+  let endY = tileCoords.maxBy("y").y;
+
+  let areaCoords = [];
+  for (let y=startY; y <= endY; ++y) {
+    for (let x=startX; x <= endX; ++x) {
+      areaCoords.push({x: x, y: y});
+    }
+  }
+  return areaCoords;
+}
 
 /**
    A class describing rectangles in absolute coordinate values
@@ -84,13 +98,13 @@ class Box {
 export default class Hitbox {
   constructor(entity, {up, left, right, down}) {
     this.entity = entity;
+    this.visualizationFunction = () => {};
     this.up = up;
     this.left = left;
     this.right = right;
     this.down = down;
     this.width = this.left + 1 + this.right;
     this.height = this.up + 1 + this.down;
-    this.visualizationFunction = () => {};
   }
 
   getBoundingBox(dx=0, dy=0) {
@@ -102,47 +116,67 @@ export default class Hitbox {
   }
 
   getIntersectingTileCoordinates(dx=0, dy=0) {
-    let tileCoordinates = new Set();
+    let tileCoordinates = new ObjectSet();
     this.getBoundingBox(dx, dy).getCorners().forEach((corner) => {
-      tileCoordinates.add(
-	pointToHash(roundPointToTile(corner)));
+      tileCoordinates.add(pointToTileCoord(corner));
     });
-    return Array.from(tileCoordinates).map
-    (e => hashToPoint(e));
+    undefined;
+    let coordArray = tileCoordinates.entries();
+        
+    if (this.width <= tileSize && this.height <= tileSize)
+      return coordArray;
+
+    // If this hitbox is larger than a tile, it is not enough to check
+    // its corners. Every tile in between the tiles that intersect with
+    // the hitbox's corners intersect with the hitbox's edges.
+    
+    //console.log('whole area: ', fillTileArea(coordArray).length);
+    return fillTileArea(coordArray);
   }
 
   getPossiblyCollidingTileCoordinates(dx=0, dy=0) {
-    let tileCoordinates = new Set();
+    let tileCoordinates = new ObjectSet();
     this.getBoundingBox(dx, dy).getImportantCorners(dx, dy)
       .forEach((corner) => {
-	tileCoordinates.add(
-	  pointToHash(roundPointToTile(corner)));
+	tileCoordinates.add(pointToTileCoord(corner));
       });
-    return Array.from(tileCoordinates).map
-    (e => hashToPoint(e));
+    return tileCoordinates.entries();
   }
   
   willCollideWithTiles(dx, dy, arr) {
     let tiles = this.getPossiblyCollidingTileCoordinates(dx, dy)
       .map(p => {
+	if (p.x < 0 || p.x > arr.lastIndex
+	  || p.y < 0 || p.y > arr[p.x].lastIndex)
+	  return null;
 	return arr[p.x][p.y];
       });
-    
+    if (tiles.includes(null)) {
+      // tested movement would cause exceeding the tile array 
+      return true;
+    }
     for (const tile of tiles) {
-      this.visualizationFunction(
-	(cx, cy) =>
-	  tile.hitbox.draw(cx,cy,ctx,{color: "transparent"})
-      );
-      if (this.willCollide(dx, dy, tile.hitbox))
-	return true;
+      for (const e of tile.entities) {
+	if (e.id === this.entity.id) continue;
+	this.visualizationFunction(
+	  (cx, cy) =>
+	    e.hitbox.draw(cx,cy,ctx,{color: "#ff000066"})
+	);
+	if (this.willCollide(dx, dy, e.hitbox))
+	  return true;
+      }
     }
     return false;
   }
   
   willCollide(dx, dy, other) {
     if (other.entity.walkable) return false;
-    return this.getBoundingBox(dx, dy)
-      .intersects(other.getBoundingBox());
+    if (this.getBoundingBox(dx, dy)
+      .intersects(other.getBoundingBox())) {
+      //console.log(other);
+      return true;
+    }
+    return false;
   }
   
   collides(other) {
@@ -166,6 +200,7 @@ export default class Hitbox {
   draw(cameraX, cameraY, context=ctx, options={}) {
     context.fillStyle = options.color ?? "red";
     let centerPoint = this.entity.getCenterPoint();
+
     context.fillRect(centerPoint.x-this.left-cameraX,
 		     centerPoint.y-this.up-cameraY,
 		     this.width, this.height);

@@ -19,7 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import ctx from "../global/ctx.js";
-import { tileSize, spriteScale, transparencyAlphaTolerance } from "../global/consts.js";
+import { tileSize, spriteScale,
+	 transparencyAlphaTolerance,
+	 defaultHitboxHeight,
+	 autoBoundaryXLooseness } from "../global/consts.js";
 import { createCanvas, randIntInRange, forbidProperty } from "../global/utilities.js";
 import imgInfo from "../static/imgInfo.js";
 
@@ -97,7 +100,7 @@ class Sprite {
       }
       else {
         // We need to wait for the image to load
-        cbs.push(this.callback);
+	cacheCallbacks.get(spriteKey).push(this.callback);
       }
       //console.log(`Cached: ${spriteKey}: ${this.img.src}`);
       return;
@@ -139,6 +142,119 @@ class Sprite {
       }
     };
     this.imageToProcess.src = this.sheetInfo.src;
+  }
+  
+  /**
+     Analyzes the sprite to guess the best values for
+     the relativeCenterPoint and the boundingDistance.
+
+     This is done by looking for the sprite's visual
+     bounds (i.e. finding the first/last rows/columns where
+     non-transparent pixels are located).
+
+     Supported options:
+     getBaselineRcp - Boolean
+     If truthy value is provided, the function returns
+     a single object, the relativeCenterPoint of the sprite,
+     with its y coordinate matching the baseline of the sprite.
+  */
+  getSpriteHitboxInfo(options = {}) {
+    if (!this.img.complete) {
+      throw `attempt to getSpriteHitboxInfo of an unloaded sprite: ${this.typeName}`;
+    }
+    let width = options.width ?? this.width;
+    let height = options.height ?? this.height;
+    const { context: offContext } =
+      createCanvas(width, height);
+
+    this.draw(0, 0, offContext);
+    
+    let image = offContext.getImageData(0, 0, this.width, this.height);
+
+    /*
+      startX and endX are respectively the smallest
+      and the biggest X coordinates on which a non-transparent
+      pixel can be found within the image
+    */
+    let startX, endX;
+    for (let x=0;x<this.width; ++x) {
+      for (let y=0;y<this.height; ++y) {
+	let currentPixelTransparency = image.data[(x+y*this.width)*4+3];
+	if (!transparent(currentPixelTransparency)) {
+	  // Non-transparent pixel found
+	  startX = x;
+	  break;
+	}
+      }
+      if (startX !== undefined) break;
+    }
+    
+    for (let x=this.width-1;x>=0; --x) {
+      for (let y=0;y<this.height; ++y) {
+	let currentPixelTransparency = image.data[(x+y*this.width)*4+3];
+	if (!transparent(currentPixelTransparency)) {
+	  // Non-transparent pixel found
+	  endX = x;
+	  break;
+	}
+      }
+      if (endX !== undefined) break;
+    }
+    
+    /*
+      endY is the biggest Y coordinate on which a non-transparent
+      pixel can be found within the image.
+      
+      We do not look for startY because it does not have an important
+      meaning when it comes to hitbox dimentions
+    */
+    let endY;
+    for (let y=this.height-1;y>=0; --y) {
+      for (let x=0;x<this.width; ++x) {
+	let currentPixelTransparency = image.data[(x+y*this.width)*4+3];
+	if (!transparent(currentPixelTransparency)) {
+	  // Non-transparent pixel found
+      	  endY = y;
+	  break;
+	}
+      }
+      if (endY !== undefined) break;
+    }
+
+    /**
+       The central pixel of the non-transparent sprite area
+    */
+    let centerPixel = ~~((startX+endX)/2);
+    
+    if (options.getBaselineRcp) {
+      return { x: centerPixel, y: endY };
+    }
+    
+    let boundingDistanceHeight = ~~(defaultHitboxHeight/2);
+    
+    /**
+       Detected relative center point of the sprite
+    */
+    let rcp = { x: centerPixel, y: endY-boundingDistanceHeight };
+    
+    let hitboxWidth = endX-startX+1;
+    
+    /**
+       Amount of pixels subtracted from the hitbox's dimensions
+       on the x-axis.
+       See documentation for autoBoundaryXLooseness.
+    */
+    let looseness = ~~((autoBoundaryXLooseness*hitboxWidth)/2);
+    
+    return {
+      relativeCenterPoint: rcp,
+      boundingDistance: {
+	up: boundingDistanceHeight,
+	down: boundingDistanceHeight,
+	left: rcp.x-startX-looseness,
+	right: endX-rcp.x-looseness
+      }
+    };
   }
   
   rotate(angle, callback) {

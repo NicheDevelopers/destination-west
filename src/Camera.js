@@ -111,11 +111,13 @@ class Camera {
     let [ignoringDepth, byDepth] = t.entitiesByDepth(t, this.game.player);
     for (const e of ignoringDepth) {
       e.draw(topLeftX, topLeftY);
-      if (options.debug) e.drawDebugInfo(topLeftX, topLeftY);
+      if (options.debug && e.drawDebugInfo)
+	e.drawDebugInfo(topLeftX, topLeftY);
     }
     for (const e of byDepth) {
       e.draw(topLeftX, topLeftY);
-      if (options.debug) e.drawDebugInfo(topLeftX, topLeftY);
+      if (options.debug && e.drawDebugInfo)
+	e.drawDebugInfo(topLeftX, topLeftY);
     }
     if (this.game.app.debugging) {
       this.debugDraws.forEach((draw, ix) => {

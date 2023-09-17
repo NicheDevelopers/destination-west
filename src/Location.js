@@ -26,6 +26,7 @@ import Entity from "./Entity/Entity.js";
 import ctx from "./global/ctx.js";
 import { createCanvas, distance, roll, compareDirectedPositions } from "./global/utilities.js";
 import { tileSize, percentageOfGenericDecoration as pGD } from "./global/consts.js";
+import Building from "./Building.js";
 
 /* pathInfo keys describe the presence of paths on adjacent squares.
    The first digit describes the top-left adjacent tile. If that tile
@@ -73,6 +74,7 @@ class Location {
     this.droppedItems = new Array();
     this.npcs = new Array();
     this.decorations = new Array();
+    this.buildings = new Array();
     this.portals = new Array();
     this.focused = null;
   }
@@ -93,12 +95,13 @@ class Location {
   }
 
   // check if there's a builing in the 5x5 square surrounding a tile
-  nearToBuilding(xPos, yPos) {
-    for (let i = -1; i <= 1; i++)
-      for (let j = -1; j <= 1; j++) {
+  nearToBuilding(xPos, yPos, maxDist=2) {
+    for (let i = -maxDist; i <= maxDist; i++)
+      for (let j = -maxDist; j <= maxDist; j++) {
         if (xPos + i < 0 || xPos + i >= this.array.length) continue;
         if (yPos + j < 0 || yPos + j >= this.array[0].length) continue;
-        if (this.array[xPos + i][yPos + j].typeName.substring(0, 9) == 'building-') return true;
+        if (this.array[xPos + i][yPos + j].hasEntityOfType(Building))
+	  return true;
       }
     return false;
   }
@@ -125,6 +128,8 @@ class Location {
     for (let i = 0; i < this.array.length; i++)
       for (let j = 0; j < this.array[0].length; j++) {
         if (this.array[i][j].typeName !== 'sand') continue;
+	if (this.array[i][j].hasEntityOfType(Building)) continue;
+	
         let array = null;
         
         if (!this.nearToBuilding(i, j) && roll(pGD.town_percentage))
@@ -133,7 +138,11 @@ class Location {
           array = rural_generic_decorations;
         
         if (array)
-          this.decorations.push(new Entity("decoration-" + array.randomElement(), i * tileSize, j * tileSize));
+          this.decorations.push(
+	    new Entity("decoration-" + array.randomElement(),
+		       i * tileSize, j * tileSize,
+		       { hitbox: this.array })
+	  );
       }
   }
 
@@ -151,13 +160,34 @@ class Location {
       }
   }
 
-  placeBuilding(xStart, yStart, building) {
-    for (let i = 0; i < building.xTiles; i++)
-      for (let j = 0; j < building.yTiles; j++) {
-        this.array[xStart + i][yStart + j] = building.array[i][j];
-        this.array[xStart + i][yStart + j].x = xStart * tileSize + building.array[i][j].x;
-        this.array[xStart + i][yStart + j].y = yStart * tileSize + building.array[i][j].y;
+  placeBuilding(startX, startY, widthInTiles,
+		heightInTiles, buildingType, options) {
+    for (let y=startY; y<startY+heightInTiles; ++y) {
+      for (let x=startX; x<startX+widthInTiles; ++x) {
+	this.array[x][y] = new Tile("sand", x*tileSize, y*tileSize);
       }
+    }
+    let width = widthInTiles*tileSize;
+    let height = heightInTiles*tileSize;
+    let rcp = {
+      x: ~~(width/2),
+      y: ~~(height/2)
+    };
+    let bd = {
+      left: width - rcp.x - 1,
+      right: width - rcp.x - 1,
+      up: height - rcp.y - 1 - tileSize/2,
+      down: height - rcp.y - 1
+    };
+    this.buildings.push(new Building(
+      startX*tileSize, startY*tileSize,
+      widthInTiles, heightInTiles,
+      buildingType,
+      Object.assign(options, {
+	hitbox: this.array,
+	relativeCenterPoint: rcp,
+	boundingDistance: bd
+      })));
   }
 
   chooseStreet(streetArray, x, y) {
@@ -279,6 +309,7 @@ class Location {
       location.containers,
       location.npcs,
       location.decorations,
+      location.buildings,
       location.portals,
       player,
     ].flat();

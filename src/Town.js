@@ -78,15 +78,15 @@ class Town extends Location {
         toPlace = this.numBldInTown[place];
       else toPlace = numBlds - counter;
       for (let i = 0; i < toPlace; i++) {
-        this.placeBuilding(
-          buildings[counter].xStart,
+	this.awaitAssets++;
+	this.placeBuilding(
+	  buildings[counter].xStart,
           buildings[counter].yStart,
-          new Building(
-            buildings[counter].xTiles,
-            buildings[counter].yTiles,
-            place)
-        );
-        counter++;
+          buildings[counter].xTiles,
+          buildings[counter].yTiles,
+          place,
+	  { callback: () => this.awaitAssets-- });
+	counter++;
       }
     });
   }

@@ -14,6 +14,8 @@ class Interactible extends Entity {
 		});
     this.focus = false;
   }
+  update() {
+  }
   draw(cameraX, cameraY) {
     if (this.focus && this.loadedFocusedSprite
       && !this.typeName === "player" /* temp to disable npc outline */) {

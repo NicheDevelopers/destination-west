@@ -36,7 +36,7 @@ class AudioPlayer {
 
   play(soundName) {
     const obtainedSound = this.soundMap.get(soundName);
-    if (typeof obtainedSound === undefined) {
+    if (obtainedSound === undefined) {
       throw `Audio Player: ` + `No sound object found for name ${soundName}`;
     }
     // Cloning allows for multiple instances of the sound to be played at once

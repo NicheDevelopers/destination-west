@@ -78,13 +78,16 @@ export function resetIdFor(objectName) {
   ids.delete(objectName);
 }
 
-export function createDiv(w, h, classes = [], styles = {}, id) {
-  let r = document.createElement('div');
+export function createElement(element, w = null, h = null, classes = [], styles = {}, id, text = null){
+  // needed test if element is equal to some given possibile outcomes
+  let r = document.createElement(element);
   classes.forEach((styleClass) => r.classList.add(styleClass));
-  r.setAttribute('style', `width: ${w}px; height: ${h}px`);
+  if (w != null && h != null)
+    r.setAttribute('style', `width: ${w}px; height: ${h}px`);
   for (const styleName in styles) {
     r.style[styleName] = styles[styleName];
   }
+  r.innerText = text;
   if (id === undefined) return r;
   r.setAttribute('id', `${id}`);
   return r;

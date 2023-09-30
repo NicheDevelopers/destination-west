@@ -19,7 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { createCanvas, createDiv } from "./global/utilities.js";
+import { createCanvas, createElement } from "./global/utilities.js";
 import { State, stateManager } from "./global/stateManager.js";
 import { mapParameters, townSizes, worldMapDisplay as wmd } from "./global/consts.js";
 
@@ -28,7 +28,8 @@ class WorldMapDisplay extends State {
     super(false);
     this.game = game;
     this.actions = ['Toggle Map Display'];
-    this.div = createDiv(mapParameters.displayWidth, mapParameters.displayHeight, ['map-canvas-div'], {
+    this.div = createElement(
+      'div', mapParameters.displayWidth, mapParameters.displayHeight, ['map-canvas-div'], {
       position: 'absolute',
       display: 'none',
       zIndex: '1'
@@ -84,7 +85,7 @@ class WorldMapDisplay extends State {
           .map((m) => m.connectedLocations)
           .some((e) => e.includes(town.ID))) {
         if (this.game.currentTown.connectedLocations?.includes(town.ID) && town.ID !== this.game.currentTown.ID) {
-          let d = createDiv(80, 80, [`town-div`], {
+          let d = createElement('div', 80, 80, [`town-div`], {
             display: 'block',
             position: 'absolute',
             height: size * 2 + 'px',

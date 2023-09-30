@@ -39,8 +39,10 @@ import WorldMap from "./WorldMap.js";
 import Travel from "./Travel.js";
 import Town from "./Town.js";
 import { distance } from "./global/utilities.js";
+import Interactible from "./Entity/Interactible.js"
 import { tileSize } from "./global/consts.js";
 import {Notification, notifier} from "./global/notifier.js";
+import Minigame from "./Minigame.js"
 
 class Game extends State {
   constructor(app) {
@@ -68,6 +70,12 @@ class Game extends State {
     this.camera = new Camera(this);
     
     this.player = new Player(this, this.currentTown.playerSpawn.x, this.currentTown.playerSpawn.y);
+
+    let testMinigame = new Minigame(this);
+    let testMinigamer = new Interactible(this, "player", 200, 200);
+    testMinigamer.interact = (who) => {
+      testMinigame.start();
+    };
     
     let testContainer = new Container(this, "barrel", 250, 250);
     for (let i=0; i<3; i++){
@@ -77,7 +85,7 @@ class Game extends State {
     
     this.currentTown.portals.push(new Portal(this, "decoration-roadsign", 64*4, 64*5, PortalType.openMap()));
     this.currentTown.containers.push(testContainer);
-    
+    this.currentTown.npcs.push(testMinigamer);
     this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));
     
     this.player.equipment.put(new Item(`Cigar`,'cigar', 0, 1, 0, 0, false));

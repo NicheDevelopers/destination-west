@@ -180,6 +180,53 @@ div.list-element img {
     overflow-y: scroll;
 }
 
+#minigame-table{
+    width: 768px;
+    height: 512px;
+    position: absolute;
+    z-index: 1;
+    background-image: url("img/minigame_assets/chuck-a-luck_table.png");
+}
+
+#dice-area{
+    width: 64px;
+    height: 224px;
+    top: 144px;
+    left: 32px;
+    position: absolute;
+    z-index: 1;
+}
+
+#betting-area{
+    width: 636px;
+    height: 512px;
+    position: absolute;
+    left: 131px;
+    z-index: 1;
+}
+
+#score-text{
+    width: 384px;
+    height: 64px;
+    position: absolute;
+    left: 63px;
+    top: 242px;
+}
+
+.dice{
+    width: 64px;
+    height: 64px;
+    position: absolute;
+    z-index: 2;
+}
+
+.betting-spot{
+    width: 128px;
+    height: 128px;
+    position: absolute;
+    z-index: 1;
+}
+
 .list-info {
     border: 2px solid black;
     border-top: none;

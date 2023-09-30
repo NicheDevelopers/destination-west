@@ -150,4 +150,14 @@ export const directions = {
   downRight: 8,
 };
 
+export const chuckALuck = {
+  diceSize: 64,
+  diceGap: 16,
+  bettingSpotSize: 128,
+  horizontalGap: 63,
+  verticalGap: 128,
+  horizontalOffset: 63,
+  verticalOffset: 64
+};
+
 export const defaultNotificationTimeout = 2;

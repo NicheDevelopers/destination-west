@@ -319,6 +319,17 @@ export function roll(chance){
   return false;
 }
 
+Object.defineProperty(Array.prototype, "popFirst", {
+  value: function (value){
+    for(let i = 0; i < this.length; ++i){
+      if(this[i] === value){
+        this.splice(i, 1);
+        return;
+      }
+    }
+  }
+});
+
 Object.defineProperty(Array.prototype, "randomElement", {
   value: function () {return this[randIntInRange(0, this.length)]},
 });

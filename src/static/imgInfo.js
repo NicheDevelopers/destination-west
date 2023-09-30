@@ -92,6 +92,7 @@ const imgInfo = new Map([
   ["jacket", img("img/clothes.png", tileSize, tileSize, 0, 0)],
   ["pants", img("img/clothes.png", tileSize, tileSize, 0, 1)],
   ["barrel", img("img/barrel.png")],
+  ["chuck-a-luck-table", img("img/chuck-a-luck-table.png")],
   ["bank-3x2", img("img/bank-3x2.png", tileSize*2, tileSize*3, 0, 0,
 		tileSize*2, tileSize*3)],
   ["bank-4x2", img("img/bank-4x2.png", tileSize*2, tileSize*4, 0, 0,

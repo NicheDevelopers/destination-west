@@ -74,8 +74,9 @@ class EquipmentDisplay extends State {
   }
   recordToListElement(record) {
     let div = createElement('div', null, null, ["list-element"], {}, null, null);
-    let nameDiv = createElement('div', null, null, ["list-obj"], {}, null, record.item.name);
-    nameDiv.style.marginLeft = "5%";
+    let nameDiv = createElement('div', null, null, ["list-obj"], {
+      marginLeft: '5%'
+    }, null, record.item.name);
     let weightDiv = createElement('div', null, null, ["list-obj"], {}, null, record.getWeight())
     let quantityDiv = createElement('div', null, null, ["list-obj"], {}, null, record.quantity)
     let dropButton = createElement('button', null, null, ["button", "eq-button"], {}, null, "Drop")

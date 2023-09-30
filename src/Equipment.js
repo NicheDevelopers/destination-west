@@ -39,7 +39,8 @@ class Equipment{
   }
   
   clear(){
-    this.records.splice(0, this.records.length);
+    // this.records.splice(0, this.records.length);
+    this.records.clear();
   }
 
   printEq() {

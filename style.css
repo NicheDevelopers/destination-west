@@ -206,11 +206,15 @@ div.list-element img {
 }
 
 #score-text{
-    width: 384px;
-    height: 64px;
+    /* width: 384px; */
+    width: 512px;
+    height: 129px;
     position: absolute;
     left: 63px;
-    top: 242px;
+    /* top: 242px; */
+    top: 192px;
+    font-size: 30px;
+    text-align: center;
 }
 
 .dice{

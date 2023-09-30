@@ -330,6 +330,12 @@ Object.defineProperty(Array.prototype, "popFirst", {
   }
 });
 
+Object.defineProperty(Array.prototype, "clear", {
+  value: function(){
+    this.length = 0;
+  }
+});
+
 Object.defineProperty(Array.prototype, "randomElement", {
   value: function () {return this[randIntInRange(0, this.length)]},
 });

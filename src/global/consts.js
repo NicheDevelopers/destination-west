@@ -150,7 +150,7 @@ export const directions = {
   downRight: 8,
 };
 
-export const chuckALuck = {
+export const chuckALuckParameters = {
   diceSize: 64,
   diceGap: 16,
   bettingSpotSize: 128,

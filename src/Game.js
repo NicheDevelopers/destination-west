@@ -42,7 +42,7 @@ import { distance } from "./global/utilities.js";
 import Interactible from "./Entity/Interactible.js"
 import { tileSize } from "./global/consts.js";
 import {Notification, notifier} from "./global/notifier.js";
-import Minigame from "./Minigame.js"
+import ChuckALuck from "./Minigames/ChuckALuck.js"
 
 class Game extends State {
   constructor(app) {
@@ -71,8 +71,9 @@ class Game extends State {
     
     this.player = new Player(this, this.currentTown.playerSpawn.x, this.currentTown.playerSpawn.y);
 
-    let testMinigame = new Minigame(this);
-    let testMinigamer = new Interactible(this, "player", 200, 200);
+    let testMinigame = new ChuckALuck(this);
+    let testMinigamer = new Interactible(this, "chuck-a-luck-table", 200, 200);
+    
     testMinigamer.interact = (who) => {
       testMinigame.start();
     };

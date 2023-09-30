@@ -59,7 +59,7 @@ class Equipment{
     
     let record = this.recordForName(item.name);
     if (record != undefined && record.item.isStackable) {
-      record.quantity += 1;
+      record.quantity++;
     }
     else {
       let record = new EquipmentRecord(item, 1);

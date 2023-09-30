@@ -21,7 +21,7 @@
 */
 
 import ColoredSprite from "./Sprite/ColoredSprite.js";
-import { createDiv, createCanvas, hex_to_rgb, rgb_to_hex } from "./global/utilities.js";
+import { createElement, createCanvas, hex_to_rgb, rgb_to_hex } from "./global/utilities.js";
 import { State, stateManager } from "./global/stateManager.js";
 
 /**
@@ -32,13 +32,13 @@ class Designer extends State {
   constructor(game) {
     super(false);
     this.display = false;
-    let div = createDiv(
-      650, 400, ['window', 'window-background'],
-      { display: 'none', zIndex: '4' });
+    let div = createElement(
+      'div', 650, 400, ['window', 'window-background'],
+      { display: 'none', zIndex: '4' }, null, null);
 
-    let previewDiv = createDiv(
-      300, 400, ['window', 'window-background'],
-      { border: 'none', display: 'flex', background: 'white' });
+    let previewDiv = createElement(
+      'div', 300, 400, ['window', 'window-background'],
+      { border: 'none', display: 'flex', background: 'white' }, null, null);
 
     let preview;
     ({ canvas: preview, context: this.previewCtx } = createCanvas(32));
@@ -67,7 +67,7 @@ class Designer extends State {
       ])
     };
 
-    let coloringDiv = createDiv(250, 400);
+    let coloringDiv = createElement('div', 250, 400);
     this.colorSliders = [0, 0, 0]; //R, G, B
     for(let i = 0; i < 3; ++i){
       this.colorSliders[i] = document.createElement('input');
@@ -184,15 +184,15 @@ function newMenuButton(name, designer, setName = name) {
 }
 
 function createMenu(designer, buttons) {
-  let setDiv = createDiv(
-    100, 400, [],
+  let setDiv = createElement(
+    'div', 100, 400, [],
     {
       borderRight: '1px solid black',
       borderLeft: '1px solid black',
       display: 'none', // to show - set to 'grid'
       alignItems: 'center',
       justifyItems: 'center',
-    });
+    }, null, null);
   buttons.forEach((button) => {
     setDiv.appendChild(newMenuButton(
       button.name, designer, button.action ?? button.name));

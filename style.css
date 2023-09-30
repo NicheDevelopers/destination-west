@@ -185,6 +185,8 @@ div.list-element img {
     border-top: none;
     font-size: 40px;
     margin: auto;
+    text-align: center;
+    border-style: none;
     /* display: table-row; */
 }
 
@@ -193,8 +195,16 @@ div.list-element img {
     border-top: none;
     font-size: xx-large;
     margin: auto;
+    display: flex;
+    text-align: center;
+    align-items: center;
     /* display: table-row; */
 }
+
+.list-obj {
+    display: inline-block;
+    flex: 2;
+    text-align: left;}
 
 .eq-button {
     margin-right: 2%;

@@ -19,12 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {equipmentSpriteSize, tileSize} from "./global/consts.js";
+import { equipmentSpriteSize, tileSize } from "./global/consts.js";
 
-import { createDiv } from "./global/utilities.js";
+import { createElement } from "./global/utilities.js";
 import { stateManager, State } from "./global/stateManager.js"
-
-let dropped = false;
 
 class EquipmentDisplay extends State {
   constructor(game, equipment) {
@@ -32,16 +30,14 @@ class EquipmentDisplay extends State {
     this.equipment = equipment;
     this.game = game;
     this.actions = ['Toggle Equipment Display'];
-    this.div = document.createElement("div");
+    this.div = createElement('div', null, null, ["window"], {}, "equipment", null);
     let gameContainer = document.querySelector("#game-container");
-    this.div.id = "equipment";
-    this.div.classList.add("window");
-    this.divEqList = document.createElement("div");
-    this.divEqList.id = "eq-list";
-    // '7' to change - constant value of equipment display width 
-    this.divEqList.style.width = `${(tileSize+2)*equipmentSpriteSize*2}px`;
-    this.divEqList.style.height = `${(tileSize+2)*equipmentSpriteSize*2}px`;
-
+    this.divEqList = createElement(
+      'div',
+      `${(tileSize+2)*equipmentSpriteSize*2}px`, 
+      `${(tileSize+2)*equipmentSpriteSize*2}px`, 
+      [], {}, "eq-list", null
+    );
     this.div.appendChild(this.divEqList);
     gameContainer.appendChild(this.div);
   }
@@ -50,35 +46,23 @@ class EquipmentDisplay extends State {
     while(this.divEqList.firstChild) {
       this.divEqList.removeChild(this.divEqList.lastChild);
     }
-    // let mainDiv = document.createElement("div");
-    // mainDiv.classList.add("list-element");
-    // mainDiv.style.display = "flex";
-    // mainDiv.innerText = "Item name" + "Weight" + "Drop";
+    // let mainDiv = createElement('div', null, null, ["list-element"], {}, null, "Item name" + "Weight" + "Drop");
     // this.divEqList.appendChild(mainDiv);
-    let sortDiv = document.createElement("div");
-    sortDiv.classList.add("list-info");
-    sortDiv.style.border = 'none';
-    sortDiv.style.borderBottom = '2px solid black';
-    sortDiv.style.textAlign = "center";
-    sortDiv.innerText = "Sort by weight from";
-    let buttonSortUp = document.createElement("button");
-    buttonSortUp.classList.add("button", "eq-button");
+    let sortDiv = createElement('div', null, null, ["list-info"], {}, null, "Sort by weight from");
+    let buttonSortUp = createElement('button', null, null, ["button", "eq-button"], {}, null, "Heavy");
     buttonSortUp.addEventListener("click", () => { this.equipment.sortByWeight(true); this.refresh() });
-    buttonSortUp.innerText = "Heavy";
     sortDiv.appendChild(buttonSortUp);
-    let buttonSortDown = document.createElement("button");
-    buttonSortDown.classList.add("button", "eq-button");
+    let buttonSortDown = createElement('button', null, null, ["button", "eq-button"], {}, null, "Light");
     buttonSortDown.addEventListener("click", () => { this.equipment.sortByWeight(false); this.refresh() });
-    buttonSortDown.innerText = "Light";
     sortDiv.appendChild(buttonSortDown);
     this.divEqList.appendChild(sortDiv);
     for (let record of this.equipment.records) {
       this.divEqList.appendChild(this.recordToListElement(record));
     }
-    let sumWeight = document.createElement("div");
-    sumWeight.classList.add("list-info");
-    sumWeight.style.textAlign = "center";
-    sumWeight.innerText = "Weight summary of all items: " + this.equipment.sumWeight()+ " / " + this.equipment.maxWeight ;
+    let sumWeight = createElement(
+      'div', null, null, ["list-info"], {}, null, 
+      "Weight summary of all items: " + this.equipment.sumWeight() + " / " + this.equipment.maxWeight
+    );
     this.divEqList.appendChild(sumWeight);
   }
   startHook() {
@@ -89,29 +73,13 @@ class EquipmentDisplay extends State {
     this.div.style.display = "none";
   }
   recordToListElement(record) {
-    let div = document.createElement("div");
-    div.classList.add("list-element");
-    div.style.display = "flex";
-    div.style.textAlign = "center";
-    div.style.alignItems = "center";
-    let nameDiv = document.createElement("div");
-    nameDiv.innerText = record.item.name;
-    nameDiv.style.display = "inline-block";
-    nameDiv.style.flex = 2;
-    nameDiv.style.textAlign = "left";
+    let div = createElement('div', null, null, ["list-element"], {}, null, null);
+    let nameDiv = createElement('div', null, null, ["list-obj"], {}, null, record.item.name);
     nameDiv.style.marginLeft = "5%";
-    let weightDiv = document.createElement("div");
-    weightDiv.innerText = record.getWeight();
-    weightDiv.style.display = "inline-block"; 
-    weightDiv.style.flex = 2;
-    let quantityDiv = document.createElement("div");
-    quantityDiv.innerText = record.quantity;
-    quantityDiv.style.display = "inline-block"; 
-    quantityDiv.style.flex = 2;
-    let dropButton = document.createElement("button");
-    dropButton.classList.add("button", "eq-button");
+    let weightDiv = createElement('div', null, null, ["list-obj"], {}, null, record.getWeight())
+    let quantityDiv = createElement('div', null, null, ["list-obj"], {}, null, record.quantity)
+    let dropButton = createElement('button', null, null, ["button", "eq-button"], {}, null, "Drop")
     dropButton.addEventListener("click", () => { this.game.player.dropItem(record); this.refresh() });
-    dropButton.innerText = "Drop";
     div.appendChild(record.item.sprite.img);
     div.appendChild(nameDiv);
     div.appendChild(weightDiv);

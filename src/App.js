@@ -21,12 +21,12 @@
 */
 
 import time from "./global/time.js";
-import { Browser } from "./Core/Browser.js";
-import KeyMan from "./Core/KeyboardManager.js";
-import AudioPlayer from "./Audio/AudioPlayer.js";
-import KeyboardVisualizer from "./Misc/KeyboardVisualizer.js";
-import Animation from "./Core/Animation.js";
-import Game from "./Game/Game.js";
+import { Browser } from "./core/Browser.js";
+import KeyMan from "./core/KeyboardManager.js";
+import AudioPlayer from "./audio/AudioPlayer.js";
+import KeyboardVisualizer from "./misc/KeyboardVisualizer.js";
+import Animation from "./core/Animation.js";
+import Game from "./game/Game.js";
 import { stateManager } from "./global/stateManager.js"
 import { notifier } from "./global/notifier.js";
 

@@ -4,7 +4,7 @@
 import Interactible from "./Interactible.js";
 import { defaultNpcSpeed } from "../global/consts.js";
 import { addTraits, InventoryTrait } from "../traits.js";
-import { genNpcName } from "../Generator/nameGenerators.js";
+import { genNpcName } from "../generators/nameGenerators.js";
 import Dialogue from "../Dialogue/Dialogue.js";
 import { stateManager } from "../global/stateManager.js";
 

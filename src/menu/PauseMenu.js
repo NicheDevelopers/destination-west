@@ -22,7 +22,7 @@
 */
 
 import defaultKeybinds from "../global/defaultKeybinds.js";
-import volumeMap from "../Audio/volumeMap.js";
+import volumeMap from "../audio/volumeMap.js";
 import { State, stateManager } from "../global/stateManager.js"
 
 class PauseMenu extends State {

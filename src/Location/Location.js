@@ -21,9 +21,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Tile from "../Game/Tile.js";
+import Tile from "../game/Tile.js";
 import Entity from "../Entity/Entity.js";
-import { ctx } from "../Core/Browser.js";
+import { ctx } from "../core/Browser.js";
 import { createCanvas, distance, roll, compareDirectedPositions } from "../global/utilities.js";
 import { tileSize, percentageOfGenericDecoration as pGD } from "../global/consts.js";
 import Building from "./Building.js";

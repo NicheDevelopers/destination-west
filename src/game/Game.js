@@ -20,13 +20,13 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Camera from "../Core/Camera.js";
+import Camera from "../core/Camera.js";
 import Tile from "./Tile.js";
 import Player from "../Entity/Player.js";
 import WorldMapDisplay from "../WorldMap/WorldMapDisplay.js";
-import PauseMenu from "../Menu/PauseMenu.js";
+import PauseMenu from "../menu/PauseMenu.js";
 import EquipmentDisplay from "../Equipment/EquipmentDisplay.js";
-import Designer from "../Misc/Designer.js";
+import Designer from "../misc/Designer.js";
 import Item from "../Item/Item.js";
 import { State } from "../global/stateManager.js"
 import Npc from "../Entity/Npc.js";
@@ -42,7 +42,7 @@ import { distance } from "../global/utilities.js";
 import Interactible from "../Entity/Interactible.js"
 import { tileSize } from "../global/consts.js";
 import {Notification, notifier} from "../global/notifier.js";
-import ChuckALuck from "../Minigames/ChuckALuck.js"
+import ChuckALuck from "../minigames/ChuckALuck.js"
 
 class Game extends State {
   constructor(app) {

@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import { ctx } from "../Core/Browser.js";
+import { ctx } from "../core/Browser.js";
 import { tileSize, spriteScale,
 	 transparencyAlphaTolerance,
 	 defaultHitboxHeight,

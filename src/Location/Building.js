@@ -1,7 +1,8 @@
 /*
-  file: src/static/soundMap.js
-  purpose: define names of sounds, their audio file and kind
-  author: Michał Miłek <https://gitlab.com/mmilek>
+  file: src/Building.js
+  purpose: Define the Building class for creating buildings is simple way  
+  authors: Szymon Nowak <https://gitlab.com/leszmak>
+          Artur Gulik <https://gitlab.com/ArturGulik>
   
   This file is part of 'Destination West'.
   
@@ -18,11 +19,18 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
+import Tile from "../Game/Tile.js";
+import { roll } from "../global/utilities.js";
+import { tileSize } from "../global/consts.js";
+import Entity from "../Entity/Entity.js";
 
-import { Sound, soundKind } from "../Sound.js";
+class Building extends Entity {
+  constructor(x, y, xTiles, yTiles, buildingType, options = {}) {
+    super(`bank-${xTiles}x${yTiles}`, x, y, options);
+    this.xTiles = xTiles;
+    this.yTiles = yTiles;
+    this.buildingType = buildingType;
+  }
+}
 
-const soundMap = new Map([
-  ['gunshot-revolver', new Sound('sounds/gunshot-revolver.mp3', soundKind.Effect)],
-]);
-
-export default soundMap;
+export default Building;

@@ -1,6 +1,6 @@
-import { randIntInRange, resetIdFor } from "./global/utilities.js";
-import { mapParameters as mp } from "./global/consts.js"
-import Town from "./Town.js";
+import { randIntInRange, resetIdFor } from "../global/utilities.js";
+import { mapParameters as mp } from "../global/consts.js"
+import Town from "../Location/Town.js";
 
 function distance([x1, y1], [x2, y2]) {
   return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));

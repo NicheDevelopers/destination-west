@@ -20,7 +20,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { keyboardVisualizerPosition as kp} from "./global/consts.js";
+import { keyboardVisualizerPosition as kp} from "../global/consts.js";
 
 function createButton(width, height, offsetX = 0, offsetY = 0) {
   let o = document.createElement('div');

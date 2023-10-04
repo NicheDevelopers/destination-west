@@ -1,7 +1,7 @@
 /*
-  file: src/Browser.js
-  purpose: define the Browser class for dealing with browser related matters
-  author: Artur Gulik <https://gitlab.com/ArturGulik>
+  file: src/static/soundMap.js
+  purpose: define names of sounds, their audio file and kind
+  author: Michał Miłek <https://gitlab.com/mmilek>
   
   This file is part of 'Destination West'.
   
@@ -19,31 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-/**
- * Class for dealing with browser-specific methods, requests
- */
-class Browser {
+import { Sound, soundKind } from "./Sound.js";
 
-  constructor(app) {
-    this.app = app;
-    this.actions = ['Toggle Fullscreen'];
-  }
+const soundMap = new Map([
+  ['gunshot-revolver', new Sound('sounds/gunshot-revolver.mp3', soundKind.Effect)],
+]);
 
-  update() {
-    this.app.manageRequest(
-      'Toggle Fullscreen',
-      this.toggleFullscreen,
-      { once: true }
-    );
-  }
-
-  toggleFullscreen() {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-      return;
-    }
-    document.documentElement.requestFullscreen();
-  }
-}
-
-export default Browser;
+export default soundMap;

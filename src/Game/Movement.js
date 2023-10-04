@@ -19,11 +19,11 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import ctx from "./global/ctx.js";
-import { tileSize, playerParameters as pp } from "./global/consts.js";
-import { validateOptions } from "./global/utilities.js";
-import { directions, Direction } from "./global/utilities.js";
-import Animation from "./Animation.js";
+import { ctx } from "../Core/Browser.js";
+import { tileSize, playerParameters as pp } from "../global/consts.js";
+import { validateOptions } from "../global/utilities.js";
+import { directions, Direction } from "../global/utilities.js";
+import Animation from "../Core/Animation.js";
 
 const movementActions = new Map([
   ['Move Up', "moveUp"],

@@ -33,7 +33,7 @@
       
 */
 
-import { directions } from "./consts.js";
+import { directions } from "../global/consts.js";
 
 class Direction {
   constructor(value=directions.none) {

@@ -19,10 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { equipmentSpriteSize, tileSize } from "./global/consts.js";
+import { equipmentSpriteSize, tileSize } from "../global/consts.js";
 
-import { createElement } from "./global/utilities.js";
-import { stateManager, State } from "./global/stateManager.js"
+import { createElement } from "../global/utilities.js";
+import { stateManager, State } from "../global/stateManager.js"
 
 class EquipmentDisplay extends State {
   constructor(game, equipment) {

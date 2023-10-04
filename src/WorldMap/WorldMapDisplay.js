@@ -19,9 +19,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { createCanvas, createElement } from "./global/utilities.js";
-import { State, stateManager } from "./global/stateManager.js";
-import { mapParameters, townSizes, worldMapDisplay as wmd } from "./global/consts.js";
+import { createCanvas, createElement } from "../global/utilities.js";
+import { State, stateManager } from "../global/stateManager.js";
+import { mapParameters, townSizes, worldMapDisplay as wmd } from "../global/consts.js";
 
 class WorldMapDisplay extends State {
   constructor(game) {

@@ -21,11 +21,11 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Tile from "./Tile.js";
-import Entity from "./Entity/Entity.js";
-import ctx from "./global/ctx.js";
-import { createCanvas, distance, roll, compareDirectedPositions } from "./global/utilities.js";
-import { tileSize, percentageOfGenericDecoration as pGD } from "./global/consts.js";
+import Tile from "../Game/Tile.js";
+import Entity from "../Entity/Entity.js";
+import { ctx } from "../Core/Browser.js";
+import { createCanvas, distance, roll, compareDirectedPositions } from "../global/utilities.js";
+import { tileSize, percentageOfGenericDecoration as pGD } from "../global/consts.js";
 import Building from "./Building.js";
 
 /* pathInfo keys describe the presence of paths on adjacent squares.

@@ -19,7 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import time from "./global/time.js";
+import time from "../global/time.js";
 
 function calculateChangeInThisTick(element) {
   element.changeStack += (element.speed * time.delta) / 1000;

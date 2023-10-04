@@ -20,29 +20,29 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Camera from "./Camera.js";
+import Camera from "../Core/Camera.js";
 import Tile from "./Tile.js";
-import Player from "./Entity/Player.js";
-import WorldMapDisplay from "./WorldMapDisplay.js";
-import PauseMenu from "./PauseMenu.js";
-import EquipmentDisplay from "./EquipmentDisplay.js";
-import Designer from "./Designer.js";
-import Item from "./Item/Item.js";
-import { State } from "./global/stateManager.js"
-import Npc from "./Entity/Npc.js";
-import Dialogue from "./Dialogue/Dialogue.js";
-import DialogueDisplay from "./Dialogue/DialogueDisplay.js";
-import Container from "./Entity/Container.js";
-import Portal, {PortalType} from "./Entity/Portal.js";
-import TransferDisplay from "./TransferDisplay.js";
-import WorldMap from "./WorldMap.js";
-import Travel from "./Travel.js";
-import Town from "./Town.js";
-import { distance } from "./global/utilities.js";
-import Interactible from "./Entity/Interactible.js"
-import { tileSize } from "./global/consts.js";
-import {Notification, notifier} from "./global/notifier.js";
-import ChuckALuck from "./Minigames/ChuckALuck.js"
+import Player from "../Entity/Player.js";
+import WorldMapDisplay from "../WorldMap/WorldMapDisplay.js";
+import PauseMenu from "../Menu/PauseMenu.js";
+import EquipmentDisplay from "../Equipment/EquipmentDisplay.js";
+import Designer from "../Misc/Designer.js";
+import Item from "../Item/Item.js";
+import { State } from "../global/stateManager.js"
+import Npc from "../Entity/Npc.js";
+import Dialogue from "../Dialogue/Dialogue.js";
+import DialogueDisplay from "../Dialogue/DialogueDisplay.js";
+import Container from "../Entity/Container.js";
+import Portal, {PortalType} from "../Entity/Portal.js";
+import TransferDisplay from "../Transfer/TransferDisplay.js";
+import WorldMap from "../WorldMap/WorldMap.js";
+import Travel from "../Location/Travel.js";
+import Town from "../Location/Town.js";
+import { distance } from "../global/utilities.js";
+import Interactible from "../Entity/Interactible.js"
+import { tileSize } from "../global/consts.js";
+import {Notification, notifier} from "../global/notifier.js";
+import ChuckALuck from "../Minigames/ChuckALuck.js"
 
 class Game extends State {
   constructor(app) {

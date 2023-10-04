@@ -19,9 +19,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Sprite from "./Sprite/Sprite.js";
+import Sprite from "../Sprite/Sprite.js";
 
-import ctx from "./global/ctx.js";
+import { ctx } from "../Core/Browser.js";
 
 /**
  * Class for creating tiles - the base of the game world structure

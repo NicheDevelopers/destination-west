@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import Item from "./Item/Item.js";
+import Item from "../Item/Item.js";
 
 // left equipment is for PlayerEquipment, right is for another
 class Transfer{

@@ -19,10 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { roll } from "./global/utilities.js";
-import { maleNames, femaleNames, nicknames, surnames } from "./static/npcNames.js";
-import { arr1, arr2 } from "./static/townNames.js";
-import { percentageOfTwoNameTown } from "./global/consts.js";
+import { roll } from "../global/utilities.js";
+import { maleNames, femaleNames, nicknames, surnames } from "./npcNames.js";
+import { arr1, arr2 } from "./townNames.js";
+import { percentageOfTwoNameTown } from "../global/consts.js";
 
 //function returning npcname
 function genNpcName(sex, important) {

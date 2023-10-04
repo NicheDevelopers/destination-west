@@ -19,7 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { soundKind } from "../Sound.js";
+import { soundKind } from "./Sound.js";
 
 const volumeMap = new Map([
   [soundKind.Music, 1],

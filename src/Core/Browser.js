@@ -1,6 +1,6 @@
 /*
-  file: src/ctx.js
-  purpose: define all contexts used for drawing on canvases
+  file: src/Browser.js
+  purpose: define the Browser class for dealing with browser related matters
   author: Artur Gulik <https://gitlab.com/ArturGulik>
   
   This file is part of 'Destination West'.
@@ -19,6 +19,33 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+/**
+ * Class for dealing with browser-specific methods, requests
+ */
+class Browser {
+
+  constructor(app) {
+    this.app = app;
+    this.actions = ['Toggle Fullscreen'];
+  }
+
+  update() {
+    this.app.manageRequest(
+      'Toggle Fullscreen',
+      this.toggleFullscreen,
+      { once: true }
+    );
+  }
+
+  toggleFullscreen() {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+      return;
+    }
+    document.documentElement.requestFullscreen();
+  }
+}
+
 const gc = document.querySelector("#game-canvas");
 
 /**
@@ -35,4 +62,4 @@ export function getGameCanvasSizeY() {
   return gc.scrollHeight;
 }
 
-export default ctx;
+export { Browser, ctx };

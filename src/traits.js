@@ -1,8 +1,8 @@
-import Equipment from "./Equipment.js";
+import Equipment from "./Equipment/Equipment.js";
 import { defaultEquipmentSize, defaultRcp, defaultBd} from "./global/consts.js";
 import { generateID, tileAt, pointToTileCoord, ObjectSet } from "./global/utilities.js";
-import Hitbox from "./Hitbox.js";
-import Movement from "./Movement.js";
+import Hitbox from "./Game/Hitbox.js";
+import Movement from "./Game/Movement.js";
 
 let specialProps = new Set(["_name_", "_before_", "_after_"]);
 

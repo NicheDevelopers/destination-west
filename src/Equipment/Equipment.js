@@ -18,8 +18,8 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import DroppedItem from "./Item/DroppedItem.js";
-import { generateID } from "./global/utilities.js";
+import DroppedItem from "../Item/DroppedItem.js";
+import { generateID } from "../global/utilities.js";
 
 class EquipmentRecord{
   constructor (item, quantity){

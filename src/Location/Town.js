@@ -21,13 +21,13 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import presets from "./static/townPresets.js";
-import { generateID } from "./global/utilities.js";
+import presets from "./townPresets.js";
+import { generateID } from "../global/utilities.js";
 import Location from "./Location.js";
 import Building from "./Building.js";
-import { defaultTownHeight, defaultTownWidth } from "./global/consts.js";
-import { genTownName } from "./nameGenerators.js";
-import {tileSize} from "./global/consts.js";
+import { defaultTownHeight, defaultTownWidth } from "../global/consts.js";
+import { genTownName } from "../Generator/nameGenerators.js";
+import {tileSize} from "../global/consts.js";
 
 class Town extends Location {
   constructor(x, y, numBldInTown = {}) {

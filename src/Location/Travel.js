@@ -20,11 +20,11 @@
 */
 
 import Location from "./Location.js";
-import { randIntInRange } from "./global/utilities.js";
+import { randIntInRange } from "../global/utilities.js";
 import Building from "./Building.js";
-import {tileSize} from "./global/consts.js";
-import Portal, { PortalType } from "./Entity/Portal.js";
-import { roll } from "./global/utilities.js";
+import {tileSize} from "../global/consts.js";
+import Portal, { PortalType } from "../Entity/Portal.js";
+import { roll } from "../global/utilities.js";
 
 // the leght of chunk must be at least 10 tiles
 

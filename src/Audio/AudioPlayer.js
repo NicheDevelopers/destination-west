@@ -21,8 +21,8 @@
 
 
 import { soundKind } from "./Sound.js"
-import soundMap from "./static/soundMap.js";
-import volumeMap from "./static/volumeMap.js";
+import soundMap from "./soundMap.js";
+import volumeMap from "./volumeMap.js";
 
 /**
  * Class for sound effect and music playback

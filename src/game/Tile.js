@@ -21,7 +21,7 @@
 
 import Sprite from "../Sprite/Sprite.js";
 
-import { ctx } from "../Core/Browser.js";
+import { ctx } from "../core/Browser.js";
 
 /**
  * Class for creating tiles - the base of the game world structure

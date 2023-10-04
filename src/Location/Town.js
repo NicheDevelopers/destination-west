@@ -26,7 +26,7 @@ import { generateID } from "../global/utilities.js";
 import Location from "./Location.js";
 import Building from "./Building.js";
 import { defaultTownHeight, defaultTownWidth } from "../global/consts.js";
-import { genTownName } from "../Generator/nameGenerators.js";
+import { genTownName } from "../generators/nameGenerators.js";
 import {tileSize} from "../global/consts.js";
 
 class Town extends Location {

@@ -19,9 +19,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { ctx } from "../Core/Browser.js";
+import { ctx } from "../core/Browser.js";
 import Sprite from "./Sprite.js";
-import Animation from "../Core/Animation.js";
+import Animation from "../core/Animation.js";
 import { allowProperty } from "../global/utilities.js";
 import { animatedSprite as as } from "../global/consts.js";
 

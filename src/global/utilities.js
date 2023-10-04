@@ -306,7 +306,7 @@ Object.defineProperty(Array.prototype, "lastNthElement", {
 });
 
 import { directions } from "./consts.js";
-import Direction from "../Game/Direction.js";
+import Direction from "../game/Direction.js";
 export {Direction, directions};
 
 // percent chance (0 - 1)

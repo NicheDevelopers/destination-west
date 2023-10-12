@@ -24,7 +24,7 @@
 import defaultKeybinds from "../global/defaultKeybinds.js";
 import volumeMap from "../audio/volumeMap.js";
 import { State, stateManager } from "../global/stateManager.js"
-import createElement  from "../global/utilities.js";
+import { createElement }  from "../global/utilities.js";
 
 class PauseMenu extends State {
   constructor(game) {

@@ -95,20 +95,34 @@ div.list-element img {
     image-rendering: crisp-edges;
 }
 
+
 #pause-menu {
+    color: lightgray;
     display: none;
-    width: 672px;
-    height: 288px;
+    width: 36%;
+    height: 31%;
     background-image: url("img/pauseMenu-background.jpg");
     z-index: 2;
 }
 
+
 .pause-menu-buttons {
+    color: lightgray;
     background-image: url("img/pauseMenu-buttons.jpg");
     background-repeat: no-repeat;
-    height: 25px;
-    width: 66px;
+    width: 19%;
+    height: 8%;
     border: none;
+}
+
+.settings-menu-buttons {
+    height: 100%;
+    width: 9.5%;
+}
+
+.exit-menu-buttons {
+    height: 22%;
+    width: 32%;
 }
 
 #pause-menu-buttons-div {

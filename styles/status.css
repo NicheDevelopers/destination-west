@@ -1,0 +1,59 @@
+/*
+  file: style.css
+  purpose: style the application
+  author: Artur Gulik <https://gitlab.com/ArturGulik>
+  
+  This file is part of 'Destination West'.
+  
+  'Destination West' is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License,
+  or (at your option) any later version.
+
+  'Destination West' is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with
+  'Destination West'. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.draggable {
+    cursor: pointer;
+}
+
+.hold {
+    
+}
+
+.hovered {
+    background: #fd0303;
+}
+
+.invisible {
+    background-image: none;
+}
+
+/* fade in */
+.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.3s linear;
+}
+
+/* fase out */
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.3s, opacity 0.3s linear;
+}

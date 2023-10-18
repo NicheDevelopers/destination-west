@@ -1,0 +1,53 @@
+/*
+  file: style.css
+  purpose: style the application
+  author: Artur Gulik <https://gitlab.com/ArturGulik>
+  
+  This file is part of 'Destination West'.
+  
+  'Destination West' is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License,
+  or (at your option) any later version.
+
+  'Destination West' is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with
+  'Destination West'. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+canvas {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+
+#game-container{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.display-2x {
+    transform: scale(2);
+    position: absolute;
+}
+
+#game-canvas {
+    background: black;
+    z-index: 0;
+ }
+
+#map-canvas {
+    display: block;
+    background-color: rgba(150, 130, 100, 0.9);
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}

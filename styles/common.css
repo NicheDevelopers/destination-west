@@ -1,0 +1,46 @@
+/*
+  file: style.css
+  purpose: style the application
+  author: Artur Gulik <https://gitlab.com/ArturGulik>
+  
+  This file is part of 'Destination West'.
+  
+  'Destination West' is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License,
+  or (at your option) any later version.
+
+  'Destination West' is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with
+  'Destination West'. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body{
+    background: #111;
+}
+
+img {
+    display: none;
+}
+
+.grid-background {
+    background-image: repeating-linear-gradient(#000 0 1px, transparent 1px 100%), repeating-linear-gradient(90deg, #000 0 1px, transparent 1px 100%);
+    background-size: 32px 32px;
+    background-color: rgb(121, 70, 20);
+}
+
+.town-div:hover {
+    background-color: red;
+}

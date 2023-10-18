@@ -1,0 +1,98 @@
+/*
+  file: style.css
+  purpose: style the application
+  author: Artur Gulik <https://gitlab.com/ArturGulik>
+  
+  This file is part of 'Destination West'.
+  
+  'Destination West' is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License,
+  or (at your option) any later version.
+
+  'Destination West' is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with
+  'Destination West'. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+#equipment {
+    width: 925px;
+    height: 925px;
+    position:  absolute;
+    z-index: 1;
+    background-color: rgb(121, 70, 20);
+}
+
+#eq-list {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+#transfer {
+    width: 1500px;
+    height: 925px;
+    position: absolute;
+    z-index: 1;
+    background-color: rgb(121, 70, 20);
+}
+
+#transfer-list {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+
+.list-info {
+    border: 2px solid black;
+    border-top: none;
+    font-size: 40px;
+    margin: auto;
+    text-align: center;
+    border-style: none;
+    /* display: table-row; */
+}
+
+div.list-element img {
+    margin-left: 2%;
+    width: 80px;
+    height: 80px;
+    image-rendering: crisp-edges;
+}
+
+.list-element {
+    border: 2px solid black;
+    border-top: none;
+    font-size: xx-large;
+    margin: auto;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    /* display: table-row; */
+}
+
+.list-obj {
+    display: inline-block;
+    flex: 2;
+    text-align: left;
+}
+
+.window {
+    display: none;
+    justify-content:center;
+    align-items: center;
+}
+
+.window-background {
+    background-color: rgb(121, 70, 20);
+    border: 1px solid black;
+}
+

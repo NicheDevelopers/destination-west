@@ -161,3 +161,8 @@ export const chuckALuckParameters = {
 };
 
 export const defaultNotificationTimeout = 2;
+
+export const focusParameters = {
+  minDist: 50.0,
+  facingPenalty: 15
+};

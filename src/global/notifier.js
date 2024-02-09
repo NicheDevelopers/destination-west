@@ -1,3 +1,4 @@
+import Sprite from "../Sprite/Sprite.js";
 import { defaultNotificationTimeout } from "./consts.js";
 
 class Queue {
@@ -25,9 +26,10 @@ class Queue {
 /* img is an img HTML element, probably obtained
    from a Sprite by the `img` field. */
 export class Notification {
-  constructor(text, img, timeoutSeconds = defaultNotificationTimeout) {
+  constructor(text, spriteName, timeoutSeconds = defaultNotificationTimeout) {
     this.text = text;
-    this.img = img;
+    this.sprite = new Sprite(spriteName, {crop: true, nocache: true});
+    this.img = this.sprite.img;
     this.timeout = timeoutSeconds * 1000;
   }
   createDiv() {

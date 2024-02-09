@@ -44,7 +44,7 @@ class Direction {
   facesDown() { return this._value > 5 }
   facesLeft() { return this._value % 3 === 0 }
   isDiagonal() { return this._value % 2 === 0 && this._value !== 4 }
-  set(dir) { this._value = dir}
+  setTo(dir) { this._value = dir; }
   fromChangeInXAndY(dx, dy) {
     this._value = directions.none;
     if (dx > 0) this.moveRight();
@@ -69,6 +69,12 @@ class Direction {
   moveLeft() {
     if (this.facesLeft()) throw "Direction: Invalid move left";
     this._value -= 1;
+  }
+  /**
+   * Set the direction's internal value to directions.none
+  */
+  reset() {
+    this._value = directions.none;
   }
   toString() {
     return Object.entries(directions).filter(([_, v]) => v == this._value)[0][0];

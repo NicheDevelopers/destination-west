@@ -24,8 +24,9 @@
 import Tile from "../game/Tile.js";
 import Entity from "../Entity/Entity.js";
 import { ctx } from "../core/Browser.js";
-import { createCanvas, distance, roll, compareDirectedPositions } from "../global/utilities.js";
-import { tileSize, percentageOfGenericDecoration as pGD } from "../global/consts.js";
+import { createCanvas, distance, roll, comparePositions } from "../global/utilities.js";
+import { tileSize, percentageOfGenericDecoration as pGD,
+         focusParameters } from "../global/consts.js";
 import Building from "./Building.js";
 
 /* pathInfo keys describe the presence of paths on adjacent squares.
@@ -60,7 +61,8 @@ const pathInfo = new Map([
 ]);
 
 class Location {
-  constructor(width, height) {
+  constructor(game, width, height) {
+    this.game = game;
     this.array = undefined;
     this.created = false;
     this.width = width;
@@ -139,7 +141,7 @@ class Location {
         
         if (array)
           this.decorations.push(
-	    new Entity("decoration-" + array.randomElement(),
+	    new Entity(this.game, "decoration-" + array.randomElement(),
 		       i * tileSize, j * tileSize,
 		       { hitbox: this.array })
 	  );
@@ -180,6 +182,7 @@ class Location {
       down: height - rcp.y - 1
     };
     this.buildings.push(new Building(
+      this.game,
       startX*tileSize, startY*tileSize,
       widthInTiles, heightInTiles,
       buildingType,
@@ -261,13 +264,20 @@ class Location {
       this.focused.focus = false;
       this.focused = null;
     }
-    let minDist = 50.0;
+    let minDist = focusParameters.minDist;
     
-    let testFn = player.direction.facesLeft() ? (e) => e.x <= player.x : (e) => e.x >= player.x ;
-    let entities = this.getInteractibles().filter(testFn);
-    
+    let entities = this.getInteractibles();
+
     for (let item of entities) {
-      let d = distance(item, player);
+      let d = distance(item.getCenterPoint(), player.getCenterPoint());
+
+      if ((player.isFacingRight() &&
+	item.getCenterPoint().x > player.getCenterPoint().x) ||
+	(!player.isFacingRight() &&
+	  item.getCenterPoint().x < player.getCenterPoint().x)) {
+	d += focusParameters.facingPenalty;
+      }
+      
       if (d < minDist) {
         minDist = d;
         this.focused = item;
@@ -331,11 +341,11 @@ class Location {
   update(player) {
     this.npcs.forEach(npc => npc.update());
 
-    if (this.lastPlayerPos && compareDirectedPositions(player, this.lastPlayerPos))
+    if (this.lastPlayerPos && comparePositions(player, this.lastPlayerPos))
       return;
     
     this.updateFocus(player);
-    this.lastPlayerPos = { x: player.x, y: player.y, direction: player.direction };
+    this.lastPlayerPos = { x: player.x, y: player.y };
   }
 }
 

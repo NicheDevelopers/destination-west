@@ -30,8 +30,9 @@ import { genTownName } from "../generators/nameGenerators.js";
 import {tileSize} from "../global/consts.js";
 
 class Town extends Location {
-  constructor(x, y, numBldInTown = {}) {
-    super(defaultTownWidth, defaultTownHeight);
+  constructor(game, x, y, numBldInTown = {}) {
+    super(game, defaultTownWidth, defaultTownHeight);
+    this.game = game;
     this.ID = generateID(Town);
     this.name = genTownName();
     this.x = x;

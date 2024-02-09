@@ -1,5 +1,5 @@
 /*
-  file: src/Hitbox.js
+  file: src/HitboxClass.js
   purpose: define the Hitbox class; provide a simple interface
            for collision management
   author: Artur Gulik <https://gitlab.com/ArturGulik>
@@ -43,7 +43,7 @@ function fillTileArea(tileCoords) {
    A class describing rectangles in absolute coordinate values
    (relative to the whole game world / location)
 */
-class Box {
+export class Box {
   constructor(left, right, top, bottom) {
     this.left = left;
     this.right = right;
@@ -128,7 +128,7 @@ export default class Hitbox {
 
     // If this hitbox is larger than a tile, it is not enough to check
     // its corners. Every tile in between the tiles that intersect with
-    // the hitbox's corners intersect with the hitbox's edges.
+    // the hitbox's corners intersects with the hitbox's edges.
     
     //console.log('whole area: ', fillTileArea(coordArray).length);
     return fillTileArea(coordArray);
@@ -168,6 +168,26 @@ export default class Hitbox {
     }
     return false;
   }
+
+  /**
+     Tests distances from 1 to `maxDist` to tell how many
+     pixels can the entity move before collision.
+
+     If no collisions are found, `maxDist` is returned.
+  */
+  distanceTillTileCollision(direction, maxDist, arr) {
+    if (maxDist < 1) throw `maxDist has to be at least 1. Got: ${maxDist}.`;
+    
+    let xm = direction.xAxisMultiplier();
+    let ym = direction.yAxisMultiplier();
+    
+    for (let d=1; d<=maxDist; ++d) {
+      if (this.willCollideWithTiles(d*xm, d*ym, arr)) {
+	return d-1;
+      }
+    }
+    return maxDist;
+  }
   
   willCollide(dx, dy, other) {
     if (other.entity.walkable) return false;
@@ -178,7 +198,7 @@ export default class Hitbox {
     }
     return false;
   }
-  
+
   collides(other) {
     if (other.entity.walkable) return false;
     this.visualizationFunction(

@@ -20,8 +20,8 @@
 */
 
 #equipment {
-    width: 925px;
-    height: 925px;
+    width: 75%;
+    height: 75%;
     position:  absolute;
     z-index: 1;
     background-color: rgb(121, 70, 20);
@@ -36,8 +36,8 @@
 }
 
 #transfer {
-    width: 1500px;
-    height: 925px;
+    width: 90%;
+    height: 75%;
     position: absolute;
     z-index: 1;
     background-color: rgb(121, 70, 20);
@@ -53,11 +53,10 @@
 
 .list-info {
     border: 2px solid black;
-    border-top: none;
+    /* border-top: none; */
     font-size: 40px;
     margin: auto;
     text-align: center;
-    border-style: none;
     /* display: table-row; */
 }
 

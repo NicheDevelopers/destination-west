@@ -110,7 +110,7 @@ export function directedDistance({x: x1, y: y1, direction: dir1},
 }
 
 export function roundToTile(value) {
-  return ~~(value/tileSize);
+  return Math.floor(value/tileSize);
 }
 
 /**
@@ -118,10 +118,10 @@ export function roundToTile(value) {
    the coordinates of a tile that contains
    the point given as the arguemnt.
 */
-export function pointToTileCoord(p) {
+export function pointToTileCoord({x, y}) {
   return {
-    x: roundToTile(p.x),
-    y: roundToTile(p.y)
+    x: roundToTile(x),
+    y: roundToTile(y)
   };
 }
 
@@ -407,6 +407,19 @@ Object.defineProperty(Array.prototype, "minBy", {
   },
 });
 
+
+Object.defineProperty(Array.prototype, "equals", {
+  value: function (otherArray) {
+    if (this.length !== otherArray.length)
+      return false;
+    
+    for (let i=0; i<this.length; ++i) {
+      if (this[i] !== otherArray[i])
+	return false;
+    }
+    return true;
+  }
+});
 
 Number.prototype.clamp = function(min, max) {
   return Math.min(Math.max(this, min), max);

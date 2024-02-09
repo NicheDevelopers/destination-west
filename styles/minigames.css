@@ -24,7 +24,7 @@
     height: 512px;
     position: absolute;
     z-index: 1;
-    background-image: url("img/minigame_assets/chuck-a-luck_table.png");
+    background-image: url("../img/minigame_assets/chuck-a-luck_table.png");
 }
 
 #dice-area{

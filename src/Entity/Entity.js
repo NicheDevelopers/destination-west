@@ -58,7 +58,8 @@ const entityOptions = new Map([
  @abstract
  */
 class Entity {
-  constructor(typeName, x = 0, y = 0, options={}) {
+  constructor(game, typeName, x = 0, y = 0, options={}) {
+    this.game = game;
     validateOptions(options, entityOptions, `Entity (${typeName})`);
     this.typeName = typeName;
     this.x = x;

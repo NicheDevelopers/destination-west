@@ -33,13 +33,11 @@ class TransferDisplay extends State {
       this.div = createElement('div', null, null, ["window"], {}, "transfer", null);
       let gameContainer = document.querySelector("#game-container");
 
-      // 'equipmentSpriteSize' to change - constant value of transfer display width 
-      let divEqWidthHeight = `${(tileSize+2)*equipmentSpriteSize*2}`;
-      this.divEqListPlayer = createElement('div', divEqWidthHeight, divEqWidthHeight, 
+      this.divEqListPlayer = createElement('div', null, null, 
         [], {}, "transfer-list", null
       );
 
-      this.divEqListTransfer = createElement('div', divEqWidthHeight, divEqWidthHeight, 
+      this.divEqListTransfer = createElement('div', null, null, 
         [], {}, "transfer-list", null
       );
 

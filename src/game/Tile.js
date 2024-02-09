@@ -23,6 +23,8 @@ import Sprite from "../Sprite/Sprite.js";
 
 import { ctx } from "../core/Browser.js";
 
+import { Box } from "../game/HitboxClass.js";
+
 /**
  * Class for creating tiles - the base of the game world structure
  */
@@ -42,7 +44,16 @@ class Tile {
     this.entities = [];
     this.items = [];
   }
-
+  
+  getBoundingBox() {
+    return new Box(this.x, this.x+this.width,
+		   this.y, this.y+this.height);
+  }
+  
+  /**
+     Checks whether there is an entity of certain type on a tile.
+     @param {Class} entityClass - The class which members we are looking for on the tile (for example Player or Entity).
+   */
   hasEntityOfType(entityClass) {
     return this.entities.some((e) => e.constructor.name === entityClass.name);
   }
@@ -60,7 +71,13 @@ class Tile {
     this.sprite.draw(x, y, context);
   }
   drawDebugInfo(cameraX, cameraY, context = ctx, options={}) {
-    this.hitbox.draw(cameraX, cameraY, context, options);
+    if (this.hitbox)
+      this.hitbox.draw(cameraX, cameraY, context, options);
+    else {
+      this.sprite.drawOverlay(
+	this.x-cameraX, this.y-cameraY,
+	options.color, context);
+    }
   }
 }
 

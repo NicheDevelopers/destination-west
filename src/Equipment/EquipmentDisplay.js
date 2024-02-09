@@ -34,8 +34,8 @@ class EquipmentDisplay extends State {
     let gameContainer = document.querySelector("#game-container");
     this.divEqList = createElement(
       'div',
-      `${(tileSize+2)*equipmentSpriteSize*2}px`, 
-      `${(tileSize+2)*equipmentSpriteSize*2}px`, 
+      null, 
+      null, 
       [], {}, "eq-list", null
     );
     this.div.appendChild(this.divEqList);

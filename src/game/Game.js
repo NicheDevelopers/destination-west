@@ -43,6 +43,7 @@ import Interactible from "../Entity/Interactible.js"
 import { tileSize } from "../global/consts.js";
 import {Notification, notifier} from "../global/notifier.js";
 import ChuckALuck from "../minigames/ChuckALuck.js"
+import Pathfinder from "../Pathfinder.js";
 
 class Game extends State {
   constructor(app) {
@@ -56,7 +57,7 @@ class Game extends State {
 
     this.testTile = new Tile("sand");
     
-    this.worldMap = new WorldMap();
+    this.worldMap = new WorldMap(this);
     this.worldMapDisplay = new WorldMapDisplay(this);
     
     this.currentTown = this.worldMap.locations[0];
@@ -67,11 +68,12 @@ class Game extends State {
 
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
-    this.camera = new Camera(this);
-    
     this.player = new Player(this, this.currentTown.playerSpawn.x, this.currentTown.playerSpawn.y);
 
     let testMinigame = new ChuckALuck(this);
+    
+    this.camera = new Camera(this);
+    
     let testMinigamer = new Interactible(this, "chuck-a-luck-table", 200, 200);
     
     testMinigamer.interact = (who) => {
@@ -87,7 +89,12 @@ class Game extends State {
     this.currentTown.portals.push(new Portal(this, "decoration-roadsign", 64*4, 64*5, PortalType.openMap()));
     this.currentTown.containers.push(testContainer);
     this.currentTown.npcs.push(testMinigamer);
-    this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));
+    let OlBenjamin = new Npc(this, 382, 350, "Ol' Benjamin");
+    this.currentTown.npcs.push(OlBenjamin);
+    OlBenjamin.impaired = true;
+    
+    //this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));
+    //this.camera.setFocusedEntity(this.currentTown.npcs[1]);
     
     this.player.equipment.put(new Item(`Cigar`,'cigar', 0, 1, 0, 0, false));
     for (let i=0; i<5; i++){
@@ -104,6 +111,9 @@ class Game extends State {
 
     this.transferDisplay = new TransferDisplay(this);
 
+    this.testEntity = new Npc(this, 370, 290, "Milas");
+    this.currentTown.npcs.push(this.testEntity);
+    
     this.slaves = [
       this.pauseMenu,
       this.designer,

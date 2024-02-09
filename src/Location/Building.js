@@ -25,8 +25,8 @@ import { tileSize } from "../global/consts.js";
 import Entity from "../Entity/Entity.js";
 
 class Building extends Entity {
-  constructor(x, y, xTiles, yTiles, buildingType, options = {}) {
-    super(`bank-${xTiles}x${yTiles}`, x, y, options);
+  constructor(game, x, y, xTiles, yTiles, buildingType, options = {}) {
+    super(game, `bank-${xTiles}x${yTiles}`, x, y, options);
     this.xTiles = xTiles;
     this.yTiles = yTiles;
     this.buildingType = buildingType;

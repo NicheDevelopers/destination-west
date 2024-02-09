@@ -52,7 +52,7 @@ class DroppedItem {
 	who.game.currentTown.droppedItems.filter(
 	  (i) => i.id !== this.id);
     }
-    notifier.send(new Notification(`Picked up ${this.item.name}`, this.item.sprite.img));
+    notifier.send(new Notification(`Picked up ${this.item.name}`, this.item.spriteName));
   }
 
   setPositionTo(pos) {

@@ -3,7 +3,7 @@ import Sprite from "../Sprite/Sprite.js";
 
 class Interactible extends Entity {
   constructor(game, typeName, x=0, y=0, options={}) {
-    super(typeName, x, y, Object.assign(options, {
+    super(game, typeName, x, y, Object.assign(options, {
       hitbox: game.currentTown.array}));
     this.game = game;
     this.loadedFocusedSprite = false;
@@ -19,7 +19,7 @@ class Interactible extends Entity {
   }
   draw(cameraX, cameraY) {
     if (this.focus && this.loadedFocusedSprite
-      && !this.typeName === "player" /* temp to disable npc outline */) {
+      && this.typeName !== "player" /* temp to disable npc outline */) {
       this.focusedSprite.draw(this.x - cameraX, this.y - cameraY);
       return;
     }

@@ -348,6 +348,15 @@ class Sprite {
 		       this.width * this.scaleX, 1);
     }
   }
+  /**
+   * Fill a rect over the region where the sprite is normally drawn
+   */
+  drawOverlay(x, y, fillStyle="#00ffff22", context = ctx) {
+    context.fillStyle = fillStyle;
+    context.fillRect(
+      x, y,
+      this.width * this.scaleX, this.height * this.scaleY);
+  }
 }
 
 export default Sprite;

@@ -35,7 +35,7 @@ let newStreet = (x1, y1, width, height) =>
 
 class Travel extends Location{
   constructor(game, distance, fromId, toId, background){
-    super(20*(~~(distance/20)), 16);
+    super(game, 20*(~~(distance/20)), 16);
     this.chunkWidth = 20;
     this.distance = distance;
     this.background = background ?? "sand";
@@ -67,13 +67,13 @@ class Travel extends Location{
         let yStart = this.height - 5 - randIntInRange(this.height - 5);
         if( roll(buildingChance)){
           let xStart = this.chunkWidth/2 - 5 + randIntInRange(2) + chunk*this.chunkWidth;
-          this.placeBuilding(xStart, yStart, new Building(3, 2, "house"));
+          this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
           preset.streets.push(newStreet(xStart+1,yStart+2 ,1,this.height-yStart-5)); 
         }
         // right building
         if( roll(buildingChance)){
           let xStart = this.chunkWidth/2 + randIntInRange(2) + chunk*this.chunkWidth;
-          this.placeBuilding(xStart, yStart, new Building(3, 2, "house"));
+          this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
           preset.streets.push(newStreet(xStart+1,yStart+2 ,1,this.height-yStart-4));
         }
   

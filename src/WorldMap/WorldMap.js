@@ -7,7 +7,8 @@ function distance([x1, y1], [x2, y2]) {
 }
 
 class WorldMap {
-  constructor() {
+  constructor(game) {
+    this.game = game;
     while (true) {
       this._generateLocations(mp.minLocations, mp.maxLocations);
       this._connectLocations();
@@ -29,7 +30,7 @@ class WorldMap {
 
     for (let i = 0; i < numOfLocations; i++) {
       let [x, y] = this._getValidCoordinates(locations)
-      locations.push(new Town(x, y, { sheriff: 1, house: 2, saloon: 11 }));
+      locations.push(new Town(this.game, x, y, { sheriff: 1, house: 2, saloon: 11 }));
     }
     this.locations = locations;
   }

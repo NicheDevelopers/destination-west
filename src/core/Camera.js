@@ -20,28 +20,39 @@
 */
 
 import { ctx,  getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser.js";
-import { camSettings, playerCenterPoint } from "../global/consts.js";
+import { tileSize, camSettings } from "../global/consts.js";
 import { makeEven } from "../global/utilities.js";
+import { MultiAnimation } from "./Animation.js";
 
 import time from "../global/time.js";
 
-/*
- * Render fragments of the world easily
- */
+/**
+ Class that makes rendering fragments of the world easier
+*/
 class Camera {
   constructor(game) {
     this.x = 0;
     this.y = 0;
-    this.zoom = camSettings.zoom;
-    this.zoomMin = camSettings.zoomMin;
-    this.zoomMax = camSettings.zoomMax;
-    this.zoomSpeed = camSettings.zoomSpeed;
+    this.focusedEntity = game.player;
+    this.focus = {
+      x: this.focusedEntity.x,
+      y: this.focusedEntity.y,
+    };
+    //console.log('focus: ', this.focus);
+
     /* Browsers sometimes struggle to position scaled elements perfectly.
        In order to prevent leaving empty space around the canvas we
        scale it up more than should be needed.
-       */
+    */
     this.zoomSafetyMultiplier = camSettings.zoomSafetyMultiplier;
-    this.updateSize();
+    
+    this.zoomMin = camSettings.zoomMin;
+    this.zoomMax = camSettings.zoomMax;
+    this.zoomSpeed = camSettings.zoomSpeed;
+
+    // Run zoom's setter
+    this.zoom = camSettings.zoom;
+    
     window.addEventListener('resize', () => this.updateSize());
     window.addEventListener('fullscreenchange', () => this.updateSize());
     this.game = game;
@@ -53,6 +64,23 @@ class Camera {
     // elements are deleted after drawing
     this.singleDebugDraws = [];
   }
+  
+  setFocusedEntity(entity) {
+    this.animation =
+      new MultiAnimation(this, ['focus.x', 'focus.y', 'zoom'], [],
+			 { endAfter: 1.5 });
+    this.animation.goal = [
+      entity.x + entity.relativeCenterPoint.x,
+      entity.y + entity.relativeCenterPoint.y,
+      5
+    ];
+    this.animation.quantums = [1, 1, 0.01];
+
+    //console.log(this.animation.speed);
+        
+    this.focusedEntity = {state: "transition", goal: entity };
+  }
+  
   addDebugDraw(fun, options={}) {
     if (options.once) {
       this.singleDebugDraws.push(fun);
@@ -60,6 +88,7 @@ class Camera {
     }
     this.debugDraws.push(fun);
   }
+  
   removeDebugDraw(index) {
     this.debugDraws.splice(index, 1);
   }
@@ -75,13 +104,14 @@ class Camera {
     this.centerX = this.width / 2;
     this.centerY = this.height / 2;
   }
+  
   render(options={}) {
+    //console.log(`camera zoom: ${this.zoom})} | focus: (${this.focus.x}, ${this.focus.y}), goals: [${this.animation.getGoalStates().join(' ')}]`);
     this.game.app.manageRequest(
       'Camera zoom in',
       () => {
         if (this.zoom < this.zoomMax) {
           this.zoom += this.zoomSpeed * time.delta;
-          this.updateSize();
         }
       }
     );
@@ -90,20 +120,32 @@ class Camera {
       () => {
         if (this.zoom > this.zoomMin) {
           this.zoom -= this.zoomSpeed * time.delta;
-          this.updateSize();
         }
       }
     );
     ctx.clearRect(0, 0, this.width, this.height);
-    
-    const playerX = this.game.player.x + playerCenterPoint.x;
-    const playerY = this.game.player.y + playerCenterPoint.y - 5;
+    if (this.focusedEntity?.state === "finished") {
+    }
+    else
+    if (this.focusedEntity?.state === "transition") {
+      if (!this.animation.next())
+	this.focusedEntity.state = "finished";
+	//this.focusedEntity = this.focusedEntity.goal;
+    }
+    else {
+      this.focus.x = this.focusedEntity.x +
+	(this.focusedEntity?.relativeCenterPoint?.x ?? tileSize/2);
+      this.focus.y = this.focusedEntity.y +
+	(this.focusedEntity?.relativeCenterPoint?.y ?? tileSize/2);
+      //console.log('after adjust', this.focus);
+    }
 
     const topLeftX = this.x + Math.max(0, Math.min(
-      playerX - this.width / 2,
+      this.focus.x - this.width / 2,
       this.game.currentTown.widthPx - this.width));
+    
     const topLeftY = this.y + Math.max(0, Math.min(
-      playerY - this.height / 2,
+      this.focus.y - this.height / 2,
       this.game.currentTown.heightPx - this.height));
 
     let t = this.game.currentTown;
@@ -128,6 +170,15 @@ class Camera {
       });
       this.singleDebugDraws.length = 0;
     }
+  }
+
+  set zoom(newZoom) {
+    this._zoom = newZoom;
+    this.updateSize();
+  }
+  
+  get zoom() {
+    return this._zoom;
   }
 }
 

@@ -16,12 +16,13 @@ class Npc extends Interactible {
 	    animated: true });
     this.name = name ?? genNpcName(true, true);
     this.dialogue = new Dialogue("src/Dialogue/test_dialogue.dwdialogue",
-      "Player",
-      this.name);
+      "Player", this.name);
+    this.impaired = false;
     addTraits(this, InventoryTrait());
   }
   update() {
-    this.movement.update();
+    if (!this.impaired)
+      this.movement.update();
     this.sprite.next();
   }
   interact(who) {

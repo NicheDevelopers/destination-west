@@ -20,7 +20,7 @@
 */
 
 import { ctx,  getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser.js";
-import { tileSize, camSettings } from "../global/consts.js";
+import { tileSize, camSettings, camStates } from "../global/consts.js";
 import { makeEven } from "../global/utilities.js";
 import { MultiAnimation } from "./Animation.js";
 
@@ -31,13 +31,15 @@ import time from "../global/time.js";
 */
 class Camera {
   constructor(game) {
-    this.x = 0;
-    this.y = 0;
+    this.state = camStates.FOCUSED;
     this.focusedEntity = game.player;
-    this.focus = {
-      x: this.focusedEntity.x,
-      y: this.focusedEntity.y,
-    };
+    
+    /**
+       The coordinates of the currently focused spot
+    */
+    this.x = this.focusedEntity.getCenterPoint().x;
+    this.y =  this.focusedEntity.getCenterPoint().y;
+    
     //console.log('focus: ', this.focus);
 
     /* Browsers sometimes struggle to position scaled elements perfectly.
@@ -65,20 +67,23 @@ class Camera {
     this.singleDebugDraws = [];
   }
   
-  setFocusedEntity(entity) {
+  setFocusedEntity(entity,
+		   newZoom=camSettings.entityFocusZoom,
+		   animationTime=camSettings.focusChangeTime) {
     this.animation =
-      new MultiAnimation(this, ['focus.x', 'focus.y', 'zoom'], [],
-			 { endAfter: 1.5 });
+      new MultiAnimation(this, ['x', 'y', 'zoom'], [],
+			 { endAfter: animationTime });
     this.animation.goal = [
-      entity.x + entity.relativeCenterPoint.x,
-      entity.y + entity.relativeCenterPoint.y,
-      5
+      () => entity.getCenterPoint().x,
+      () => entity.getCenterPoint().y,
+      newZoom
     ];
-    this.animation.quantums = [1, 1, 0.01];
 
-    //console.log(this.animation.speed);
+    this.animation.quantums = [1, 1, 0.01];
         
-    this.focusedEntity = {state: "transition", goal: entity };
+    this.focusedEntity = entity;
+
+    this.state = camStates.ANIMATING;
   }
   
   addDebugDraw(fun, options={}) {
@@ -124,28 +129,23 @@ class Camera {
       }
     );
     ctx.clearRect(0, 0, this.width, this.height);
-    if (this.focusedEntity?.state === "finished") {
+    if (this.state === camStates.FOCUSED) {
+      this.x = this.focusedEntity.getCenterPoint().x;
+      this.y = this.focusedEntity.getCenterPoint().y;
     }
-    else
-    if (this.focusedEntity?.state === "transition") {
-      if (!this.animation.next())
-	this.focusedEntity.state = "finished";
-	//this.focusedEntity = this.focusedEntity.goal;
+    else if (this.state === camStates.ANIMATING) {
+      if (!this.animation.next()) {
+	// Animation finished
+	this.state = camStates.FOCUSED;
+      }
     }
-    else {
-      this.focus.x = this.focusedEntity.x +
-	(this.focusedEntity?.relativeCenterPoint?.x ?? tileSize/2);
-      this.focus.y = this.focusedEntity.y +
-	(this.focusedEntity?.relativeCenterPoint?.y ?? tileSize/2);
-      //console.log('after adjust', this.focus);
-    }
-
-    const topLeftX = this.x + Math.max(0, Math.min(
-      this.focus.x - this.width / 2,
-      this.game.currentTown.widthPx - this.width));
     
-    const topLeftY = this.y + Math.max(0, Math.min(
-      this.focus.y - this.height / 2,
+    const topLeftX = Math.max(0, Math.min(
+      this.x - this.width / 2,
+      this.game.currentTown.widthPx - this.width));
+        
+    const topLeftY = Math.max(0, Math.min(
+      this.y - this.height / 2,
       this.game.currentTown.heightPx - this.height));
 
     let t = this.game.currentTown;

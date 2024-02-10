@@ -94,8 +94,7 @@ class Game extends State {
     OlBenjamin.impaired = true;
     
     //this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));
-    //this.camera.setFocusedEntity(this.currentTown.npcs[1]);
-    
+        
     this.player.equipment.put(new Item(`Cigar`,'cigar', 0, 1, 0, 0, false));
     for (let i=0; i<5; i++){
       this.player.equipment.put(new Item(`Apple`, 'apple', 0, 5, 0, 0, true));
@@ -113,7 +112,7 @@ class Game extends State {
 
     this.testEntity = new Npc(this, 370, 290, "Milas");
     this.currentTown.npcs.push(this.testEntity);
-    
+
     this.slaves = [
       this.pauseMenu,
       this.designer,

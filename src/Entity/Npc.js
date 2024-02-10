@@ -15,8 +15,6 @@ class Npc extends Interactible {
 	    hitbox: game.currentTown.array,
 	    animated: true });
     this.name = name ?? genNpcName(true, true);
-    this.dialogue = new Dialogue("src/Dialogue/test_dialogue.dwdialogue",
-      "Player", this.name);
     this.impaired = false;
     addTraits(this, InventoryTrait());
   }
@@ -26,6 +24,9 @@ class Npc extends Interactible {
     this.sprite.next();
   }
   interact(who) {
+    this.sprite.mirrored = (who.x < this.x);
+    this.dialogue = new Dialogue("src/Dialogue/test_dialogue.dwdialogue",
+      who, this);
     if (this.dialogue.exhausted()) this.dialogue.reset();
     this.game.dialogueDisplay.setDialogue(this.dialogue);
     stateManager.toggleState(this.game.dialogueDisplay);

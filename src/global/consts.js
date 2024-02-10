@@ -85,13 +85,31 @@ export const townSizes = {
   large: 20
 };
 
+export const camStates = {
+  /**
+     FOCUSED state
+     The camera is locked onto a target
+  */
+  FOCUSED: 0,
+  /**
+     ANIMATING state
+     The camera is currently animating its position
+     to reach the focused entity
+  */
+  ANIMATING: 1
+};
+
 export const camSettings = {
   zoom: 1.5,
   zoomMin: 0.85,
   zoomMax: 50,
   zoomSafetyMultiplier: 1.05,
-  zoomSpeed: 0.002
+  zoomSpeed: 0.002,
+  entityFocusZoom: 3.5,
+  focusChangeTime: 1.0
 };
+
+export const focusBackToPlayerTime = 0.5;
 
 export const keyboardVisualizerPosition = {
   width: 100,
@@ -165,4 +183,8 @@ export const defaultNotificationTimeout = 2;
 export const focusParameters = {
   minDist: 50.0,
   facingPenalty: 15
+};
+
+export const dialogueParameters = {
+  lettersPerSecond: 60
 };

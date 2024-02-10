@@ -73,6 +73,7 @@ class Player extends Entity {
   }
   
   interact() {
+    this.game.updateFocus();
     let focused = this.game.getFocusedItem();
     focused?.interact(this);
     this.game.updateFocus();

@@ -32,7 +32,7 @@ class AnimationProperty {
        The object to animate the property on.
     */
     this.host = host;
-    
+
     /**
        The name of the property.
        Key to the property in the host object.
@@ -78,9 +78,10 @@ class AnimationProperty {
     
     /**
        Determines the final value of the animated property,
-       achieving which stops the animation. Null means any
-       value is accepted, undefined means there is no goal
-       (the animation will never stop).
+       achieving which stops the animation. Can be set to a
+       direct value or to a function returning such value.
+       Null means any value is accepted, undefined means
+       that there is no goal (the animation will never stop).
     */
     this.goal = undefined;
     
@@ -98,7 +99,13 @@ class AnimationProperty {
     if (propertyPath.length > 1) {
       this.name = propertyPath.last;
       this.host = propertyPath.slice(0, propertyPath.length-1)
-	.reduce((acc, val) => acc[val], this.host);
+	.reduce((acc, val) => {
+	  if (acc[val] === undefined) {
+	    throw `Field '${val}' of object ` +
+	      `'${acc.constructor.name}' is undefined`;
+	  }
+	  return acc[val];
+	}, this.host);
     }
 
     if (this.value === undefined)
@@ -118,6 +125,16 @@ class AnimationProperty {
   get value() {
     return this.host[this.name];
   }
+
+  set goal(newGoal) {
+    this._goal = newGoal;
+  }
+
+  get goal() {
+    if (typeof this._goal === "function")
+      return this._goal();
+    return this._goal;
+  }
   
   /**
      Check whether the property value goal has been reached
@@ -132,11 +149,11 @@ class AnimationProperty {
   }
 
   /**
-     Get the absolute value of the difference between the current
-     property value and its goal value.
+     Get the difference between the goal value
+     and the current property value
    */
   leftToGoal() {
-    return Math.abs(this.value-this.goal);
+    return this.goal-this.value;
   }
 
   /**
@@ -163,6 +180,7 @@ export default class Animation {
   constructor(host, propertyName, speed) {
     this.host = host;    
     this.property = new AnimationProperty(host, propertyName, speed);
+    this._changeCallback = null;
   }
 
   clearChangeStack() {
@@ -192,6 +210,15 @@ export default class Animation {
   }
   get goal() {
     return this.property.goal;
+  }
+
+  /**
+     Sets a callback function that will be run
+     when the animation applies changes to the animated
+     property.
+  */
+  setChangeCallback(cb) {
+    this._changeCallback = cb;
   }
 
   /**
@@ -238,6 +265,9 @@ export default class Animation {
     }
 
     this.property.value += changeNow;
+
+    if (this._changeCallback && changeNow !== 0)
+      this._changeCallback();
     
     if (this.property.goalReached()){
       // Make value equal the goal value exactly
@@ -245,6 +275,10 @@ export default class Animation {
       return false;
     }
     return true;
+  }
+
+  finish() {
+    this.property.value = this.property.goal;
   }
 }
 
@@ -267,7 +301,7 @@ export class MultiAnimation {
     
     for (let i=0; i<propertyNames.length; ++i) {
       this.animations.push(
-	new Animation(host, propertyNames[i], speeds[i] ?? ac.speed));
+	new Animation(this.host, propertyNames[i], speeds[i] ?? ac.speed));
       if (this.animations.last.isFunction)
 	throw `Function properties not yet allowed in MultiAnimations`;
     }
@@ -275,6 +309,10 @@ export class MultiAnimation {
     this.options = {
       endAfter: options.endAfter ?? null
     };
+
+    if (this.options.endAfter) {
+      this.options._endTime = time.now + this.options.endAfter*1000;
+    }
   }
 
   /**
@@ -282,8 +320,15 @@ export class MultiAnimation {
      @returns {Boolean} true if for any properties the animation's goal isn't set or has not been reached, false otherwise
    */
   next() {
+    if (this.options.endAfter) {
+      this.adjustSpeeds((this.options._endTime-time.now)/1000);
+    }
     return this.animations.map((anim) => anim.next())
       .some((result) => result);
+  }
+
+  finish() {
+    this.animations.forEach((anim) => anim.finish());
   }
   
   /**
@@ -294,13 +339,18 @@ export class MultiAnimation {
     if (Number.isNaN(time)) {
       throw `Provided time value is not a valid number: ${timeToFinish}`;
     }
+    if (timeToFinish <= 0) {
+      this.finish();
+      return;
+    }
+    console.log(timeToFinish);
     for (const animation of this.animations) {
       // v = s/t
       if (animation.goal !== null)
 	animation.speed = animation.property.leftToGoal() / timeToFinish;
     }
-    console.log('to do: ', this.getGoalStates());
-    console.log('speeds adjusted to: ', this.animations.map((a) => a.speed));
+    //console.log('to do: ', this.getGoalStates());
+    //console.log('speeds adjusted to: ', this.animations.map((a) => a.speed));
   }
   
   /**

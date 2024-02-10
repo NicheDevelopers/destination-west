@@ -6,7 +6,7 @@ function parseDialogue(text, playerName, npcName) {
     .map(s => s.split('|'))
     .map(([who, what]) => ({
       who: whoMap(who),
-      what: what.replaceAll("NPC_NAME", npcName)
+      what: what.substring(1).replaceAll("NPC_NAME", npcName)
         .replaceAll("PLAYER_NAME", playerName),
       n: 0
     }));
@@ -19,11 +19,12 @@ function parseDialogue(text, playerName, npcName) {
   from 0 to n is displayed
   */
 class Dialogue {
-  constructor(filename, playerName, npcName) {
+  constructor(filename, player, npc) {
+    this.player = player;
+    this.npc = npc;
     // PlayerName is given here so that whenReady can have a simpler arglist.
     // the name doesn't change anyway.
-    this.playerName = playerName;
-    this.npcName = npcName;
+    this.playerName = "Player";
     this.loaded = false;
     this._n = 0;
     this.text = null;
@@ -36,9 +37,9 @@ class Dialogue {
         if (!r.ok)
           throw new Error("Dialogue Fetch Error: " + r.status);
         r.text().then(t => {
-          this.loaded = true;
+	  this.loaded = true;
           this.text = t;
-          this.lines = parseDialogue(this.text, this.playerName, this.npcName);
+	  this.lines = parseDialogue(this.text, this.playerName, this.npc.name);
         });
       });
   }
@@ -55,9 +56,11 @@ class Dialogue {
     return this.lines[this._n++];
   }
   formatLine(line) {
+    if (!this.loaded) return "";
     return `${line.who}: ${line.what.substring(0, line.n)}`;
   }
   exhausted() {
+    if (!this.loaded) return false;
     return this._n > this.lines.length - 1;
   }
   reset() {

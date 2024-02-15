@@ -71,6 +71,24 @@ class TransferDisplay extends State {
         child.removeChild(child.lastChild);
       }
       // add divs
+      let cashDiv = createElement('div', null, null, ["list-info"], {}, null, `Cash: ${givenEquipment.cash}`);
+      if (!this.transfer.trading){
+        let buttonGetCash = createElement('div', null, null, ["button", "eq-button"], {}, null, null);
+        buttonGetCash.innerText = "Get";
+        buttonGetCash.addEventListener("click", () => {
+          if (eqFlag){
+            transferEquipment.cash += givenEquipment.cash;
+            givenEquipment.cash = 0;
+          }
+          else {
+            givenEquipment.cash += transferEquipment.cash;
+            transferEquipment.cash = 0;
+          }
+          this.refresh();
+        });
+        cashDiv.appendChild(buttonGetCash);
+      }
+      child.appendChild(cashDiv);
       let sortDiv = createElement('div', null, null, ["list-info"], {}, null, "Sort by weight from");
 
       for (let j = 0; j<2; j++){
@@ -110,8 +128,14 @@ class TransferDisplay extends State {
       this.transfer.transferItem(record, givenEquipment, transferEquipment); 
       this.refresh(); 
     });
-    if (eqFlag) transferButton.innerText = "Right";
-    else transferButton.innerText = "Left";
+    if (this.transfer.trading){
+      if (eqFlag) transferButton.innerText = "Sell";
+      else transferButton.innerText = "Buy";
+    }
+    else {
+      if (eqFlag) transferButton.innerText = "Right";
+      else transferButton.innerText = "Left";
+    }
     div.appendChild(record.item.sprite.img);
     div.appendChild(nameDiv);
     div.appendChild(weightDiv);
@@ -119,8 +143,8 @@ class TransferDisplay extends State {
     div.appendChild(transferButton);
     return div;
   }
-  setTransferWith(playerEq, transferEq) {
-    this.transfer = new Transfer(playerEq, transferEq);
+  setTransferWith(playerEq, transferEq, trading) {
+    this.transfer = new Transfer(playerEq, transferEq, trading);
   }
   update() {
     this.game.app.manageRequest(

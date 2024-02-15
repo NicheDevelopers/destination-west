@@ -44,6 +44,7 @@ import { tileSize } from "../global/consts.js";
 import {Notification, notifier} from "../global/notifier.js";
 import ChuckALuck from "../minigames/ChuckALuck.js"
 import Pathfinder from "../Pathfinder.js";
+import Trader from "../Entity/Trader.js";
 
 class Game extends State {
   constructor(app) {
@@ -82,7 +83,7 @@ class Game extends State {
     
     let testContainer = new Container(this, "barrel", 250, 250);
     for (let i=0; i<3; i++){
-      testContainer.equipment.put(new Item(`Whisky`,'whisky', 0, 3, 0, 0, true));
+      testContainer.equipment.put(new Item(`Whisky`,'whisky', 0, 3, 3, 0, true));
     }
     //console.log(testContainer);
     
@@ -92,18 +93,22 @@ class Game extends State {
     let OlBenjamin = new Npc(this, 382, 350, "Ol' Benjamin");
     this.currentTown.npcs.push(OlBenjamin);
     OlBenjamin.impaired = true;
+
+    let testTrader = new Trader(this, 300, 250, "testTrader");
+    testTrader.equipment.put(new Item(`Apple`, 'apple', 0, 5, 1, 0, true));
+    this.currentTown.npcs.push(testTrader);
     
     //this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));
         
-    this.player.equipment.put(new Item(`Cigar`,'cigar', 0, 1, 0, 0, false));
+    this.player.equipment.put(new Item(`Cigar`,'cigar', 0, 1, 1, 0, false));
     for (let i=0; i<5; i++){
-      this.player.equipment.put(new Item(`Apple`, 'apple', 0, 5, 0, 0, true));
-      this.player.equipment.put(new Item(`Whisky`,'whisky', 0, 3, 0, 0, true));
+      this.player.equipment.put(new Item(`Apple`, 'apple', 0, 5, 1, 0, true));
+      this.player.equipment.put(new Item(`Whisky`,'whisky', 0, 3, 3, 0, true));
       this.player.equipment.put(new Item(`Revolver`,
 					 'revolver-'+(i%2+1),
-					 0, 7, 0, 0, false));
+					 0, 7, 200, 0, false));
     }
-    this.player.equipment.put(new Item(`Broken Bottle`,'broken-bottle', 0, 1, 0, 0, false));
+    this.player.equipment.put(new Item(`Broken Bottle`,'broken-bottle', 0, 1, 0.5, 0, false));
     this.equipmentDisplay = new EquipmentDisplay(this, this.player.equipment);
 
     this.dialogueDisplay = new DialogueDisplay(this)

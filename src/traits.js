@@ -1,6 +1,6 @@
 import Equipment from "./Equipment/Equipment.js";
-import { defaultEquipmentSize, defaultRcp, defaultBd} from "./global/consts.js";
-import { generateID, tileAt, pointToTileCoord, ObjectSet, Direction } from "./global/utilities.js";
+import { defaultEquipmentSize, defaultRcp, defaultBd, cashMinMaxParameters as cashParam} from "./global/consts.js";
+import { generateID, tileAt, pointToTileCoord, ObjectSet, Direction, randIntInRange } from "./global/utilities.js";
 import Hitbox from "./game/HitboxClass.js";
 import Movement from "./game/Movement.js";
 
@@ -28,15 +28,16 @@ export function addTraits(obj, ...traits) {
   }
 }
 
-export function InventoryTrait(equipmentSize=defaultEquipmentSize) {
+export function InventoryTrait(startCash, equipmentSize=defaultEquipmentSize) {
+  startCash = startCash ?? randIntInRange(cashParam.minCash, cashParam.maxCash);
   return {
     _name_: "InventoryTrait",
-    equipment: new Equipment(equipmentSize),
+    equipment: new Equipment(equipmentSize, startCash),
     dropItem: function (record) {
       let droppedItem = this.equipment.dropFrom(record);
       droppedItem.setPositionTo(
-        (this.centerPoint) ? { x: this.centerPoint.x, y: this.centerPoint.y }
-          : { x: this.x, y: this.y });
+      (this.centerPoint) ? { x: this.centerPoint.x, y: this.centerPoint.y }
+        : { x: this.x, y: this.y });
       if (!this.game) console.error('InventoryTrait in a class without a Game field.');
       this.game.currentTown.droppedItems.push(droppedItem);
       this.game.currentTown.updateFocus(this.game.player);

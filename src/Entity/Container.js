@@ -12,7 +12,7 @@ class Container extends Interactible {
   }
   interact(who) {
     console.log("Interacted with a container!");
-    this.game.transferDisplay.setTransferWith(who.equipment, this.equipment);
+    this.game.transferDisplay.setTransferWith(who.equipment, this.equipment, false);
     stateManager.toggleState(this.game.transferDisplay);
   }
 }

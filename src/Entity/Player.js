@@ -45,7 +45,7 @@ class Player extends Entity {
     
     addTraits(
       this,
-      InventoryTrait());
+      InventoryTrait(pp.defaultStartCash));
     this.game = game;
     
     // register all actions that the player can do and bind

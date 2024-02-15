@@ -1,7 +1,6 @@
 export const tileSize = 64;
 export const defaultEquipmentSize = 100;
 export const animationSpeed = 9;
-export const defaultNpcSpeed = 130;
 export const spriteScale = 1;
 export const defaultTownWidth = 42;
 export const defaultTownHeight = 20;
@@ -53,8 +52,19 @@ export const playerParameters = {
     right: 14,
     down: 2
   },
-  playerRcp: { x: 48, y: 70 }
+  playerRcp: { x: 48, y: 70 },
+  defaultStartCash: 100
 };
+
+export const npcParameters = {
+  defaultNpcSpeed : 130,
+  defaultNpcStartCash: 150
+};
+
+export const cashMinMaxParameters = {
+  minCash : 0,
+  maxCash : 100
+}
 
 export const mapParameters = {
   minLocations: 20,

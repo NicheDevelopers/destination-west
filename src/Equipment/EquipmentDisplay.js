@@ -48,6 +48,8 @@ class EquipmentDisplay extends State {
     }
     // let mainDiv = createElement('div', null, null, ["list-element"], {}, null, "Item name" + "Weight" + "Drop");
     // this.divEqList.appendChild(mainDiv);
+    let cashDiv = createElement('div', null, null, ["list-info"], {}, null, `Cash: ${this.equipment.cash}`);
+    this.divEqList.appendChild(cashDiv);
     let sortDiv = createElement('div', null, null, ["list-info"], {}, null, "Sort by weight from");
     let buttonSortUp = createElement('button', null, null, ["button", "eq-button"], {}, null, "Heavy");
     buttonSortUp.addEventListener("click", () => { this.equipment.sortByWeight(true); this.refresh() });

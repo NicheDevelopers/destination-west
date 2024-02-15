@@ -28,7 +28,7 @@ import { roll } from "../global/utilities.js";
 
 // the leght of chunk must be at least 10 tiles
 
-let buildingChance = 0.1; 
+let buildingChance = 0.1; // => to consts.js
 
 let newStreet = (x1, y1, width, height) =>
   ({ start: { x: x1, y: y1 }, width: width, height: height });
@@ -65,15 +65,17 @@ class Travel extends Location{
         // no event
         // left building
         let yStart = this.height - 5 - randIntInRange(this.height - 5);
-        if( roll(buildingChance)){
+        if(roll(buildingChance)){
           let xStart = this.chunkWidth/2 - 5 + randIntInRange(2) + chunk*this.chunkWidth;
-          this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
+          //this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
+          this.placeBuilding(xStart, yStart, 3, 2, "house", {});
           preset.streets.push(newStreet(xStart+1,yStart+2 ,1,this.height-yStart-5)); 
         }
         // right building
-        if( roll(buildingChance)){
+        if(roll(buildingChance)){
           let xStart = this.chunkWidth/2 + randIntInRange(2) + chunk*this.chunkWidth;
-          this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
+          //this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
+          this.placeBuilding(xStart, yStart, 3, 2, "house", {});
           preset.streets.push(newStreet(xStart+1,yStart+2 ,1,this.height-yStart-4));
         }
   

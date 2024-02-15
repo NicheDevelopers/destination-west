@@ -1,0 +1,109 @@
+.kvDiv {
+    width: 300px;
+    height: 150px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: block;
+}
+
+.nodisp {
+    visibility: hidden;
+}
+
+.kvForm {
+    margin: 5px;
+    width: 100px;
+    height: 20px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.kvButton {
+    position: absolute;
+    border: 1px solid blue;
+    border-radius: 10%;
+    background: lightblue;
+    width: 50px;
+    height: 40px;
+    left: 105px;
+    top: 100px;
+}
+
+#kvButtonLeft {
+    left: 50px;
+}
+#kvButtonRight {
+    left: 160px;
+}
+#kvButtonUp {
+    top: 55px;
+}
+#kvButtonDown {
+}
+
+.kvButton.active {
+    background: blue;
+}
+
+.counter {
+    width: 105px;
+    height: 45px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 30px;
+    text-align: right;
+    padding-right: 10px;
+    font-family: monospace;
+    background: white;
+    border-radius: 5px 0px 0px 5px;
+    white-space: pre;
+}
+
+.counter:hover {
+    background: lightgray;
+}
+
+#fps-sim-counter {
+    width: 100px;
+    height: 20px;
+    top: 55px;
+    font-size: 14px;
+}
+
+#fps-settings {
+    position: absolute;
+    left: 15vw;
+    top: 30vh;
+    width: 70vw;
+    height: 40vh;
+    background: #312101;
+    border: 1px solid black;
+    padding: 1vh 2vw;
+    color: white;
+    font-size: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#time-scale-input {
+    width: 3em;
+}
+#dev-settings-button {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: 0;
+    right: 0;
+}
+
+#dev-settings-button::after {
+    content: "\00d7";
+}
+
+#dev-settings-button:hover {
+    color: lightgray;
+}

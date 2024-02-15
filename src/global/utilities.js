@@ -79,6 +79,52 @@ export function resetIdFor(objectName) {
 }
 
 /**
+   Create a specified HTML element with specified
+   attributes and return it.
+   
+   Unrecognized element attributes are treated
+   as style attributes.
+   The function throws if a provided attribute is not
+   a valid element attribute, not a valid style attribute
+   and not a valid special attribute from the list below.
+
+   Optional special attributes:
+   (name: type [defaultValue] - description)
+   
+   what: String ["div"]
+     - tag name of the element to create
+   
+   appendTo: Node
+     - a node to which the new element should be appended
+     to. if none provided, the element is not appended
+     to anything
+ */
+export function htmlCreate(args={}) {
+  let what = args.what;
+  delete args.what;
+  
+  if (what === undefined)
+    what = "div";
+  let d = document.createElement(what);
+  
+  if (args.appendTo) {
+    args.appendTo.appendChild(d);
+    delete args.appendTo;
+  }
+  for (const property in args) {
+    if (d[property] === undefined) {
+      if (d.style[property] === undefined) {
+	throw `Unrecognized '${what}' property: ${property}`;
+      }
+      d.style[property] = args[property];
+      continue;
+    }
+    d[property] = args[property];
+  }
+  return d;
+}
+
+/**
  * Create HTML elements
  * @param {string} element name of element
  * @param {number} [w = null] - width 
@@ -291,6 +337,42 @@ export class ObjectSet {
   }
 }
 
+/**
+   Returns a string with digits added to a number
+   to make the whole number part and the decimal part
+   at long as specified. The whole number part may be
+   longer than that if it originally was. The decimal
+   part is truncated when needed.
+
+   numLength or decLength can be -1 to leave the whole
+   number part or the decimal part unchanged.
+   
+   For example numberPad(4.2, 2, 3) shall return 04.200
+   numberPad(430.239, 2, 2) shall return 430.23
+ */
+export function numberPad(value, numLength=-1, decLength=2) {
+  let str = String(value);
+  let point = str.indexOf(".");
+  if (point === -1) {
+    if (decLength > 0) {
+      str += "." + "0".repeat(decLength);
+      point = str.indexOf(".");
+    }
+  }
+  if (point < numLength) {
+    str = "0".repeat(numLength-point) + str;
+  }
+  if (decLength < 0) return;
+  let decimals = str.length-point-1;
+  if (decimals < decLength) {
+    str += "0".repeat(decLength-decimals);
+  }
+  else if (decimals > decLength) {
+    str = str.substring(0, str.length-(decimals-decLength));
+  }
+  return str;
+}
+
 Object.defineProperty(Array.prototype, "none", {
   value: function (fn) {return !this.some(fn)},
 });
@@ -421,7 +503,6 @@ Object.defineProperty(Array.prototype, "minBy", {
   },
 });
 
-
 Object.defineProperty(Array.prototype, "equals", {
   value: function (otherArray) {
     if (this.length !== otherArray.length)
@@ -432,6 +513,12 @@ Object.defineProperty(Array.prototype, "equals", {
 	return false;
     }
     return true;
+  }
+});
+
+Object.defineProperty(String.prototype, "capitalized", {
+  value: function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
   }
 });
 

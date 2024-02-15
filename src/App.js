@@ -21,10 +21,10 @@
 */
 
 import time from "./global/time.js";
-import { Browser } from "./core/Browser.js";
+import { Browser, ctx } from "./core/Browser.js";
 import KeyMan from "./core/KeyboardManager.js";
 import AudioPlayer from "./audio/AudioPlayer.js";
-import KeyboardVisualizer from "./misc/KeyboardVisualizer.js";
+import DebugView from "./debug/DebugView.js";
 import Animation from "./core/Animation.js";
 import Game from "./game/Game.js";
 import { stateManager } from "./global/stateManager.js"
@@ -43,17 +43,14 @@ class App {
     this.browser = new Browser(this);
     this.audioPlayer = new AudioPlayer();
 
-    this.fps = 0;
-    this.testFPSCounter = new Animation(this, '()updateFPSCounter', 5);
-
     /* Keyman has to load keybinds AFTER functions are written to
        userFunctionsMap. This means it has to be instantinated AFTER
        every function provider */
 
     this.keyman = new KeyMan(this, keybinds);
 
-    this.keyVisualizer = new KeyboardVisualizer(this);
-
+    this.debugView = new DebugView(this);
+    
     let self = this;
     document.addEventListener("keydown", (event) => {
       self.keyman.manageKeydown(event);
@@ -71,16 +68,25 @@ class App {
     this.keyman.manageRequest(...args);
   }
 
+  update() {
+    this.manageRequest(
+      'Toggle Debug Mode',
+      () => {
+	this.debugging = !this.debugging;
+	this.debugView.setVisibility(this.debugging);
+      }, { once: true });
+  }
+
   loop() {
     this.animationFrameID =
       window.requestAnimationFrame(() => this.loop());
     try {
       time.update();
 
-      this.keyVisualizer.update();
+      this.update();
+      this.debugView.update();
       this.browser.update();
-      this.testFPSCounter.next();
-
+      
       stateManager.updateStates();
       notifier.update();
     }
@@ -88,15 +94,8 @@ class App {
       window.cancelAnimationFrame(this.animationFrameID);
       throw e;
     }
-    
-    // ctx.font = "16px serif";
-    // ctx.fillText(`FPS: ${this.game.app.fps}`, 606, 16);
   }
 
-  updateFPSCounter() {
-    this.fps = time.getFPS();
-    this.fps = ((this.fps > 99) ? "" : " ") + this.fps;
-  }
 }
 
 export default App;

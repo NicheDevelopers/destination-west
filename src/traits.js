@@ -161,9 +161,8 @@ export function HitboxTrait(self, locationArray, rcp=defaultRcp,
        @param {Number} speedY - The speed on the Y-axis
     */
     moveTillCollision(speedX, speedY) {
-      if (speedX === 0) this.movement.moveX.clearChangeStack();
-      else if (speedY === 0) this.movement.moveY.clearChangeStack();
-      else throw `moveTillCollision only supports one axis movement. ` +
+      if (speedX * speedY !== 0)
+	throw `moveTillCollision only supports one axis movement. ` +
 	`One speed has to be 0. Speeds provided: X=${speedX}, Y=${speedY}.`;
       
       let dx = this.movement.getChangeX(speedX);
@@ -175,17 +174,20 @@ export function HitboxTrait(self, locationArray, rcp=defaultRcp,
       
       let direction = new Direction().fromChangeInXAndY(dx, dy);
 
-      let d = this.hitbox.distanceTillTileCollision(
+      let snappedPixelCount = this.hitbox.distanceTillTileCollision(
 	direction, maxChange, this.game.currentTown.array);
 
-      if (d !== 0) {
-	//console.log (`Snapped ${d} pixels`);
+      if (snappedPixelCount === 0) return;
+      
+      // Snapped a non-zero distance
+      if (Math.sign(dx)) {
+	this.x += Math.sign(dx) * snappedPixelCount;
 	this.movement.moveX.clearChangeStack();
+      }
+      else {
+	this.y += Math.sign(dy) * snappedPixelCount;
 	this.movement.moveY.clearChangeStack();
       }
-      
-      this.x += Math.sign(dx) * d;
-      this.y += Math.sign(dy) * d;
     },
     /**
      * Check whether this hitbox intersects with a tile on provided coordinates

@@ -191,6 +191,7 @@ export default class Animation {
     let newSign = Math.sign(newSpeed);
     if (newSign !== 0 && newSign !== this.property.sign) {
       this.property.sign = newSign;
+      
       // changeStack needs to be cleared on direction change
       this.clearChangeStack();
     }
@@ -225,13 +226,18 @@ export default class Animation {
      Calculates how much change would be applied to the animated property
      in this tick, has no side effects
    */
-  getChangeInThisTick(testSpeed) {
-    let speed = testSpeed ?? this.property.speed;
-
+  getChangeInThisTick(speed=this.property.speed, logStackChange=false) {
+    const p = this.property;
     let change = (speed * time.delta) / 1000;
+    let changesInThisTick = Math.floor(
+      (p.changeStack + change) / p.quantum);
+    
+    change -= changesInThisTick * p.quantum;
 
-    return Math.floor(
-      (this.property.changeStack + change) / this.property.quantum);
+    if (logStackChange)
+      console.log(p.changeStack, change);
+    
+    return changesInThisTick * p.quantum;
   }
 
   /**
@@ -241,7 +247,7 @@ export default class Animation {
   tick() {
     const p = this.property;
     p.changeStack += (p.speed * time.delta) / 1000;
-    let changesInThisTick = ~~(p.changeStack / p.quantum);
+    let changesInThisTick = Math.floor(p.changeStack / p.quantum);
     p.changeStack -= changesInThisTick * p.quantum;
     return changesInThisTick * p.quantum;
   }
@@ -343,7 +349,7 @@ export class MultiAnimation {
       this.finish();
       return;
     }
-    console.log(timeToFinish);
+
     for (const animation of this.animations) {
       // v = s/t
       if (animation.goal !== null)

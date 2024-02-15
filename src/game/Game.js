@@ -160,9 +160,6 @@ class Game extends State {
   }
   
   update() {
-    this.app.manageRequest('Toggle Debug Mode',
-			   () => this.app.debugging =
-      !this.app.debugging, { once: true });
     this.player.update();
     this.currentTown.update(this.player);
     this.camera.render({debug: this.app.debugging});

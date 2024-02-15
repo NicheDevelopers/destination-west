@@ -30,7 +30,6 @@ const defaultKeybinds = [
   ['n', 'Toggle Debug Mode'],
   ['m', 'Toggle Map Display'],
   ['h', 'Toggle Designer Display'],
-  ['l', 'Toggle Keyboard Visualization'],
   ['escape', 'Toggle Pause Menu'],
   ['e', 'Interact'],
   ['g', 'Toggle Equipment Display'],

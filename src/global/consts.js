@@ -121,31 +121,6 @@ export const camSettings = {
 
 export const focusBackToPlayerTime = 0.5;
 
-export const keyboardVisualizerPosition = {
-  width: 100,
-  height: 20,
-  offsetX: 0,
-  offsetY: 0,
-  buttonWidth: 50,
-  buttonHeight: 40,
-  buttonLeft : {
-    offsetX: 50,
-    offsetY: 100,
-  },
-  buttonRight : {
-    offsetX: 160,
-    offsetY: 100,
-  },
-  buttonUp : {
-    offsetX: 105,
-    offsetY: 55,
-  },
-  buttonDown : {
-    offsetX: 105,
-    offsetY: 100,
-  }
-};
-
 export const percentageOfGenericDecoration = {
   rural_percentage : 0.2,
   town_percentage : 0.05

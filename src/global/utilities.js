@@ -78,6 +78,17 @@ export function resetIdFor(objectName) {
   ids.delete(objectName);
 }
 
+/**
+ * Create HTML elements
+ * @param {string} element name of element
+ * @param {number} [w = null] - width 
+ * @param {number} [h = null] - height 
+ * @param {string[]} [classes = []] - array of css classes
+ * @param {*} styles
+ * @param {*} id 
+ * @param {string} [text = null] - inner text of element 
+ * @returns {Element} created element
+ */
 export function createElement(element, w = null, h = null, classes = [], styles = {}, id, text = null){
   // needed test if element is equal to some given possibile outcomes
   let r = document.createElement(element);
@@ -309,7 +320,11 @@ import { directions } from "./consts.js";
 import Direction from "../game/Direction.js";
 export {Direction, directions};
 
-// percent chance (0 - 1)
+/**
+ * Rolling possibility with given chance
+ * @param {number} chance value between 0 and 1, chance of getting success
+ * @returns {boolean} true if roll was successfull, otherwise false
+ */
 export function roll(chance){
   if (chance < 0 || chance > 1){
     throw `attempt to roll when chance of success (${chance}) was not between 0 and 1`;
@@ -358,7 +373,6 @@ Object.defineProperty(Array.prototype, "randomElement", {
    >= 0 - currentMin remains
    <  0 - element becomes the new currentMin
 */
-
 Object.defineProperty(Array.prototype, "max", {
   value: function ( fn = ((a,b)=>a-b)) {
     let max = undefined;

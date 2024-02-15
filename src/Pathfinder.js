@@ -3,6 +3,13 @@ import { defaultTownHeight as dTH, defaultTownWidth as dTW, tileSize as tS } fro
 import { Direction, ObjectSet, directions, randIntInRange, roundToTile } from "./global/utilities.js";
 
 class PathTile extends Tile {
+    /**
+     * Create Tile with extra parameters hold for A* algorithm
+     * @param {string} typeName 
+     * @param {number} x x coordinate of tile 
+     * @param {number} y y coordinate of tile
+     * @param {*} options 
+     */
     constructor (typeName, x, y, options = {}){
         super(typeName, x, y, options);
         this.movePossible = null;
@@ -13,11 +20,22 @@ class PathTile extends Tile {
         this.parent = null;
         this.optimalDirection = new Direction(directions.none);
     }
-  getCoords() {
-    return { x: roundToTile(this.x), y: roundToTile(this.y) };
+    
+    /**
+     * Get coordinates of tile (top-left corner of tile)
+     * @returns {Object} object with coordinates of top-left corner of tile
+     */
+    getCoords() {
+        return { x: roundToTile(this.x), y: roundToTile(this.y) };
   }
 };
 class Pathfinder {
+    /**
+     * Pathfinder for moving Entities
+     * @param {State} game 
+     * @param {Entity} entity 
+     * @param {Boolean} [diagonalMovement = false] - true if Entity is able to move diagonally, otherwise false
+     */
     constructor(game, entity, diagonalMovement = false){
         this.game = game;
         this.entity = entity;
@@ -31,6 +49,10 @@ class Pathfinder {
         this.path = null;
     }
 
+    /**
+     * Get next information for movement.
+     * @returns {Object} object with next PathTile on path and Direction from current position to it
+     */
     getNextMove(){
       if (this.path?.length){
         return this.path.shift();
@@ -38,6 +60,9 @@ class Pathfinder {
       return null;
     }
 
+    /**
+     * Generate new path for Entity.
+     */
   genNewPath() {
     this.path = null;
     this.changeStartTile();
@@ -47,11 +72,13 @@ class Pathfinder {
     // if it is not possible to reach new endTile - search for new reachable one
     if (!this.end.movePossible){
         this.changeEndTile();
-    }
-      
+    } 
     this.path = this.search();
   }
 
+  /**
+   * Set start tile to tile where entity is standing
+   */
     changeStartTile(){
       let {x, y} = this.entity.getCenterPoint();
       this.start = new PathTile("sand", x, y);
@@ -59,6 +86,11 @@ class Pathfinder {
       y = roundToTile(y);
     }
 
+    /**
+     * Set end tile for Entity movement
+     * @param {number} [x=randIntInRange(0, dTW)*tS] - x coordinate 
+     * @param {number} [y=randIntInRange(0, dTH)*tS] - y coordinate 
+     */
     changeEndTile(x = randIntInRange(0, dTW) * tS , y = randIntInRange(0, dTH) * tS){
         x = roundToTile(x);
         y = roundToTile(y);
@@ -70,6 +102,11 @@ class Pathfinder {
         this.end = new PathTile(tile.typeName, tile.x, tile.y, tile.options);
     }
 
+    /**
+     * Check in location which tiles have Entities with hitboxes.
+     * Such tiles are unable to be walked through.
+     * Tiles with no hitbox-Entity on it can be passed and will be considered in path creation procces.
+     */
     updatePathArray(){
         for (let i = 0; i<this.townArray.length; i++){
             this.pathArray[i] = new Array();
@@ -93,6 +130,13 @@ class Pathfinder {
         }
     }
 
+    /**
+     * Generate informations of neighbors for given pathTile.
+     * @param {Array[][]} pathArray hold information about tiles in location
+     * @param {PathTile} pathTile pathTile for which we are checking neighbors
+     * @param {Boolean} diagonalMovement true if Entity is able to move diagonally, otherwise false
+     * @returns {Array[]} array of object holding information about next possible movement
+     */
     neighbors(pathArray, pathTile, diagonalMovement){
         let neighbors = new Array();
         let x = roundToTile(pathTile.x)
@@ -150,12 +194,24 @@ class Pathfinder {
         return neighbors;
     }
 
+    /**
+     * Heuristic function for A* algorithm
+     * @param {number} x1 x coordinate of start point
+     * @param {number} y1 y coordinate of start point
+     * @param {number} x2 x coordinate of end point
+     * @param {number} y2 y coordinate of end point
+     * @returns {number} smallest distance between two points (non-diagonal movement)
+     */
     heuristic(x1, y1, x2, y2){
         let d1 = Math.abs(x1-x2);
         let d2 = Math.abs(y1-y2);
         return d1+d2;
     }
 
+    /**
+     * A* algorithm trying to find path from startTile to endTile
+     * @returns {Array[]} array of objects, path which was found
+     */
     search(){
         let openList = new ObjectSet;
       let closedList = new ObjectSet;

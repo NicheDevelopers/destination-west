@@ -2,21 +2,21 @@
 // import Entity from "./Entity.js";
 // import {animationSpeed} from "../global/consts.js";
 import Interactible from "./Interactible.js";
-import { defaultNpcSpeed } from "../global/consts.js";
 import { addTraits, InventoryTrait } from "../traits.js";
 import { genNpcName } from "../generators/nameGenerators.js";
 import Dialogue from "../Dialogue/Dialogue.js";
 import { stateManager } from "../global/stateManager.js";
+import { npcParameters } from "../global/consts.js";
 
 class Npc extends Interactible {
   constructor(game, x, y, name) {
     super(game, "player", x, y,
-	  { movement: { speed: defaultNpcSpeed },
+	  { movement: { speed: npcParameters.defaultNpcSpeed },
 	    hitbox: game.currentTown.array,
 	    animated: true });
     this.name = name ?? genNpcName(true, true);
     this.impaired = false;
-    addTraits(this, InventoryTrait());
+    addTraits(this, InventoryTrait(npcParameters.defaultNpcStartCash));
   }
   update() {
     if (!this.impaired)

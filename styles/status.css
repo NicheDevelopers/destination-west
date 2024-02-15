@@ -51,7 +51,7 @@
     transition: opacity 0.3s linear;
 }
 
-/* fase out */
+/* fade out */
 .hidden {
     visibility: hidden;
     opacity: 0;

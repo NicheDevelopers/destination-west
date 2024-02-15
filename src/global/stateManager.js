@@ -19,6 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+import time from "./time.js";
 import { generateID } from "./utilities.js"
 
 class State {
@@ -35,6 +36,8 @@ class StateManager {
   constructor() {
     this.stateStack = [];
     this.previous = null;
+    this.lastUpdateTime = time.now;
+    this.maxUpdateTime = 100;
   }
   pushState(state) {
     state.startHook();
@@ -54,6 +57,12 @@ class StateManager {
     return (this.currentState() !== this.previous)
   }
   updateStates() {
+    if (time.now - this.lastUpdateTime > this.maxUpdateTime) {
+      // Cancelling update due to exceeding the maximum allowed udpate time
+      this.lastUpdateTime = time.now;
+      return;
+    }
+    this.lastUpdateTime = time.now;
     this.previous = this.currentState();
     for (let state of this.stateStack.slice().reverse()) {
       state.update();

@@ -262,7 +262,6 @@ export default class Movement {
    */
   updateMovement() {
     let {speed: currentSpeed, direction} = this.momentum;
-    
     // Collisions
     if (currentSpeed.y < 0 && direction.facesUp()
       && this.entity.willCollide?.(0, currentSpeed.y)) {
@@ -298,7 +297,6 @@ export default class Movement {
       currentSpeed.x *= pp.defaultDiagonalOffset;
       currentSpeed.y *= pp.defaultDiagonalOffset;
     }
-
     this.moveX.speed = currentSpeed.x;
     this.moveY.speed = currentSpeed.y;
 

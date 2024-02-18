@@ -20,11 +20,10 @@
 */
 
 import Location from "./Location.js";
-import { randIntInRange } from "../global/utilities.js";
+import { srandIntInRange, seedRoll } from "../global/utilities.js";
 import Building from "./Building.js";
 import {tileSize} from "../global/consts.js";
 import Portal, { PortalType } from "../Entity/Portal.js";
-import { roll } from "../global/utilities.js";
 
 // the leght of chunk must be at least 10 tiles
 
@@ -64,16 +63,16 @@ class Travel extends Location{
       
         // no event
         // left building
-        let yStart = this.height - 5 - randIntInRange(this.height - 5);
-        if(roll(buildingChance)){
-          let xStart = this.chunkWidth/2 - 5 + randIntInRange(2) + chunk*this.chunkWidth;
+        let yStart = this.height - 5 - srandIntInRange(this.height - 5);
+        if(seedRoll(buildingChance)){
+          let xStart = this.chunkWidth/2 - 5 + srandIntInRange(2) + chunk*this.chunkWidth;
           //this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
           this.placeBuilding(xStart, yStart, 3, 2, "house", {});
           preset.streets.push(newStreet(xStart+1,yStart+2 ,1,this.height-yStart-5)); 
         }
         // right building
-        if(roll(buildingChance)){
-          let xStart = this.chunkWidth/2 + randIntInRange(2) + chunk*this.chunkWidth;
+        if(seedRoll(buildingChance)){
+          let xStart = this.chunkWidth/2 + srandIntInRange(2) + chunk*this.chunkWidth;
           //this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
           this.placeBuilding(xStart, yStart, 3, 2, "house", {});
           preset.streets.push(newStreet(xStart+1,yStart+2 ,1,this.height-yStart-4));

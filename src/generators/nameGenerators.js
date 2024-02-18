@@ -19,7 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { roll } from "../global/utilities.js";
+import { seedRoll } from "../global/utilities.js";
 import { maleNames, femaleNames, nicknames, surnames } from "./npcNames.js";
 import { arr1, arr2 } from "./townNames.js";
 import { percentageOfTwoNameTown } from "../global/consts.js";
@@ -33,10 +33,10 @@ import { percentageOfTwoNameTown } from "../global/consts.js";
 function genNpcName(sex, important) {
   // selecting part of arrays by drawing indexes
   let part1;
-  if (sex) part1 = maleNames.randomElement();
-  else part1 = femaleNames.randomElement();
-  let part2 = nicknames.randomElement();
-  let part3 = surnames.randomElement();
+  if (sex) part1 = maleNames.srandomElement();
+  else part1 = femaleNames.srandomElement();
+  let part2 = nicknames.srandomElement();
+  let part3 = surnames.srandomElement();
 
   let npcname;
   if (important) npcname = part1 + " " + "'" + part2 + "'" + " " + part3;
@@ -49,14 +49,14 @@ function genNpcName(sex, important) {
  * @returns {string} name of town
  */
 function genTownName() {
-  let part1 = arr1.randomElement();
-  let part2 = arr2.randomElement();
+  let part1 = arr1.srandomElement();
+  let part2 = arr2.srandomElement();
 
   // if part1 is like: "Devil's" or "Bull's" get capital letter in part2
   if (part1[part1.length - 2] == "'") part2 = part2.charAt(0).toUpperCase() + part2.slice(1); //getting capital letter
 
   // chance of getting capital letter in part2 depending on given percentageOfTwoNameTown 
-  if (roll(percentageOfTwoNameTown)) part2 = part2.charAt(0).toUpperCase() + part2.slice(1); //getting capital letter
+  if (seedRoll(percentageOfTwoNameTown)) part2 = part2.charAt(0).toUpperCase() + part2.slice(1); //getting capital letter
   // else nothing will change
 
   let townname = "";

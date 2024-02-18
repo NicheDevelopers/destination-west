@@ -20,7 +20,6 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import Tile from "../game/Tile.js";
-import { roll } from "../global/utilities.js";
 import { tileSize } from "../global/consts.js";
 import Entity from "../Entity/Entity.js";
 

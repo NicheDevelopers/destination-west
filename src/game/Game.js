@@ -45,12 +45,19 @@ import {Notification, notifier} from "../global/notifier.js";
 import ChuckALuck from "../minigames/ChuckALuck.js"
 import Pathfinder from "../Pathfinder.js";
 import Trader from "../Entity/Trader.js";
+import seed from "../global/seed.js";
 
 class Game extends State {
-  constructor(app) {
+  constructor(app, callback) {
     super(true);
-    
     this.app = app;
+    seed.generate(null, () => {
+      this.init();
+      callback();
+    });
+  }
+  
+  init() {
     this.pauseMenu = new PauseMenu(this);
     this.paused = false;
 

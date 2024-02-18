@@ -28,11 +28,11 @@ export function addTraits(obj, ...traits) {
   }
 }
 
-export function InventoryTrait(startCash, equipmentSize=defaultEquipmentSize) {
+export function InventoryTrait(startCash, equipmentSize=defaultEquipmentSize, itemNameList=[]) {
   startCash = startCash ?? randIntInRange(cashParam.minCash, cashParam.maxCash);
   return {
     _name_: "InventoryTrait",
-    equipment: new Equipment(equipmentSize, startCash),
+    equipment: new Equipment(equipmentSize, startCash, itemNameList),
     dropItem: function (record) {
       let droppedItem = this.equipment.dropFrom(record);
       droppedItem.setPositionTo(

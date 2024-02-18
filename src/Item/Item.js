@@ -23,20 +23,18 @@ import Sprite from "../Sprite/Sprite.js";
 import { generateID } from "../global/utilities.js";
 
 class Item {
-  constructor(item, spriteName, durability, weight, price, priceRetention, isStackable) {
-    if (item instanceof Item){
-      this.name = item.name;
-      this.spriteName = item.spriteName;
-      this.sprite = new Sprite(item.spriteName, {crop: true, nocache: true});
-      this.durability = item.durability;
-      this.id = generateID(Item);
-      this.weight = item.weight;
-      this.price = item.price;
-      this.priceRetention = item.priceRetention;
-      this.isStackable = item.isStackable;
-      return;
-    }
-    this.name = item;
+  /**
+   * Constructor for item creation.
+   * @param {string} name item name which will be visible for player
+   * @param {string} spriteName sprite name based on sprites
+   * @param {number} durability 
+   * @param {number} weight weight of item
+   * @param {number} price price of item
+   * @param {number} priceRetention
+   * @param {boolean} isStackable true if item should be stacked, otherwise false
+   */
+  constructor(name, spriteName, durability, weight, price, priceRetention, isStackable) {
+    this.name = name;
     this.spriteName = spriteName;
     this.sprite = new Sprite(spriteName, {crop: true, nocache: true});
     this.durability = durability;

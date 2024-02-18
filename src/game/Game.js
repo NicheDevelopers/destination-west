@@ -46,6 +46,8 @@ import ChuckALuck from "../minigames/ChuckALuck.js"
 import Pathfinder from "../Pathfinder.js";
 import Trader from "../Entity/Trader.js";
 import seed from "../global/seed.js";
+import { createItem } from "../global/items.js";
+import { items } from "../global/items.js";
 
 class Game extends State {
   constructor(app, callback) {
@@ -89,10 +91,12 @@ class Game extends State {
     };
     
     let testContainer = new Container(this, "barrel", 250, 250);
-    for (let i=0; i<3; i++){
-      testContainer.equipment.put(new Item(`Whisky`,'whisky', 0, 3, 3, 0, true));
-    }
-    //console.log(testContainer);
+    testContainer.equipment.fillRecords([
+      {name: items.whisky, quantity: 3},
+      {name: items.apple, quantity: 3},
+      {name: items.brokenBottle, quantity: 1},
+      {name: items.revolver1, quantity: 3}
+    ]);
     
     this.currentTown.portals.push(new Portal(this, "decoration-roadsign", 64*4, 64*5, PortalType.openMap()));
     this.currentTown.containers.push(testContainer);
@@ -102,20 +106,23 @@ class Game extends State {
     OlBenjamin.impaired = true;
 
     let testTrader = new Trader(this, 300, 250, "testTrader");
-    testTrader.equipment.put(new Item(`Apple`, 'apple', 0, 5, 1, 0, true));
+    testTrader.equipment.fillRecords([
+      {name: items.apple, quantity: 3},
+      {name: items.revolver1, quantity: 5}
+    ]);
     this.currentTown.npcs.push(testTrader);
     
     //this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));
         
-    this.player.equipment.put(new Item(`Cigar`,'cigar', 0, 1, 1, 0, false));
-    for (let i=0; i<5; i++){
-      this.player.equipment.put(new Item(`Apple`, 'apple', 0, 5, 1, 0, true));
-      this.player.equipment.put(new Item(`Whisky`,'whisky', 0, 3, 3, 0, true));
-      this.player.equipment.put(new Item(`Revolver`,
-					 'revolver-'+(i%2+1),
-					 0, 7, 200, 0, false));
-    }
-    this.player.equipment.put(new Item(`Broken Bottle`,'broken-bottle', 0, 1, 0.5, 0, false));
+    this.player.equipment.fillRecords([
+      {name: items.cigar, quantity: 1},
+      {name: items.whisky, quantity: 5},
+      {name: items.revolver1, quantity: 2},
+      {name: items.revolver2, quantity: 3},
+      {name: items.apple, quantity: 5},
+      {name: items.brokenBottle, quantity: 1}
+    ]);
+
     this.equipmentDisplay = new EquipmentDisplay(this, this.player.equipment);
 
     this.dialogueDisplay = new DialogueDisplay(this)

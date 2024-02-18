@@ -19,7 +19,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import DroppedItem from "../Item/DroppedItem.js";
+import { createItem } from "../global/items.js";
 import { generateID } from "../global/utilities.js";
+import { notifier, Notification } from "../global/notifier.js";;
 
 class EquipmentRecord{
   /**
@@ -46,11 +48,31 @@ class Equipment{
    * Equipment given in InventoryTrait() for transfering, trading or getting items
    * @param {number} maxWeight maximal weight of all items in equipment
    * @param {number} startCash cash given into equipment for start
+   * @param {Object[]} [itemObjList = []] array of item objects from items
    */
-  constructor (maxWeight, startCash){
+  constructor (maxWeight, startCash, itemObjList = []){
     this.maxWeight = maxWeight;
-    this.records = [];
     this.cash = startCash;
+    this.records = [];
+    if (itemObjList.length) this.fillRecords(itemObjList);
+  }
+
+  /**
+   * Method for filling equipment records for start with given itemObjList
+   * @param {Object[]} itemObjList array of item objects
+   * @example
+   * this.fillRecords([
+   *  {name: items.apple, quantity: 3},
+   *  {name: items.whisky, quantity: 2}
+   * ]);
+   */
+  fillRecords(itemObjList){
+    for (let itemObj of itemObjList){
+      for (let i=0; i<itemObj.quantity; i++){
+        this.put(createItem(itemObj.name));
+      }
+    }
+    this.sortByWeight();
   }
   
   /**
@@ -76,7 +98,7 @@ class Equipment{
    */
   canFit(item){
     if (this.sumWeight()+item.weight>this.maxWeight){
-      console.log("Cannot fit!");
+      notifier.send(new Notification(`Too much weight in inventory (+${item.name})`, item.spriteName));
       return false;
     }
     return true;
@@ -89,7 +111,7 @@ class Equipment{
    */
   canBuy(item){
     if (this.cash < item.price){
-      console.log("Cannot buy - not enough cash!");
+      notifier.send(new Notification(`Not enough cash to buy (${item.name})`, item.spriteName));
       return false;
     }
     return true;
@@ -145,9 +167,9 @@ class Equipment{
 
   /**
    * Method for sorting records depends of summary weight of record
-   * @param {boolean} heavy_on_top true if sorting weight descending, otherwise false
+   * @param {boolean} [heavy_on_top=true] true if sorting weight descending, otherwise false
    */
-  sortByWeight(heavy_on_top){
+  sortByWeight(heavy_on_top = true){
     if (heavy_on_top == true) this.records.sort((a, b) => b.getWeight() - a.getWeight());
     else this.records.sort((a, b) => a.getWeight() - b.getWeight());
   }

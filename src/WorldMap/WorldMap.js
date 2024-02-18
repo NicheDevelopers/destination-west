@@ -1,4 +1,4 @@
-import { randIntInRange, resetIdFor } from "../global/utilities.js";
+import { srandIntInRange, resetIdFor } from "../global/utilities.js";
 import { mapParameters as mp } from "../global/consts.js"
 import Town from "../Location/Town.js";
 
@@ -25,7 +25,7 @@ class WorldMap {
   
   _generateLocations(min, max) {
     resetIdFor(Town);
-    let numOfLocations = randIntInRange(min, max);
+    let numOfLocations = srandIntInRange(min, max);
     let locations = new Array();
 
     for (let i = 0; i < numOfLocations; i++) {
@@ -75,8 +75,8 @@ class WorldMap {
 
   _getValidCoordinates(existingLocations) {
     while (true) {
-      let [x, y] = [randIntInRange(mp.paddingX, mp.displayWidth - mp.paddingX),
-      randIntInRange(mp.paddingY, mp.displayHeight - mp.paddingY)];
+      let [x, y] = [srandIntInRange(mp.paddingX, mp.displayWidth - mp.paddingX),
+      srandIntInRange(mp.paddingY, mp.displayHeight - mp.paddingY)];
       if (existingLocations.none((t) =>
         distance([t.x, t.y], [x, y]) < mp.minDistanceBetweenLocations)) {
         return [x, y];

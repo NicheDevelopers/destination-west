@@ -24,7 +24,7 @@
 import Tile from "../game/Tile.js";
 import Entity from "../Entity/Entity.js";
 import { ctx } from "../core/Browser.js";
-import { createCanvas, distance, roll, comparePositions } from "../global/utilities.js";
+import { createCanvas, distance, seedRoll, comparePositions } from "../global/utilities.js";
 import { tileSize, percentageOfGenericDecoration as pGD,
          focusParameters } from "../global/consts.js";
 import Building from "./Building.js";
@@ -134,14 +134,14 @@ class Location {
 	
         let array = null;
         
-        if (!this.nearToBuilding(i, j) && roll(pGD.town_percentage))
+        if (!this.nearToBuilding(i, j) && seedRoll(pGD.town_percentage))
           array = town_generic_decorations;
-        else if (!this.nearToBuilding(i, j) && roll(pGD.rural_percentage))
+        else if (!this.nearToBuilding(i, j) && seedRoll(pGD.rural_percentage))
           array = rural_generic_decorations;
         
         if (array)
           this.decorations.push(
-	    new Entity(this.game, "decoration-" + array.randomElement(),
+	    new Entity(this.game, "decoration-" + array.srandomElement(),
 		       i * tileSize, j * tileSize,
 		       { hitbox: this.array })
 	  );
@@ -214,7 +214,7 @@ class Location {
 
     for (const element of [0, 90, 180, 270]) {
       if (pathInfo.has(string)) 
-        return [pathInfo.get(string).randomElement(), element];
+        return [pathInfo.get(string).srandomElement(), element];
       string = string.substring(2, 8) + string.substring(0, 2)
     }
 

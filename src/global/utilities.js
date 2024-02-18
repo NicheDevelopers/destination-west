@@ -21,6 +21,7 @@
 */
 
 import {tileSize} from "./consts.js";
+import seed from "./seed.js";
 
 /**
  * Return a random float.
@@ -60,6 +61,26 @@ export function randIntInRange(min, max) {
     min = 0;
   }
   return (Math.random() * (max - min) + min) | 0;
+}
+
+/**
+ * Return a random integer based on the global seed
+ # Two arguments provided: Return an integer from range <`min`, `max`)
+ @param {number} min - returned integer lower limit, inclusive
+ @param {number} max - returned integer upper limit, exclusive
+ # One argument provided: Return an integer from range <0, `max`)
+ @param {number} max - returned integer upper limit, exclusive
+ # No arguments provided: Return 0 or 1
+ */
+export function srandIntInRange(min, max) {
+  if (min === undefined) {
+    return Math.round(seed.random());
+  }
+  if (max === undefined) {
+    max = min
+    min = 0;
+  }
+  return (seed.random() * (max - min) + min) | 0;
 }
 
 /**
@@ -416,6 +437,20 @@ export function roll(chance){
   return false;
 }
 
+/**
+ * Rolling possibility with given chance based on the global seed
+ * @param {number} chance value between 0 and 1, chance of getting success
+ * @returns {boolean} true if roll was successfull, otherwise false
+ */
+export function seedRoll(chance){
+  if (chance < 0 || chance > 1){
+    throw `attempt to roll when chance of success (${chance}) was not between 0 and 1`;
+  }
+  if (seed.random() < chance)
+    return true;
+  return false;
+}
+
 Object.defineProperty(Array.prototype, "popFirst", {
   value: function (value){
     for(let i = 0; i < this.length; ++i){
@@ -435,6 +470,10 @@ Object.defineProperty(Array.prototype, "clear", {
 
 Object.defineProperty(Array.prototype, "randomElement", {
   value: function () {return this[randIntInRange(0, this.length)]},
+});
+
+Object.defineProperty(Array.prototype, "srandomElement", {
+  value: function () {return this[srandIntInRange(0, this.length)]},
 });
 
 /* The comparison functions in `min` and `max` act like

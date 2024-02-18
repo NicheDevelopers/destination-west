@@ -48,7 +48,7 @@ class Town extends Location {
     // see https://gitlab.com/niche-devs/destination-west/-/wikis/Technical-Documentation/Classes/Town/Town-Presets
     this.array = new Array(this.width);
     for (let x = 0; x < this.width; ++x) this.array[x] = new Array(this.height);
-    let preset = presets.randomElement();
+    let preset = presets.srandomElement();
     this.placeStreets(preset);
     this.placeBuildings(preset);
     this.placeBackground('sand');

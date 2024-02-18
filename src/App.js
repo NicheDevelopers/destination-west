@@ -32,9 +32,10 @@ import { notifier } from "./global/notifier.js";
 
 class App {
   constructor(keybinds = []) {
-    this.game = new Game(this);
-    stateManager.pushState(this.game);
-
+    this.game = new Game(this, () => {
+      stateManager.pushState(this.game);
+    });
+    
     this.animationFrameID = null;
     this.userFunctionsMap = new Map();
 

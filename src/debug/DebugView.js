@@ -2,6 +2,7 @@ import KeyboardVisualizer from "./KeyboardVisualizer.js";
 import { htmlCreate, numberPad } from "../global/utilities.js";
 import Animation from "../core/Animation.js";
 import time from "../global/time.js";
+import seed from "../global/seed.js";
 
 /**
  * Create and manage a group of HTML elements useful for debugging
@@ -93,6 +94,13 @@ export default class DebugView {
 	else this.fpsSimDisplay.classList.add("nodisp");
       },
       appendTo: this.simSettingsRow
+    });
+
+    this.gameSeedRow = htmlCreate({
+      innerText: `Game seed: ${seed.seed}`,
+      title: `The seed used to generate the world`,
+      "font-size": "25px",
+      appendTo: this.fpsSettings
     });
     
     this.fpsCounter = new Animation(this, '()updateFpsCounter', 5);

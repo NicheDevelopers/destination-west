@@ -2,6 +2,7 @@ import Dialogue from "../Dialogue/Dialogue.js";
 import { State, stateManager } from "../global/stateManager.js";
 import Entity from "./Entity.js";
 import Npc from "./Npc.js";
+import { ButtonList } from "../global/utilities.js";
 
 class Trader extends Npc {
   /**
@@ -28,14 +29,22 @@ class Trader extends Npc {
    */
   interact(who) {
     this.sprite.mirrored = (who.x < this.x);
-    //this.dialogue = new Dialogue("src/Dialogue/trader_dialogue.dwdialogue",
-    //  who, this);
-    //if (this.dialogue.exhausted()) this.dialogue.reset();
-    //this.game.dialogueDisplay.setDialogue(this.dialogue);
-    //stateManager.toggleState(this.game.dialogueDisplay);
-    console.log("Interacted with Trader NPC.");
-    this.game.transferDisplay.setTransferWith(who.equipment, this.equipment, true);
-    stateManager.toggleState(this.game.transferDisplay);
+    this.dialogue = new Dialogue("src/Dialogue/trader_dialogue.dwdialogue",
+      who, this);
+
+    let postMenu = new ButtonList({
+      callbackArgument: this.game.dialogueDisplay
+    });
+
+    postMenu.add("Trade", (dialogueDisplay) => {
+      dialogueDisplay.endState();
+      this.game.startTransfer(who.equipment, this.equipment, true);
+    });
+    postMenu.add("End dialogue", (dialogueDisplay) => {
+      dialogueDisplay.endState();
+    });
+    
+    this.game.startDialogue(this.dialogue, postMenu);
   }
 }
 

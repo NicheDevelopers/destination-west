@@ -28,7 +28,7 @@ import PauseMenu from "../menu/PauseMenu.js";
 import EquipmentDisplay from "../Equipment/EquipmentDisplay.js";
 import Designer from "../misc/Designer.js";
 import Item from "../Item/Item.js";
-import { State } from "../global/stateManager.js"
+import { State, stateManager } from "../global/stateManager.js"
 import Npc from "../Entity/Npc.js";
 import Dialogue from "../Dialogue/Dialogue.js";
 import DialogueDisplay from "../Dialogue/DialogueDisplay.js";
@@ -104,12 +104,13 @@ class Game extends State {
     let OlBenjamin = new Npc(this, 382, 350, "Ol' Benjamin");
     this.currentTown.npcs.push(OlBenjamin);
     OlBenjamin.impaired = true;
-
-    let testTrader = new Trader(this, 300, 250, "testTrader");
+    
+    let testTrader = new Trader(this, 300, 250, "Sawyer McCleary");
     testTrader.equipment.fillRecords([
       {name: items.apple, quantity: 3},
       {name: items.revolver1, quantity: 5}
     ]);
+
     this.currentTown.npcs.push(testTrader);
     
     //this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));
@@ -181,6 +182,16 @@ class Game extends State {
 
   togglePause() {
     this.paused = !this.paused;
+  }
+
+  startDialogue(...args) {
+    this.dialogueDisplay.setDialogue(...args);
+    stateManager.startState(this.dialogueDisplay);
+  }
+
+  startTransfer(...args) {
+    this.transferDisplay.setTransferWith(...args);
+    stateManager.startState(this.transferDisplay);
   }
 }
 

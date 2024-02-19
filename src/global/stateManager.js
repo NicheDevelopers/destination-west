@@ -30,6 +30,9 @@ class State {
   }
   startHook() {}
   endHook() {}
+  endState() {
+    stateManager.endState(this);
+  }
 }
 
 class StateManager {
@@ -77,6 +80,16 @@ class StateManager {
   toggleState(state) {
     (this.currentState().id === state.id) ?
       this.popState() : this.pushState(state)
+  }
+  startState(state) {
+    if (this.currentState().id === state.id)
+      throw `Attempt to start a state which is already the current state`;
+    this.pushState(state);
+  }
+  endState(state) {
+    if (this.currentState().id !== state.id)
+      throw `Attempt to end a state which is not the current state`;
+    this.popState();
   }
 }
 

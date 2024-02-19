@@ -26,10 +26,9 @@ class Npc extends Interactible {
   interact(who) {
     this.sprite.mirrored = (who.x < this.x);
     this.dialogue = new Dialogue("src/Dialogue/test_dialogue.dwdialogue",
-      who, this);
-    if (this.dialogue.exhausted()) this.dialogue.reset();
-    this.game.dialogueDisplay.setDialogue(this.dialogue);
-    stateManager.toggleState(this.game.dialogueDisplay);
+				 who, this);
+
+    this.game.startDialogue(this.dialogue);
   }
 }
 

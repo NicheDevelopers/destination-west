@@ -26,7 +26,7 @@ import { createElement } from "../global/utilities.js";
 
 class TransferDisplay extends State {
   constructor(game){
-      super(true);
+      super(false);
       this.game = game;
       this.actions = ['Interact'];
       this.transfer = null;

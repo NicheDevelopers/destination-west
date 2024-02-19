@@ -564,3 +564,58 @@ Object.defineProperty(String.prototype, "capitalized", {
 Number.prototype.clamp = function(min, max) {
   return Math.min(Math.max(this, min), max);
 };
+
+/**
+ * Easily create nested button lists
+ */
+export class ButtonList {
+  constructor(options={}) {
+    this.div = htmlCreate({
+      classList: "button-list"
+    });
+    this.clear();
+    if (options.callbackArgument !== undefined)
+      this.setCallbackArgument(options.callbackArgument);
+  }
+  /**
+   * Adds a button to the ButtonList.
+   * @param {string} buttonText - The text displayed on the button
+   * @param {function|ButtonList} action - A callback function called
+   * when the button is pressed, or another ButtonList that replaces
+   * this one in the display.
+   */
+  add(buttonText, action) {
+    if (typeof action !== "function")
+      throw `Non function button actions are not supported yet`;
+    this.buttons.push(htmlCreate({
+      what: "button",
+      innerText: buttonText,
+      onclick: () => action(this.callbackArgument),
+      appendTo: this.div
+    }));
+  }
+
+  /**
+   * Sets the argument that is passed to buttons' callback functions
+   */
+  setCallbackArgument(arg) {
+    this.callbackArgument = arg;
+  }
+  
+  /**
+   * Append the ButtonList to the given node
+   */
+  appendTo(node) {
+    node.appendChild(this.div);
+  }
+  
+  /**
+   * Brings the ButtonList to its initial state
+   */
+  clear() {
+    while (this.div.firstChild)
+      this.div.removeChild(this.div.firstChild);
+    this.buttons = [];
+    this.callbackArgument = undefined;
+  }
+}

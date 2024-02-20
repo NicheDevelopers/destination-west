@@ -20,15 +20,11 @@
 */
 import { ctx } from "../core/Browser.js";
 import { tileSize, spriteScale,
-	 transparencyAlphaTolerance,
 	 defaultHitboxHeight,
 	 autoBoundaryXLooseness } from "../global/consts.js";
-import { createCanvas, randIntInRange, forbidProperty } from "../global/utilities.js";
+import { createCanvas, randIntInRange, forbidProperty,
+	 transparent, PixelImage } from "../global/utilities.js";
 import imgInfo from "../static/imgInfo.js";
-
-function transparent(alpha) {
-  return (alpha<transparencyAlphaTolerance);
-}
 
 function toKey(name, rotation, outline) {
   return name+'/'+(rotation === undefined? 'n' : rotation)+'/'+(outline? 'y' : 'n');
@@ -164,13 +160,11 @@ class Sprite {
     }
     let width = options.width ?? this.width;
     let height = options.height ?? this.height;
-    const { context: offContext } =
-      createCanvas(width, height);
-
+    const { context: offContext } = createCanvas(width, height);
     this.draw(0, 0, offContext);
     
-    let image = offContext.getImageData(0, 0, this.width, this.height);
-
+    let image = new PixelImage().fromContext(offContext);
+        
     /*
       startX and endX are respectively the smallest
       and the biggest X coordinates on which a non-transparent
@@ -179,9 +173,7 @@ class Sprite {
     let startX, endX;
     for (let x=0;x<this.width; ++x) {
       for (let y=0;y<this.height; ++y) {
-	let currentPixelTransparency = image.data[(x+y*this.width)*4+3];
-	if (!transparent(currentPixelTransparency)) {
-	  // Non-transparent pixel found
+	if (!image[x][y].isTransparent()) {
 	  startX = x;
 	  break;
 	}
@@ -191,9 +183,7 @@ class Sprite {
     
     for (let x=this.width-1;x>=0; --x) {
       for (let y=0;y<this.height; ++y) {
-	let currentPixelTransparency = image.data[(x+y*this.width)*4+3];
-	if (!transparent(currentPixelTransparency)) {
-	  // Non-transparent pixel found
+	if (!image[x][y].isTransparent()) {
 	  endX = x;
 	  break;
 	}
@@ -211,10 +201,8 @@ class Sprite {
     let endY;
     for (let y=this.height-1;y>=0; --y) {
       for (let x=0;x<this.width; ++x) {
-	let currentPixelTransparency = image.data[(x+y*this.width)*4+3];
-	if (!transparent(currentPixelTransparency)) {
-	  // Non-transparent pixel found
-      	  endY = y;
+	if (!image[x][y].isTransparent()) {
+	  endY = y;
 	  break;
 	}
       }
@@ -278,7 +266,6 @@ class Sprite {
 
   drawOutline(image, callback) {
     let borderCoordinates = [
-      //{x: 0, y : -5},
       {x: -1, y:  0},
       {x:  1, y:  0},
       {x:  0, y: -1},
@@ -304,36 +291,31 @@ class Sprite {
     this.spriteSheetCol = 0;
     this.spriteSheetRow = 0;
     
-    let imgDataRef = offCtx.getImageData(0, 0, this.width, this.height);
-    let imgData = offCtx.getImageData(0, 0, this.width, this.height);
-
+    let imgRef = new PixelImage().fromContext(offCtx);
+    let imgData = new PixelImage().fromContext(offCtx);
+    
     for (let y=1; y < this.height-1; ++y) {
       for (let x=1; x < this.width-1; ++x) {
-	      let ix = x*4 + y*this.width*4; // index of the currently processed pixel
-	      if (transparent(imgDataRef.data[ix + 3]))
-	        continue;
-
-	      borderCoordinates.forEach(({x: dx, y: dy}) => {
-          let index = ix + dx*4 + dy*this.width*4;
-          if (transparent(imgDataRef.data[index + 3])) {
-            imgData.data[index] = color.r;
-            imgData.data[index + 1] = color.g;
-            imgData.data[index + 2] = color.b;
-            imgData.data[index + 3] = color.a;
-          }
-	      });
+	if (imgRef[x][y].isTransparent())
+	  continue;
+	
+	borderCoordinates.forEach(({x: dx, y: dy}) => {
+          if (imgRef[x+dx][y+dy].isTransparent()) {
+	    imgData[x+dx][y+dy].setColor(color);
+	  }
+        });
       }
     }
-    offCtx.putImageData(imgData, 0, 0);
-    
+    imgData.drawToContext(offCtx);
+        
     this.img.onload = callback;
     this.img.src = canvas.toDataURL('image/png');
   }
 
   /**
-  * Draw the sprite on the #game-canvas
-  @param {number} x - Position x of the draw location
-  @param {number} y - Position y of the draw location
+   * Draw the sprite on the #game-canvas
+   * @param {number} x - Position x of the draw location
+   * @param {number} y - Position y of the draw location
   */
   draw(x, y, context = ctx, options = {}) {
     context.drawImage(

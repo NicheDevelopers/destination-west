@@ -23,8 +23,9 @@ import Sprite from "../Sprite/Sprite.js"
 import { generateID } from "../global/utilities.js";
 import { tileSize } from "../global/consts.js";
 import { notifier, Notification } from "../global/notifier.js";
+import { addTraits, centerPointTrait } from "../traits.js";
 
-class DroppedItem {
+class DroppedItem{
   constructor(item) {
     this.item = item,
     this.sprite = new Sprite("decoration-big-bag-3x");
@@ -36,6 +37,7 @@ class DroppedItem {
     this.x = null;
     this.y = null;
     this.id = generateID(DroppedItem);
+    addTraits(this, centerPointTrait());
   }
   
   draw(cameraX, cameraY) {

@@ -21,7 +21,8 @@
 import DroppedItem from "../Item/DroppedItem.js";
 import { createItem } from "../global/items.js";
 import { generateID } from "../global/utilities.js";
-import { notifier, Notification } from "../global/notifier.js";;
+import { notifier, Notification } from "../global/notifier.js";
+import Sprite from "../Sprite/Sprite.js";
 
 class EquipmentRecord{
   /**
@@ -175,18 +176,36 @@ class Equipment{
   }
 
   /**
-   * Method for dropping or selling item given in record
-   * @param {EquipmentRecord} record EquipmentRecord which is trying to be dropped from 
-   * @param {boolean} [trading = false] - true if owner should pay for item (during process of trade), otherwise false 
-   * @returns {DroppedItem} dropped item created from item in record
+   * Help method for drop and transfer equipment method
+   * @param {EquipmentRecord} record EquipmentRecord which is trying to be dropped or transfer
    */
-  dropFrom(record, trading = false) {
+  reduceQuantity(record){
     if (!record.item.isStackable || record.quantity == 1)
       this.records = this.records.filter((rec) => rec.item.id != record.item.id);
     else
       record.quantity -= 1;
-    if (trading) this.cash += record.item.price;
+  }
+
+  /**
+   * Method for dropping items from inventory
+   * @param {EquipmentRecord} record EquipmentRecord which is trying to be dropped from
+   * @returns {DroppedItem} droppedItem 
+   */
+  drop(record) {
+    this.reduceQuantity(record);
     return new DroppedItem(record.item);
+  }
+
+  /**
+   * Method for transfering items from inventory
+   * @param {EquipmentRecord} record EquipmentRecord which is trying to be transfered from
+   * @param {boolean} [trading = false] - true if owner should pay for item (during process of trade), otherwise false 
+   * @returns {Item} 
+   */
+  transfer(record, trading = false) {
+    this.reduceQuantity(record);
+    if (trading) this.cash += record.item.price;
+    return record.item.deepCopy();
   }
 };
 

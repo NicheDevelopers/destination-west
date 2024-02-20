@@ -43,7 +43,7 @@ class Transfer{
      */
     transferItem(record, equipmentFrom, equipmentTo){
         if ((!this.trading || equipmentTo.canBuy(record.item)) && equipmentTo.canFit(record.item)) 
-            equipmentTo.put(equipmentFrom.dropFrom(record, this.trading).item, this.trading);
+            equipmentTo.put(equipmentFrom.transfer(record, this.trading), this.trading);
     }
 
     /**

@@ -44,8 +44,18 @@ class Item {
     this.priceRetention = priceRetention;
     this.isStackable = isStackable;
   }
+
   getResellPrice() {
     return this.price * this.priceRetention;
+  }
+
+  /**
+   * Method for deep copy of Item object. Generates new Sprite.
+   * @returns {Item} deep copy Item
+   */
+  deepCopy(){
+    return new Item(this.name, this.spriteName, this.durability, this.weight,
+		    this.price, this.priceRetention, this.isStackable);
   }
 }
 export default Item;

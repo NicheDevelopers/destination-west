@@ -34,10 +34,11 @@ export function InventoryTrait(startCash, equipmentSize=defaultEquipmentSize, it
     _name_: "InventoryTrait",
     equipment: new Equipment(equipmentSize, startCash, itemNameList),
     dropItem: function (record) {
-      let droppedItem = this.equipment.dropFrom(record);
-      droppedItem.setPositionTo(
-      (this.centerPoint) ? { x: this.centerPoint.x, y: this.centerPoint.y }
-        : { x: this.x, y: this.y });
+      let droppedItem = this.equipment.drop(record);
+      droppedItem.setPositionTo({ 
+        x: this.getCenterPoint().x, 
+        y: this.getCenterPoint().y
+      });
       if (!this.game) console.error('InventoryTrait in a class without a Game field.');
       this.game.currentTown.droppedItems.push(droppedItem);
       this.game.currentTown.updateFocus(this.game.player);

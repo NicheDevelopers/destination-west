@@ -20,7 +20,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {tileSize} from "./consts.js";
+import { tileSize, transparencyAlphaTolerance } from "./consts.js";
 import seed from "./seed.js";
 
 /**
@@ -247,6 +247,18 @@ export function makeEven(x) {
   if (x % 2 == 1)
     x++;
   return x;
+}
+
+/**
+ * Reads a color's components from a hex string
+ * @returns {object} rgb - an object with r, g and b keys.
+ */
+export function hexToRgb(colorHex) {
+  return {
+    r: parseInt(colorHex.slice(1, 3), 16),
+    g: parseInt(colorHex.slice(3, 5), 16),
+    b: parseInt(colorHex.slice(5, 7), 16),
+  };
 }
 
 export function hex_to_rgb(colorHex){
@@ -561,6 +573,20 @@ Object.defineProperty(String.prototype, "capitalized", {
   }
 });
 
+Object.defineProperty(String.prototype, "isNumber", {
+  value: function() {
+    return /^\d+$/.test(this);
+  }
+});
+
+Object.defineProperty(String.prototype, "toNumber", {
+  value: function() {
+    return Number(this);
+  }
+});
+
+
+
 Number.prototype.clamp = function(min, max) {
   return Math.min(Math.max(this, min), max);
 };
@@ -617,5 +643,218 @@ export class ButtonList {
       this.div.removeChild(this.div.firstChild);
     this.buttons = [];
     this.callbackArgument = undefined;
+  }
+}
+
+/**
+ * Informs whether a pixel with a given alpha should
+ * be considered transparent
+ */
+export function transparent(alpha) {
+  return (alpha<transparencyAlphaTolerance);
+}
+
+/**
+ * An accessor object for reading and modifying pixels in PixelImages
+ */
+class Pixel {
+  constructor(parentImage, pixelIndex) {
+    this.img = parentImage;
+    this.index = pixelIndex;
+  }
+  /**
+   * Sets the pixel's color components accordint to the provided object
+   * @param color {object} - An object with r, g, b, a keys
+   * @example
+   * pixel.setColor({r: 255});
+   * // sets the red component of the pixel's color to the maximum value
+   * @example
+   * pixel.setColor({r: 0, g: 255, b: 0, a: 255});
+   * // sets the pixel's color to green
+   */
+  setColor(color={}) {
+    for (const comp in color)
+      this[comp] = color[comp];
+  }
+  get r() {
+    return this.img.imgData.data[this.index];
+  }
+  get g() {
+    return this.img.imgData.data[this.index+1];
+  }
+  get b() {
+    return this.img.imgData.data[this.index+2];
+  }
+  get a() {
+    return this.img.imgData.data[this.index+3];
+  }
+  
+  set r(val) {
+    this.img.imgData.data[this.index] = val;
+  }
+  set g(val) {
+    this.img.imgData.data[this.index+1] = val;
+  }
+  set b(val) {
+    this.img.imgData.data[this.index+2] = val;
+  }
+  set a(val) {
+    this.img.imgData.data[this.index+3] = val;
+  }
+
+  /**
+   * Informs whether the pixel should be considered transparent
+   */
+  isTransparent() {
+    return transparent(this.a);
+  }
+}
+
+/**
+ * A Proxy wrapper for the ImageData interface.
+ */
+export class PixelImage {
+  constructor() {
+    this.width = null;
+    this.height = null;
+    this.imgData = null;
+    
+    return new Proxy(this, { get: PixelImage.get, set: PixelImage.set });
+  }
+
+  /**
+   * Load an image from a provided rendering context
+  */
+  fromContext(ctx) {
+    this.width = ctx.canvas.width;
+    this.height = ctx.canvas.height;
+    
+    this.imgData = ctx.getImageData(0, 0, this.width, this.height);
+    
+    return this;
+  }
+
+  /**
+   * Load an image from the rendering context of a provided canvas
+   */
+  fromCanvas(canvas) {
+    this.width = canvas.width;
+    this.height = canvas.height;
+    this.imgData = canvas.getContext("2d")
+      .getImageData(0, 0, this.width, this.height);
+    return this;
+  }
+
+  /**
+   * Puts image data of the PixelImage to a provided rendering context
+   */
+  drawToContext(ctx) {
+    ctx.putImageData(this.imgData, 0, 0);
+  }
+  
+  /**
+   * Print a simplified text representation of the image
+   * to the console.
+   */
+  log() {
+    let out = "";
+    for (let y=0; y < this.height; ++y) {
+      for (let x=0; x < this.width; ++x) {
+	out += (transparent(this[x][y].a))? " " : "X";
+      }
+      out += "\n";
+    }
+    console.log(out);
+  }
+
+  /**
+   * Get the number of pixels in the image
+   * @returns The number of pixels or null if no image was loaded
+   */
+  pixelCount() {
+    return this.width * this.height;
+  }
+
+  /**
+   * Get ImagaData entries with bound checcking
+  */
+  getDataAt(index) {
+    if (!this.imgData)
+      throw `Attempt to read pixel data in unloaded PixelImage`;
+    if (index < 0 || index > this.width*this.height*4)
+      throw `getDataAt: index is out of bounds (${index})`;
+    return this.imgData.data[index];
+  }
+
+  /**
+   * Set ImagaData entries with bound checcking
+  */
+  setDataAt(index, val) {
+    if (!this.imgData)
+      throw `Attempt to write pixel data in unloaded PixelImage`;
+    if (index < 0 || index > this.width*this.height*4)
+      throw `setDataAt: index is out of bounds (${index})`;
+    this.imgData.data[index] = val;
+  }
+
+  /**
+   * Get a Pixel at the specified index
+   */
+  pixel(index) {
+    return this[index % this.width][index / this.width | 0];
+  }
+
+  /**
+   * The get handler of the PixelImage Proxy
+   */
+  static get(self, prop, receiver) {
+    if (!prop.isNumber())
+      return Reflect.get(...arguments);
+    if (!self.imgData)
+      throw `Attempt to read pixel in unloaded PixelImage`;
+    let col = prop.toNumber();
+    if (col < 0 || col >= self.width)
+      throw `Attempt to read pixel from column ${col} ` +
+      `in ${self.width}px width image`;
+    
+    return new Proxy(self, { get: PixelImage.colGet(col),
+			     set: PixelImage.colSet });
+  }
+
+  /**
+   * The set handler of the PixelImage Proxy
+   */
+  static set(self, prop, val, receiver) {
+    if (prop.isNumber())
+      throw `Direct assignment to PixelImage column is forbidden`;
+    
+    return Reflect.set(...arguments);
+  }
+
+  /**
+   * A get handler for column proxies returned by the top-level
+   * PixelImage Proxy
+   */
+  static colGet(col) {
+    return (self, row, receiver) => {
+      if (!row.isNumber())
+	throw `Given image row is not a number: ${row}`;
+      row = row.toNumber();
+      if (row < 0 || row >= self.height)
+	throw `Attempt to read pixel from row ${row} ` +
+	`in ${self.height}px height image`;
+      let pixelIndex = (col+row*self.width)*4;
+
+      return new Pixel(self, pixelIndex);
+    }
+  }
+
+  /**
+   * A set handler for column proxies returned by the top-level
+   * PixelImage Proxy
+   */
+  static colSet(self, prop, val, receiver) {
+    throw `Direct assignment to PixelImage's Pixel is forbidden.` +
+      ` Use methods of the Pixel object instead.`;
   }
 }

@@ -48,6 +48,7 @@ import Trader from "../Entity/Trader.js";
 import seed from "../global/seed.js";
 import { createItem } from "../global/items.js";
 import { items } from "../global/items.js";
+import { FindQuestBuilder, FindQuestConfig, FindQuestType, ItemDistribution, ItemEntry } from '../Quest.js'
 
 class Game extends State {
   constructor(app, callback) {
@@ -110,7 +111,22 @@ class Game extends State {
       {name: items.apple, quantity: 3},
       {name: items.revolver1, quantity: 5}
     ]);
-
+    
+    //----------------------------------------
+    const type = FindQuestType.FindOnTheGround;
+    const distribution = ItemDistribution.Even;
+    const entries = [
+      new ItemEntry(items.apple, 5),
+      new ItemEntry(items.brokenBottle, 3),
+    ];
+    const questConfig = new FindQuestConfig(type, entries, distribution);
+    const builder = new FindQuestBuilder(testTrader, questConfig, null);
+    const valid = builder.validate()
+    console.log(`Is quest valid?: ${valid}`)
+    const quest = builder.build();
+    console.log(quest);
+    //----------------------------------------
+    
     this.currentTown.npcs.push(testTrader);
     
     //this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));

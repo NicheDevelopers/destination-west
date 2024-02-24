@@ -10,21 +10,25 @@ export const playerCenterPoint = { x: 48, y: 60 };
 export const percentageOfTwoNameTown = 0.4;
 export const transparencyAlphaTolerance = 5;
 export function distances(left, right, up, down) {
-  return {left: left, right: right, up: up, down: down};
+  return { left: left, right: right, up: up, down: down };
 }
 /**
    relativeCenterPoint - an object with x and y properties,
    describing the position of a visual base center point of
    a sprite, relative to the top-left corner of the sprite.
 */
-export const defaultRcp = { x: tileSize/2, y: tileSize/2 };
+export const defaultRcp = { x: tileSize / 2, y: tileSize / 2 };
 /**
    boundingDistance - an object with properties: left,
    right, up, down. It describes distances to the hitbox boundaries
    from the absolute position of the relativeCenterPoint.
 */
-export const defaultBd =
-  distances((tileSize/2)-1,tileSize/2,(tileSize/2)-1, tileSize/2);
+export const defaultBd = distances(
+  tileSize / 2 - 1,
+  tileSize / 2,
+  tileSize / 2 - 1,
+  tileSize / 2,
+);
 export const defaultHitboxHeight = 4;
 /**
    horizontal sprite-detected boundary looseness;
@@ -40,31 +44,31 @@ export const defaultHitboxHeight = 4;
 */
 export const autoBoundaryXLooseness = 0.2;
 export const playerParameters = {
-  defaultPlayerSpeed : 150,
-  defaultDiagonalOffset : Math.sqrt(2)/2,
-  defaultSprintMultiplier : 1.5,
-  defaultSneakMultiplier : 0.5,
-  defaultSprintMode : 'hold',
-  defaultSneakMode : 'hold',
+  defaultPlayerSpeed: 150,
+  defaultDiagonalOffset: Math.sqrt(2) / 2,
+  defaultSprintMultiplier: 1.5,
+  defaultSneakMultiplier: 0.5,
+  defaultSprintMode: "hold",
+  defaultSneakMode: "hold",
   playerBd: {
     up: 2,
     left: 14,
     right: 14,
-    down: 2
+    down: 2,
   },
   playerRcp: { x: 48, y: 70 },
-  defaultStartCash: 100
+  defaultStartCash: 100,
 };
 
 export const npcParameters = {
-  defaultNpcSpeed : 130,
-  defaultNpcStartCash: 150
+  defaultNpcSpeed: 130,
+  defaultNpcStartCash: 150,
 };
 
 export const cashMinMaxParameters = {
-  minCash : 0,
-  maxCash : 100
-}
+  minCash: 0,
+  maxCash: 100,
+};
 
 export const mapParameters = {
   minLocations: 20,
@@ -85,14 +89,13 @@ export const mapParameters = {
     For a slight difference between these two values time required to generate WorldMap will singificantly increase.
   */
   minDistanceBetweenLocations: 150,
-  minDistanceForConnection: 300
-  
+  minDistanceForConnection: 300,
 };
 
 export const townSizes = {
   small: 8,
   medium: 16,
-  large: 20
+  large: 20,
 };
 
 export const camStates = {
@@ -106,7 +109,7 @@ export const camStates = {
      The camera is currently animating its position
      to reach the focused entity
   */
-  ANIMATING: 1
+  ANIMATING: 1,
 };
 
 export const camSettings = {
@@ -116,29 +119,29 @@ export const camSettings = {
   zoomSafetyMultiplier: 1.05,
   zoomSpeed: 0.002,
   entityFocusZoom: 3.5,
-  focusChangeTime: 1.0
+  focusChangeTime: 1.0,
 };
 
 export const focusBackToPlayerTime = 0.5;
 
 export const percentageOfGenericDecoration = {
-  rural_percentage : 0.2,
-  town_percentage : 0.05
+  rural_percentage: 0.2,
+  town_percentage: 0.05,
 };
 
 export const worldMapDisplay = {
-  townNameOffsetX : -50,
-  townNameOffsetY : 40,
-  lowConnection : 3,
-  mediumConnection : 5,
-  highConnection : 10
+  townNameOffsetX: -50,
+  townNameOffsetY: 40,
+  lowConnection: 3,
+  mediumConnection: 5,
+  highConnection: 10,
 };
 
 export const animatedSprite = {
-  defaultIntervalTime : 110,
-  defaultFramesPerInterval : 1,
-  defaultAnimationSpeed : 8,
-  defaultFrameCount : 1
+  defaultIntervalTime: 110,
+  defaultFramesPerInterval: 1,
+  defaultAnimationSpeed: 8,
+  defaultFrameCount: 1,
 };
 
 export const directions = {
@@ -160,16 +163,18 @@ export const chuckALuckParameters = {
   horizontalGap: 63,
   verticalGap: 128,
   horizontalOffset: 63,
-  verticalOffset: 64
+  verticalOffset: 64,
 };
 
 export const defaultNotificationTimeout = 2;
 
 export const focusParameters = {
   minDist: 50.0,
-  facingPenalty: 15
+  facingPenalty: 15,
 };
 
 export const dialogueParameters = {
-  lettersPerSecond: 60
+  lettersPerSecond: 60,
 };
+
+export const defaultEntityHp = 100;

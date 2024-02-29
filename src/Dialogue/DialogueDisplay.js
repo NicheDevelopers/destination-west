@@ -3,8 +3,6 @@ import { State, stateManager } from "../global/stateManager.js";
 import { focusBackToPlayerTime as focusTime,
 	 dialogueParameters } from "../global/consts.js";
 
-import Animation from "../core/Animation.js";
-
 import { htmlCreate, ButtonList } from "../global/utilities.js";
 
 class DialogueDisplay extends State {
@@ -17,11 +15,6 @@ class DialogueDisplay extends State {
       classList: 'hidden',
       appendTo: document.getElementById('game-container')
     });
-    /**
-       A ButtonList displayed after the dialogue.
-     */
-    this.postDialogueMenu = null;
-    
     this.reset();
   }
   /**
@@ -37,60 +30,29 @@ class DialogueDisplay extends State {
    */
   reset() {
     this.dialogue = null;
-    this.currentLine = null;
     this.div.innerHTML = "";
-    this.postDialogueMenu?.clear();
+    this.postDialogueMenu?.reset();
   }
   
-  endState() {
-    stateManager.popState();
-  }
-  
-  drawNextLine() {
-    let line = this.dialogue.next();
-    if (line === null) return;
-    this.currentLine = line;
-    this.div.innerHTML = this.dialogue.formatLine(this.currentLine);
-    
-    this.textAnimation = new Animation(this, "currentLine.n", dialogueParameters.lettersPerSecond);
-    this.textAnimation.goal = this.currentLine.what.length;
-    this.textAnimation.setChangeCallback(() => {
-      this.div.innerHTML = this.dialogue.formatLine(this.currentLine);
-    });
-  }
-
   /**
    * Sets a dialogue to be displayed
    * @param {Dialogue} dialogue - The new dialogue
-   * @param {ButtonList} postDialogueMenu - Optional. A menu to display
-   * after the dialogue
    */
-  setDialogue(dialogue, postDialogueMenu) {
+  setDialogue(dialogue) {
     this.reset();
     this.dialogue = dialogue;
-    this.postDialogueMenu = postDialogueMenu ?? null;
+    this.dialogue.setupDisplay(this, this.div, () => this.endState());
   }
-  update() {
-    if (!this.dialogue.loaded) return;
-    if (this.currentLine === null) this.drawNextLine();
 
-    this.textAnimation.next();
+  update() {
+    this.dialogue.update();
     
     /* This is weird. For now I have to use the 'Interact' action,
        but perhaps we should change that once we make state-specific keymaps */
     this.game.app.manageRequest(
       'Interact',
       () => {
-	if (this.dialogue.exhausted()) {
-	  if (this.postDialogueMenu) {
-	    this.textAnimation.finish();
-	    this.div.innerHTML = "";
-	    this.postDialogueMenu.appendTo(this.div);
-	  }
-	  else this.endState();
-	  return;
-	}
-        this.drawNextLine();
+	this.dialogue.step();
       },
       { once: true }
     );

@@ -29,22 +29,10 @@ class Trader extends Npc {
    */
   interact(who) {
     this.sprite.mirrored = (who.x < this.x);
-    this.dialogue = new Dialogue("src/Dialogue/trader_dialogue.dwdialogue",
+    this.dialogue = new Dialogue("src/Dialogue/trader_dialogue.dwd",
       who, this);
-
-    let postMenu = new ButtonList({
-      callbackArgument: this.game.dialogueDisplay
-    });
-
-    postMenu.add("Trade", (dialogueDisplay) => {
-      dialogueDisplay.endState();
-      this.game.startTransfer(who.equipment, this.equipment, true);
-    });
-    postMenu.add("End dialogue", (dialogueDisplay) => {
-      dialogueDisplay.endState();
-    });
     
-    this.game.startDialogue(this.dialogue, postMenu);
+    this.game.startDialogue(this.dialogue);
   }
 }
 

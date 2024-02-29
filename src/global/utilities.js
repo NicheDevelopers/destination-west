@@ -585,6 +585,12 @@ Object.defineProperty(String.prototype, "toNumber", {
   }
 });
 
+Object.defineProperty(Map.prototype, "keysArray", {
+  value: function() {
+    return Array.from(this.keys());
+  }
+});
+
 
 
 Number.prototype.clamp = function(min, max) {
@@ -599,26 +605,81 @@ export class ButtonList {
     this.div = htmlCreate({
       classList: "button-list"
     });
-    this.clear();
+    this.reset();
     if (options.callbackArgument !== undefined)
       this.setCallbackArgument(options.callbackArgument);
   }
   /**
    * Adds a button to the ButtonList.
    * @param {string} buttonText - The text displayed on the button
-   * @param {function|ButtonList} action - A callback function called
-   * when the button is pressed, or another ButtonList that replaces
-   * this one in the display.
+   * @param {function|ButtonList|ButtonList.BACK} action
+   * - A callback function called when the button is pressed,
+   * another ButtonList that replaces this one in the display, or
+   * a the ButtonList.BACK static value that indicates going going
+   * up a level in the nested hierarchy.
    */
   add(buttonText, action) {
-    if (typeof action !== "function")
-      throw `Non function button actions are not supported yet`;
+    if (typeof action === "function") {
+      return this.pushButton(buttonText, () =>
+	action(this.callbackArgument));
+    }
+    if (action === ButtonList.BACK) {
+      return this.pushButton(buttonText, () =>
+	this.backCallback());
+    }
+    if (action?.constructor?.name !== "ButtonList")
+      throw `Button actions need to be either a function, ` +
+      `a different ButtonList or ButtonList.BACK. Got: '${action}'`;
+    
+    let otherList = action;
+    otherList.parentList = this;
+    
+    this.pushButton(buttonText, () => this.displayButtonsFrom(otherList));
+  }
+  
+  /**
+   * Push a button with a specified text and onclick
+   * to the `this.buttons` array. For internal use.
+   */
+  pushButton(buttonText, onclick) {
     this.buttons.push(htmlCreate({
       what: "button",
       innerText: buttonText,
-      onclick: () => action(this.callbackArgument),
+      onclick: onclick,
       appendTo: this.div
     }));
+  }
+  
+  /**
+   * A function called by a deeper nested ButtonList
+   * when a ButtonList.BACK button has been clicked.
+   * Used to signal the decision to the upper ButtonList.
+   */
+  backCallback() {
+    if (!this.parentList)
+      throw `Attempt to go back from a top-level ButtonList`;
+    this.parentList.back();
+  }
+
+  back() {
+    this.clear();
+    this.displayButtonsFrom(this);
+  }
+
+  /**
+   * Append buttons from the provided ButtonList to `this.div`.
+   */
+  displayButtonsFrom(list) {
+    if (this.parentList) {
+      // If this ButtonList is nested, outsource the display
+      // responsibility to the parent ButtonList
+      return this.parentList.displayButtonsFrom(list);
+    }
+    this.otherList = list;
+    this.clear();
+    this.otherList.buttons.forEach((button) => {
+      this.div.appendChild(button);
+    });
   }
 
   /**
@@ -634,16 +695,25 @@ export class ButtonList {
   appendTo(node) {
     node.appendChild(this.div);
   }
-  
+
   /**
-   * Brings the ButtonList to its initial state
+   * Removes all children from `this.div`.
    */
   clear() {
     while (this.div.firstChild)
       this.div.removeChild(this.div.firstChild);
+  }
+  
+  /**
+   * Brings the ButtonList to its initial state
+   */
+  reset() {
+    this.clear();
     this.buttons = [];
     this.callbackArgument = undefined;
   }
+
+  static BACK = "back";
 }
 
 /**

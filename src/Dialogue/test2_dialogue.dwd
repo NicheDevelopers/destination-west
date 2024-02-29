@@ -1,0 +1,15 @@
+# An example of nested Dialogue Menus
+
+P| My name is PLAYER_NAME.
+N| My name is NPC_NAME.
+-| goto decision
+
+decision:
+| Restart dialogue. | START
+| End dialogue. | END
+| More options | more
+
+more:
+| Combat. | COMBAT
+| Trade. | TRADE
+| Back. | decision

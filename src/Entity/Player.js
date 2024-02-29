@@ -42,7 +42,8 @@ class Player extends Entity {
 	   hitbox: game.currentTown.array,
 	   relativeCenterPoint: pp.playerRcp,
 	   boundingDistance: pp.playerBd});
-    
+
+    this.name = "Player";
     addTraits(
       this,
       InventoryTrait(pp.defaultStartCash));

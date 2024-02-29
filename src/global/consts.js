@@ -178,3 +178,21 @@ export const dialogueParameters = {
 };
 
 export const defaultEntityHp = 100;
+
+export const statThresholds = {
+  anger: {
+    min: 0,
+    medium: 15,
+    max: 30
+  },
+  respect: {
+    min: 0,
+    medium: 45,
+    max: 100
+  },
+  trust: {
+    min: 0,
+    medium: 50,
+    max: 80
+  }
+};

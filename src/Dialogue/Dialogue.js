@@ -1,73 +1,199 @@
-function parseDialogue(text, playerName, npcName) {
-  let whoMap = (c) => c === 'P' ? playerName : npcName;
+import Stats from "../Entity/Stats.js";
+import { DialogueUnit, DialogueLine, DialogueMenu,
+	 DialogueOperation, Label, specialLabels } from "./DialogueUnit.js";
 
-  return text.split('\n')
-    .filter((e) => e)
-    .map(s => s.split('|'))
-    .map(([who, what]) => ({
-      who: whoMap(who),
-      what: what.substring(1).replaceAll("NPC_NAME", npcName)
-        .replaceAll("PLAYER_NAME", playerName),
-      n: 0
-    }));
-}
-
-/*
-  Dialogue is an iterator that returns subsequent lines of a dialogue.
-  Each line is meant to be displayed letter-by-letter, so it has the
-  `n` counter, which is incremented with time and a substring
-  from 0 to n is displayed
-  */
+/**
+ * A class managing the flow of a dialogue. Can be bound to a
+ * DialogueDisplay with `setupDisplay()`.
+ */
 class Dialogue {
   constructor(filename, player, npc) {
     this.player = player;
     this.npc = npc;
-    // PlayerName is given here so that whenReady can have a simpler arglist.
-    // the name doesn't change anyway.
-    this.playerName = "Player";
-    this.loaded = false;
-    this._n = 0;
-    this.text = null;
-    this.lines = null;
+    
+    this.currentUnit = null;
+    this.currentLabel = null;
+    this.animation = null;
+    this.labels = new Map(
+      specialLabels.keysArray().map((labelName) => {
+	return [labelName, new Label(labelName)];
+      })
+    );
+
+    this.contentContainer = null;
+    this.endCallback = () => {};
+    
     this.load(filename);
   }
-  load(filename) {
-    fetch(filename).then(
-      r => {
+  
+  /**
+   * Loads the dialogue content from a dwd file
+   */
+  load(filepath) {
+    fetch(filepath)
+      .then(r => {
         if (!r.ok)
           throw new Error("Dialogue Fetch Error: " + r.status);
-        r.text().then(t => {
-	  this.loaded = true;
-          this.text = t;
-	  this.lines = parseDialogue(this.text, this.playerName, this.npc.name);
-        });
+        return r.text();
+      })
+      .then(text => {
+	this.parseDialogue(text);
+	this.currentLabel = this.labels.get(Label.START);
+	this.step();
       });
   }
-  // whenReady(callback) {
-  //   if (!this.loaded) {
-  //     setTimeout(() => this.whenReady(callback), 0);
-  //     return;
-  //   }
-  //   callback(parseDialogue());
-  // }
-  next() {
-    if (!this.loaded) return false;
-    if (this.exhausted()) return null;
-    return this.lines[this._n++];
+  
+  update() {
+    if (this.animation)
+      this.animation.next();
   }
-  formatLine(line) {
-    if (!this.loaded) return "";
-    return `${line.who}: ${line.what.substring(0, line.n)}`;
-  }
-  exhausted() {
-    if (!this.loaded) return false;
-    return this._n > this.lines.length - 1;
-  }
-  reset() {
-    this._n = 0;
-    this.lines.forEach(l => {l.n = 0});
+    
+  /**
+   * Step through the dialogue, display the next DialogueUnit
+   */
+  step() {
+    if (this.exhausted()) return this.endCallback();
+    if (!this.currentLabel.canStep()) return;
+
+    let nextUnit = this.currentLabel.step();
+
+    if (nextUnit === DialogueUnit.OPERATION)
+      return;
+        
+    this.currentUnit = nextUnit;
+
+    this.animation = this.currentUnit?.setupAnimation(
+      () => this.updateContainer());
+    this.updateContainer();
   }
 
+  /**
+   * Jump to the first DialogueUnit in the provided label
+   */
+  gotoLabel(labelName) {
+    this.animation = null;
+    if (!this.labels.has(labelName))
+      throw `Attempt to go to label '${labelName}', which does not ` +
+      `exist.\nExisting labels: ${this.labels.keysArray()}`;
+    this.currentLabel = this.labels.get(labelName);
+    this.currentLabel.reset();
+    this.step();
+  }
+
+  changeNpcStat(statName, changeValue) {
+    this.npc.changeStat(statName, changeValue);
+    if (this.npc.checkStat(statName) === Stats.MAX) {
+      return this.gotoLabel(Label.ANGER_LIMIT)
+    }
+    this.step();
+  }
+
+  /**
+   * If contentContainer is set, update its content to match
+   * the current state of the dialogue
+   */
+  updateContainer() {
+    if (!this.contentContainer || !this.currentUnit) return;
+    this.currentUnit.updateContent(this.contentContainer);
+  }
+  
+  /**
+   * Returns true if the dialogue is finished (no more content
+   * can be displayed). False otherwise.
+   */
+  exhausted() {
+    return this.currentLabel.exhausted();
+  }
+
+  /**
+   * Sets up dialogue's variables to prepare it for display
+   * @param display {DialogueDisplay} - The state managing this
+   * dialogue's display
+   * @param node {HTML...Element} - A node that will be automatically
+   * updated to match the current state of the dialogue.
+   * @param endCallback {function} - A callback called when this
+   * dialogue is exhausted and `step()` is called.
+   */
+  setupDisplay(display, node, endCallback=()=>{}) {
+    this.display = display;
+    this.contentContainer = node;
+    this.endCallback = endCallback;
+  }
+
+  end() {
+    this.display.endState();
+  }
+  
+  startTrade() {
+    this.end();
+    this.display.game.startTransfer(
+      this.player.equipment,
+      this.npc.equipment, true);
+  }
+
+  startCombat() {
+    console.log("TODO: Combat start point");
+    this.end();
+  }
+  
+  parseDialogue(text) {
+    let lineSplit = (/\r\n/).test(text) ? '\r\n' : '\n';
+    const lines = text.split(lineSplit)
+      .filter(line => line)
+      .map(line => line
+      .replace(/[ ]*\|[ ]*/g, "|")
+      .replaceAll("NPC_NAME", this.npc.name)
+      .replaceAll("PLAYER_NAME", this.player.name));
+    
+    let currentLabel = this.labels.get(Label.START);
+    
+    for (let i=0, line=lines[0]; i<lines.length; ++i, line=lines[i]) {
+      if (/^P|^N/.test(line)) {
+	line = line.replace(/^P\|/, `${this.player.name}|`)
+	  .replace(/^N\|/, `${this.npc.name}|`);
+	currentLabel.push(new DialogueLine().fromText(line));
+	continue;
+      }
+      if (/^[|]/.test(line)) {
+	if (!currentLabel.last?.isDialogueMenu()) {
+	  currentLabel.push(new DialogueMenu(this));
+	}
+	line = line.substring(1);
+	currentLabel.last.addChoiceFromText(line);
+	continue;
+      }
+      if (/:[ ]*$/.test(line)) {
+	let labelName = line.replace(/[ ]*:[ ]*/, "");
+	if (this.labels.has(labelName) &&
+	  specialLabels.get(labelName)?.canOverride !== true) {
+	  throw `Attempt to override a dialogue label: ${labelName}`;
+	}
+	
+	this.labels.set(labelName, new Label(labelName));
+	currentLabel = this.labels.get(labelName);
+	continue;
+      }
+      if (/^-[|]/.test(line)) {
+	line = line.slice(2);
+	currentLabel.push(new DialogueOperation(this).fromText(line));
+	continue;
+      }
+      if (/^[ ]*#/.test(line)) {
+	continue;
+      }
+      throw `No information on how to parse line: ${line}`;
+    }
+    this.verify();
+  }
+
+  /**
+   * Call `Label.verify()` on every Label present in this Dialogue
+   */
+  verify() {
+    for (const label of this.labels) {
+      label.last.verify(this);
+    }
+  }
 }
 
 export default Dialogue;

@@ -19,6 +19,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { PixelImage, createCanvas } from "../global/utilities.js";
+import { townPalette } from "../global/consts.js";
+
 let newBuilding = (x1, y1, x2, y2) =>
   ({ xStart: x1, yStart: y1, xTiles: x2, yTiles: y2 });
 let newStreet = (x1, y1, width, height) =>
@@ -233,6 +236,100 @@ const preset9 = {
     newStreet(0, 10, 42, 3)
   ]
 };
+
+/**
+ * Class responsible from parsing an image (presumably) of a town
+ * and creating a location out of it. colors of buildings, street and background
+ * are described in the "townPaletter" constant variable.
+ */
+export class LocationInfo {
+  constructor(){
+    this.preset = {
+      buildings: [],
+      streets: [],
+    }
+  }
+
+  /**
+   * Helper function to mark pixels on a check matrix
+   * if there was a bulding in this pixel.
+   *
+   * @param {number} x - horizontal pixel
+   * @param {number} y - vertical pixel
+   * @param {number} dx - offset from x (width)
+   * @param {number} dy - offset from y (height)
+   * @param {number[][]} matrix - binary matrix to set fields to ones
+   * @returns {*} - modifies matrix
+   */
+  _markAsChecked(x,y, dx, dy, matrix) {
+    for (let j = y; j <= dy + y; j++) {
+      for (let  i = x; i <= dx + x; i++) {
+	matrix[i][j] = 1;
+      }
+    }
+  }
+  
+  /**
+   * Helper function to create newBuilding and/or newStreet
+   * and populate the preset field with buildings and streets.
+   *
+   * @param {number} x - horizontal pixel
+   * @param {number} y - vertical pixel
+   * @param {Image} image - image to be processed
+   * @param {Object} palette - color pallete to process buildings and streets
+   * @param {number[][]} matrix - binary matrix to set fields to ones
+   * @returns {*} - pushes new buildings/streets into preset field
+   */
+  _createBuilding(x, y, image, palette, matrix){
+    for (const color of Object.keys(palette)) {
+      if (!image[x][y].isColor(palette[color])) continue;
+    
+      let objWidth = 0;
+      let objHeight = 0;
+	
+      while (image[x+objWidth][y].isColor(palette[color]) && x+objWidth < image.width - 1) objWidth++;
+      while (image[x][y+objHeight].isColor(palette[color]) && y+objHeight < image.height - 1) objHeight++;
+    
+      this._markAsChecked(x, y, objWidth, objHeight, matrix);
+      if (color === "street") this.preset.streets.push(newStreet(x, y, objWidth, objHeight));
+      else this.preset.buildings.push(newBuilding(x, y, objWidth, objHeight));
+    }
+  }
+
+  /**
+   * Helper function to iterate over given image and check against matrix
+   * if the function can continue.
+   *
+   * @param {Image} image - image to be processed
+   * @param {number[][]} matrix - binary matrix to set fields to ones
+   * @param {Object} palette - color pallete to process buildings and streets
+   */
+  _createLocation(image, matrix, palette) {
+    for (let y = 0; y < image.height; y++) {
+      for (let x = 0; x < image.width; x++) {
+	if (matrix[x][y]) continue;
+	this._createBuilding(x, y, image, palette, matrix);
+      }
+    }
+  }
+
+  /**
+   * Function to load image from path "src" and parse it into a location.
+   *
+   * @param {string} src - path to image to be parsed.
+   */
+  loadImage(src) {
+    let presetImg = new Image();
+    presetImg.src = src;
+    presetImg.onload = () => {
+      const { context: offContext } = createCanvas(presetImg.width, presetImg.height);
+      offContext.drawImage(presetImg, 0, 0);
+      const checkMatrix = Array(presetImg.width).fill(0).map(()=>Array(presetImg.height).fill(0));
+      let image = new PixelImage().fromContext(offContext);
+      this._createLocation(image, checkMatrix, townPalette)
+    }
+  }
+}
 
 let presets = [preset1, preset2, preset3, preset4, preset5, preset6, preset7, preset8, preset9];
 export default presets;

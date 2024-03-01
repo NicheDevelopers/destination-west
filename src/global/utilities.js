@@ -778,6 +778,13 @@ class Pixel {
   isTransparent() {
     return transparent(this.a);
   }
+
+  isColor(color={}) {
+    for (const comp in color)
+      if (this[comp] !== color[comp]) return false;
+    return true;
+  }
+
 }
 
 /**

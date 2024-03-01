@@ -179,6 +179,20 @@ export const dialogueParameters = {
 
 export const defaultEntityHp = 100;
 
+export const townPalette = {
+  // background: {r: 250, g: 200, b: 100},
+  bank: {r: 255, g: 255, b: 0},
+  street: {r: 220, g: 160, b: 100},
+  saloon: {r: 200, g: 50, b: 50},
+  house: {r: 130, g: 130, b: 130},
+  sheriff: {r: 100, g: 110, b: 250},
+  gunStore: {r: 200, g: 120, b: 180},
+  generalStore: {r: 100, g: 200, b: 230},
+  signpost: {r: 120, g: 60, b: 40},
+  church: {r: 255, g: 255, b: 255},
+  stable: {r: 215, g: 120, b: 100},
+};
+
 export const statThresholds = {
   anger: {
     min: 0,

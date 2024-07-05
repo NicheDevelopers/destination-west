@@ -26,7 +26,7 @@ import { stateManager, State } from "../global/stateManager.js"
 
 class EquipmentDisplay extends State {
   constructor(game, equipment) {
-    super(false);
+    super();
     this.equipment = equipment;
     this.game = game;
     this.actions = ['Toggle Equipment Display'];
@@ -90,12 +90,15 @@ class EquipmentDisplay extends State {
     div.appendChild(dropButton);
     return div;
   }
-  update() {
-    this.game.app.manageRequest(
-      'Toggle Equipment Display',
-      () => stateManager.toggleState(this),
-      { once: true }
+  
+  manageInputs(keyman) {
+    keyman.manageInput(
+      'Open Equipment',
+      () => stateManager.toggleState(this)
     );
+  }
+  
+  update() {
   }
 };
 

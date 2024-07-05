@@ -25,15 +25,15 @@ import { mapParameters, townSizes, worldMapDisplay as wmd } from "../global/cons
 
 class WorldMapDisplay extends State {
   constructor(game) {
-    super(false);
+    super();
     this.game = game;
     this.actions = ['Toggle Map Display'];
     this.div = createElement(
       'div', mapParameters.displayWidth, mapParameters.displayHeight, ['map-canvas-div'], {
-      position: 'absolute',
-      display: 'none',
-      zIndex: '1'
-    });
+	position: 'absolute',
+	display: 'none',
+	zIndex: '1'
+      });
     this.mapCanvas = createCanvas(mapParameters.displayWidth, mapParameters.displayHeight).canvas;
     this.mapCanvas.id = 'map-canvas';
     //this.mapCanvas.style.background = 'rgba(150,130,100, 0.8)';
@@ -61,8 +61,8 @@ class WorldMapDisplay extends State {
           .map((m) => m.connectedLocations)
           .flat()
           .concat(this.game.worldMap.locations
-            .filter((t) => t.visited)
-            .map((x) => x.ID)))];
+          .filter((t) => t.visited)
+          .map((x) => x.ID)))];
 
     // Draw all connections so that they get completely overlapped by towns
     for (const location of map.locations) {
@@ -114,30 +114,26 @@ class WorldMapDisplay extends State {
     }
   }
 
-computeTownSize(town) {
-  // make the last town large
-  if (town.ID === this.game.worldMap.locations.last.ID)
-    return townSizes.large;
-  if (town.connectedLocations.length < wmd.lowConnection) return townSizes.small;
-  else if (town.connectedLocations.length < wmd.mediumConnection) return townSizes.medium;
-  else if (town.connectedLocations.length < wmd.highConnection) return townSizes.large;
-}
+  computeTownSize(town) {
+    // make the last town large
+    if (town.ID === this.game.worldMap.locations.last.ID)
+      return townSizes.large;
+    if (town.connectedLocations.length < wmd.lowConnection) return townSizes.small;
+    else if (town.connectedLocations.length < wmd.mediumConnection) return townSizes.medium;
+    else if (town.connectedLocations.length < wmd.highConnection) return townSizes.large;
+  }
 
-update() {
-  this.game.app.manageRequest(
-    'Toggle Map Display',
-    () => stateManager.toggleState(this),
-    { once: true }
-  );
-}
+  manageInput(keyman) {}
+  
+  update() {}
 
-startHook() {
-  this.draw();
-  this.div.style.display = 'block';
-}
-endHook() {
-  this.div.style.display = 'none';
-}
+  startHook() {
+    this.draw();
+    this.div.style.display = 'block';
+  }
+  endHook() {
+    this.div.style.display = 'none';
+  }
 }
 
 function drawCircle(ctx, x, y, radius, strokeWidth, color) {

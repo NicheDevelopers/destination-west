@@ -591,6 +591,12 @@ Object.defineProperty(Map.prototype, "keysArray", {
   }
 });
 
+Object.defineProperty(Map.prototype, "valuesArray", {
+  value: function() {
+    return Array.from(this.values());
+  }
+});
+
 
 
 Number.prototype.clamp = function(min, max) {
@@ -933,5 +939,72 @@ export class PixelImage {
   static colSet(self, prop, val, receiver) {
     throw `Direct assignment to PixelImage's Pixel is forbidden.` +
       ` Use methods of the Pixel object instead.`;
+  }
+}
+
+/**
+ * A data structure that stores pairs of keys and values.
+ * All the keys within a TwoWayMap are unique, but more than
+ * one key could lead to the same value.
+ */
+export class TwoWayMap {
+  constructor(array=[]) {
+    this.map = new Map();
+    this.pam = new Map();
+
+    array.forEach(([key, value]) => {
+      this.set(key, value);
+    });
+  }
+  set(key, value) {
+    if (this.map.has(key))
+      throw `Key '${key}' is already present in the TwoWayMap`;
+    this.map.set(key, value);
+    
+    if (!this.pam.has(value))
+      this.pam.set(value, key);
+  }
+  
+  /**
+   * Get the value that maps to the provided key
+   */
+  getValue(key) {
+    return this.map.get(key);
+  }
+  
+  /**
+   * Get the key that maps to the provided value
+   */
+  getKey(value) {
+    return this.pam.get(value);
+  }
+
+  hasValue(value) {
+    return this.pam.has(value);
+  }
+  
+  hasKey(key) {
+    return this.map.has(key);
+  }
+
+  deleteByKey(key) {
+    let value = this.getValue(key);
+    this.map.delete(key);
+    this.pam.delete(value);
+  }
+  
+  deleteByValue(value) {
+    let key = this.getKey(value);
+    this.map.delete(key);
+    this.pam.delete(value);
+  }
+
+  clear() {
+    this.map.clear();
+    this.pam.clear();
+  }
+
+  get size() {
+    return this.map.size;
   }
 }

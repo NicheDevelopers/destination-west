@@ -7,7 +7,7 @@ import { htmlCreate, ButtonList } from "../global/utilities.js";
 
 class DialogueDisplay extends State {
   constructor(game, options={}) {
-    super(false);
+    super();
     this.game = game;
         
     this.div = htmlCreate({
@@ -44,19 +44,17 @@ class DialogueDisplay extends State {
     this.dialogue.setupDisplay(this, this.div, () => this.endState());
   }
 
-  update() {
-    this.dialogue.update();
-    
-    /* This is weird. For now I have to use the 'Interact' action,
-       but perhaps we should change that once we make state-specific keymaps */
-    this.game.app.manageRequest(
-      'Interact',
+  manageInputs(keyman) {
+    keyman.manageInput(
+      'Next Dialogue Line',
       () => {
 	this.dialogue.step();
-      },
-      { once: true }
+      }
     );
-    
+  }
+  
+  update() {
+    this.dialogue.update();
   }
   startHook() {
     this.div.className = "visible";

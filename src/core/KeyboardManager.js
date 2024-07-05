@@ -1,25 +1,7 @@
-/*
-  file: src/KeyboardManager.js
-  purpose: define the KeyboardManager class; provide a simple interface
-           for keyboard event management
-  author: Artur Gulik <https://gitlab.com/ArturGulik>
-  
-  This file is part of 'Destination West'.
-  
-  'Destination West' is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License,
-  or (at your option) any later version.
-
-  'Destination West' is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-  or FITNESS FOR A PARTICULAR PURPOSE.
-  See the GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License along with
-  'Destination West'. If not, see <https://www.gnu.org/licenses/>.
-*/
-
+import { TwoWayMap } from "../global/utilities.js";
+import { stateManager } from "../global/stateManager.js";
+import defaultKeybinds, { specialKeys, actions as specialActions }
+from "../global/defaultKeybinds.js";
 
 /* Prevent accidental game exit. To be used in the future
 window.onbeforeunload = (e) => {
@@ -31,92 +13,125 @@ window.onbeforeunload = (e) => {
 /**
  * Provide a simple interface for managing keyboard events
  */
-class KeyboardManager {
-  constructor(app, keybinds = []) {
-    this.app = app;
-    this.actions = new Map(); // [key, array of actions]
-
-    this.load(keybinds);
-    // Requests are actions bound to the currently pressed keys
-    this.requests = new Map(); // [action, true]
-
-    // Ignored actions are meant to be ignored on key presses
+export class KeyboardManager {
+  constructor() {
+    // Stores maps of keybinds for particular states
+    this.stateBinds = new Map();
+    
+    this.load(defaultKeybinds);
+    this.generalActions = new Map();
+    
+    this.requests = new TwoWayMap(); // [key, action]
     this.ignore = new Map(); // [action, true]
+
+    document.addEventListener("keydown", this.manageKeydown.bind(this));
+    document.addEventListener("keyup", this.manageKeyup.bind(this));
+  }
+
+  load(keybinds) {
+    this.keybinds = keybinds;
+    this.stateBinds = new Map();
+    
+    for (const state in keybinds) {
+      this.stateBinds.set(state, new TwoWayMap(keybinds[state]));
+    }
+  }
+  
+  manageKeydown(event) {
+    let key = event.key.toLowerCase();
+      
+    if (this.ignore.has(key))
+      return;
+    
+    let action = this.getAction(key);
+    
+    if (!action && key === stateManager.currentState.startKey)
+      action = this.getAction(specialKeys.STATE_START_KEY);
+
+    if (action === specialActions.NONE) return;
+    
+    if (action && !this.requests.hasValue(action))
+      this.requests.set(key, action);
+  }
+  manageKeyup(event) {
+    let key = event.key.toLowerCase();
+    this.ignore.delete(key);
+    
+    this.requests.deleteByKey(key);
+  }
+  isActionRequested(action) {
+    return this.requests.hasValue(action);
+  }
+  
+  /**
+   * Manage a particular action by calling a callback
+   * if that action has been requested due to a keypress
+   * @param action - The name of the managed action
+   * @param callback - The function to call if the action has been requested
+   * @param options.once [true] - Whether the input is meant to be managed
+   * once per keypress (and not every tick while the key is down).
+  */
+  manageInput(action, callback, options = {}) {
+    if (!this.isActionRequested(action))
+      return;
+    
+    let key = this.getKey(action);
+    
+    // `Key for action '${action}' is not bound in neither 
+    // '${stateManager.currentState.name}' nor in 'general'`;
+    if (!key) return;
+    
+    if (options.once === undefined || options?.once) {
+      this.requests.deleteByValue(action);
+      this.ignore.set(key, true);
+    }
+    
+    callback(key);
+
+    stateManager.potentialStateChange(key);
+
+    return;
   }
 
   /**
-   * Add *key* to the keymap and assign function *func* to it
-   @returns true on success, false on failure
-  */
-  bind(key, action) {
-    if (!this.actions.get(key)) this.actions.set(key, []);
-
-    let actions = this.actions.get(key);
-
-    if (actions.indexOf(action) !== -1) {
-      throw `Keyboard Manager: ` +
-      `Attempted to bind function \'${action}\' to key ` +
-      `\'${key}\' the second time.`;
+   * Manages requests for actions stored in generalActions
+   */
+  manageGeneralInputs() {
+    for (const name of this.generalActions.keys()) {
+      let action = this.generalActions.get(name);
+      this.manageInput(name, action.fn, action.flags);
     }
-
-    actions.push(action);
-    return true;
   }
 
-  unbind(key, action = false) {
-    // Remove *key* from the keymap.
-    // Returns: true on success, false on failure
-    let actions = this.actions.get(key);
-    if (!actions) return false;
+  /**
+   * Returns the TwoWayMap of keybinds of a specified state.
+   */
+  bindsAt(stateName) {
+    return this.stateBinds.get(stateName);
+  }
 
-    if (!action) {
-      actions.delete(key);
-      return true;
-    }
+  currentBinds(){
+    return this.bindsAt(stateManager.currentState.name);
+  }
+  
+  /**
+   * Returns the key bound to the given action if this action is
+   * available within the current state or the "general" bind collection.
+   * Returns undefined otherwise.
+   */
+  getKey(action) {
+    return this.currentBinds()?.getKey(action) ??
+      this.bindsAt("general").getKey(action);
+  }
 
-    let i = actions.indexOf(action);
-    if (i === -1) return false;
-    actions[i] = actions.last;
-    actions.pop();
-    return true;
+  getAction(key) {
+    return this.currentBinds()?.getValue(key) ??
+      this.bindsAt("general").getValue(key);
   }
-  load(keybinds) {
-    // Load keybinds from an array with [key, action] pairs
-    // Returns: undefined
-    keybinds.forEach(keybind => {
-      this.bind(keybind[0], keybind[1]);
-    });
-  }
-  manageKeydown(event) {
-    let k = event.key.toLowerCase();
-    let actions = this.actions.get(k);
-    if (!actions) return;
-    actions.forEach(action => {
-      if (!this.ignore.has(action))
-        this.requests.set(action, true);
-    });
-  }
-  manageKeyup(event) {
-    let k = event.key.toLowerCase();
-    let actions = this.actions.get(k);
-    if (!actions) return;
-    actions.forEach(action => {
-      this.ignore.delete(action);
-      this.requests.delete(action);
-    });
-  }
-  isActionRequested(action) {
-    return this.requests.has(action);
-  }
-  manageRequest(action, callback, options = {}) {
-    if (!this.requests.has(action))
-      return;
-    if (options?.once) {
-      this.requests.delete(action);
-      this.ignore.set(action, true);
-    }
-    return callback();
+
+  clearInputs() {
+    this.requests.clear();
   }
 }
 
-export default KeyboardManager;
+export default new KeyboardManager();

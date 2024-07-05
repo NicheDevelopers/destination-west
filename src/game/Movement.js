@@ -81,21 +81,23 @@ class Momentum {
   /**
    * Update this.sprinting and this.sneaking properties.
    * Set the X and Y speeds and the direction
-   * according to keyboard input registered in `app`.
+   * according to keyboard input registered in `keyman`.
    */
-  setFromKeyboardInput(app) {
+  manageInputs(keyman) {
+    this.reset();
+    
     if (this.sprintMode === 'hold') {
       this.sprinting = false;
     }
     if (this.sneakMode === 'hold') {
       this.sneaking = false;
     }
-    app.manageRequest(
+    keyman.manageInput(
       'Toggle Sprint',
       () => this.toggleSprint(),
       { once: (this.sprintMode === 'toggle') });
 
-    app.manageRequest(
+    keyman.manageInput(
       'Toggle Sneak',
       () => this.toggleSneak(),
       { once: (this.sneakMode === 'toggle') });
@@ -106,7 +108,7 @@ class Momentum {
     }
     
     this.movementActions.forEach((moveFn, action) => {
-      if (app.isActionRequested(action)) {
+      if (keyman.isActionRequested(action)) {
         this[moveFn]();
       }
     });
@@ -114,6 +116,8 @@ class Momentum {
   }
 
   setFromPathfinder(pathfinder, entity) {
+    this.reset();
+    
     if (this.standing) {
       return;
     }
@@ -221,17 +225,16 @@ export default class Movement {
     and updateSprite() to apply the changes properly.
   */
   update() {
-    this.momentum.reset();
-
-    if (this.playerControlled) {
-      this.momentum.setFromKeyboardInput(this.entity.game.app);
-    }
-    else {
+    if (!this.playerControlled) {
       this.momentum.setFromPathfinder(this.pathfinder, this.entity);
     }
-
+    
     this.updateMovement();
     this.updateSprite();
+  }
+
+  manageInputs(keyman) {
+    this.momentum.manageInputs(keyman);
   }
 
   /**

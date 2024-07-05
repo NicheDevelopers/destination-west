@@ -49,10 +49,11 @@ import seed from "../global/seed.js";
 import { createItem } from "../global/items.js";
 import { items } from "../global/items.js";
 import { FindQuestBuilder, FindQuestConfig, FindQuestType, ItemDistribution, ItemEntry } from '../Quest.js'
+import keyman from "../core/KeyboardManager.js";
 
 class Game extends State {
   constructor(app, callback) {
-    super(true);
+    super(true, {async: true});
     this.app = app;
     seed.generate(null, () => {
       this.init();
@@ -148,14 +149,7 @@ class Game extends State {
 
     this.testEntity = new Npc(this, 370, 290, "Milas");
     this.currentTown.npcs.push(this.testEntity);
-
-    this.slaves = [
-      this.pauseMenu,
-      this.designer,
-      this.worldMapDisplay,
-      this.equipmentDisplay,
-      this.transferDisplay,
-    ]
+    this.validate();
   }
 
   travel(id) {
@@ -182,6 +176,23 @@ class Game extends State {
     this.worldMapDisplay.draw();
   }
 
+  manageInputs(keyman) {
+    this.camera.manageInputs(keyman);
+    this.player.manageInputs(keyman);
+    keyman.manageInput('Open Pause Menu',
+      (key) => stateManager.startState(this.pauseMenu, key)
+    );
+    keyman.manageInput('Open Designer',
+      (key) => stateManager.startState(this.designer, key)
+    );
+    keyman.manageInput('Open Map',
+      (key) => stateManager.startState(this.worldMapDisplay, key)
+    );
+    keyman.manageInput('Open Equipment',
+      (key) => stateManager.startState(this.equipmentDisplay, key)
+    );
+  }
+
   getFocusedItem() {
     return this.currentTown.focused;
   }
@@ -200,9 +211,9 @@ class Game extends State {
     this.paused = !this.paused;
   }
 
-  startDialogue(...args) {
-    this.dialogueDisplay.setDialogue(...args);
-    stateManager.startState(this.dialogueDisplay);
+  startDialogue(dialogue, stateChangeKey) {
+    this.dialogueDisplay.setDialogue(dialogue);
+    stateManager.startState(this.dialogueDisplay, stateChangeKey);
   }
 
   startTransfer(...args) {

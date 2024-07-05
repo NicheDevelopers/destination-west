@@ -109,25 +109,29 @@ class Camera {
     this.centerX = this.width / 2;
     this.centerY = this.height / 2;
   }
-  
-  render(options={}) {
-    //console.log(`camera zoom: ${this.zoom})} | focus: (${this.focus.x}, ${this.focus.y}), goals: [${this.animation.getGoalStates().join(' ')}]`);
-    this.game.app.manageRequest(
+
+  manageInputs(keyman) {
+    keyman.manageInput(
       'Camera zoom in',
       () => {
         if (this.zoom < this.zoomMax) {
           this.zoom += this.zoomSpeed * time.delta;
         }
-      }
+      },
+      { once: false }
     );
-    this.game.app.manageRequest(
+    keyman.manageInput(
       'Camera zoom out',
       () => {
         if (this.zoom > this.zoomMin) {
           this.zoom -= this.zoomSpeed * time.delta;
         }
-      }
+      },
+      { once: false }
     );
+  }
+  
+  render(options={}) {
     ctx.clearRect(0, 0, this.width, this.height);
     if (this.state === camStates.FOCUSED) {
       this.x = this.focusedEntity.getCenterPoint().x;

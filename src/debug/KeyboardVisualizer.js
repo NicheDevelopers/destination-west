@@ -1,4 +1,5 @@
 import { htmlCreate } from "../global/utilities.js";
+import keyman from "../core/KeyboardManager.js";
 
 function kvForm(formOptions = []) {
   let form = document.createElement('form');
@@ -26,13 +27,12 @@ function kvForm(formOptions = []) {
 
 /**
  * Add an input method for a button
- @param keyman - The keyboard manager object that manages the action bound to the button
  @param button - The button to add input methods to
  @param action - The action from keyman to execute on triggers
  @param triggerListenerType - The name of the event listener type to trigger the action
  @param cancelListenerType - The name of the event listener type to cancel the action
  */
-function addInput(keyman, button, action, triggerListenerType, cancelListenerType) {
+function addInput(button, action, triggerListenerType, cancelListenerType) {
   let trigger = () => {
     keyman.requests.set(action, true);
   };
@@ -66,8 +66,7 @@ function addInput(keyman, button, action, triggerListenerType, cancelListenerTyp
 class KeyboardVisualizer {
   constructor(app, appendTo=document.body) {
     this.app = app;
-    this.keyman = app.keyman;
-    
+        
     this.div = htmlCreate({
       classList: "kvDiv nodisp",
       appendTo: appendTo
@@ -140,7 +139,7 @@ class KeyboardVisualizer {
     if (!this.isVisible()) return;
     
     this.buttons.forEach((button, action) => {
-      if (this.keyman.isActionRequested(action))
+      if (keyman.isActionRequested(action))
         button.element.classList.add("active");
       else button.element.classList.remove("active");
     });
@@ -156,12 +155,12 @@ class KeyboardVisualizer {
   }
   hoverMode() {
     this.buttons.forEach((button, action) => {
-      addInput(this.keyman, button, action, 'mouseover', 'mouseout');
+      addInput(button, action, 'mouseover', 'mouseout');
     });
   }
   toggleMode() {
     this.buttons.forEach((button, action) => {
-      addInput(this.keyman, button, action, 'click');
+      addInput(button, action, 'click');
     });
   }
 }

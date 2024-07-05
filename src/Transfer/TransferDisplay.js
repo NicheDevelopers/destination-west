@@ -26,9 +26,8 @@ import { createElement } from "../global/utilities.js";
 
 class TransferDisplay extends State {
   constructor(game){
-      super(false);
+      super();
       this.game = game;
-      this.actions = ['Interact'];
       this.transfer = null;
       this.div = createElement('div', null, null, ["window"], {}, "transfer", null);
       let gameContainer = document.querySelector("#game-container");
@@ -146,13 +145,12 @@ class TransferDisplay extends State {
   setTransferWith(playerEq, transferEq, trading) {
     this.transfer = new Transfer(playerEq, transferEq, trading);
   }
+  
+  manageInput(keyman) {}
+  
   update() {
-    this.game.app.manageRequest(
-      'Interact',
-      () => stateManager.toggleState(this),
-      { once: true }
-    );
   }
+  
   startHook() {
     this.refresh();
     this.div.style.display = "flex";

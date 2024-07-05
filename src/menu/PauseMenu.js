@@ -31,7 +31,6 @@ class PauseMenu extends State {
     super(true);
     // basic functions
     this.game = game;
-    this.actions = ['Toggle Pause Menu'];
     this.paused = false;
     this.customKeybinds = defaultKeybinds;
     this.customVolumeMap = volumeMap;
@@ -86,13 +85,9 @@ class PauseMenu extends State {
     exitMenuRefusalButton.addEventListener("click", () => { this.exitExitMenu() });
   }
 
-  update() {
-    this.game.app.manageRequest(
-      'Toggle Pause Menu',
-      () => stateManager.toggleState(this),
-      { once: true }
-    );
-  }
+  manageInputs(keyman) {}
+  
+  update() {}
 
   startHook() {
     this.pauseMenu.style.display = 'flex';
@@ -110,16 +105,18 @@ class PauseMenu extends State {
 
   // functions displaying settings
   loadKeybinds() {
-    this.customKeybinds.forEach(e => {
-      let actionName = e[1];
-      let keyName = e[0];
-      let div = createElement("div", null, null, [], {borderBottom: "2px solid brown", padding: "2% 0 4% 0"}, null, null);
-      let action = createElement("div", null, null, [], {width: "50%", display: "inline-block"}, null, actionName + ":");
-      let key = createElement("button", null, null, ["pause-menu-buttons","settings-menu-buttons", "button"], {}, null, keyName.charAt(0).toUpperCase() + keyName.slice(1));
-      div.append(action);
-      div.append(key);
-      this.settingsMenu.append(div);
-    });
+    for (const category in this.customKeybinds) {
+      this.customKeybinds[category].forEach(e => {
+	let actionName = e[1];
+	let keyName = e[0];
+	let div = createElement("div", null, null, [], {borderBottom: "2px solid brown", padding: "2% 0 4% 0"}, null, null);
+	let action = createElement("div", null, null, [], {width: "50%", display: "inline-block"}, null, actionName + ":");
+	let key = createElement("button", null, null, ["pause-menu-buttons","settings-menu-buttons", "button"], {}, null, keyName.charAt(0).toUpperCase() + keyName.slice(1));
+	div.append(action);
+	div.append(key);
+	this.settingsMenu.append(div);
+      });
+    }
   }
 
   // function loading volumeMap

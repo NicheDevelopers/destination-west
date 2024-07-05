@@ -60,15 +60,15 @@ class ChuckALuck extends State {
     this.mainDiv.appendChild(this.bettingAreaDiv);
     gameContainer.appendChild(this.mainDiv);
   }
-  /**
-     Function run every tick this state is active
-  */
-  update() {
-    this.game.app.manageRequest(
+  
+  manageInput(keyman) {
+    keyman.manageRequest(
       'Toggle Pause Menu',
-      () => stateManager.toggleState(this),
-      { once: true }
+      () => stateManager.toggleState(this)
     );
+  }
+  
+  update() {
   }
   
   start() {

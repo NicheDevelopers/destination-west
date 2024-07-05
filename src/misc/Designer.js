@@ -30,7 +30,7 @@ import { State, stateManager } from "../global/stateManager.js";
 
 class Designer extends State {
   constructor(game) {
-    super(false);
+    super();
     this.display = false;
     let div = createElement(
       'div', 650, 400, ['window', 'window-background'],
@@ -142,14 +142,10 @@ class Designer extends State {
     this.div.style.display = 'none'
   }
 
+  manageInputs(keyman) {
+  }
+  
   update() {
-    this.game.app.manageRequest(
-      'Toggle Designer Display',
-      () => {
-        stateManager.toggleState(this)
-      },
-      { once: true });
-
     for (const clothing in this.clothes) {
       this.clothes[clothing].draw(0, 0, this.previewCtx);
     }

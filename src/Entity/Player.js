@@ -59,24 +59,28 @@ class Player extends Entity {
   }
 
   update() {
-    this.game.app.manageRequest(
-      'Interact',
-      () => this.interact(),
-      { once: true });
-
     this.movement.update();
     
     this.sprite.next();
+  }
+
+  manageInputs(keyman) {
+    keyman.manageInput(
+      'Interact',
+      (key) => this.interact(key)
+    );
+    
+    this.movement.manageInputs(keyman);
   }
   
   isFacingRight() {
     return this.sprite.mirrored;
   }
   
-  interact() {
+  interact(key) {
     this.game.updateFocus();
     let focused = this.game.getFocusedItem();
-    focused?.interact(this);
+    focused?.interact(this, key);
     this.game.updateFocus();
   }
   

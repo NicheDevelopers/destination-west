@@ -23,18 +23,8 @@
  * Class for dealing with browser-specific methods, requests
  */
 class Browser {
-
   constructor(app) {
     this.app = app;
-    this.actions = ['Toggle Fullscreen'];
-  }
-
-  update() {
-    this.app.manageRequest(
-      'Toggle Fullscreen',
-      this.toggleFullscreen,
-      { once: true }
-    );
   }
 
   toggleFullscreen() {

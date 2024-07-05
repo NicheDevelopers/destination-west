@@ -22,7 +22,7 @@
 
 import time from "./global/time.js";
 import { Browser, ctx } from "./core/Browser.js";
-import KeyMan from "./core/KeyboardManager.js";
+import keyman from "./core/KeyboardManager.js";
 import AudioPlayer from "./audio/AudioPlayer.js";
 import DebugView from "./debug/DebugView.js";
 import Animation from "./core/Animation.js";
@@ -31,51 +31,32 @@ import { stateManager } from "./global/stateManager.js"
 import { notifier } from "./global/notifier.js";
 
 class App {
-  constructor(keybinds = []) {
+  constructor() {
     this.game = new Game(this, () => {
       stateManager.pushState(this.game);
     });
     
     this.animationFrameID = null;
-    this.userFunctionsMap = new Map();
-
+    
     this.debugging = false;
 
     this.browser = new Browser(this);
     this.audioPlayer = new AudioPlayer();
 
-    /* Keyman has to load keybinds AFTER functions are written to
-       userFunctionsMap. This means it has to be instantinated AFTER
-       every function provider */
-
-    this.keyman = new KeyMan(this, keybinds);
-
     this.debugView = new DebugView(this);
-    
-    let self = this;
-    document.addEventListener("keydown", (event) => {
-      self.keyman.manageKeydown(event);
+
+    keyman.generalActions.set('Toggle Fullscreen', {
+      fn: () => this.browser.toggleFullscreen()
     });
-    document.addEventListener("keyup", (event) => {
-      self.keyman.manageKeyup(event);
+    keyman.generalActions.set('Close Window', {
+      fn: () => stateManager.currentState.endState()
     });
-  }
-
-  isActionRequested(action) {
-    return this.keyman.isActionRequested(action);
-  }
-
-  manageRequest(...args) {
-    this.keyman.manageRequest(...args);
-  }
-
-  update() {
-    this.manageRequest(
-      'Toggle Debug Mode',
-      () => {
+    keyman.generalActions.set('Toggle Debug Mode', {
+      fn: () => {
 	this.debugging = !this.debugging;
 	this.debugView.setVisibility(this.debugging);
-      }, { once: true });
+      }
+    });
   }
 
   loop() {
@@ -84,9 +65,7 @@ class App {
     try {
       time.update();
 
-      this.update();
       this.debugView.update();
-      this.browser.update();
       
       stateManager.updateStates();
       notifier.update();
@@ -96,7 +75,6 @@ class App {
       throw e;
     }
   }
-
 }
 
 export default App;

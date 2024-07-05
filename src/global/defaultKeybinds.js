@@ -1,42 +1,47 @@
-/*
-  file: src/defaultKeybinds.js
-  purpose: define the default keybinds array
-  authors: Artur Gulik <https://gitlab.com/ArturGulik>
-           Kamil Małecki <https://gitlab.com/gaussx>
-           Michał Miłek <https://gitlab.com/mmilek>
+export const specialKeys = {
+  STATE_START_KEY: "STATE_START_KEY"
+}
 
-  This file is part of 'Destination West'.
-  
-  'Destination West' is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License,
-  or (at your option) any later version.
+export const actions = {
+  NONE: "NONE"
+}
 
-  'Destination West' is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-  or FITNESS FOR A PARTICULAR PURPOSE.
-  See the GNU General Public License for more details.
+/**
+ * A collection of arrays describing keybinds in particular states.
+ * The 'general' keybinds are used in every state unless overwritten
+ * by it. `actions.NONE` can be used to disable a keybind without overwriting.
+ * Note: Order matters! The first keybind that matches a keypress will be used.
+ * This also applies to special keys.
+ */
+const defaultKeybinds = {
+  general: [
+    [specialKeys.STATE_START_KEY, 'Close Window'],
+    ['escape', 'Close Window'],
+    ['f', 'Toggle Fullscreen'],
+    ['n', 'Toggle Debug Mode'],
+  ],
+  Game: [
+    ['a', 'Move Left'],
+    ['d', 'Move Right'],
+    ['w', 'Move Up'],
+    ['s', 'Move Down'],
+    ['shift', 'Toggle Sprint'],
+    ['c', 'Toggle Sneak'],
+    ['m', 'Open Map'],
+    ['h', 'Open Designer'],
+    ['e', 'Interact'],
+    ['g', 'Open Equipment'],
+    ['=', 'Camera zoom in'],
+    ['-', 'Camera zoom out'],
+    ['escape', 'Open Pause Menu'],
+  ],
+  DialogueDisplay: [
+    [specialKeys.STATE_START_KEY, 'Next Dialogue Line'],
+    ['escape', actions.NONE],
+  ],
+  EquipmentDisplay: [
+    ['g', 'Open Equipment'],
+  ]
+};
 
-  You should have received a copy of the GNU General Public License along with
-  'Destination West'. If not, see <https://www.gnu.org/licenses/>.
-*/
-
-const defaultKeybinds = [
-  ['f', 'Toggle Fullscreen'],
-  ['a', 'Move Left'],
-  ['d', 'Move Right'],
-  ['w', 'Move Up'],
-  ['s', 'Move Down'],
-  ['n', 'Toggle Debug Mode'],
-  ['m', 'Toggle Map Display'],
-  ['h', 'Toggle Designer Display'],
-  ['escape', 'Toggle Pause Menu'],
-  ['e', 'Interact'],
-  ['g', 'Toggle Equipment Display'],
-  ['shift', 'Toggle Sprint'],
-  ['c', 'Toggle Sneak'],
-  ['=', 'Camera zoom in'],
-  ['-', 'Camera zoom out'],
-  ['e', 'Next Dialogue Line']
-];
 export default defaultKeybinds;

@@ -28,28 +28,35 @@ import PauseMenu from "../menu/PauseMenu.js";
 import EquipmentDisplay from "../Equipment/EquipmentDisplay.js";
 import Designer from "../misc/Designer.js";
 import Item from "../Item/Item.js";
-import { State, stateManager } from "../global/stateManager.js"
+import { State, stateManager } from "../global/stateManager.js";
 import Npc from "../Entity/Npc.js";
 import Dialogue from "../Dialogue/Dialogue.js";
 import DialogueDisplay from "../Dialogue/DialogueDisplay.js";
 import Container from "../Entity/Container.js";
-import Portal, {PortalType} from "../Entity/Portal.js";
+import Portal, { PortalType } from "../Entity/Portal.js";
 import TransferDisplay from "../Transfer/TransferDisplay.js";
 import WorldMap from "../WorldMap/WorldMap.js";
 import Travel from "../Location/Travel.js";
 import Town from "../Location/Town.js";
 import { distance } from "../global/utilities.js";
-import Interactible from "../Entity/Interactible.js"
+import Interactible from "../Entity/Interactible.js";
 import { tileSize } from "../global/consts.js";
-import {Notification, notifier} from "../global/notifier.js";
-import ChuckALuck from "../minigames/ChuckALuck.js"
+import { Notification, notifier } from "../global/notifier.js";
+import ChuckALuck from "../minigames/ChuckALuck.js";
 import Pathfinder from "../Pathfinder.js";
 import Trader from "../Entity/Trader.js";
 import seed from "../global/seed.js";
 import { createItem } from "../global/items.js";
 import { items } from "../global/items.js";
-import { FindQuestBuilder, FindQuestConfig, FindQuestType, ItemDistribution, ItemEntry } from '../Quest.js'
-import keyman from "../core/KeyboardManager.js";
+import { FindQuestBuilder, FindQuestConfig, FindQuestType, ItemDistribution, ItemEntry } from '../Quest.js';
+import {
+  Combat,
+  CombatAction,
+  CombatConfig,
+  CombatInitiationType,
+  Difficulty,
+} from "../Combat/Combat.js";
+import CombatDisplay from "../Combat/CombatDisplay.js";
 
 class Game extends State {
   constructor(app, callback) {
@@ -60,7 +67,7 @@ class Game extends State {
       callback();
     });
   }
-  
+
   init() {
     this.pauseMenu = new PauseMenu(this);
     this.paused = false;
@@ -68,10 +75,10 @@ class Game extends State {
     this.designer = new Designer(this);
 
     this.testTile = new Tile("sand");
-    
+
     this.worldMap = new WorldMap(this);
     this.worldMapDisplay = new WorldMapDisplay(this);
-    
+
     this.currentTown = this.worldMap.locations[0];
     this.currentTown.visited = true;
     if (!this.currentTown.created) {
@@ -80,39 +87,51 @@ class Game extends State {
 
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
-    this.player = new Player(this, this.currentTown.playerSpawn.x, this.currentTown.playerSpawn.y);
+    this.player = new Player(
+      this,
+      this.currentTown.playerSpawn.x,
+      this.currentTown.playerSpawn.y,
+    );
 
     let testMinigame = new ChuckALuck(this);
-    
+
     this.camera = new Camera(this);
-    
+
     let testMinigamer = new Interactible(this, "chuck-a-luck-table", 200, 200);
-    
+
     testMinigamer.interact = (who) => {
       testMinigame.start();
     };
-    
+
     let testContainer = new Container(this, "barrel", 250, 250);
     testContainer.equipment.fillRecords([
-      {name: items.whisky, quantity: 3},
-      {name: items.apple, quantity: 3},
-      {name: items.brokenBottle, quantity: 1},
-      {name: items.revolver1, quantity: 3}
+      { name: items.whisky, quantity: 3 },
+      { name: items.apple, quantity: 3 },
+      { name: items.brokenBottle, quantity: 1 },
+      { name: items.revolver1, quantity: 3 },
     ]);
-    
-    this.currentTown.portals.push(new Portal(this, "decoration-roadsign", 64*4, 64*5, PortalType.openMap()));
+
+    this.currentTown.portals.push(
+      new Portal(
+        this,
+        "decoration-roadsign",
+        64 * 4,
+        64 * 5,
+        PortalType.openMap(),
+      ),
+    );
     this.currentTown.containers.push(testContainer);
     this.currentTown.npcs.push(testMinigamer);
     let OlBenjamin = new Npc(this, 382, 350, "Ol' Benjamin");
     this.currentTown.npcs.push(OlBenjamin);
     OlBenjamin.impaired = true;
-    
+
     let testTrader = new Trader(this, 300, 250, "Sawyer McCleary");
     testTrader.equipment.fillRecords([
-      {name: items.apple, quantity: 3},
-      {name: items.revolver1, quantity: 5}
+      { name: items.apple, quantity: 3 },
+      { name: items.revolver1, quantity: 5 },
     ]);
-    
+
     //----------------------------------------
     const type = FindQuestType.FindOnTheGround;
     const distribution = ItemDistribution.Even;
@@ -122,48 +141,72 @@ class Game extends State {
     ];
     const questConfig = new FindQuestConfig(type, entries, distribution);
     const builder = new FindQuestBuilder(testTrader, questConfig, null);
-    const valid = builder.validate()
-    console.log(`Is quest valid?: ${valid}`)
+    const valid = builder.validate();
+    console.log(`Is quest valid?: ${valid}`);
     const quest = builder.build();
     console.log(quest);
     //----------------------------------------
-    
+
     this.currentTown.npcs.push(testTrader);
-    
+
     //this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));
-        
+
     this.player.equipment.fillRecords([
-      {name: items.cigar, quantity: 1},
-      {name: items.whisky, quantity: 5},
-      {name: items.revolver1, quantity: 2},
-      {name: items.revolver2, quantity: 3},
-      {name: items.apple, quantity: 5},
-      {name: items.brokenBottle, quantity: 1}
+      { name: items.cigar, quantity: 1 },
+      { name: items.whisky, quantity: 5 },
+      { name: items.revolver1, quantity: 2 },
+      { name: items.revolver2, quantity: 3 },
+      { name: items.apple, quantity: 5 },
+      { name: items.brokenBottle, quantity: 1 },
     ]);
 
     this.equipmentDisplay = new EquipmentDisplay(this, this.player.equipment);
 
-    this.dialogueDisplay = new DialogueDisplay(this)
+    this.dialogueDisplay = new DialogueDisplay(this);
 
     this.transferDisplay = new TransferDisplay(this);
 
     this.testEntity = new Npc(this, 370, 290, "Milas");
     this.currentTown.npcs.push(this.testEntity);
+
+    const initType = CombatInitiationType.Normal;
+    const difficulty = new Difficulty();
+    const config = new CombatConfig(initType, difficulty);
+    const combat = new Combat(
+      this.player,
+      [OlBenjamin],
+      [this.testEntity],
+      config,
+    );
+    this.combatDisplay = new CombatDisplay(this, combat);
+    const testActions = [
+      CombatAction.Attack(OlBenjamin, null, this.player),
+      CombatAction.Retreat(this.player),
+      CombatAction.Ability(this.player, undefined, OlBenjamin),
+      CombatAction.UseItem(OlBenjamin, items.brokenBottle, this.player),
+    ];
+    //testActions.forEach((a) => combat.executeAction(a));
+
+    this.testEntity.interact = (who) => {
+      stateManager.startState(this.combatDisplay);
+    };
+
     this.validate();
   }
 
   travel(id) {
-    if(this.currentTown instanceof Town ){
+    if (this.currentTown instanceof Town) {
       if (!this.currentTown.connectedLocations.includes(parseInt(id))) {
-        throw "attempt to travel to a location not connected to the current one"
+        throw "attempt to travel to a location not connected to the current one";
       }
-      let pos1 = {x: this.currentTown.x, y: this.currentTown.y};
-      let pos2 = {x: this.worldMap.getByID(id).x, y: this.worldMap.getByID(id).y};
+      let pos1 = { x: this.currentTown.x, y: this.currentTown.y };
+      let pos2 = {
+        x: this.worldMap.getByID(id).x,
+        y: this.worldMap.getByID(id).y,
+      };
       let length = distance(pos1, pos2);
       this.currentTown = new Travel(this, length, this.currentTown.ID, id);
-    }
-
-    else if(this.currentTown instanceof Travel ){
+    } else if (this.currentTown instanceof Travel) {
       this.currentTown = this.worldMap.getByID(id);
       this.currentTown.visited = true;
       if (!this.currentTown.created) {
@@ -200,11 +243,11 @@ class Game extends State {
   updateFocus() {
     this.currentTown.updateFocus(this.player);
   }
-  
+
   update() {
     this.player.update();
     this.currentTown.update(this.player);
-    this.camera.render({debug: this.app.debugging});
+    this.camera.render({ debug: this.app.debugging });
   }
 
   togglePause() {

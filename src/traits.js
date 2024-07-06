@@ -1,6 +1,18 @@
 import Equipment from "./Equipment/Equipment.js";
-import { defaultEquipmentSize, defaultRcp, defaultBd, cashMinMaxParameters as cashParam} from "./global/consts.js";
-import { generateID, tileAt, pointToTileCoord, ObjectSet, Direction, randIntInRange } from "./global/utilities.js";
+import {
+  defaultEquipmentSize,
+  defaultRcp,
+  defaultBd,
+  cashMinMaxParameters as cashParam,
+} from "./global/consts.js";
+import {
+  generateID,
+  tileAt,
+  pointToTileCoord,
+  ObjectSet,
+  Direction,
+  randIntInRange,
+} from "./global/utilities.js";
 import Hitbox from "./game/HitboxClass.js";
 import Movement from "./game/Movement.js";
 
@@ -19,7 +31,7 @@ export function addTraits(obj, ...traits) {
     for (const prop in trait) {
       if (specialProps.has(prop)) continue;
       if (obj[prop] !== undefined)
-	throw `adding trait would override property ${prop} of ${obj.constructor.name}`;
+        throw `adding trait would override property ${prop} of ${obj.constructor.name}`;
       obj[prop] = trait[prop];
     }
     if (trait._after_) {
@@ -28,31 +40,38 @@ export function addTraits(obj, ...traits) {
   }
 }
 
-export function InventoryTrait(startCash, equipmentSize=defaultEquipmentSize, itemNameList=[]) {
+export function InventoryTrait(
+  startCash,
+  equipmentSize = defaultEquipmentSize,
+  itemNameList = [],
+) {
   startCash = startCash ?? randIntInRange(cashParam.minCash, cashParam.maxCash);
   return {
     _name_: "InventoryTrait",
     equipment: new Equipment(equipmentSize, startCash, itemNameList),
     dropItem: function (record) {
       let droppedItem = this.equipment.drop(record);
-      droppedItem.setPositionTo({ 
-        x: this.getCenterPoint().x, 
-        y: this.getCenterPoint().y
+      droppedItem.setPositionTo({
+        x: this.getCenterPoint().x,
+        y: this.getCenterPoint().y,
       });
-      if (!this.game) console.error('InventoryTrait in a class without a Game field.');
+      if (!this.game)
+        console.error("InventoryTrait in a class without a Game field.");
       this.game.currentTown.droppedItems.push(droppedItem);
       this.game.currentTown.updateFocus(this.game.player);
-    }
+    },
   };
 }
 
-export function centerPointTrait(rcp=defaultRcp) {
+export function centerPointTrait(rcp = defaultRcp) {
   return {
     _name_: "centerPointTrait",
     relativeCenterPoint: rcp,
     getCenterPoint() {
-      return {x: this.x + this.relativeCenterPoint.x,
-	      y: this.y + this.relativeCenterPoint.y};
+      return {
+        x: this.x + this.relativeCenterPoint.x,
+        y: this.y + this.relativeCenterPoint.y,
+      };
     },
     /**
        Move the entity to match its center point to the given coordinates
@@ -60,29 +79,33 @@ export function centerPointTrait(rcp=defaultRcp) {
     moveTo(x, y) {
       this.x = x - this.relativeCenterPoint.x;
       this.y = y - this.relativeCenterPoint.y;
-    }
+    },
   };
 }
-   
-export function HitboxTrait(self, locationArray, rcp=defaultRcp,
-			    bd=defaultBd) {
+
+export function HitboxTrait(
+  self,
+  locationArray,
+  rcp = defaultRcp,
+  bd = defaultBd,
+) {
   return {
     _name_: "HitboxTrait",
     _before_() {
       addTraits(this, centerPointTrait(rcp));
     },
-    id: generateID("hitboxEntity"),
     locationArray: locationArray,
     boundingDistance: bd,
     hitbox: new Hitbox(self, bd),
     tileHashSet: new ObjectSet(),
     enterTile(tileX, tileY) {
       if (this.isAtTile(tileX, tileY))
-	throw `attempt to add an entity (${self.constructor.name}) ` +
-	`to the same tile twice (coords: (${tileX}, ${tileY}))`;
-      if (!this.locationArray[tileX][tileY])
-	return; // omit tiles out of bounds
-      this.tileHashSet.add({x: tileX, y: tileY});
+        throw (
+          `attempt to add an entity (${self.constructor.name}) ` +
+          `to the same tile twice (coords: (${tileX}, ${tileY}))`
+        );
+      if (!this.locationArray[tileX][tileY]) return; // omit tiles out of bounds
+      this.tileHashSet.add({ x: tileX, y: tileY });
       this.locationArray[tileX][tileY].addEntity(this);
     },
     /**
@@ -91,33 +114,32 @@ export function HitboxTrait(self, locationArray, rcp=defaultRcp,
        tileHashSet (this should always be done unless it is planned to clear
        the object set after leaving all tiles).
      */
-    leaveTile(tileX, tileY, nodelete=false) {
+    leaveTile(tileX, tileY, nodelete = false) {
       if (!this.isAtTile(tileX, tileY))
-	throw "attempt to remove an entity from a tile it was not on";
+        throw "attempt to remove an entity from a tile it was not on";
 
       this.locationArray[tileX][tileY].removeEntity(this);
-      
-      if (!nodelete)
-	this.tileHashSet.delete({x: tileX, y: tileY});
+
+      if (!nodelete) this.tileHashSet.delete({ x: tileX, y: tileY });
     },
     leaveAllTiles() {
       for (const tileCoords of this.tileHashSet.entries()) {
-	this.leaveTile(tileCoords.x, tileCoords.y, true);
+        this.leaveTile(tileCoords.x, tileCoords.y, true);
       }
       this.tileHashSet.clear();
     },
     updateTilePresence() {
       this.leaveAllTiles();
       for (const tileCoord of this.getIntersectingTileCoordinates()) {
-	this.enterTile(tileCoord.x, tileCoord.y);
+        this.enterTile(tileCoord.x, tileCoord.y);
       }
     },
     isAtTile(tileX, tileY) {
-      return this.tileHashSet.has({x: tileX, y: tileY});
+      return this.tileHashSet.has({ x: tileX, y: tileY });
     },
     _after_() {
       let tiles = this.hitbox.getIntersectingTileCoordinates();
-      tiles.forEach(tile => this.enterTile(tile.x, tile.y));
+      tiles.forEach((tile) => this.enterTile(tile.x, tile.y));
     },
     /**
      * Tests whether the entity would collide if it
@@ -125,9 +147,9 @@ export function HitboxTrait(self, locationArray, rcp=defaultRcp,
      */
     willCollide(speedX, speedY) {
       return this.hitbox.willCollideWithTiles(
-	this.movement.getChangeX(speedX),
-	this.movement.getChangeY(speedY),
-	this.game.currentTown.array
+        this.movement.getChangeX(speedX),
+        this.movement.getChangeY(speedY),
+        this.game.currentTown.array,
       );
     },
     /**
@@ -163,31 +185,35 @@ export function HitboxTrait(self, locationArray, rcp=defaultRcp,
     */
     moveTillCollision(speedX, speedY) {
       if (speedX * speedY !== 0)
-	throw `moveTillCollision only supports one axis movement. ` +
-	`One speed has to be 0. Speeds provided: X=${speedX}, Y=${speedY}.`;
-      
+        throw (
+          `moveTillCollision only supports one axis movement. ` +
+          `One speed has to be 0. Speeds provided: X=${speedX}, Y=${speedY}.`
+        );
+
       let dx = this.movement.getChangeX(speedX);
       let dy = this.movement.getChangeY(speedY);
-      
+
       // change in this tick if no collisions were detected
       // (assumes one of dx and dy numbers is 0)
-      let maxChange = Math.abs(dx+dy);
-      
+      let maxChange = Math.abs(dx + dy);
+
       let direction = new Direction().fromChangeInXAndY(dx, dy);
 
       let snappedPixelCount = this.hitbox.distanceTillTileCollision(
-	direction, maxChange, this.game.currentTown.array);
+        direction,
+        maxChange,
+        this.game.currentTown.array,
+      );
 
       if (snappedPixelCount === 0) return;
-      
+
       // Snapped a non-zero distance
       if (Math.sign(dx)) {
-	this.x += Math.sign(dx) * snappedPixelCount;
-	this.movement.moveX.clearChangeStack();
-      }
-      else {
-	this.y += Math.sign(dy) * snappedPixelCount;
-	this.movement.moveY.clearChangeStack();
+        this.x += Math.sign(dx) * snappedPixelCount;
+        this.movement.moveX.clearChangeStack();
+      } else {
+        this.y += Math.sign(dy) * snappedPixelCount;
+        this.movement.moveY.clearChangeStack();
       }
     },
     /**
@@ -195,24 +221,24 @@ export function HitboxTrait(self, locationArray, rcp=defaultRcp,
      * @param {Object {x: tileX, y: tileY}} tileCoords - Tile coordinates object
      */
     intersectsWithTileOn(tileCoords) {
-      return this.hitbox.getBoundingBox()
-	.intersects(this.game.currentTown.array[tileCoords.x][tileCoords.y]);
+      return this.hitbox
+        .getBoundingBox()
+        .intersects(this.game.currentTown.array[tileCoords.x][tileCoords.y]);
     },
     /**
      * Returns an array of intersecting tiles' coordinates
      */
     getIntersectingTileCoordinates() {
       return this.hitbox.getIntersectingTileCoordinates();
-    }
+    },
   };
 }
 
 export function MovementTrait(self, speed, sprintMp, sneakMp, options) {
   return {
     _name_: "MovementTrait",
-    movement: new Movement(self, speed, sprintMp, sneakMp, options)
+    movement: new Movement(self, speed, sprintMp, sneakMp, options),
   };
 }
 
-export function CollideTrait() {
-}
+export function CollideTrait() {}

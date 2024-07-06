@@ -21,7 +21,7 @@
 */
 import { ctx } from "../core/Browser.js";
 import { tileSize } from "../global/consts.js";
-import { pointToTileCoord, ObjectSet } from "../global/utilities.js";
+import { pointToTileCoord, ObjectSet, generateID } from "../global/utilities.js";
 import { directions, Direction } from "../global/utilities.js";
 
 function fillTileArea(tileCoords) {
@@ -98,6 +98,7 @@ export class Box {
 export default class Hitbox {
   constructor(entity, {up, left, right, down}) {
     this.entity = entity;
+    this.id = generateID(Hitbox);
     this.visualizationFunction = () => {};
     this.up = up;
     this.left = left;
@@ -151,13 +152,14 @@ export default class Hitbox {
 	  return null;
 	return arr[p.x][p.y];
       });
+    
     if (tiles.includes(null)) {
       // tested movement would cause exceeding the tile array 
       return true;
     }
     for (const tile of tiles) {
       for (const e of tile.entities) {
-	if (e.id === this.entity.id) continue;
+	if (e.hitbox.id === this.entity.hitbox.id) continue;
 	this.visualizationFunction(
 	  (cx, cy) =>
 	    e.hitbox.draw(cx,cy,ctx,{color: "#ff000066"})

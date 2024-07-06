@@ -22,7 +22,7 @@
 import Sprite from "../Sprite/Sprite.js";
 import AnimatedSprite from "../Sprite/AnimatedSprite.js";
 import { animationSpeed, defaultEntityHp } from "../global/consts.js";
-import { validateOptions } from "../global/utilities.js";
+import { generateID, validateOptions } from "../global/utilities.js";
 import {
   addTraits,
   centerPointTrait,
@@ -76,6 +76,7 @@ class Entity {
     this.x = x;
     this.y = y;
     this.hp = defaultEntityHp;
+    this.id = generateID(Entity);
 
     if (!options.animated)
       this.sprite = new Sprite(typeName, { callback: options.callback });
@@ -125,6 +126,11 @@ class Entity {
 
   draw(cameraX, cameraY) {
     this.sprite.draw(this.x - cameraX, this.y - cameraY);
+  }
+  
+  // enable drawing on different canvases while still using the camera
+  drawWithCtx(cameraX, cameraY, ctx) {
+    this.sprite.draw(this.x - cameraX, this.y - cameraY, ctx);
   }
 }
 

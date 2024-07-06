@@ -139,7 +139,7 @@ class StateManager {
     return this.stateStack.lastNthElement(n);
   }
   stateChanged() {
-    return (this.currentState !== this.previousState)
+    return this.currentState !== this.previousState;
   }
   updateStates() {
     if (time.now - this.lastUpdateTime > this.maxUpdateTime) {

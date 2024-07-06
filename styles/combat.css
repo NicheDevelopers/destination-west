@@ -1,0 +1,48 @@
+.combat {
+  display: none;
+  flex-direction: column;
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+#combat-menu {
+  position: absolute;
+  width: 90%;
+  height: 20%;
+  bottom: 5%;
+  background-color: whitesmoke;
+  z-index: 3;
+  border-radius: 1cm;
+  border: solid 6px black;
+  font-size: 42px;
+  padding: 42px;
+}
+
+#combat-menu .button-list {
+  font-size: xx-large;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin: 1em;
+}
+
+#combat-menu .button-list button {
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  white-space: pre;
+}
+
+#combat-menu .button-list button::before {
+  content: "⮞ ";
+  visibility: hidden;
+}
+
+#combat-menu .button-list button.selected,
+#combat-menu .button-list button:hover::before {
+  content: "⮞ ";
+  visibility: visible;
+}

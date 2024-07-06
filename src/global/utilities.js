@@ -37,7 +37,7 @@ export function randFloatInRange(min, max) {
     return Math.random();
   }
   if (max === undefined) {
-    max = min
+    max = min;
     min = 0;
   }
   return Math.random() * (max - min) + min;
@@ -57,7 +57,7 @@ export function randIntInRange(min, max) {
     return Math.round(Math.random());
   }
   if (max === undefined) {
-    max = min
+    max = min;
     min = 0;
   }
   return (Math.random() * (max - min) + min) | 0;
@@ -77,7 +77,7 @@ export function srandIntInRange(min, max) {
     return Math.round(seed.random());
   }
   if (max === undefined) {
-    max = min
+    max = min;
     min = 0;
   }
   return (seed.random() * (max - min) + min) | 0;
@@ -120,14 +120,13 @@ export function resetIdFor(objectName) {
      to. if none provided, the element is not appended
      to anything
  */
-export function htmlCreate(args={}) {
+export function htmlCreate(args = {}) {
   let what = args.what;
   delete args.what;
-  
-  if (what === undefined)
-    what = "div";
+
+  if (what === undefined) what = "div";
   let d = document.createElement(what);
-  
+
   if (args.appendTo) {
     args.appendTo.appendChild(d);
     delete args.appendTo;
@@ -135,7 +134,7 @@ export function htmlCreate(args={}) {
   for (const property in args) {
     if (d[property] === undefined) {
       if (d.style[property] === undefined) {
-	throw `Unrecognized '${what}' property: ${property}`;
+        throw `Unrecognized '${what}' property: ${property}`;
       }
       d.style[property] = args[property];
       continue;
@@ -148,47 +147,57 @@ export function htmlCreate(args={}) {
 /**
  * Create HTML elements
  * @param {string} element name of element
- * @param {number} [w = null] - width 
- * @param {number} [h = null] - height 
+ * @param {number} [w = null] - width
+ * @param {number} [h = null] - height
  * @param {string[]} [classes = []] - array of css classes
  * @param {*} styles
- * @param {*} id 
- * @param {string} [text = null] - inner text of element 
+ * @param {*} id
+ * @param {string} [text = null] - inner text of element
  * @returns {Element} created element
  */
-export function createElement(element, w = null, h = null, classes = [], styles = {}, id, text = null){
+export function createElement(
+  element,
+  w = null,
+  h = null,
+  classes = [],
+  styles = {},
+  id,
+  text = null,
+) {
   // needed test if element is equal to some given possibile outcomes
   let r = document.createElement(element);
   classes.forEach((styleClass) => r.classList.add(styleClass));
   if (w != null && h != null)
-    r.setAttribute('style', `width: ${w}px; height: ${h}px`);
+    r.setAttribute("style", `width: ${w}px; height: ${h}px`);
   for (const styleName in styles) {
     r.style[styleName] = styles[styleName];
   }
   r.innerText = text;
   if (id === undefined) return r;
-  r.setAttribute('id', `${id}`);
+  r.setAttribute("id", `${id}`);
   return r;
 }
 
 export function createCanvas(w, h) {
-  let r = document.createElement('canvas');
+  let r = document.createElement("canvas");
   r.width = w;
   r.height = h ?? w;
-  return { canvas: r, context: r.getContext('2d') };
+  return { canvas: r, context: r.getContext("2d") };
 }
 
-export function distance({x: x1, y: y1}, {x: x2, y: y2}) {
-  return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+export function distance({ x: x1, y: y1 }, { x: x2, y: y2 }) {
+  return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
-export function directedDistance({x: x1, y: y1, direction: dir1},
-			  {x: x2, y: y2, direction: dir2}) {
-  return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+export function directedDistance(
+  { x: x1, y: y1, direction: dir1 },
+  { x: x2, y: y2, direction: dir2 },
+) {
+  return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
 export function roundToTile(value) {
-  return Math.floor(value/tileSize);
+  return Math.floor(value / tileSize);
 }
 
 /**
@@ -196,10 +205,10 @@ export function roundToTile(value) {
    the coordinates of a tile that contains
    the point given as the arguemnt.
 */
-export function pointToTileCoord({x, y}) {
+export function pointToTileCoord({ x, y }) {
   return {
     x: roundToTile(x),
-    y: roundToTile(y)
+    y: roundToTile(y),
   };
 }
 
@@ -211,30 +220,33 @@ export function tileAt(array, t) {
   return array[t.x][t.y];
 }
 
-export function comparePositions({x: x1, y: y1}, {x: x2, y: y2}) {
-  return x1===x2 && y1===y2;
+export function comparePositions({ x: x1, y: y1 }, { x: x2, y: y2 }) {
+  return x1 === x2 && y1 === y2;
 }
 
-export function compareDirectedPositions({x: x1, y: y1, direction: dir1},
-				  {x: x2, y: y2, direction: dir2}) {
+export function compareDirectedPositions(
+  { x: x1, y: y1, direction: dir1 },
+  { x: x2, y: y2, direction: dir2 },
+) {
   return x1 === x2 && y1 === y2 && dir1 === dir2;
 }
 
-export function validateOptions(givenOptions, allowedOptions,
-				name = "") {
-  Object.keys(givenOptions).forEach(option => {
+export function validateOptions(givenOptions, allowedOptions, name = "") {
+  Object.keys(givenOptions).forEach((option) => {
     if (!allowedOptions.has(option))
-      throw `Unrecognized ${name} construction option: ${option}`
+      throw `Unrecognized ${name} construction option: ${option}`;
   });
 }
 
 export function forbidProperty(obj, prop) {
   Object.defineProperty(obj, prop, {
     configurable: true,
-    get: function() {
-      throw `attempt to read ${prop} property which ` +
-	`is forbidden for ${obj.constructor.name}`;
-    }
+    get: function () {
+      throw (
+        `attempt to read ${prop} property which ` +
+        `is forbidden for ${obj.constructor.name}`
+      );
+    },
   });
 }
 
@@ -244,8 +256,7 @@ export function allowProperty(obj, prop) {
 }
 
 export function makeEven(x) {
-  if (x % 2 == 1)
-    x++;
+  if (x % 2 == 1) x++;
   return x;
 }
 
@@ -261,22 +272,21 @@ export function hexToRgb(colorHex) {
   };
 }
 
-export function hex_to_rgb(colorHex){
+export function hex_to_rgb(colorHex) {
   let rgb = [0, 0, 0];
-  for(let i = 0; i < 3; i++){
-    rgb[i] = parseInt(colorHex.slice(2*i + 1, 2*i + 3), 16)
+  for (let i = 0; i < 3; i++) {
+    rgb[i] = parseInt(colorHex.slice(2 * i + 1, 2 * i + 3), 16);
   }
   return rgb;
 }
 
-export function rgb_to_hex(colorRgb){
+export function rgb_to_hex(colorRgb) {
   let hex = "#";
-  for(const element of colorRgb){
-    let intElement = element
-    if(Object.getPrototypeOf("") === Object.getPrototypeOf(element))
+  for (const element of colorRgb) {
+    let intElement = element;
+    if (Object.getPrototypeOf("") === Object.getPrototypeOf(element))
       intElement = parseInt(element, 10);
-    if(intElement < 15)
-      hex += "0";
+    if (intElement < 15) hex += "0";
     hex += intElement.toString(16);
   }
   return hex.toUpperCase();
@@ -302,8 +312,7 @@ export class ObjectSet {
   */
   add(...objs) {
     for (const obj of objs) {
-      if (!this.has(obj))
-	this.elements.push(obj);
+      if (!this.has(obj)) this.elements.push(obj);
     }
   }
   /**
@@ -317,8 +326,8 @@ export class ObjectSet {
     let index = 0;
     for (const e of this.elements) {
       if (this.areObjectsEqual(obj, e)) {
-	this.elements.splice(index, 1);
-	return true;
+        this.elements.splice(index, 1);
+        return true;
       }
       index++;
     }
@@ -331,8 +340,7 @@ export class ObjectSet {
   */
   has(obj) {
     for (const e of this.elements) {
-      if (this.areObjectsEqual(obj, e))
-	return true;
+      if (this.areObjectsEqual(obj, e)) return true;
     }
     return false;
   }
@@ -343,16 +351,12 @@ export class ObjectSet {
      which the other does not.
   */
   areObjectsEqual(obj1, obj2) {
-    if (typeof obj1 !== "object"
-      || typeof obj2 !== "object")
-      return false;
+    if (typeof obj1 !== "object" || typeof obj2 !== "object") return false;
     for (const prop of Object.getOwnPropertyNames(obj1)) {
-      if (obj1[prop] !== obj2[prop])
-	return false;
+      if (obj1[prop] !== obj2[prop]) return false;
     }
     for (const prop of Object.getOwnPropertyNames(obj2)) {
-      if (!Object.hasOwn(obj1, prop))
-	return false;
+      if (!Object.hasOwn(obj1, prop)) return false;
     }
     return true;
   }
@@ -383,7 +387,7 @@ export class ObjectSet {
    For example numberPad(4.2, 2, 3) shall return 04.200
    numberPad(430.239, 2, 2) shall return 430.23
  */
-export function numberPad(value, numLength=-1, decLength=2) {
+export function numberPad(value, numLength = -1, decLength = 2) {
   let str = String(value);
   let point = str.indexOf(".");
   if (point === -1) {
@@ -393,59 +397,65 @@ export function numberPad(value, numLength=-1, decLength=2) {
     }
   }
   if (point < numLength) {
-    str = "0".repeat(numLength-point) + str;
+    str = "0".repeat(numLength - point) + str;
   }
   if (decLength < 0) return;
-  let decimals = str.length-point-1;
+  let decimals = str.length - point - 1;
   if (decimals < decLength) {
-    str += "0".repeat(decLength-decimals);
-  }
-  else if (decimals > decLength) {
-    str = str.substring(0, str.length-(decimals-decLength));
+    str += "0".repeat(decLength - decimals);
+  } else if (decimals > decLength) {
+    str = str.substring(0, str.length - (decimals - decLength));
   }
   return str;
 }
 
 Object.defineProperty(Array.prototype, "none", {
-  value: function (fn) {return !this.some(fn)},
+  value: function (fn) {
+    return !this.some(fn);
+  },
 });
 
 Object.defineProperty(Array.prototype, "lastIndex", {
-  get: function () {return this.length-1;},
+  get: function () {
+    return this.length - 1;
+  },
 });
 
 Object.defineProperty(Array.prototype, "first", {
-  get: function () {return this[0]},
+  get: function () {
+    return this[0];
+  },
 });
 
 Object.defineProperty(Array.prototype, "last", {
-  get: function () {return this[this.length - 1]},
+  get: function () {
+    return this[this.length - 1];
+  },
 });
 
 Object.defineProperty(Array.prototype, "lastNthElement", {
-  value: function (n){
-    if (n < 0 || n > this.length - 1){
+  value: function (n) {
+    if (n < 0 || n > this.length - 1) {
       throw `attempt to get lastNthElement (${n}) of array, when array's last index is ${this.length - 1}`;
     }
     return this[this.length - 1 - n];
-  }
+  },
 });
 
 import { directions } from "./consts.js";
 import Direction from "../game/Direction.js";
-export {Direction, directions};
+export { Direction, directions };
 
 /**
  * Rolling possibility with given chance
  * @param {number} chance value between 0 and 1, chance of getting success
  * @returns {boolean} true if roll was successfull, otherwise false
  */
-export function roll(chance){
-  if (chance < 0 || chance > 1){
+export function roll(chance) {
+  if (chance < 0 || chance > 1) {
     throw `attempt to roll when chance of success (${chance}) was not between 0 and 1`;
   }
-  if (randFloatInRange(0,1) < chance)
-    return true;
+  if (randFloatInRange(0, 1) < chance) return true;
   return false;
 }
 
@@ -454,38 +464,41 @@ export function roll(chance){
  * @param {number} chance value between 0 and 1, chance of getting success
  * @returns {boolean} true if roll was successfull, otherwise false
  */
-export function seedRoll(chance){
-  if (chance < 0 || chance > 1){
+export function seedRoll(chance) {
+  if (chance < 0 || chance > 1) {
     throw `attempt to roll when chance of success (${chance}) was not between 0 and 1`;
   }
-  if (seed.random() < chance)
-    return true;
+  if (seed.random() < chance) return true;
   return false;
 }
 
 Object.defineProperty(Array.prototype, "popFirst", {
-  value: function (value){
-    for(let i = 0; i < this.length; ++i){
-      if(this[i] === value){
+  value: function (value) {
+    for (let i = 0; i < this.length; ++i) {
+      if (this[i] === value) {
         this.splice(i, 1);
         return;
       }
     }
-  }
+  },
 });
 
 Object.defineProperty(Array.prototype, "clear", {
-  value: function(){
+  value: function () {
     this.length = 0;
-  }
+  },
 });
 
 Object.defineProperty(Array.prototype, "randomElement", {
-  value: function () {return this[randIntInRange(0, this.length)]},
+  value: function () {
+    return this[randIntInRange(0, this.length)];
+  },
 });
 
 Object.defineProperty(Array.prototype, "srandomElement", {
-  value: function () {return this[srandIntInRange(0, this.length)]},
+  value: function () {
+    return this[srandIntInRange(0, this.length)];
+  },
 });
 
 /* The comparison functions in `min` and `max` act like
@@ -507,24 +520,22 @@ Object.defineProperty(Array.prototype, "srandomElement", {
    <  0 - element becomes the new currentMin
 */
 Object.defineProperty(Array.prototype, "max", {
-  value: function ( fn = ((a,b)=>a-b)) {
+  value: function (fn = (a, b) => a - b) {
     let max = undefined;
-    for (let element of this){
+    for (let element of this) {
       if (max == undefined) max = element;
-      if (fn(element, max) > 0)
-        max = element;
+      if (fn(element, max) > 0) max = element;
     }
     return max;
   },
 });
 
 Object.defineProperty(Array.prototype, "min", {
-  value: function ( fn = ((a,b)=>a-b) ) {
+  value: function (fn = (a, b) => a - b) {
     let min = undefined;
-    for (let element of this){
+    for (let element of this) {
       if (min == undefined) min = element;
-      if (fn(element, min) < 0)
-        min = element;
+      if (fn(element, min) < 0) min = element;
     }
     return min;
   },
@@ -533,22 +544,20 @@ Object.defineProperty(Array.prototype, "min", {
 Object.defineProperty(Array.prototype, "maxBy", {
   value: function (prop) {
     let max = undefined;
-    for (let element of this){
+    for (let element of this) {
       if (max == undefined) max = element;
-      if (element[prop]-max[prop] > 0)
-        max = element;
+      if (element[prop] - max[prop] > 0) max = element;
     }
     return max;
   },
 });
-  
+
 Object.defineProperty(Array.prototype, "minBy", {
   value: function (prop) {
     let min = undefined;
-    for (let element of this){
+    for (let element of this) {
       if (min == undefined) min = element;
-      if (element[prop]-min[prop] < 0)
-        min = element;
+      if (element[prop] - min[prop] < 0) min = element;
     }
     return min;
   },
@@ -556,33 +565,31 @@ Object.defineProperty(Array.prototype, "minBy", {
 
 Object.defineProperty(Array.prototype, "equals", {
   value: function (otherArray) {
-    if (this.length !== otherArray.length)
-      return false;
-    
-    for (let i=0; i<this.length; ++i) {
-      if (this[i] !== otherArray[i])
-	return false;
+    if (this.length !== otherArray.length) return false;
+
+    for (let i = 0; i < this.length; ++i) {
+      if (this[i] !== otherArray[i]) return false;
     }
     return true;
-  }
+  },
 });
 
 Object.defineProperty(String.prototype, "capitalized", {
-  value: function() {
+  value: function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
-  }
+  },
 });
 
 Object.defineProperty(String.prototype, "isNumber", {
-  value: function() {
+  value: function () {
     return /^\d+$/.test(this);
-  }
+  },
 });
 
 Object.defineProperty(String.prototype, "toNumber", {
-  value: function() {
+  value: function () {
     return Number(this);
-  }
+  },
 });
 
 Object.defineProperty(Map.prototype, "keysArray", {
@@ -597,9 +604,7 @@ Object.defineProperty(Map.prototype, "valuesArray", {
   }
 });
 
-
-
-Number.prototype.clamp = function(min, max) {
+Number.prototype.clamp = function (min, max) {
   return Math.min(Math.max(this, min), max);
 };
 
@@ -607,9 +612,9 @@ Number.prototype.clamp = function(min, max) {
  * Easily create nested button lists
  */
 export class ButtonList {
-  constructor(options={}) {
+  constructor(options = {}) {
     this.div = htmlCreate({
-      classList: "button-list"
+      classList: "button-list",
     });
     this.reset();
     if (options.callbackArgument !== undefined)
@@ -694,7 +699,7 @@ export class ButtonList {
   setCallbackArgument(arg) {
     this.callbackArgument = arg;
   }
-  
+
   /**
    * Append the ButtonList to the given node
    */
@@ -727,7 +732,7 @@ export class ButtonList {
  * be considered transparent
  */
 export function transparent(alpha) {
-  return (alpha<transparencyAlphaTolerance);
+  return alpha < transparencyAlphaTolerance;
 }
 
 /**
@@ -748,34 +753,33 @@ class Pixel {
    * pixel.setColor({r: 0, g: 255, b: 0, a: 255});
    * // sets the pixel's color to green
    */
-  setColor(color={}) {
-    for (const comp in color)
-      this[comp] = color[comp];
+  setColor(color = {}) {
+    for (const comp in color) this[comp] = color[comp];
   }
   get r() {
     return this.img.imgData.data[this.index];
   }
   get g() {
-    return this.img.imgData.data[this.index+1];
+    return this.img.imgData.data[this.index + 1];
   }
   get b() {
-    return this.img.imgData.data[this.index+2];
+    return this.img.imgData.data[this.index + 2];
   }
   get a() {
-    return this.img.imgData.data[this.index+3];
+    return this.img.imgData.data[this.index + 3];
   }
-  
+
   set r(val) {
     this.img.imgData.data[this.index] = val;
   }
   set g(val) {
-    this.img.imgData.data[this.index+1] = val;
+    this.img.imgData.data[this.index + 1] = val;
   }
   set b(val) {
-    this.img.imgData.data[this.index+2] = val;
+    this.img.imgData.data[this.index + 2] = val;
   }
   set a(val) {
-    this.img.imgData.data[this.index+3] = val;
+    this.img.imgData.data[this.index + 3] = val;
   }
 
   /**
@@ -801,19 +805,19 @@ export class PixelImage {
     this.width = null;
     this.height = null;
     this.imgData = null;
-    
+
     return new Proxy(this, { get: PixelImage.get, set: PixelImage.set });
   }
 
   /**
    * Load an image from a provided rendering context
-  */
+   */
   fromContext(ctx) {
     this.width = ctx.canvas.width;
     this.height = ctx.canvas.height;
-    
+
     this.imgData = ctx.getImageData(0, 0, this.width, this.height);
-    
+
     return this;
   }
 
@@ -823,7 +827,8 @@ export class PixelImage {
   fromCanvas(canvas) {
     this.width = canvas.width;
     this.height = canvas.height;
-    this.imgData = canvas.getContext("2d")
+    this.imgData = canvas
+      .getContext("2d")
       .getImageData(0, 0, this.width, this.height);
     return this;
   }
@@ -834,16 +839,16 @@ export class PixelImage {
   drawToContext(ctx) {
     ctx.putImageData(this.imgData, 0, 0);
   }
-  
+
   /**
    * Print a simplified text representation of the image
    * to the console.
    */
   log() {
     let out = "";
-    for (let y=0; y < this.height; ++y) {
-      for (let x=0; x < this.width; ++x) {
-	out += (transparent(this[x][y].a))? " " : "X";
+    for (let y = 0; y < this.height; ++y) {
+      for (let x = 0; x < this.width; ++x) {
+        out += transparent(this[x][y].a) ? " " : "X";
       }
       out += "\n";
     }
@@ -860,22 +865,22 @@ export class PixelImage {
 
   /**
    * Get ImagaData entries with bound checcking
-  */
+   */
   getDataAt(index) {
     if (!this.imgData)
       throw `Attempt to read pixel data in unloaded PixelImage`;
-    if (index < 0 || index > this.width*this.height*4)
+    if (index < 0 || index > this.width * this.height * 4)
       throw `getDataAt: index is out of bounds (${index})`;
     return this.imgData.data[index];
   }
 
   /**
    * Set ImagaData entries with bound checcking
-  */
+   */
   setDataAt(index, val) {
     if (!this.imgData)
       throw `Attempt to write pixel data in unloaded PixelImage`;
-    if (index < 0 || index > this.width*this.height*4)
+    if (index < 0 || index > this.width * this.height * 4)
       throw `setDataAt: index is out of bounds (${index})`;
     this.imgData.data[index] = val;
   }
@@ -884,24 +889,26 @@ export class PixelImage {
    * Get a Pixel at the specified index
    */
   pixel(index) {
-    return this[index % this.width][index / this.width | 0];
+    return this[index % this.width][(index / this.width) | 0];
   }
 
   /**
    * The get handler of the PixelImage Proxy
    */
   static get(self, prop, receiver) {
-    if (!prop.isNumber())
-      return Reflect.get(...arguments);
-    if (!self.imgData)
-      throw `Attempt to read pixel in unloaded PixelImage`;
+    if (!prop.isNumber()) return Reflect.get(...arguments);
+    if (!self.imgData) throw `Attempt to read pixel in unloaded PixelImage`;
     let col = prop.toNumber();
     if (col < 0 || col >= self.width)
-      throw `Attempt to read pixel from column ${col} ` +
-      `in ${self.width}px width image`;
-    
-    return new Proxy(self, { get: PixelImage.colGet(col),
-			     set: PixelImage.colSet });
+      throw (
+        `Attempt to read pixel from column ${col} ` +
+        `in ${self.width}px width image`
+      );
+
+    return new Proxy(self, {
+      get: PixelImage.colGet(col),
+      set: PixelImage.colSet,
+    });
   }
 
   /**
@@ -910,7 +917,7 @@ export class PixelImage {
   static set(self, prop, val, receiver) {
     if (prop.isNumber())
       throw `Direct assignment to PixelImage column is forbidden`;
-    
+
     return Reflect.set(...arguments);
   }
 
@@ -920,16 +927,17 @@ export class PixelImage {
    */
   static colGet(col) {
     return (self, row, receiver) => {
-      if (!row.isNumber())
-	throw `Given image row is not a number: ${row}`;
+      if (!row.isNumber()) throw `Given image row is not a number: ${row}`;
       row = row.toNumber();
       if (row < 0 || row >= self.height)
-	throw `Attempt to read pixel from row ${row} ` +
-	`in ${self.height}px height image`;
-      let pixelIndex = (col+row*self.width)*4;
+        throw (
+          `Attempt to read pixel from row ${row} ` +
+          `in ${self.height}px height image`
+        );
+      let pixelIndex = (col + row * self.width) * 4;
 
       return new Pixel(self, pixelIndex);
-    }
+    };
   }
 
   /**
@@ -937,8 +945,10 @@ export class PixelImage {
    * PixelImage Proxy
    */
   static colSet(self, prop, val, receiver) {
-    throw `Direct assignment to PixelImage's Pixel is forbidden.` +
-      ` Use methods of the Pixel object instead.`;
+    throw (
+      `Direct assignment to PixelImage's Pixel is forbidden.` +
+      ` Use methods of the Pixel object instead.`
+    );
   }
 }
 

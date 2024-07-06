@@ -7,10 +7,10 @@ import { ButtonList } from "../global/utilities.js";
 class Trader extends Npc {
   /**
    * Trader - NPC which is able to interact with in term of trading
-   * @param {State} game 
-   * @param {number} x x coordinate of location 
-   * @param {number} y y coordinate of location 
-   * @param {string} name name of Trader 
+   * @param {State} game
+   * @param {number} x x coordinate of location
+   * @param {number} y y coordinate of location
+   * @param {string} name name of Trader
    */
   constructor(game, x, y, name) {
     super(game, x, y, name);

@@ -61,8 +61,10 @@ class AnimatedSprite extends Sprite {
    */
   changeAnimation(animationName) {
     if (!this.animations.has(animationName))
-      throw ('Sprite: Attempted to change to an animation that' +
-        ` does not exist: ${animationName}`);
+      throw new Error(
+        'Sprite: Attempted to change to an animation that' +
+        ` does not exist: ${animationName}`
+      );
 
     this.animation = this.animations.get(animationName);
     this.frame = 0;
@@ -96,8 +98,10 @@ class AnimatedSprite extends Sprite {
    */
   alterFrame(frameCount = as.defaultFrameCount) {
     if (!this.animation)
-      throw ('Sprite: Attempted to cycle an animation' +
-        ' which was not defined');
+      throw new Error(
+        'Sprite: Attempted to cycle an animation ' +
+        'which was not defined'
+      );
     this.frame = (this.frame + frameCount) % this.animation.frames;
   }
 

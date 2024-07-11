@@ -17,21 +17,13 @@ class DialogueDisplay extends State {
     });
     this.reset();
   }
-  /**
-     Sets a ButtonList that will be displayed after the dialogue.
-     @param {ButtonList} buttonList - The button list to display after
-     the dialogue
-  */
-  setPostDialogueMenu(buttonList) {
-    this.postDialogueMenu = buttonList;
-  }
+
   /**
    * Brings the DialogueDisplay to its initial state
    */
   reset() {
     this.dialogue = null;
     this.div.innerHTML = "";
-    this.postDialogueMenu?.reset();
   }
   
   /**
@@ -48,7 +40,7 @@ class DialogueDisplay extends State {
     keyman.manageInput(
       'Next Dialogue Line',
       () => {
-	this.dialogue.step();
+	      this.dialogue.step();
       }
     );
   }

@@ -95,8 +95,8 @@ class Pathfinder {
         x = roundToTile(x);
         y = roundToTile(y);
         if (x < 0 || x >= dTW || y < 0 || y >= dTH){
-            throw `attempt to create endTile on (${x}, ${y}) for pathfinder\n` +
-            `given range x: <${0}, ${dTW}); y: <${0}, ${dTH})`;
+            throw new Error(`Attempt to create endTile on (${x}, ${y}) for pathfinder\n` +
+            `given range x: <${0}, ${dTW}); y: <${0}, ${dTH})`);
         }
         let tile = this.townArray[x][y];
         this.end = new PathTile(tile.typeName, tile.x, tile.y, tile.options);

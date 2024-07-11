@@ -22,9 +22,11 @@
 import { tileSize } from "../global/consts.js";
 
 let img = (src, height = tileSize, width = tileSize, row = 0, col = 0,
-	   spriteHeight, spriteWidth) =>
-  ({ src: src, height: height, width: width, row: row, col: col,
-     spriteHeight: spriteHeight, spriteWidth: spriteWidth });
+  spriteHeight, spriteWidth) =>
+({
+  src: src, height: height, width: width, row: row, col: col,
+  spriteHeight: spriteHeight, spriteWidth: spriteWidth
+});
 
 const spriteSheetOptions = new Map([
   ["nc", "no collisions"],
@@ -32,11 +34,13 @@ const spriteSheetOptions = new Map([
 ]);
 class Spritesheet {
   constructor(path, width, height, elements, options = {}) {
-    if (width*height < elements.length)
-      throw "Error: Spritesheet element count is greater " +
-      `than the specified spritesheet size (${path})\n` +
-      `Size: ${width*height} (${width}*${height})\n` +
-      `Numer of elements: ${elements.length}`;
+    if (width * height < elements.length)
+      throw new Error(
+        `Spritesheet element count is greater ` +
+        `than the specified spritesheet size (${path})\n` +
+        `Size: ${width * height} (${width}*${height})\n` +
+        `Numer of elements: ${elements.length}`
+      );
     this.path = path;
     this.width = width;
     this.height = height;
@@ -54,15 +58,15 @@ class Spritesheet {
     this.options = options;
   }
   saveToMap(map) {
-    let x=0, y=0;
-    for (let e of this.elements){
-      let args = 
-	Array.from(spriteSheetOptions.keys())
-	  .map((arg) => ({argument: arg, position: e.indexOf(`_${arg}`)}))
-	  .filter((arg) => arg.position !== -1);
+    let x = 0, y = 0;
+    for (let e of this.elements) {
+      let args =
+        Array.from(spriteSheetOptions.keys())
+          .map((arg) => ({ argument: arg, position: e.indexOf(`_${arg}`) }))
+          .filter((arg) => arg.position !== -1);
 
       let argumentStartIndex = args.minBy("position")?.position ?? Infinity;
-      
+
       e = e.substring(0, argumentStartIndex);
       map.set(e, {
         src: this.path,
@@ -73,8 +77,8 @@ class Spritesheet {
         defaultAnimation: this.options.defaultAnimation,
         animations: this.options.animations,
         random: this.options.random,
-	nocollision: args.some((arg) => arg.argument === "nc"),
-	nodepth: args.some((arg) => arg.argument === "nd")
+        nocollision: args.some((arg) => arg.argument === "nc"),
+        nodepth: args.some((arg) => arg.argument === "nd")
       });
       x++;
       if (x === this.width) {
@@ -93,16 +97,16 @@ const imgInfo = new Map([
   ["pants", img("img/clothes.png", tileSize, tileSize, 0, 1)],
   ["barrel", img("img/barrel.png")],
   ["chuck-a-luck-table", img("img/chuck-a-luck-table.png")],
-  ["bank-3x2", img("img/bank-3x2.png", tileSize*2, tileSize*3, 0, 0,
-		tileSize*2, tileSize*3)],
-  ["bank-4x2", img("img/bank-4x2.png", tileSize*2, tileSize*4, 0, 0,
-		   tileSize*2, tileSize*4)],
-  ["bank-3x3", img("img/bank-3x3.png", tileSize*3, tileSize*3, 0, 0,
-		   tileSize*3, tileSize*3)],
-  ["bank-4x3", img("img/bank-4x3.png", tileSize*3, tileSize*4, 0, 0,
-		tileSize*3, tileSize*4)],
-  ["bank-5x3", img("img/bank-5x3.png", tileSize*3, tileSize*5, 0, 0,
-		tileSize*3, tileSize*5)],
+  ["bank-3x2", img("img/bank-3x2.png", tileSize * 2, tileSize * 3, 0, 0,
+    tileSize * 2, tileSize * 3)],
+  ["bank-4x2", img("img/bank-4x2.png", tileSize * 2, tileSize * 4, 0, 0,
+    tileSize * 2, tileSize * 4)],
+  ["bank-3x3", img("img/bank-3x3.png", tileSize * 3, tileSize * 3, 0, 0,
+    tileSize * 3, tileSize * 3)],
+  ["bank-4x3", img("img/bank-4x3.png", tileSize * 3, tileSize * 4, 0, 0,
+    tileSize * 3, tileSize * 4)],
+  ["bank-5x3", img("img/bank-5x3.png", tileSize * 3, tileSize * 5, 0, 0,
+    tileSize * 3, tileSize * 5)],
   ["player", {
     src: "img/player.png",
     spriteHeight: 74,
@@ -134,7 +138,7 @@ const townPropList = [
 const townPropSheet = new Spritesheet("img/town-props.png", 3, 3, townPropList);
 
 const itemsList = ["apple", "cigar", "revolver-1", "revolver-2", "broken-bottle",
-		   "whisky"];
+  "whisky"];
 const itemsSheet = new Spritesheet("img/items.png", 6, 1, itemsList);
 
 const pathTypeList = [

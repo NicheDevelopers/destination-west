@@ -23,7 +23,7 @@ export function addTraits(obj, ...traits) {
   for (const trait of traits) {
     if (!trait._name_) {
       console.error(trait);
-      throw `attept to add a trait without _name_ property`;
+      throw new Error(`Attept to add a trait without _name_ property`);
     }
     if (trait._before_) {
       trait._before_.call(obj);
@@ -31,7 +31,9 @@ export function addTraits(obj, ...traits) {
     for (const prop in trait) {
       if (specialProps.has(prop)) continue;
       if (obj[prop] !== undefined)
-        throw `adding trait would override property ${prop} of ${obj.constructor.name}`;
+        throw new Error(
+          `Adding trait would override property ` +
+          `${prop} of ${obj.constructor.name}`);
       obj[prop] = trait[prop];
     }
     if (trait._after_) {
@@ -43,12 +45,12 @@ export function addTraits(obj, ...traits) {
 export function InventoryTrait(
   startCash,
   equipmentSize = defaultEquipmentSize,
-  itemNameList = [],
+  itemRecipeList = [],
 ) {
   startCash = startCash ?? randIntInRange(cashParam.minCash, cashParam.maxCash);
   return {
     _name_: "InventoryTrait",
-    equipment: new Equipment(equipmentSize, startCash, itemNameList),
+    equipment: new Equipment(equipmentSize, startCash, itemRecipeList),
     dropItem: function (record) {
       let droppedItem = this.equipment.drop(record);
       droppedItem.setPositionTo({
@@ -100,7 +102,7 @@ export function HitboxTrait(
     tileHashSet: new ObjectSet(),
     enterTile(tileX, tileY) {
       if (this.isAtTile(tileX, tileY))
-        throw (
+        throw new Error(
           `attempt to add an entity (${self.constructor.name}) ` +
           `to the same tile twice (coords: (${tileX}, ${tileY}))`
         );
@@ -116,7 +118,7 @@ export function HitboxTrait(
      */
     leaveTile(tileX, tileY, nodelete = false) {
       if (!this.isAtTile(tileX, tileY))
-        throw "attempt to remove an entity from a tile it was not on";
+        throw new Error("Attempt to remove an entity from a tile it was not on");
 
       this.locationArray[tileX][tileY].removeEntity(this);
 
@@ -185,7 +187,7 @@ export function HitboxTrait(
     */
     moveTillCollision(speedX, speedY) {
       if (speedX * speedY !== 0)
-        throw (
+        throw new Error (
           `moveTillCollision only supports one axis movement. ` +
           `One speed has to be 0. Speeds provided: X=${speedX}, Y=${speedY}.`
         );
@@ -241,4 +243,4 @@ export function MovementTrait(self, speed, sprintMp, sneakMp, options) {
   };
 }
 
-export function CollideTrait() {}
+export function CollideTrait() { }

@@ -178,7 +178,8 @@ export default class Hitbox {
      If no collisions are found, `maxDist` is returned.
   */
   distanceTillTileCollision(direction, maxDist, arr) {
-    if (maxDist < 1) throw `maxDist has to be at least 1. Got: ${maxDist}.`;
+    if (maxDist < 1)
+      throw new Error(`maxDist has to be at least 1. Got: ${maxDist}.`);
     
     let xm = direction.xAxisMultiplier();
     let ym = direction.yAxisMultiplier();

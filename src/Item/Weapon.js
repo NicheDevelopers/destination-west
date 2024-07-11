@@ -22,21 +22,29 @@
 import Item from "./Item.js";
 
 class Weapon extends Item {
-  constructor(weaponType, damage, critChance, critMultiplier, durabilityLossPerUse) {
-    super(itemName,
-	  spriteName,
-	  sprite,
-	  durability,
-	  id,
-	  weight,
-	  price,
-	  priceRetention);
-    this.type = weaponType;
-    this.damage = damage;
-    this.critChance = critChance;
-    this.critMultiplier = critMultiplier;
-    this.durabilityLossPerUse = durabilityLossPerUse;
+  constructor(recipe) {
+    super(recipe);
+    this.type = recipe.type;
+    this.damage = recipe.damage;
+    this.critChance = recipe.critChance;
+    this.critMultiplier = recipe.critMultiplier;
+    this.durabilityLossPerUse = recipe.durabilityLossPerUse;
   }
+
+  static validateSpecialFields(recipe) {
+    const props = ['type', 'damage', 'critChance', 'critMultiplier', 'durabilityLossPerUse'];
+    const throwValidationError = (prop) => {
+      throw new Error(
+        `Weapon recipe must have a '${prop}' property.\n` +
+        `Recipe received: ${JSON.stringify(recipe)}`
+      );
+    }
+    for (const prop of props) {
+      if (!recipe[prop])
+        throwValidationError(prop);
+    }
+  }
+
   reduceDurability(times) {
     this.durability -= this.durabilityLossPerUse * times
   }

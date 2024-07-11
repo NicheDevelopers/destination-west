@@ -55,19 +55,19 @@ class Direction {
     return this;
   }
   moveUp() {
-    if (this.facesUp()) throw "Direction: Invalid move up";
+    if (this.facesUp()) throw new Error("Direction: Invalid move up");
     this._value -= 3;
   }
   moveRight() {
-    if (this.facesRight()) throw "Direction: Invalid move right";
+    if (this.facesRight()) throw new Error("Direction: Invalid move right");
     this._value += 1
   }
   moveDown() {
-    if (this.facesDown()) throw "Direction: Invalid move down";
+    if (this.facesDown()) throw new Error("Direction: Invalid move down");
     this._value += 3
   }
   moveLeft() {
-    if (this.facesLeft()) throw "Direction: Invalid move left";
+    if (this.facesLeft()) throw new Error("Direction: Invalid move left");
     this._value -= 1;
   }
   /**

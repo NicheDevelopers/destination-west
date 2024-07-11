@@ -134,7 +134,7 @@ export function htmlCreate(args = {}) {
   for (const property in args) {
     if (d[property] === undefined) {
       if (d.style[property] === undefined) {
-        throw `Unrecognized '${what}' property: ${property}`;
+        throw new Error(`Unrecognized '${what}' property: ${property}`);
       }
       d.style[property] = args[property];
       continue;
@@ -234,7 +234,7 @@ export function compareDirectedPositions(
 export function validateOptions(givenOptions, allowedOptions, name = "") {
   Object.keys(givenOptions).forEach((option) => {
     if (!allowedOptions.has(option))
-      throw `Unrecognized ${name} construction option: ${option}`;
+      throw new Error(`Unrecognized ${name} construction option: ${option}`);
   });
 }
 
@@ -242,8 +242,8 @@ export function forbidProperty(obj, prop) {
   Object.defineProperty(obj, prop, {
     configurable: true,
     get: function () {
-      throw (
-        `attempt to read ${prop} property which ` +
+      throw new Error(
+        `Attempt to read ${prop} property which ` +
         `is forbidden for ${obj.constructor.name}`
       );
     },
@@ -436,7 +436,10 @@ Object.defineProperty(Array.prototype, "last", {
 Object.defineProperty(Array.prototype, "lastNthElement", {
   value: function (n) {
     if (n < 0 || n > this.length - 1) {
-      throw `attempt to get lastNthElement (${n}) of array, when array's last index is ${this.length - 1}`;
+      throw new Error(
+        `Attempt to get lastNthElement (${n}) of array, ` +
+        `when array's last index is ${this.length - 1}`
+      );
     }
     return this[this.length - 1 - n];
   },
@@ -453,7 +456,10 @@ export { Direction, directions };
  */
 export function roll(chance) {
   if (chance < 0 || chance > 1) {
-    throw `attempt to roll when chance of success (${chance}) was not between 0 and 1`;
+    throw new Error(
+      `Attempt to roll when chance of success ` +
+      `(${chance}) was not between 0 and 1`
+    );
   }
   if (randFloatInRange(0, 1) < chance) return true;
   return false;
@@ -466,7 +472,10 @@ export function roll(chance) {
  */
 export function seedRoll(chance) {
   if (chance < 0 || chance > 1) {
-    throw `attempt to roll when chance of success (${chance}) was not between 0 and 1`;
+    throw new Error(
+      `Attempt to seedRoll when chance of success ` +
+      `(${chance}) was not between 0 and 1`
+    );
   }
   if (seed.random() < chance) return true;
   return false;
@@ -593,13 +602,13 @@ Object.defineProperty(String.prototype, "toNumber", {
 });
 
 Object.defineProperty(Map.prototype, "keysArray", {
-  value: function() {
+  value: function () {
     return Array.from(this.keys());
   }
 });
 
 Object.defineProperty(Map.prototype, "valuesArray", {
-  value: function() {
+  value: function () {
     return Array.from(this.values());
   }
 });
@@ -610,6 +619,15 @@ Number.prototype.clamp = function (min, max) {
 
 /**
  * Easily create nested button lists
+ * @param {object} options
+ * @param {object} options.callbackArgument
+ * An argument passed to the callback functions of the buttons.
+ * @param {number} options.rowCount
+ * If provided, the grid layout will be used for the ButtonList instead of flex.
+ * This parameter specifies the number of columns in the grid layout.
+ * If added, the ButtonList.BACK option will be automatically set to the last button
+ * in the list, preserving spacing (empty rows) if less than the rowCount buttons are added.
+ * The grid layout has one column. More column layouts are not yet supported.
  */
 export class ButtonList {
   constructor(options = {}) {
@@ -617,9 +635,20 @@ export class ButtonList {
       classList: "button-list",
     });
     this.reset();
-    if (options.callbackArgument !== undefined)
-      this.setCallbackArgument(options.callbackArgument);
+
+    /**
+     * The argument that is passed to buttons' callback functions
+     */
+    this.callbackArgument = options.callbackArgument;
+
+    /**
+     * The number of rows in the grid layout
+     */
+    this.rowCount = options.rowCount;
+
+    this.style();
   }
+
   /**
    * Adds a button to the ButtonList.
    * @param {string} buttonText - The text displayed on the button
@@ -631,36 +660,43 @@ export class ButtonList {
    */
   add(buttonText, action) {
     if (typeof action === "function") {
-      return this.pushButton(buttonText, () =>
-	action(this.callbackArgument));
+      this.pushButton(buttonText, () => action(this.callbackArgument));
+      return;
     }
     if (action === ButtonList.BACK) {
-      return this.pushButton(buttonText, () =>
-	this.backCallback());
+      this.pushButton(
+        buttonText,
+        () => this.backCallback(),
+        (this.rowCount) ? `grid-row: ${this.rowCount}` : ""
+      );
+      return;
     }
     if (action?.constructor?.name !== "ButtonList")
-      throw `Button actions need to be either a function, ` +
-      `a different ButtonList or ButtonList.BACK. Got: '${action}'`;
-    
+      throw new Error(
+        `Button actions need to be either a function, ` +
+        `a different ButtonList or ButtonList.BACK. Got: '${action}'`
+      );
+
     let otherList = action;
     otherList.parentList = this;
-    
+
     this.pushButton(buttonText, () => this.displayButtonsFrom(otherList));
   }
-  
+
   /**
    * Push a button with a specified text and onclick
    * to the `this.buttons` array. For internal use.
    */
-  pushButton(buttonText, onclick) {
+  pushButton(buttonText, onclick, style = "") {
     this.buttons.push(htmlCreate({
       what: "button",
       innerText: buttonText,
       onclick: onclick,
+      style: style,
       appendTo: this.div
     }));
   }
-  
+
   /**
    * A function called by a deeper nested ButtonList
    * when a ButtonList.BACK button has been clicked.
@@ -668,12 +704,14 @@ export class ButtonList {
    */
   backCallback() {
     if (!this.parentList)
-      throw `Attempt to go back from a top-level ButtonList`;
+      throw new Error(`Attempt to go back from a top-level ButtonList`);
     this.parentList.back();
   }
 
+  /**
+   * Display the original content of this ButtonList
+   */
   back() {
-    this.clear();
     this.displayButtonsFrom(this);
   }
 
@@ -691,13 +729,7 @@ export class ButtonList {
     this.otherList.buttons.forEach((button) => {
       this.div.appendChild(button);
     });
-  }
-
-  /**
-   * Sets the argument that is passed to buttons' callback functions
-   */
-  setCallbackArgument(arg) {
-    this.callbackArgument = arg;
+    this.style();
   }
 
   /**
@@ -708,13 +740,25 @@ export class ButtonList {
   }
 
   /**
-   * Removes all children from `this.div`.
+   * Applies styling (as defined in constructor's `options`) to the ButtonList
+   */
+  style() {
+    if (this.rowCount === undefined) return;
+    this.div.classList.add("grid");
+    this.div.style.gridTemplateRows = `repeat(${this.rowCount}, 1fr`;
+  }
+
+  /**
+   * Removes all children from `this.div` and clears `this.div` styling.
    */
   clear() {
     while (this.div.firstChild)
       this.div.removeChild(this.div.firstChild);
+
+    this.div.classList.remove("grid");
+    this.div.style.gridTemplateRows = "";
   }
-  
+
   /**
    * Brings the ButtonList to its initial state
    */
@@ -722,6 +766,18 @@ export class ButtonList {
     this.clear();
     this.buttons = [];
     this.callbackArgument = undefined;
+  }
+
+  /**
+   * Set the ButtonList to inherit the construction options of another ButtonList
+   * @param {ButtonList} otherList 
+   * The ButtonList from which the construction options are to be inherited
+   * @returns {ButtonList} this
+   */
+  inherit(otherList) {
+    this.callbackArgument = otherList.callbackArgument;
+    this.rowCount = otherList.rowCount;
+    return this;
   }
 
   static BACK = "back";
@@ -789,7 +845,7 @@ class Pixel {
     return transparent(this.a);
   }
 
-  isColor(color={}) {
+  isColor(color = {}) {
     for (const comp in color)
       if (this[comp] !== color[comp]) return false;
     return true;
@@ -864,24 +920,24 @@ export class PixelImage {
   }
 
   /**
-   * Get ImagaData entries with bound checcking
+   * Get ImagaData entries with bound checking
    */
   getDataAt(index) {
     if (!this.imgData)
-      throw `Attempt to read pixel data in unloaded PixelImage`;
+      throw new Error(`Attempt to read pixel data in unloaded PixelImage`);
     if (index < 0 || index > this.width * this.height * 4)
-      throw `getDataAt: index is out of bounds (${index})`;
+      throw new Error(`getDataAt: index is out of bounds (${index})`);
     return this.imgData.data[index];
   }
 
   /**
-   * Set ImagaData entries with bound checcking
+   * Set ImagaData entries with bound checking
    */
   setDataAt(index, val) {
     if (!this.imgData)
-      throw `Attempt to write pixel data in unloaded PixelImage`;
+      throw new Error(`Attempt to write pixel data in unloaded PixelImage`);
     if (index < 0 || index > this.width * this.height * 4)
-      throw `setDataAt: index is out of bounds (${index})`;
+      throw new Error(`setDataAt: index is out of bounds (${index})`);
     this.imgData.data[index] = val;
   }
 
@@ -897,10 +953,10 @@ export class PixelImage {
    */
   static get(self, prop, receiver) {
     if (!prop.isNumber()) return Reflect.get(...arguments);
-    if (!self.imgData) throw `Attempt to read pixel in unloaded PixelImage`;
+    if (!self.imgData) throw new Error(`Attempt to read pixel in unloaded PixelImage`);
     let col = prop.toNumber();
     if (col < 0 || col >= self.width)
-      throw (
+      throw new Error(
         `Attempt to read pixel from column ${col} ` +
         `in ${self.width}px width image`
       );
@@ -916,7 +972,7 @@ export class PixelImage {
    */
   static set(self, prop, val, receiver) {
     if (prop.isNumber())
-      throw `Direct assignment to PixelImage column is forbidden`;
+      throw new Error(`Direct assignment to PixelImage column is forbidden`);
 
     return Reflect.set(...arguments);
   }
@@ -927,10 +983,11 @@ export class PixelImage {
    */
   static colGet(col) {
     return (self, row, receiver) => {
-      if (!row.isNumber()) throw `Given image row is not a number: ${row}`;
+      if (!row.isNumber())
+        throw new Error(`Given image row is not a number: ${row}`);
       row = row.toNumber();
       if (row < 0 || row >= self.height)
-        throw (
+        throw new Error(
           `Attempt to read pixel from row ${row} ` +
           `in ${self.height}px height image`
         );
@@ -945,7 +1002,7 @@ export class PixelImage {
    * PixelImage Proxy
    */
   static colSet(self, prop, val, receiver) {
-    throw (
+    throw new Error(
       `Direct assignment to PixelImage's Pixel is forbidden.` +
       ` Use methods of the Pixel object instead.`
     );
@@ -958,7 +1015,7 @@ export class PixelImage {
  * one key could lead to the same value.
  */
 export class TwoWayMap {
-  constructor(array=[]) {
+  constructor(array = []) {
     this.map = new Map();
     this.pam = new Map();
 
@@ -968,20 +1025,20 @@ export class TwoWayMap {
   }
   set(key, value) {
     if (this.map.has(key))
-      throw `Key '${key}' is already present in the TwoWayMap`;
+      throw new Error(`Key '${key}' is already present in the TwoWayMap`);
     this.map.set(key, value);
-    
+
     if (!this.pam.has(value))
       this.pam.set(value, key);
   }
-  
+
   /**
    * Get the value that maps to the provided key
    */
   getValue(key) {
     return this.map.get(key);
   }
-  
+
   /**
    * Get the key that maps to the provided value
    */
@@ -992,7 +1049,7 @@ export class TwoWayMap {
   hasValue(value) {
     return this.pam.has(value);
   }
-  
+
   hasKey(key) {
     return this.map.has(key);
   }
@@ -1002,7 +1059,7 @@ export class TwoWayMap {
     this.map.delete(key);
     this.pam.delete(value);
   }
-  
+
   deleteByValue(value) {
     let key = this.getKey(value);
     this.map.delete(key);
@@ -1017,4 +1074,46 @@ export class TwoWayMap {
   get size() {
     return this.map.size;
   }
+}
+
+function jsonReplacer(key, value) {
+  if (typeof value === 'function') {
+    return value.name;
+  }
+  return value;
+}
+
+export function toPrettyJson(obj) {
+  return JSON.stringify(obj, jsonReplacer, 2)
+}
+
+export function formatError(error) {
+  if (!(error instanceof Error))
+    return `Warning: this error is not an instance of Error! ` +
+      `Please make sure to throw Error instances instead of strings.\n\n` + 
+      `${error}`;
+
+  return `${error.message}`;
+}
+
+export function makeErrorInfoHeader(error, appendTo) {
+  const errorInfo = error.stack.split("\n").first.split("@");
+  const errorFunction = errorInfo.first;
+  const errorLocation = errorInfo.last;
+  const errorLocationText = errorInfo.last.split(/:[/][/].*?[//]/i).last;
+
+  const content = `Thrown by ${errorFunction}() @ `;
+  let header = htmlCreate({
+    what: "h3",
+    innerText: content,
+    appendTo: appendTo,
+  });
+
+  htmlCreate({
+    what: "span",
+    innerText: errorLocationText,
+    appendTo: header,
+  });
+
+  return header;
 }

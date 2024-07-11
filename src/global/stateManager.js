@@ -46,10 +46,16 @@ class State {
       // If the state is prepared asynchronously, the `validate`
       // function should be called manually. This is checked after 5 seconds.
       setTimeout(() => {
+        if (stateManager.crashed) {
+          // If the game loop has crashed, the validation could falsely indicate an error
+          return;
+        }
         if (!this.validated)
-          throw `Async state '${this.name}' was not validated. ` +
-          `(validate check timed out after 5 seconds) ` +
-          `The 'validate' function should be called manually.`;
+          throw new Error(
+            `Async state '${this.name}' was not validated. ` +
+            `(validate check timed out after 5 seconds) ` +
+            `The 'validate' function should be called manually.`
+          );
       }, 5000);
     }
   }
@@ -91,17 +97,19 @@ class State {
 
     for (const input of managedInputs) {
       if (!thisStateKeybinds?.includes(input))
-        throw `Validation failed: ` +
-        `State '${this.name}' manages action '${input}', which ` +
-        `is not bound to it.`;
+        throw new Error(`Validation failed: ` +
+          `State '${this.name}' manages action '${input}', which ` +
+          `is not bound to it.`
+        );
     }
 
     for (const input of thisStateKeybinds ?? []) {
       if (input === null || input === specialActions.NONE)
         continue;
       if (!managedInputs.includes(input))
-        throw `Validation failed: ` +
-        `Action '${input}' is not managed by state '${this.name}'`;
+        throw new Error(`Validation failed: ` +
+          `Action '${input}' is not managed by state '${this.name}'`
+        );
     }
 
     this.validated = true;
@@ -119,6 +127,11 @@ class StateManager {
     this.previousState = null;
     this.lastUpdateTime = time.now;
     this.maxUpdateTime = 100;
+
+    /**
+     * Indicates whether the game loop has crashed
+     */
+    this.crashed = false;
   }
   pushState(state, startKey = undefined) {
     state.startKey = startKey;
@@ -171,12 +184,12 @@ class StateManager {
   }
   startState(state, startKey = undefined) {
     if (this.currentState.id === state.id)
-      throw `Attempt to start a state which is already the current state`;
+      throw new Error(`Attempt to start a state which is already the current state`);
     this.pushState(state, startKey);
   }
   endState(state) {
     if (this.currentState.id !== state.id)
-      throw `Attempt to end a state which is not the current state`;
+      throw new Error(`Attempt to end a state which is not the current state`);
     this.popState();
   }
   /**

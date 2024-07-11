@@ -24,8 +24,11 @@ export class KeyboardManager {
     this.requests = new TwoWayMap(); // [key, action]
     this.ignore = new Map(); // [action, true]
 
-    document.addEventListener("keydown", this.manageKeydown.bind(this));
-    document.addEventListener("keyup", this.manageKeyup.bind(this));
+    this.onKeyDown = this.manageKeydown.bind(this);
+    this.onKeyUp = this.manageKeyup.bind(this);
+
+    document.addEventListener("keydown", this.onKeyDown);
+    document.addEventListener("keyup", this.onKeyUp);
   }
 
   load(keybinds) {
@@ -131,6 +134,14 @@ export class KeyboardManager {
 
   clearInputs() {
     this.requests.clear();
+  }
+
+  /**
+   * Detach the KeyboardManager from the document
+   */
+  detach() {
+    document.removeEventListener("keydown", this.onKeyDown);
+    document.removeEventListener("keyup", this.onKeyUp);
   }
 }
 

@@ -29,8 +29,7 @@ class Trader extends Npc {
    */
   interact(who) {
     this.sprite.mirrored = (who.x < this.x);
-    this.dialogue = new Dialogue("src/Dialogue/trader_dialogue.dwd",
-      who, this);
+    this.dialogue = new Dialogue(who, this, "src/Dialogue/trader_dialogue.dwd");
     
     this.game.startDialogue(this.dialogue);
   }

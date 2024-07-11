@@ -5,7 +5,7 @@ import { randIntInRange } from "../global/utilities.js";
  * Describes various variables that affect combat difficulty.
  * Created before the fight and passed as a parameter to `CombatConfig`
  **/
-export class Difficulty {}
+export class Difficulty { }
 
 /**
  * Enum listing types of Combat initiation.
@@ -43,38 +43,60 @@ const ActionType = {
 };
 
 /**
- *
+ * Describes an action in combat.
+ */
+class CombatActionProps {
+  constructor(options = {}) {
+    if (options.who === undefined)
+      throw new Error("CombatActionProps: 'who' is a required parameter");
+    if (options.type === undefined)
+      throw new Error("CombatActionProps: 'type' is a required parameter");
+
+    this.who = options.who;
+    this.type = options.type;
+
+    if (options.type === ActionType.UseItem) {
+      if (options.item === undefined)
+        throw new Error("CombatActionProps: 'item' is a required parameter for UseItem action");
+      this.item = options.item;
+    }
+  }
+}
+
+/**
+ * Enum for creating actions in combat.
+ * Each action is a function that returns a CombatActionProps object describing the action.
  **/
 export const CombatAction = {
   Attack: (who, weapon, targets) => {
-    return {
+    return new CombatActionProps({
+      who: who,
       type: ActionType.Attack,
       who,
       weapon,
       targets,
-    };
+    });
   },
   Retreat: (entity) => {
-    return {
+    return new CombatActionProps({
+      who: entity,
       type: ActionType.Retreat,
-      entity,
-    };
+    });
   },
   Ability: (who, ability, targets = null) => {
-    return {
+    return new CombatActionProps({
+      who: who,
       type: ActionType.Ability,
-      who,
       ability,
       targets,
-    };
+    });
   },
-  UseItem: (who, item, targets = null) => {
-    return {
+  UseItem: (who, item) => {
+    return new CombatActionProps({
+      who: who,
       type: ActionType.UseItem,
-      who,
-      item,
-      targets,
-    };
+      item: item,
+    });
   },
 };
 
@@ -104,10 +126,22 @@ class RetreatResult extends BaseResult {
     this.success = successBoolean;
   }
 }
+/**
+ * Result of using an item in combat
+ * @param {Entity} target - target of the item, for now it's always the player
+ * @param {{stat: string, change: number}} effect - effect of the item,
+ * the change in the stat of the target
+ */
 class UseItemResult extends BaseResult {
-  constructor(target, effect) {
+  constructor(target, effects) {
     super(target);
-    this.effect = effect;
+
+    /**
+     * Effects of the item
+     * @type {Array<Array<string, number>>}
+     * @example [['health', 10], ['accuracy', 15]]
+     */
+    this.effects = effects;
   }
 }
 
@@ -119,19 +153,22 @@ export const AttackType = {
 
 export class Combat {
   /**
-  @param {Player} player
-  @param {Npc[]} allies
-  @param {Npc[]} enemies
-  @param {Difficulty} difficulty
+   * @param {Player} player
+   * @param {Npc[]} allies
+   * @param {Npc} mainEnemy
+   * @param {Npc[]} enemies
+   * @param {Difficulty} difficulty
    **/
-  constructor(player, allies, enemies, combatConfig) {
+  constructor(player, allies, mainEnemy, enemies, combatConfig) {
     this.player = player;
     this.allies = allies;
+    this.mainEnemy = mainEnemy;
     this.enemies = enemies;
     this.config = combatConfig;
 
-    this.orderedByTurn = this._determineTurnOrder([player, ...allies], enemies);
-    this.turnIndex = 0;
+    this.orderedByTurn = this._determineTurnOrder([player, ...allies], [mainEnemy, ...enemies]);
+
+    this.reset();
 
     this.executorMap = new Map([
       [ActionType.Attack, this._executeAttack],
@@ -142,38 +179,57 @@ export class Combat {
   }
 
   /**
-   * Sort combatants by speed (temporarily by ID)
+   * Reset the combat to its initial state
+   **/
+  reset() {
+    this.turnIndex = 0;
+  }
+
+  /**
+   * Sort combatants by speed (temporarily no sorting)
    @returns {Entity[]} Array of combatants sorted by speed
    **/
   _determineTurnOrder(allies, enemies) {
-    return [allies, enemies].flat().sort((a, b) => a.id - b.id);
+    return [allies, enemies].flat();
   }
 
   /**
    * Interface for mutating Combat state
    * Mutates combat state according to the given action
-   @param {CombatAction} action action describing an event in combat
+   @param {CombatActionProps} action action describing an event in combat
    @returns {BaseResult[]} results of the executed actions
    **/
   executeAction(action) {
     const entityAtTurn = this.orderedByTurn[this.turnIndex];
-    if (entityAtTurn !== action.who) null;
-    //throw "Attempt to execute an action out of turn";
-    console.log(`executing`, action);
+    if (entityAtTurn !== action.who)
+      throw new Error(
+        "Attempt to execute an action out of turn.\n" +
+        `Expected: ${entityAtTurn.name}, got: ${action.who.name}\n` +
+        `Turn index: ${this.turnIndex}, ` +
+        `turn order: [${this.orderedByTurn.map((e) => e.name)}]`
+      );
 
-    const actionResults = this.executorMap.get(action.type)(action); // execute the action
+    const actionResults = this.executorMap.get(action.type)(action);
 
-    this.turnIndex = ++this.turnIndex % this.orderedByTurn.length; // loop around
+    this.nextTurn();
 
     return actionResults;
   }
+
+  /**
+   * Move to the next turn
+   */
+  nextTurn() {
+    this.turnIndex = ++this.turnIndex % this.orderedByTurn.length;
+  }
+
   /**
    * Given a weapon and an AttackType, determine which minigame needs to be run
    @param {Weapon} weapon weapon of the attacker
    @param {AttackType} attackType
    @returns {MiniGame} minigame that needs to be run
   **/
-  getMinigame(weapon, attackType) {}
+  getMinigame(weapon, attackType) { }
 
   _executeAttack({ _, who, weapon, targets }) {
     return targets.map((t) => {
@@ -188,15 +244,13 @@ export class Combat {
       return new AbilityHitResult(t, null);
     });
   }
-  _executeUseItem({ _, who, item, targets }) {
-    return targets.map((t) => {
-      return new UseItemResult(t, null);
-    });
+  _executeUseItem({ _, who, item }) {
+    return new UseItemResult(who, item.effects);
   }
 
   /**
    * CombatDisplay uses it to know when to show an action menu
-   @returns {boolean} boolean - is it the Player's turn?
+   * @returns {boolean} boolean - is it the Player's turn?
    **/
   isPlayersTurn() {
     return this.orderedByTurn[this.turnIndex] instanceof Player;

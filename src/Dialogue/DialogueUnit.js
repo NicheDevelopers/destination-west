@@ -1,6 +1,8 @@
 import Animation from "../core/Animation.js";
-import { focusBackToPlayerTime as focusTime,
-	 dialogueParameters } from "../global/consts.js";
+import {
+  focusBackToPlayerTime as focusTime,
+  dialogueParameters
+} from "../global/consts.js";
 import { ButtonList } from "../global/utilities.js";
 
 /**
@@ -8,11 +10,11 @@ import { ButtonList } from "../global/utilities.js";
  * that the DialogueDisplay is in.
  * Can represent a single line of dalogue or a menu of dialogue options
  * Manages its own animations and updates to reduce the responsibility
- * of DialogueDisaplay to calling an update function every frame
+ * of DialogueDisaplay (or other states using it) to calling an update function every frame
  */
 export class DialogueUnit {
-  constructor() {}
-  
+  constructor() { }
+
   /**
    * Create and return an animation of this DialogueUnit
    * Optionally set the changeCallback. Return null if no
@@ -21,14 +23,14 @@ export class DialogueUnit {
   setupAnimation(changeCallback) {
     return null;
   }
-  
+
   /**
    * Fills the provided node's innerHTML with the current
    * state of this DialogueUnit
    * @param node - the node to fill
    */
-  updateContent(node) {}
-  
+  updateContent(node) { }
+
   /**
    * Is this unit immediately skippable with the 'Next Dialogue Line'
    * action?
@@ -42,18 +44,18 @@ export class DialogueUnit {
    * Returns `this` to enable chaining and in-place construction using
    * this method
    */
-  fromText(text) {}
+  fromText(text) { }
 
   /**
    * Test if the Dialogue Unit has been initialized properly.
    * Throw an error if not.
    */
-  verify(dialogue) {}
-  
+  verify(dialogue) { }
+
   isDialogueMenu() {
     return this.constructor.name === DialogueMenu.name;
   }
-  
+
   isDialogueOperation() {
     return this.constructor.name === DialogueOperation.name;
   }
@@ -63,7 +65,7 @@ export class DialogueUnit {
    */
   reset() {
   }
-  
+
   /**
    * A static value returned by `Label.step()` after an operation was called.
    * When that happens it means that the dialogue's `Dialogue.step()` function
@@ -79,9 +81,12 @@ export class DialogueUnit {
 export class DialogueLine extends DialogueUnit {
   constructor(who, text) {
     super();
+    /**
+     * who {string} The speaker of the line, eg. "Player" or "Ol' Benjamin"
+     */
     this.who = who;
     this.text = text;
-    this.n = 0;
+    this.reset();
   }
   fromText(text) {
     [this.who, this.text] = text.split('|');
@@ -95,7 +100,7 @@ export class DialogueLine extends DialogueUnit {
     return animation;
   }
   updateContent(node) {
-    node.innerHTML =  `${this.who}: ${this.text.substring(0, this.n)}`;
+    node.innerHTML = `${this.who}: ${this.text.substring(0, this.n)}`;
   }
   reset() {
     this.n = 0;
@@ -114,12 +119,12 @@ export class DialogueMenu extends DialogueUnit {
     this.choices = [];
     this.callbacks = [];
     this.destLabels = [];
-    
+
     this.menu = new ButtonList({
       callbackArgument: dialogue
     });
   }
-  
+
   skippable() {
     return false;
   }
@@ -128,36 +133,36 @@ export class DialogueMenu extends DialogueUnit {
     node.innerHTML = "";
     this.menu.appendTo(node);
   }
-  
+
   addChoiceFromText(text) {
     let [choice, destLabel] = text.split('|');
     this.choices.push(choice);
 
     let special = specialLabels.get(destLabel);
-    
+
     if (special) {
       this.callbacks.push((dialogue) => {
-	dialogue[special.fnName](...special.args ?? []);
+        dialogue[special.fnName](...special.args ?? []);
       });
     }
     else {
       this.destLabels.push(destLabel);
       this.callbacks.push((dialogue) => {
-	dialogue.gotoLabel(destLabel);
+        dialogue.gotoLabel(destLabel);
       });
     }
     this.menu.add(this.choices.last, this.callbacks.last);
   }
-  
+
   fromText() {
-    throw `DialogueMenu choices should be added with addChoiceFromText`;
+    throw new Error(`DialogueMenu choices should be added with addChoiceFromText`);
   }
-  
+
   verify(dialogue) {
     for (const destLabel of this.destLabels)
       if (!dialogue.labels.has(destLabel))
-	throw `DialogueMenu can lead to a label that does ` +
-      `not exist in the dialogue: '${destLabel}'`;
+        throw new Error(`DialogueMenu can lead to a label that does ` +
+        `not exist in the dialogue: '${destLabel}'`);
   }
 }
 
@@ -171,13 +176,13 @@ export class DialogueOperation extends DialogueUnit {
     this.operation = null;
     this.args = null;
   }
-  
+
   call() {
     if (!this.dialogue[this.operation])
-      throw `Dialogue has no method named '${this.operation}' to call.`;
+      throw new Error(`Dialogue has no method named '${this.operation}' to call.`);
     this.dialogue[this.operation](...this.args);
   }
-  
+
   fromText(text) {
     text = text.split(' ');
     let operation = text.first;
@@ -196,7 +201,7 @@ export class DialogueOperation extends DialogueUnit {
       this.args = ordinary.createArguments(args);
       return this;
     }
-    throw `Unrecognized operation: '${operation}'`;
+    throw new Error(`Unrecognized operation: '${operation}'`);
   }
 
   static GOTO = "goto";
@@ -213,47 +218,45 @@ export class Label {
     this.units = [];
   }
   /**
-   * Can the label step to the next Unit?
-   * (ie. is the currently displayed Unit skippable
-   * and is the dialogue still not finished?)
+   * Is the currently displayed Unit skippable?
    */
   canStep() {
-    return this._n < 0 || (this.units[this._n].skippable()
-      && this.nextUnit !== undefined);
+    return this._n < 0 || this.units[this._n].skippable();
   }
-  
+
   /**
    * Get the next Unit in this label. Increments a built-in
    * counter.
    */
   step() {
     if (!this.canStep())
-      throw `Attempt to step through a non skippable or finished dialogue`;
-    
+      throw new Error(`Attempt to step through a non skippable dialogue unit`);
+
     if (this.nextUnit.isDialogueOperation()) {
       this.units[++this._n].call();
       return DialogueUnit.OPERATION;
     }
     return this.units[++this._n];
   }
-  
+
   /**
    * Is this label exhausted?
    * A label is exhausted when there is no more content to show
    * and the current unit is skippable (using `step` would try to load
-   * an non existent unit).
+   * an non existent unit). If the last unit is not skippable, the label
+   * is not exhausted (as some user interaction other than `step` is needed).
    */
   exhausted() {
     return this.canStep() && this.nextUnit === undefined;
   }
-  
+
   /**
    * Push elements to the units array of the label
    */
   push(...args) {
     this.units.push(...args);
   }
-  
+
   /**
    * An accessor to the `units.last` element.
    */
@@ -265,7 +268,7 @@ export class Label {
    * The unit that will be used on the next call to `step()`.
    */
   get nextUnit() {
-    return this.units[this._n+1];
+    return this.units[this._n + 1];
   }
 
   /**
@@ -286,7 +289,7 @@ export class Label {
       unit.reset();
     }
   }
-  
+
   static START = "START";
   static TRADE = "TRADE";
   static END = "END";
@@ -341,7 +344,7 @@ export const dialogueOperations = new Map([
     DialogueOperation.GOTO, {
       fnName: 'gotoLabel',
       createArguments(text) {
-	return [text];
+        return [text];
       }
     }
   ],
@@ -349,8 +352,8 @@ export const dialogueOperations = new Map([
     DialogueOperation.STAT, {
       fnName: 'changeNpcStat',
       createArguments(text) {
-	text = text.split(' ');
-	return [text[0].toLowerCase(), parseFloat(text[1])];
+        text = text.split(' ');
+        return [text[0].toLowerCase(), parseFloat(text[1])];
       }
     }
   ]

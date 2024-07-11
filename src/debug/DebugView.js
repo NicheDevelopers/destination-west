@@ -17,13 +17,13 @@ export default class DebugView {
       classList: "nodisp",
       appendTo: document.body
     });
-    
+
     this.fpsDisplay = htmlCreate({
       id: "fps-counter",
       innerText: "FPS",
       classList: "counter",
       onclick: () => {
-	this.fpsSettings.classList.toggle("nodisp");
+        this.fpsSettings.classList.toggle("nodisp");
       },
       appendTo: this.div
     });
@@ -33,7 +33,7 @@ export default class DebugView {
       innerText: "sim FPS",
       classList: "counter",
       onclick: () => {
-	this.fpsSettings.classList.toggle("nodisp");
+        this.fpsSettings.classList.toggle("nodisp");
       },
       appendTo: this.div
     });
@@ -48,16 +48,16 @@ export default class DebugView {
     this.closeFpsSettings = htmlCreate({
       id: "dev-settings-button",
       onclick: () => {
-	this.fpsSettings.classList.add("nodisp");
+        this.fpsSettings.classList.add("nodisp");
       },
       appendTo: this.fpsSettings
     });
-    
+
     this.timeScaleRow = htmlCreate({
       innerText: "Time scale: ",
       title: `A value by which time differences are multipled by` +
-	` to simulate shorter or longer game update delays (simulate` +
-	` a different time speed / scale)`,
+        ` to simulate shorter or longer game update delays (simulate` +
+        ` a different time speed / scale)`,
       "font-size": "25px",
       appendTo: this.fpsSettings
     });
@@ -70,7 +70,7 @@ export default class DebugView {
       step: "0.1",
       value: "1.0",
       onchange: (i) => {
-	time.speed = Number(i.target.value);
+        time.speed = Number(i.target.value);
       },
       appendTo: this.timeScaleRow
     });
@@ -78,20 +78,20 @@ export default class DebugView {
     this.simSettingsRow = htmlCreate({
       innerText: "Show simulated FPS: ",
       title: `Simulated FPS is calculated using the given timescale` +
-	` and represents the refresh frequency as perceived from the` +
-	` game loop perspective`,
+        ` and represents the refresh frequency as perceived from the` +
+        ` game loop perspective`,
       "font-size": "25px",
       appendTo: this.fpsSettings
     });
-    
+
     this.showSimInput = htmlCreate({
       what: "input",
       type: "checkbox",
       checked: true,
       onchange: (i) => {
-	if (i.target.checked)
-	  this.fpsSimDisplay.classList.remove("nodisp");
-	else this.fpsSimDisplay.classList.add("nodisp");
+        if (i.target.checked)
+          this.fpsSimDisplay.classList.remove("nodisp");
+        else this.fpsSimDisplay.classList.add("nodisp");
       },
       appendTo: this.simSettingsRow
     });
@@ -102,12 +102,12 @@ export default class DebugView {
       "font-size": "25px",
       appendTo: this.fpsSettings
     });
-    
+
     this.fpsCounter = new Animation(this, '()updateFpsCounter', 5);
 
     this.setVisibility(this.app.debugging);
   }
-  
+
   updateFpsCounter() {
     this.fpsDisplay.innerText = numberPad(time.getRealFps(), -1, 2);
     this.fpsSimDisplay.innerText = "sim:" + numberPad(time.getFps(), -1, 2).padStart(7, ' ');
@@ -124,7 +124,7 @@ export default class DebugView {
   isVisible() {
     return !this.div.classList.contains("nodisp");
   }
-  
+
   update() {
     this.keyVisualizer.update();
     this.fpsCounter.next();

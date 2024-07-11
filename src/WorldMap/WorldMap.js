@@ -18,11 +18,14 @@ class WorldMap {
 
   getByID(id) {
     if (id > this.locations.length - 1 || id < 0) {
-      throw `WorldMap: no town with ID ${id} - locations length is ${this.locations.length}`;
+      throw new Error(
+        `WorldMap: no town with ID ${id} - locations ` +
+        `length is ${this.locations.length}`
+      );
     }
     return this.locations[id];
   }
-  
+
   _generateLocations(min, max) {
     resetIdFor(Town);
     let numOfLocations = srandIntInRange(min, max);

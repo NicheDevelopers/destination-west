@@ -35,9 +35,9 @@ class App {
     this.game = new Game(this, () => {
       stateManager.pushState(this.game);
     });
-    
+
     this.animationFrameID = null;
-    
+
     this.debugging = false;
 
     this.browser = new Browser(this);
@@ -53,8 +53,8 @@ class App {
     });
     keyman.generalActions.set('Toggle Debug Mode', {
       fn: () => {
-	this.debugging = !this.debugging;
-	this.debugView.setVisibility(this.debugging);
+        this.debugging = !this.debugging;
+        this.debugView.setVisibility(this.debugging);
       }
     });
   }
@@ -66,14 +66,24 @@ class App {
       time.update();
 
       this.debugView.update();
-      
+
       stateManager.updateStates();
       notifier.update();
     }
-    catch(e) {
-      window.cancelAnimationFrame(this.animationFrameID);
-      throw e;
+    catch (e) {
+      this.crash(e);
     }
+  }
+
+  /**
+   * Run when an error occurs in the game loop or in some asynchronous callback.
+   */
+  crash(error) {
+    stateManager.crashed = true;
+    keyman.detach();
+    window.cancelAnimationFrame(this.animationFrameID);
+    this.browser.displayError(error);
+    console.error(error);
   }
 }
 

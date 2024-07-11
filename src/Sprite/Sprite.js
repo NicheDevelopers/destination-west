@@ -44,7 +44,7 @@ class Sprite {
   */
   constructor(typeName, options = {}, isColored = false) {
     if (!imgInfo.has(typeName)) {
-      	throw `type name is not recognized: ${typeName}`;
+      	throw new Error(`type name is not recognized: ${typeName}`);
     }
     forbidProperty(this, "animation");
     
@@ -76,7 +76,7 @@ class Sprite {
     if (isColored) return;
 
     if (this.sheetInfo.src === undefined)
-      throw `Sprite: No image path provided for sprite: ${typeName}`;
+      throw new Error(`Sprite: No image path provided for sprite: ${typeName}`);
 
     this.processingImage = (this.rotation !== undefined || this.outline !== undefined);
     
@@ -156,7 +156,7 @@ class Sprite {
   */
   getSpriteHitboxInfo(options = {}) {
     if (!this.img.complete) {
-      throw `attempt to getSpriteHitboxInfo of an unloaded sprite: ${this.typeName}`;
+      throw new Error(`Attempt to getSpriteHitboxInfo of an unloaded sprite: ${this.typeName}`);
     }
     let width = options.width ?? this.width;
     let height = options.height ?? this.height;

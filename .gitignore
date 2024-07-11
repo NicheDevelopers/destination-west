@@ -5,7 +5,9 @@
 ti*.log
 tsserver.log
 .*.js
-#ignore sebnow91 LSP files
+
+# ignore LSP, editor config files
 node_modules/
 package-lock.json
 package.json
+jsconfig.json

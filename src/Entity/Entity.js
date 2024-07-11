@@ -66,7 +66,7 @@ const entityOptions = new Map([
 
 /**
  * The super class for entity classes to derive from
- @abstract
+ * @abstract
  */
 class Entity {
   constructor(game, typeName, x = 0, y = 0, options = {}) {

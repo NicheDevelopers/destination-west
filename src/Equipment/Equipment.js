@@ -63,14 +63,14 @@ class Equipment {
    * @param {Object[]} itemObjList array of item objects
    * @example
    * this.fillRecords([
-   *  {name: items.apple, quantity: 3},
-   *  {name: items.whisky, quantity: 2}
+   *  {recipe: items.apple, quantity: 3},
+   *  {recipe: items.whisky, quantity: 2}
    * ]);
    */
   fillRecords(itemObjList) {
     for (let itemObj of itemObjList) {
       for (let i = 0; i < itemObj.quantity; i++) {
-        this.put(createItem(itemObj.name));
+        this.put(createItem(itemObj.recipe));
       }
     }
     this.sortByWeight();

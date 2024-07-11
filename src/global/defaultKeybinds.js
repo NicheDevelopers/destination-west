@@ -41,7 +41,10 @@ const defaultKeybinds = {
   ],
   EquipmentDisplay: [
     ['g', 'Open Equipment'],
-  ]
+  ],
+  CombatDisplay: [
+    [specialKeys.STATE_START_KEY, 'Next Dialogue Line'],
+  ],
 };
 
 export default defaultKeybinds;

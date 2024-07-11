@@ -19,6 +19,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { htmlCreate, formatError, makeErrorInfoHeader } from "../global/utilities.js";
+
 /**
  * Class for dealing with browser-specific methods, requests
  */
@@ -33,6 +35,27 @@ class Browser {
       return;
     }
     document.documentElement.requestFullscreen();
+  }
+
+  displayError(error) {
+    let errorMessageBox = htmlCreate({
+      id: "error-message-box",
+      appendTo: document.querySelector("#game-container")
+    });
+
+    htmlCreate({
+      what: "h1",
+      innerText: "An error occurred",
+      appendTo: errorMessageBox
+    });
+
+    makeErrorInfoHeader(error, errorMessageBox);
+
+    htmlCreate({
+      what: "span",
+      innerText: formatError(error),
+      appendTo: errorMessageBox
+    });
   }
 }
 

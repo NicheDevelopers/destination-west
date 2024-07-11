@@ -46,7 +46,7 @@ export class FindQuestBuilder {
     let res =
       this.questGiver instanceof Npc && this.config instanceof FindQuestConfig;
     if (!res) {
-      throw "Attempt to create a quest with invalid argument types";
+      throw new Error("Attempt to create a quest with invalid argument types");
     }
     return true;
   }

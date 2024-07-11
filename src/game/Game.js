@@ -60,12 +60,15 @@ import CombatDisplay from "../Combat/CombatDisplay.js";
 
 class Game extends State {
   constructor(app, callback) {
-    super(true, {async: true});
+    super(true, { async: true });
     this.app = app;
-    seed.generate(null, () => {
-      this.init();
-      callback();
-    });
+    seed.generate(null,
+      () => {
+        this.init();
+        callback();
+      },
+      (e) => this.app.crash(e)
+    );
   }
 
   init() {
@@ -105,10 +108,10 @@ class Game extends State {
 
     let testContainer = new Container(this, "barrel", 250, 250);
     testContainer.equipment.fillRecords([
-      { name: items.whisky, quantity: 3 },
-      { name: items.apple, quantity: 3 },
-      { name: items.brokenBottle, quantity: 1 },
-      { name: items.revolver1, quantity: 3 },
+      { recipe: items.whisky, quantity: 3 },
+      { recipe: items.apple, quantity: 3 },
+      { recipe: items.brokenBottle, quantity: 1 },
+      { recipe: items.revolver1, quantity: 3 },
     ]);
 
     this.currentTown.portals.push(
@@ -128,8 +131,8 @@ class Game extends State {
 
     let testTrader = new Trader(this, 300, 250, "Sawyer McCleary");
     testTrader.equipment.fillRecords([
-      { name: items.apple, quantity: 3 },
-      { name: items.revolver1, quantity: 5 },
+      { recipe: items.apple, quantity: 3 },
+      { recipe: items.revolver1, quantity: 5 },
     ]);
 
     //----------------------------------------
@@ -152,12 +155,12 @@ class Game extends State {
     //this.currentTown.npcs.push(new Npc(this, 382, 350, "Ol' Benjamin"));
 
     this.player.equipment.fillRecords([
-      { name: items.cigar, quantity: 1 },
-      { name: items.whisky, quantity: 5 },
-      { name: items.revolver1, quantity: 2 },
-      { name: items.revolver2, quantity: 3 },
-      { name: items.apple, quantity: 5 },
-      { name: items.brokenBottle, quantity: 1 },
+      { recipe: items.cigar, quantity: 1 },
+      { recipe: items.whisky, quantity: 5 },
+      { recipe: items.revolver1, quantity: 2 },
+      { recipe: items.revolver2, quantity: 3 },
+      { recipe: items.apple, quantity: 5 },
+      { recipe: items.brokenBottle, quantity: 1 },
     ]);
 
     this.equipmentDisplay = new EquipmentDisplay(this, this.player.equipment);
@@ -175,19 +178,14 @@ class Game extends State {
     const combat = new Combat(
       this.player,
       [OlBenjamin],
-      [this.testEntity],
+      this.testEntity,
+      [],
       config,
     );
     this.combatDisplay = new CombatDisplay(this, combat);
-    const testActions = [
-      CombatAction.Attack(OlBenjamin, null, this.player),
-      CombatAction.Retreat(this.player),
-      CombatAction.Ability(this.player, undefined, OlBenjamin),
-      CombatAction.UseItem(OlBenjamin, items.brokenBottle, this.player),
-    ];
-    //testActions.forEach((a) => combat.executeAction(a));
 
     this.testEntity.interact = (who) => {
+      this.combatDisplay.reset();
       stateManager.startState(this.combatDisplay);
     };
 
@@ -197,7 +195,7 @@ class Game extends State {
   travel(id) {
     if (this.currentTown instanceof Town) {
       if (!this.currentTown.connectedLocations.includes(parseInt(id))) {
-        throw "attempt to travel to a location not connected to the current one";
+        throw new Error("Attempt to travel to a location not connected to the current one");
       }
       let pos1 = { x: this.currentTown.x, y: this.currentTown.y };
       let pos2 = {

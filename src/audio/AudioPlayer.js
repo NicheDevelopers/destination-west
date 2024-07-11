@@ -37,7 +37,9 @@ class AudioPlayer {
   play(soundName) {
     const obtainedSound = this.soundMap.get(soundName);
     if (obtainedSound === undefined) {
-      throw `Audio Player: ` + `No sound object found for name ${soundName}`;
+      throw new Error(
+        `Audio Player: No sound object found for name ${soundName}`
+      );
     }
     // Cloning allows for multiple instances of the sound to be played at once
     obtainedSound.sound.cloneNode().play();
@@ -51,24 +53,39 @@ class AudioPlayer {
   }
 
   setMusicVolume(vol) {
-    if (vol < 0 || vol > 1) throw `Audio Player:` + `Invalid volume argument for setMusicVolume. Allowed range: <0;1>, but argument is ${vol}`;
+    if (vol < 0 || vol > 1)
+      throw new Error(
+        `Audio Player: Invalid volume argument for setMusicVolume.\n` +
+        `Allowed range: <0;1>, but argument is ${vol}`
+      );
     this.volumeMap.set(soundKind.Music, vol);
     return true;
   }
 
   setMenuMusicVolume(vol) {
-    if (vol < 0 || vol > 1) throw `Audio Player:` + `Invalid volume argument for setMenuMusicVolume. Allowed range: <0;1>, but argument is ${vol}`;
+    if (vol < 0 || vol > 1)
+      throw new Error(
+        `Audio Player: Invalid volume argument for setMenuMusicVolume.\n` +
+        `Allowed range: <0;1>, but argument is ${vol}`
+      );
     this.volumeMap.set(soundKind.MenuMusic, vol);
     return true;
   }
 
   setEffectVolume(vol) {
-    if (vol < 0 || vol > 1) throw `Audio Player:` + `Invalid volume argument for setEffectVolume. Allowed range: <0;1>, but argument is ${vol}`;
+    if (vol < 0 || vol > 1)
+      throw new Error(
+        `Audio Player: Invalid volume argument for setEffectVolume.\n` +
+        `Allowed range: <0;1>, but argument is ${vol}`
+      );
     this.volumeMap.set(soundKind.Effect, vol);
     return true;
   }
   setDialogueVolume(vol) {
-    if (vol < 0 || vol > 1) throw `Audio Player:` + `Invalid volume argument for setDialogueVolume. Allowed range: <0;1>, but argument is ${vol}>`;
+    if (vol < 0 || vol > 1)
+      throw new Error(`Audio Player: Invalid volume argument for setDialogueVolume.\n` +
+        `Allowed range: <0;1>, but argument is ${vol}>`
+      );
     this.volumeMap.set(soundKind.Dialogue, vol);
     return true;
   }

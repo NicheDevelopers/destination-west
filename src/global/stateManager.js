@@ -195,6 +195,7 @@ class StateManager {
   /**
    * Called when a key is pressed. If the state has changed, the new state's
    * startKey is set to the key that caused the state change.
+   * @param {string} key - The key that was pressed
    */
   potentialStateChange(key) {
     if (this.stateChanged()) {

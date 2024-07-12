@@ -56,6 +56,39 @@
     text-align: center;
 }
 
+#shooting-range{
+    width: 90%;
+    height: 20%;
+    position: absolute;
+    top: 70%;
+    z-index: 1;
+    background-size: cover;
+    background-repeat: round;
+}
+
+.bullet{
+    width: 1%;
+    height: 90%;
+    position: relative;
+    top: 5%;
+    z-index: 2;
+    background-size: cover;
+    background-repeat: round;
+}
+
+.arrow{
+    width: 5%;
+    height: 33%;
+    position: absolute;
+    z-index: 2;
+    background-size: cover;
+    background-repeat: round;
+}
+
+.flying{
+    left: 15% ! important;
+}
+
 .dice{
     width: 64px;
     height: 64px;

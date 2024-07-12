@@ -34,7 +34,13 @@ class AudioPlayer {
     this.updateVolumes();
   }
 
-  play(soundName) {
+  /**
+   * Plays a sound from the soundMap
+   * @param {string} soundName 
+   * @param {Object} options - optional object with additional options
+   * @param {number} options.delay - additional delay in ms before playing the sound
+   */
+  play(soundName, options={}) {
     const obtainedSound = this.soundMap.get(soundName);
     if (obtainedSound === undefined) {
       throw new Error(
@@ -42,6 +48,12 @@ class AudioPlayer {
       );
     }
     // Cloning allows for multiple instances of the sound to be played at once
+    if (options.delay) {
+      setTimeout(() => {
+        obtainedSound.sound.cloneNode().play();
+      }, options.delay);
+      return;
+    }
     obtainedSound.sound.cloneNode().play();
   }
 

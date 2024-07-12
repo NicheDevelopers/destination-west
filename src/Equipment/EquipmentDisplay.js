@@ -92,10 +92,7 @@ class EquipmentDisplay extends State {
   }
   
   manageInputs(keyman) {
-    keyman.manageInput(
-      'Open Equipment',
-      () => stateManager.toggleState(this)
-    );
+
   }
   
   update() {

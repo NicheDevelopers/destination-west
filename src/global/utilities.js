@@ -1012,67 +1012,105 @@ export class PixelImage {
 /**
  * A data structure that stores pairs of keys and values.
  * All the keys within a TwoWayMap are unique, but more than
- * one key could lead to the same value.
+ * one key could lead to the same value. If that's the case, calling getKey()
+ * will return the key that was added first.
+ * @param {Array} array - An array of key-value pairs to initialize the TwoWayMap
+ * @param {boolean} ignoreDuplicates [false] - Whether to ignore duplicate keys
+ * and leave original values mapped to them during creation from the provided array.
+ * The default behavior is to throw an error in such case.
  */
 export class TwoWayMap {
-  constructor(array = []) {
-    this.map = new Map();
-    this.pam = new Map();
+  constructor(array = [], ignoreDuplicates = false) {
+    this._map = new Map();
+    this._pam = new Map();
 
     array.forEach(([key, value]) => {
-      this.set(key, value);
+      this.set(key, value, ignoreDuplicates);
     });
   }
-  set(key, value) {
-    if (this.map.has(key))
+  set(key, value, ignoreDuplicates = false) {
+    if (this._map.has(key)) {
+      if (ignoreDuplicates) return;
       throw new Error(`Key '${key}' is already present in the TwoWayMap`);
-    this.map.set(key, value);
+    }
+    this._map.set(key, value);
 
-    if (!this.pam.has(value))
-      this.pam.set(value, key);
+    if (!this._pam.has(value))
+      this._pam.set(value, key);
   }
 
   /**
    * Get the value that maps to the provided key
    */
   getValue(key) {
-    return this.map.get(key);
+    return this._map.get(key);
   }
 
   /**
    * Get the key that maps to the provided value
    */
   getKey(value) {
-    return this.pam.get(value);
+    return this._pam.get(value);
   }
 
   hasValue(value) {
-    return this.pam.has(value);
+    return this._pam.has(value);
   }
 
   hasKey(key) {
-    return this.map.has(key);
+    return this._map.has(key);
   }
 
   deleteByKey(key) {
     let value = this.getValue(key);
-    this.map.delete(key);
-    this.pam.delete(value);
+    this._map.delete(key);
+    this._pam.delete(value);
   }
 
   deleteByValue(value) {
     let key = this.getKey(value);
-    this.map.delete(key);
-    this.pam.delete(value);
+    this._map.delete(key);
+    this._pam.delete(value);
+
+    if (!this._map.valuesArray().includes(value)) return;
+
+    // If there are more keys mapped to the same value,
+    // set the first one as a value in the pam
+    let found = false;
+    this._map.forEach((v, k) => {
+      if (found) return;
+      if (v === value) {
+        found = true;
+        this._pam.set(v, k);
+      }
+    });
   }
 
   clear() {
-    this.map.clear();
-    this.pam.clear();
+    this._map.clear();
+    this._pam.clear();
   }
 
   get size() {
-    return this.map.size;
+    return this._map.size;
+  }
+
+  /**
+   * Creates a copy of the TwoWayMap
+   */
+  copy() {
+    return new TwoWayMap(Array.from(this._map.entries()));
+  }
+
+  /**
+   * Creates a copy of the TwoWayMap with keys and values modified by the provided function
+   * @param {(any, any) => [any, any]} mapFn - A function that takes an array with
+   * a key and a value and returns a new key and value pair wrapped in an array
+   * @param {boolean} ignoreDuplicates [false] - Whether to ignore duplicate keys
+   * and leave original values mapped to them. The default behavior is to throw an error in such case.
+   */
+  map(mapFn, ignoreDuplicates = false) {
+    return new TwoWayMap(Array.from(this._map.entries()).map(mapFn), ignoreDuplicates);
   }
 }
 
@@ -1090,7 +1128,7 @@ export function toPrettyJson(obj) {
 export function formatError(error) {
   if (!(error instanceof Error))
     return `Warning: this error is not an instance of Error! ` +
-      `Please make sure to throw Error instances instead of strings.\n\n` + 
+      `Please make sure to throw Error instances instead of strings.\n\n` +
       `${error}`;
 
   return `${error.message}`;

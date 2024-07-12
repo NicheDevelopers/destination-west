@@ -1,3 +1,23 @@
+/*
+  file: src/minigames/ChuckALuck.js
+  purpose: define the ChuckALuck class
+  author: Kamil Małecki <https://gitlab.com/gaussx>
+  
+  This file is part of 'Destination West'.
+  
+  'Destination West' is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License,
+  or (at your option) any later version.
+
+  'Destination West' is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with
+  'Destination West'. If not, see <https://www.gnu.org/licenses/>.
+*/
 import { State, stateManager } from "../global/stateManager.js"
 import { createElement, randIntInRange } from "../global/utilities.js";
 import { chuckALuckParameters as cal } from "../global/consts.js";
@@ -150,7 +170,8 @@ class ChuckALuck extends State {
 
   updateScoreText (multiplier){
     if(multiplier > 0) {
-      this.scoreDiv.innerText = "You won " + multiplier + ":1!";
+      let display_multiplier = multiplier + 1;
+      this.scoreDiv.innerText = "You won " + display_multiplier + "x your bet!";
       return;
     }
     this.scoreDiv.innerText = "You lost!";

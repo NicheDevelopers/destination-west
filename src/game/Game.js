@@ -41,8 +41,10 @@ import Town from "../Location/Town.js";
 import { distance } from "../global/utilities.js";
 import Interactible from "../Entity/Interactible.js";
 import { tileSize } from "../global/consts.js";
-import { Notification, notifier } from "../global/notifier.js";
+import {Notification, notifier} from "../global/notifier.js";
 import ChuckALuck from "../minigames/ChuckALuck.js";
+import revolverShoot from "../minigames/battle_minigames/revolverShoot.js";
+import revolverLoad from "../minigames/battle_minigames/revolverLoad.js";
 import Pathfinder from "../Pathfinder.js";
 import Trader from "../Entity/Trader.js";
 import seed from "../global/seed.js";
@@ -106,6 +108,21 @@ class Game extends State {
       testMinigame.start();
     };
 
+    let testShooting = new revolverShoot(this, 6);
+    let testTarget = new Interactible(this, "torso", 100, 100);
+    testTarget.interact = (who) => {
+      stateManager.toggleState(testShooting);
+    }
+    this.currentTown.npcs.push(testTarget);
+
+    let testLoading = new revolverLoad(this, 6);
+    let testLoader = new Interactible(this, "torso", 164, 100);
+    testLoader.interact = (who) => {
+      stateManager.toggleState(testLoading);
+    }
+    this.currentTown.npcs.push(testLoader);
+
+    
     let testContainer = new Container(this, "barrel", 250, 250);
     testContainer.equipment.fillRecords([
       { recipe: items.whisky, quantity: 3 },
@@ -145,9 +162,9 @@ class Game extends State {
     const questConfig = new FindQuestConfig(type, entries, distribution);
     const builder = new FindQuestBuilder(testTrader, questConfig, null);
     const valid = builder.validate();
-    console.log(`Is quest valid?: ${valid}`);
+    //console.log(`Is quest valid?: ${valid}`);
     const quest = builder.build();
-    console.log(quest);
+    //console.log(quest);
     //----------------------------------------
 
     this.currentTown.npcs.push(testTrader);

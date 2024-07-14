@@ -14,13 +14,76 @@ pages:
     - public
   only:
   - main
+  
+variables:
+  # Setting this variable will affect all Security templates
+  # (SAST, Dependency Scanning, ...)
+  TEMPLATE_REGISTRY_HOST: 'registry.gitlab.com'
+  SECURE_ANALYZERS_PREFIX: "$TEMPLATE_REGISTRY_HOST/security-products"
+  SAST_IMAGE_SUFFIX: ""
 
-sast:
-  stage: test
+  SAST_EXCLUDED_PATHS: "spec, test, tests, tmp"
 
-include:
-- template: Jobs/SAST.gitlab-ci.yml
+iac-sast:
+  stage: security
+  artifacts:
+    name: sast
+    paths:
+      - gl-sast-report.json
+    #reports:
+    #  sast: gl-sast-report.json
+    when: always
+  rules:
+    - when: never
+  # `rules` must be overridden explicitly by each child job
+  # see https://gitlab.com/gitlab-org/gitlab/-/issues/218444
+  variables:
+    SEARCH_MAX_DEPTH: 4
+  allow_failure: true
+  script:
+    - /analyzer run
+
+kics-iac-sast:
+  extends: iac-sast
+  image:
+    name: "$SAST_ANALYZER_IMAGE"
+  variables:
+    SAST_ANALYZER_IMAGE_TAG: 3
+    SAST_ANALYZER_IMAGE: "$SECURE_ANALYZERS_PREFIX/kics:$SAST_ANALYZER_IMAGE_TAG$SAST_IMAGE_SUFFIX"
+  rules:
+    - if: $SAST_DISABLED
+      when: never
+    - if: $SAST_EXCLUDED_ANALYZERS =~ /kics/
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+sast postprocessing:
+  stage: security_postprocessing
+  image: debian:latest
+  before_script:
+    - ls -al
+    - apt-get update
+    - apt-get install --yes jq
+  script:
+    # The v.json file is created to check if any vulnerabilities were
+    # detected. Decisions are made based on that file being empty or not.
+    - jq -r '.vulnerabilities | .[] | select(.name != "Use of cryptographically weak pseudo-random number generator (PRNG)")' > v.json
+    - |
+      [ -s v.json ] && echo "Vulnerabilities were found." || true
+    # Save more detailed json as report.json artifact
+    - |
+      [ -s v.json ] && jq -r '{version: .version, vulnerabilities: [.vulnerabilities | .[] | select(.name != "Use of cryptographically weak pseudo-random number generator (PRNG)")], scan: .scan}' gl-sast-report.json > report.json || true
+    - |
+      [ -s v.json ] || echo "No vulnerabilities found."
+  artifacts:
+    reports:
+      sast:
+        - 'report.json'
+    when: always
+  dependencies:
+    - kics-iac-sast
 
 stages:
-- test
+- security
+- security_postprocessing
 - deploy

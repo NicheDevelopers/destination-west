@@ -19,7 +19,6 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Sprite from "../Sprite/Sprite.js";
 import AnimatedSprite from "../Sprite/AnimatedSprite.js";
 import { animationSpeed, defaultEntityHp } from "../global/consts.js";
 import { generateID, validateOptions } from "../global/utilities.js";
@@ -30,37 +29,38 @@ import {
   MovementTrait,
 } from "../traits.js";
 import imgInfo from "../static/imgInfo.js";
+import SpriteLoader from "../Sprite/SpriteLoader.js";
 
 const entityOptions = new Map([
   ["animated", "Boolean. Determines whether the entity has an animated sprite"],
   [
     "movement",
     "Boolean or {speed, sprintMultiplier, sneakMultiplier} object. " +
-      "Falsy value means the entity is stationary, any truthy value " +
-      "means the entity has movement. Movement construction arguments " +
-      "If an object is passed, it provides the arguments for the entity's " +
-      "Movement constructor.",
+    "Falsy value means the entity is stationary, any truthy value " +
+    "means the entity has movement. Movement construction arguments " +
+    "If an object is passed, it provides the arguments for the entity's " +
+    "Movement constructor.",
   ],
   ["callback", "function(). Callback function passed to the created Sprite"],
   [
     "hitbox",
     "array[][]. A 2d array of the location the entity is in. If passed," +
-      " the entity will have a hitbox and its position will be stored" +
-      " on the tiles that intersect with its hitbox (in tile.entities[])",
+    " the entity will have a hitbox and its position will be stored" +
+    " on the tiles that intersect with its hitbox (in tile.entities[])",
   ],
   [
     "relativeCenterPoint",
     "{x, y}. Only has effect if provided `hitbox` option" +
-      " is truthy. Provides the relativeCenterPoint for the Hitbox" +
-      " constructor. By default getSpriteRelativeCenterPoint is run on the" +
-      " Entity's Sprite to get this value",
+    " is truthy. Provides the relativeCenterPoint for the Hitbox" +
+    " constructor. By default getSpriteRelativeCenterPoint is run on the" +
+    " Entity's Sprite to get this value",
   ],
   [
     "boundingDistance",
     "{left, right, up, down}. Only has effect if provided `hitbox` option" +
-      " is truthy. Provides the boundingDistance for the Hitbox constructor." +
-      " By default getSpriteBoundingDistance is run on the Entity's Sprite" +
-      " to get this value",
+    " is truthy. Provides the boundingDistance for the Hitbox constructor." +
+    " By default getSpriteBoundingDistance is run on the Entity's Sprite" +
+    " to get this value",
   ],
 ]);
 
@@ -79,7 +79,12 @@ class Entity {
     this.id = generateID(Entity);
 
     if (!options.animated)
-      this.sprite = new Sprite(typeName, { callback: options.callback });
+      this.sprite = SpriteLoader.getSprite(typeName, {
+        callback: () => {
+          console.log(typeName + " loaded");
+          options.callback?.();
+        }
+      });
     else
       this.sprite = new AnimatedSprite(typeName, {
         animationSpeed: animationSpeed,
@@ -118,7 +123,7 @@ class Entity {
     );
   }
 
-  drawDebugInfo(cameraX, cameraY) {}
+  drawDebugInfo(cameraX, cameraY) { }
 
   drawRaw(x, y, context) {
     this.sprite.draw(x, y, context);
@@ -127,7 +132,7 @@ class Entity {
   draw(cameraX, cameraY) {
     this.sprite.draw(this.x - cameraX, this.y - cameraY);
   }
-  
+
   // enable drawing on different canvases while still using the camera
   drawWithCtx(cameraX, cameraY, ctx) {
     this.sprite.draw(this.x - cameraX, this.y - cameraY, ctx);

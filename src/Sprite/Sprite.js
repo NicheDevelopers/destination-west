@@ -19,15 +19,19 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import { ctx } from "../core/Browser.js";
-import { tileSize, spriteScale,
-	 defaultHitboxHeight,
-	 autoBoundaryXLooseness } from "../global/consts.js";
-import { createCanvas, randIntInRange, forbidProperty,
-	 transparent, PixelImage } from "../global/utilities.js";
+import {
+  tileSize, spriteScale,
+  defaultHitboxHeight,
+  autoBoundaryXLooseness
+} from "../global/consts.js";
+import {
+  createCanvas, randIntInRange, forbidProperty,
+  transparent, PixelImage
+} from "../global/utilities.js";
 import imgInfo from "../static/imgInfo.js";
 
 function toKey(name, rotation, outline) {
-  return name+'/'+(rotation === undefined? 'n' : rotation)+'/'+(outline? 'y' : 'n');
+  return name + '/' + (rotation === undefined ? 'n' : rotation) + '/' + (outline ? 'y' : 'n');
 }
 
 const cachedSprites = new Map(); // String -> Image
@@ -44,10 +48,10 @@ class Sprite {
   */
   constructor(typeName, options = {}, isColored = false) {
     if (!imgInfo.has(typeName)) {
-      	throw new Error(`type name is not recognized: ${typeName}`);
+      throw new Error(`type name is not recognized: ${typeName}`);
     }
     forbidProperty(this, "animation");
-    
+
     this.typeName = typeName;
 
     this.scale = options.scale ?? spriteScale;
@@ -60,32 +64,32 @@ class Sprite {
     this.width = this.sheetInfo.spriteWidth ?? tileSize;
     this.spriteSheetRow = this.sheetInfo.row ?? 0;
     this.spriteSheetCol = this.sheetInfo.col ?? 0;
-    
+
     if (this.sheetInfo.random) {
       this.spriteSheetRow = randIntInRange(0, this.sheetInfo.height);
       this.spriteSheetCol = randIntInRange(0, this.sheetInfo.width);
     }
 
-    this.callback = options.callback ?? (() => {});
+    this.callback = options.callback ?? (() => { });
 
     //if (options.debug) debugger;
     this.nocache = options.nocache;
-    this.rotation = (options.crop)? 0 : options.rotation;
+    this.rotation = (options.crop) ? 0 : options.rotation;
     this.outline = options.outline;
-        
+
     if (isColored) return;
 
     if (this.sheetInfo.src === undefined)
       throw new Error(`Sprite: No image path provided for sprite: ${typeName}`);
 
     this.processingImage = (this.rotation !== undefined || this.outline !== undefined);
-    
+
     const spriteKey = toKey(this.typeName, this.rotation, this.outline);
 
-       
+
     if (!this.nocache && cachedSprites.has(spriteKey)) {
       this.img = cachedSprites.get(spriteKey);
-      
+
       if (cachedSprites.get(spriteKey).complete) {
         // Image is already loaded
         if (this.processingImage) {
@@ -96,21 +100,21 @@ class Sprite {
       }
       else {
         // We need to wait for the image to load
-	cacheCallbacks.get(spriteKey).push(this.callback);
+        cacheCallbacks.get(spriteKey).push(this.callback);
       }
       //console.log(`Cached: ${spriteKey}: ${this.img.src}`);
       return;
     }
-    
+
     this.img = new Image();
     this.img.style.display = 'block';
     //console.log(`---caching: ${spriteKey}`);
     cachedSprites.set(spriteKey, this.img);
     cacheCallbacks.set(spriteKey, [this.callback]);
-    
+
     if (!this.processingImage) {
       this.img.onload = () => {
-	      cacheCallbacks.get(spriteKey).forEach((f) => f());
+        cacheCallbacks.get(spriteKey).forEach((f) => f());
       }
       this.img.src = this.sheetInfo.src;
       return;
@@ -120,26 +124,26 @@ class Sprite {
 
     this.imageToProcess.onload = () => {
       if (this.rotation !== undefined) {
-	      this.rotate(this.rotation * Math.PI / 180,
-		    () => {
-		      if (this.outline) {
-			      this.drawOutline(this.img, () => {
-			        cacheCallbacks.get(spriteKey).forEach((f) => f());
-			      });
-		      }
-		      else 
-            cacheCallbacks.get(spriteKey).forEach((f) => f());
-		    });
+        this.rotate(this.rotation * Math.PI / 180,
+          () => {
+            if (this.outline) {
+              this.drawOutline(this.img, () => {
+                cacheCallbacks.get(spriteKey).forEach((f) => f());
+              });
+            }
+            else
+              cacheCallbacks.get(spriteKey).forEach((f) => f());
+          });
       }
       else if (this.outline) {
-	      this.drawOutline(this.imageToProcess, () => {
-	        cacheCallbacks.get(spriteKey).forEach((f) => f());
-	      });
+        this.drawOutline(this.imageToProcess, () => {
+          cacheCallbacks.get(spriteKey).forEach((f) => f());
+        });
       }
     };
     this.imageToProcess.src = this.sheetInfo.src;
   }
-  
+
   /**
      Analyzes the sprite to guess the best values for
      the relativeCenterPoint and the boundingDistance.
@@ -162,35 +166,35 @@ class Sprite {
     let height = options.height ?? this.height;
     const { context: offContext } = createCanvas(width, height);
     this.draw(0, 0, offContext);
-    
+
     let image = new PixelImage().fromContext(offContext);
-        
+
     /*
       startX and endX are respectively the smallest
       and the biggest X coordinates on which a non-transparent
       pixel can be found within the image
     */
     let startX, endX;
-    for (let x=0;x<this.width; ++x) {
-      for (let y=0;y<this.height; ++y) {
-	if (!image[x][y].isTransparent()) {
-	  startX = x;
-	  break;
-	}
+    for (let x = 0; x < this.width; ++x) {
+      for (let y = 0; y < this.height; ++y) {
+        if (!image[x][y].isTransparent()) {
+          startX = x;
+          break;
+        }
       }
       if (startX !== undefined) break;
     }
-    
-    for (let x=this.width-1;x>=0; --x) {
-      for (let y=0;y<this.height; ++y) {
-	if (!image[x][y].isTransparent()) {
-	  endX = x;
-	  break;
-	}
+
+    for (let x = this.width - 1; x >= 0; --x) {
+      for (let y = 0; y < this.height; ++y) {
+        if (!image[x][y].isTransparent()) {
+          endX = x;
+          break;
+        }
       }
       if (endX !== undefined) break;
     }
-    
+
     /*
       endY is the biggest Y coordinate on which a non-transparent
       pixel can be found within the image.
@@ -199,12 +203,12 @@ class Sprite {
       meaning when it comes to hitbox dimentions
     */
     let endY;
-    for (let y=this.height-1;y>=0; --y) {
-      for (let x=0;x<this.width; ++x) {
-	if (!image[x][y].isTransparent()) {
-	  endY = y;
-	  break;
-	}
+    for (let y = this.height - 1; y >= 0; --y) {
+      for (let x = 0; x < this.width; ++x) {
+        if (!image[x][y].isTransparent()) {
+          endY = y;
+          break;
+        }
       }
       if (endY !== undefined) break;
     }
@@ -212,74 +216,74 @@ class Sprite {
     /**
        The central pixel of the non-transparent sprite area
     */
-    let centerPixel = ~~((startX+endX)/2);
-    
+    let centerPixel = ~~((startX + endX) / 2);
+
     if (options.getBaselineRcp) {
       return { x: centerPixel, y: endY };
     }
-    
-    let boundingDistanceHeight = ~~(defaultHitboxHeight/2);
-    
+
+    let boundingDistanceHeight = ~~(defaultHitboxHeight / 2);
+
     /**
        Detected relative center point of the sprite
     */
-    let rcp = { x: centerPixel, y: endY-boundingDistanceHeight };
-    
-    let hitboxWidth = endX-startX+1;
-    
+    let rcp = { x: centerPixel, y: endY - boundingDistanceHeight };
+
+    let hitboxWidth = endX - startX + 1;
+
     /**
        Amount of pixels subtracted from the hitbox's dimensions
        on the x-axis.
        See documentation for autoBoundaryXLooseness.
     */
-    let looseness = ~~((autoBoundaryXLooseness*hitboxWidth)/2);
-    
+    let looseness = ~~((autoBoundaryXLooseness * hitboxWidth) / 2);
+
     return {
       relativeCenterPoint: rcp,
       boundingDistance: {
-	up: boundingDistanceHeight,
-	down: boundingDistanceHeight,
-	left: rcp.x-startX-looseness,
-	right: endX-rcp.x-looseness
+        up: boundingDistanceHeight,
+        down: boundingDistanceHeight,
+        left: rcp.x - startX - looseness,
+        right: endX - rcp.x - looseness
       }
     };
   }
-  
+
   rotate(angle, callback) {
     const { canvas: canvas, context: offCtx } = createCanvas(this.width, this.height);
-    offCtx.translate(this.width/2, this.height/2);
+    offCtx.translate(this.width / 2, this.height / 2);
     offCtx.rotate(angle);
-    offCtx.translate(-this.width/2, -this.height/2);
-        
+    offCtx.translate(-this.width / 2, -this.height / 2);
+
     offCtx.drawImage(this.imageToProcess,
-		     this.spriteSheetCol * this.width,
-		     this.spriteSheetRow * this.height,
-		     this.width, this.height, 0, 0,
-		     this.width * this.scaleX, this.height * this.scaleY);
+      this.spriteSheetCol * this.width,
+      this.spriteSheetRow * this.height,
+      this.width, this.height, 0, 0,
+      this.width * this.scaleX, this.height * this.scaleY);
 
     this.spriteSheetCol = 0;
     this.spriteSheetRow = 0;
-    
+
     this.img.onload = callback;
     this.img.src = canvas.toDataURL('image/png');
   }
 
   drawOutline(image, callback) {
     let borderCoordinates = [
-      {x: -1, y:  0},
-      {x:  1, y:  0},
-      {x:  0, y: -1},
-      {x:  0, y:  1}
+      { x: -1, y: 0 },
+      { x: 1, y: 0 },
+      { x: 0, y: -1 },
+      { x: 0, y: 1 }
     ];
     if (this.outline.corners) {
       borderCoordinates.concat([
-        {x:  -1, y: -1},
-        {x:  -1, y:  1},
-        {x:   1, y: -1},
-        {x:   1, y:  1}
+        { x: -1, y: -1 },
+        { x: -1, y: 1 },
+        { x: 1, y: -1 },
+        { x: 1, y: 1 }
       ]);
     }
-    let color = {r: 255, g: 255, b: 255, a: 255};
+    let color = { r: 255, g: 255, b: 255, a: 255 };
     const { canvas: canvas, context: offCtx } = createCanvas(this.width, this.height);
     offCtx.drawImage(
       image,
@@ -290,24 +294,24 @@ class Sprite {
 
     this.spriteSheetCol = 0;
     this.spriteSheetRow = 0;
-    
+
     let imgRef = new PixelImage().fromContext(offCtx);
     let imgData = new PixelImage().fromContext(offCtx);
-    
-    for (let y=1; y < this.height-1; ++y) {
-      for (let x=1; x < this.width-1; ++x) {
-	if (imgRef[x][y].isTransparent())
-	  continue;
-	
-	borderCoordinates.forEach(({x: dx, y: dy}) => {
-          if (imgRef[x+dx][y+dy].isTransparent()) {
-	    imgData[x+dx][y+dy].setColor(color);
-	  }
+
+    for (let y = 1; y < this.height - 1; ++y) {
+      for (let x = 1; x < this.width - 1; ++x) {
+        if (imgRef[x][y].isTransparent())
+          continue;
+
+        borderCoordinates.forEach(({ x: dx, y: dy }) => {
+          if (imgRef[x + dx][y + dy].isTransparent()) {
+            imgData[x + dx][y + dy].setColor(color);
+          }
         });
       }
     }
     imgData.drawToContext(offCtx);
-        
+
     this.img.onload = callback;
     this.img.src = canvas.toDataURL('image/png');
   }
@@ -323,21 +327,84 @@ class Sprite {
       this.spriteSheetCol * this.width,
       this.spriteSheetRow * this.height,
       this.width, this.height, x, y,
-		      this.width * this.scaleX, this.height * this.scaleY);
+      this.width * this.scaleX, this.height * this.scaleY);
     if (options.innerOutline) {
       context.fillStyle = "black";
       context.fillRect(x, y,
-		       this.width * this.scaleX, 1);
+        this.width * this.scaleX, 1);
     }
   }
   /**
    * Fill a rect over the region where the sprite is normally drawn
    */
-  drawOverlay(x, y, fillStyle="#00ffff22", context = ctx) {
+  drawOverlay(x, y, fillStyle = "#00ffff22", context = ctx) {
     context.fillStyle = fillStyle;
     context.fillRect(
       x, y,
       this.width * this.scaleX, this.height * this.scaleY);
+  }
+
+  /**
+   * Returns a string of arguments used to construct this sprite,
+   * which can be used to compare sprites.
+   */
+  getRecipe() {
+    return [
+      this.typeName,
+      this.scale,
+      this.scaleX,
+      this.scaleY,
+      this.rotation,
+      this.outline,
+      this.nocache,
+    ].join('|');
+  }
+
+  /**
+   * Returns a string of the given arguments which can be used
+   * to see if some sprite has the same recipe as the given one.
+   */
+  static createRecipe(...args) {
+    const typeName = args[0];
+    const options = args[1];
+
+    const scale = options.scale ?? spriteScale;
+    const scaleX = options.scaleX ?? scale;
+    const scaleY = options.scaleY ?? scale;
+    const rotation = (options.crop) ? 0 : options.rotation;
+    const outline = options.outline;
+    const nocache = options.nocache;
+
+    return [
+      typeName,
+      scale,
+      scaleX,
+      scaleY,
+      rotation,
+      outline,
+      nocache,
+    ].join('|');
+  }
+
+  /**
+   * Returns a readable description of the given recipe.
+   */
+  static getRecipeDescription(recipe) {
+    const [
+      typeName,
+      scale,
+      scaleX,
+      scaleY,
+      rotation,
+      outline,
+      nocache,
+    ] = recipe.split('|');
+
+    const scaleDesc = `, scale:` + (scaleX === scaleY) ? `${scale}` : `(${scaleX}, ${scaleY})`;
+    const rotationDesc = (rotation) ? `, rotation: ${rotation}` : ``;
+    const outlineDesc = (outline) ? `, outline ${outline}` : ``;
+    const nocacheDesc = (nocache) ? `, nocache` : ``;
+    return `Sprite ${typeName}${scaleDesc}${rotationDesc}${outlineDesc}${nocacheDesc}`;
   }
 }
 

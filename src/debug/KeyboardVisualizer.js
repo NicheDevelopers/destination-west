@@ -4,7 +4,7 @@ import keyman from "../core/KeyboardManager.js";
 function kvForm(formOptions = []) {
   let form = document.createElement('form');
   form.classList.add("kvForm");
-  
+
   let label = document.createElement('label');
   label.style.color = 'white';
   label.innerHTML = "Input mode";
@@ -34,21 +34,22 @@ function kvForm(formOptions = []) {
  */
 function addInput(button, action, triggerListenerType, cancelListenerType) {
   let trigger = () => {
-    keyman.requests.set(action, true);
+    if (!keyman.requests.hasValue(action))
+      keyman.requests.set(`Simulated ${action}`, action);
   };
   let cancel = () => {
-    keyman.requests.delete(action);
+    keyman.requests.deleteByValue(action);
   };
 
   // If cancelListenerType is not provided
   // triggerListenerType is used as a toggle function
   if (!cancelListenerType) {
     trigger = () => {
-      if (keyman.requests.has(action)) {
-        keyman.requests.delete(action);
+      if (keyman.requests.hasValue(action)) {
+        keyman.requests.deleteByValue(action);
         return;
       }
-      keyman.requests.set(action, true);
+      keyman.requests.set(`Simulated ${action}`, action);
     }
   }
 
@@ -64,23 +65,23 @@ function addInput(button, action, triggerListenerType, cancelListenerType) {
  * Provide a way for visualizing keyboard inputs
  */
 class KeyboardVisualizer {
-  constructor(app, appendTo=document.body) {
+  constructor(app, appendTo = document.body) {
     this.app = app;
-        
+
     this.div = htmlCreate({
       classList: "kvDiv nodisp",
       appendTo: appendTo
     });
-        
+
     this.inputModes = new Map([
       ['Hover', this.hoverMode],
       ['Toggle', this.toggleMode],
-      ['None', () => {}]
+      ['None', () => { }]
     ]);
 
     let { form, select } =
       kvForm(Array.from(this.inputModes.keys()));
-    
+
     form.onchange = () => {
       let mode = select.options[select.selectedIndex].value;
       this.clearMode();
@@ -91,38 +92,42 @@ class KeyboardVisualizer {
 
     this.buttons = new Map([
       ['Move Left', {
-	element: htmlCreate({
-	  id: 'kvButtonLeft',
-	  classList: "kvButton",
-	  appendTo: this.div
-	}),
-	listeners: [] }],
+        element: htmlCreate({
+          id: 'kvButtonLeft',
+          classList: "kvButton",
+          appendTo: this.div
+        }),
+        listeners: []
+      }],
       ['Move Up', {
-	element: htmlCreate({
-	  id: 'kvButtonUp',
-	  classList: "kvButton",
-	  appendTo: this.div
-	}),
-	listeners: [] }],
+        element: htmlCreate({
+          id: 'kvButtonUp',
+          classList: "kvButton",
+          appendTo: this.div
+        }),
+        listeners: []
+      }],
       ['Move Right', {
-	element: htmlCreate({
-	  id: 'kvButtonRight',
-	  classList: "kvButton",
-	  appendTo: this.div
-	}),
-	listeners: [] }],
+        element: htmlCreate({
+          id: 'kvButtonRight',
+          classList: "kvButton",
+          appendTo: this.div
+        }),
+        listeners: []
+      }],
       ['Move Down', {
-	element: htmlCreate({
-	  id: 'kvButtonDown',
-	  classList: "kvButton",
-	  appendTo: this.div
-	}),
-	listeners: [] }]
+        element: htmlCreate({
+          id: 'kvButtonDown',
+          classList: "kvButton",
+          appendTo: this.div
+        }),
+        listeners: []
+      }]
     ]);
 
     this.hoverMode();
   }
-  
+
   setVisibility(visible) {
     if (visible) {
       this.div.classList.remove("nodisp");
@@ -130,21 +135,21 @@ class KeyboardVisualizer {
     }
     this.div.classList.add("nodisp");
   }
-  
+
   isVisible() {
     return !this.div.classList.contains("nodisp");
   }
-  
+
   update() {
     if (!this.isVisible()) return;
-    
+
     this.buttons.forEach((button, action) => {
       if (keyman.isActionRequested(action))
         button.element.classList.add("active");
       else button.element.classList.remove("active");
     });
   }
- 
+
   clearMode() {
     this.buttons.forEach((button) => {
       button.listeners.forEach((listener) => {

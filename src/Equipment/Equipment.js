@@ -22,7 +22,6 @@ import DroppedItem from "../Item/DroppedItem.js";
 import { createItem } from "../global/items.js";
 import { generateID } from "../global/utilities.js";
 import { notifier, Notification } from "../global/notifier.js";
-import Sprite from "../Sprite/Sprite.js";
 
 class EquipmentRecord {
   /**
@@ -76,9 +75,6 @@ class Equipment {
     this.sortByWeight();
   }
 
-  /**
-   * Method for clearing equipment. Remove all record items from inventory.
-   */
   clear() {
     // this.records.splice(0, this.records.length);
     this.records.clear();
@@ -100,10 +96,7 @@ class Equipment {
   canFit(item) {
     if (this.sumWeight() + item.weight > this.maxWeight) {
       notifier.send(
-        new Notification(
-          `Too much weight in inventory (+${item.name})`,
-          item.spriteName,
-        ),
+        new Notification(`Too much weight in inventory (+${item.name})`, item.spriteName),
       );
       return false;
     }
@@ -117,12 +110,7 @@ class Equipment {
    */
   canBuy(item) {
     if (this.cash < item.price) {
-      notifier.send(
-        new Notification(
-          `Not enough cash to buy (${item.name})`,
-          item.spriteName,
-        ),
-      );
+      notifier.send(new Notification(`Not enough cash to buy (${item.name})`, item.spriteName));
       return false;
     }
     return true;
@@ -154,10 +142,7 @@ class Equipment {
    * @returns {number} summary weight of all items stored in equipment
    */
   sumWeight() {
-    return this.records.reduce(
-      (acc, currentRecord) => acc + currentRecord.getWeight(),
-      0,
-    );
+    return this.records.reduce((acc, currentRecord) => acc + currentRecord.getWeight(), 0);
   }
 
   /**
@@ -186,9 +171,7 @@ class Equipment {
   countOf(item) {
     // If the item is stackable, this returns exactly one record.
     // else, it's a bunch of records
-    const found = this.records.filter(
-      (record) => record.item.spriteName === item.spriteName,
-    );
+    const found = this.records.filter((record) => record.item.spriteName === item.spriteName);
     if (item.isStackable) {
       // stackable -> one record returned so check the quantity
       return found.first.quantity;
@@ -202,8 +185,7 @@ class Equipment {
    * @param {boolean} [heavy_on_top=true] true if sorting weight descending, otherwise false
    */
   sortByWeight(heavy_on_top = true) {
-    if (heavy_on_top == true)
-      this.records.sort((a, b) => b.getWeight() - a.getWeight());
+    if (heavy_on_top == true) this.records.sort((a, b) => b.getWeight() - a.getWeight());
     else this.records.sort((a, b) => a.getWeight() - b.getWeight());
   }
 
@@ -213,9 +195,7 @@ class Equipment {
    */
   reduceQuantity(record) {
     if (!record.item.isStackable || record.quantity == 1)
-      this.records = this.records.filter(
-        (rec) => rec.item.id != record.item.id,
-      );
+      this.records = this.records.filter((rec) => rec.item.id != record.item.id);
     else record.quantity -= 1;
   }
 

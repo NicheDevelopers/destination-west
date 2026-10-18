@@ -56,7 +56,7 @@ const arr1 = [
   "Rapid",
   "Oat",
   "Tomb",
-  "Dodge"
+  "Dodge",
 ];
 
 const arr2 = [
@@ -96,8 +96,7 @@ const arr2 = [
   "hallow",
   "trails",
   "man",
-  "ton"
+  "ton",
 ];
 
 export { arr1, arr2 };
-

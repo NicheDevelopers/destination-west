@@ -21,11 +21,11 @@
 
 // Improvised enum defining sound kind
 const soundKind = {
-  Music: 'music',
-  MenuMusic: 'menu-music',
-  Effect: 'effect',
-  Dialogue: 'dialogue'
-}
+  Music: "music",
+  MenuMusic: "menu-music",
+  Effect: "effect",
+  Dialogue: "dialogue",
+};
 
 /**
  * Helper class representing a single sound object, a wrapper over HTMLAudioElement

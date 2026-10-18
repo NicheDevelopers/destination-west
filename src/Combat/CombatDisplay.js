@@ -3,7 +3,6 @@ import { AttackType, CombatAction } from "./Combat.js";
 import { ButtonList, htmlCreate } from "../global/utilities.js";
 import { ctx } from "../core/Browser.js";
 import { Dialogue } from "../Dialogue/Dialogue.ts";
-import { DialogueLine } from "../Dialogue/DialogueUnit.ts";
 import { items } from "../global/items.js";
 
 export default class CombatDisplay extends State {
@@ -33,7 +32,7 @@ export default class CombatDisplay extends State {
       attackTypeList.add(key, () => {
         this.displayDialogue(
           `P|Hold on adventurer! ${key} attack is not implemented yet!\n` +
-          `N|Who are you talking to?`
+            `N|Who are you talking to?`,
         );
       });
     });
@@ -44,10 +43,10 @@ export default class CombatDisplay extends State {
       this.displayDialogue("P|*Spits!*\nN|How dare you spit on me! I'll make you pay for that!");
     });
     abilityList.add("Insult", () => {
-      this.displayDialogue("P|Your mama's so old, she knew the Grand Canyon when it was just a ditch.\n" +
-        "N|You'll pay for that insult!"
+      this.displayDialogue(
+        "P|Your mama's so old, she knew the Grand Canyon when it was just a ditch.\n" +
+          "N|You'll pay for that insult!",
       );
-    
     });
     abilityList.add("Back", ButtonList.BACK);
 
@@ -55,7 +54,9 @@ export default class CombatDisplay extends State {
     const whiskeyCount = this.player.equipment.countOf(items.whisky);
     useItemList.add(`Whiskey (x${whiskeyCount})`, () => {
       this.combat.executeAction(CombatAction.UseItem(this.combat.player, items.whisky));
-      this.displayDialogue("P|*Gulp, gulp*\nN|You're drinking on the job? I'll make you pay for that!");
+      this.displayDialogue(
+        "P|*Gulp, gulp*\nN|You're drinking on the job? I'll make you pay for that!",
+      );
     });
     useItemList.add("Back", ButtonList.BACK);
 
@@ -69,7 +70,7 @@ export default class CombatDisplay extends State {
       if (retreatResult.success) {
         this.displayDialogue(
           "N|You coward! No one crosses me and lives to tell the tale. I'll find ya!",
-          () => this.endState()
+          () => this.endState(),
         );
         return;
       }
@@ -93,17 +94,11 @@ export default class CombatDisplay extends State {
     this.dialogue.setupDisplay(this, this.display.div, callback);
   }
 
-  /**
-   * Style the display for a dialogue
-   */
   styleForDialogue() {
     this.display.clear();
     this.display.div.classList.add("dialogue");
   }
 
-  /**
-   * Reset the combat display to its initial state
-   */
   reset() {
     this.combat.reset();
     this.display.back();
@@ -120,17 +115,13 @@ export default class CombatDisplay extends State {
     this.menuDiv.style.display = "none";
   }
   update() {
-    if (this.dialogue)
-      this.dialogue.update();
+    if (this.dialogue) this.dialogue.update();
   }
   manageInputs(keyman) {
-    keyman.manageInput(
-      'Next Dialogue Line',
-      () => {
-        if (this.dialogue) {
-          this.dialogue.step();
-        }
+    keyman.manageInput("Next Dialogue Line", () => {
+      if (this.dialogue) {
+        this.dialogue.step();
       }
-    );
+    });
   }
 }

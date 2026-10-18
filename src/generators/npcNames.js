@@ -57,7 +57,7 @@ const maleNames = [
   "Robert",
   "Blake",
   "Oliver",
-  "Levi"
+  "Levi",
 ];
 const femaleNames = [
   "Catherine",
@@ -90,7 +90,7 @@ const femaleNames = [
   "Anna",
   "Ruby",
   "Lucy",
-  "Nina"
+  "Nina",
 ];
 
 //nickname
@@ -131,7 +131,7 @@ const nicknames = [
   "Bullseye",
   "Pistol",
   "Lefty",
-  "Trapper"
+  "Trapper",
 ];
 
 //surname
@@ -184,7 +184,7 @@ const surnames = [
   "Pearsoll",
   "O'Kones",
   "O'Dane",
-  "Coxwell"
+  "Coxwell",
 ];
 
 export { maleNames, femaleNames, nicknames, surnames };

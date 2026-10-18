@@ -36,15 +36,27 @@
 import { directions } from "../global/consts.js";
 
 class Direction {
-  constructor(value=directions.none) {
+  constructor(value = directions.none) {
     this._value = value;
   }
-  facesRight() { return this._value % 3 === 2 }
-  facesUp() { return this._value < 3 }
-  facesDown() { return this._value > 5 }
-  facesLeft() { return this._value % 3 === 0 }
-  isDiagonal() { return this._value % 2 === 0 && this._value !== 4 }
-  setTo(dir) { this._value = dir; }
+  facesRight() {
+    return this._value % 3 === 2;
+  }
+  facesUp() {
+    return this._value < 3;
+  }
+  facesDown() {
+    return this._value > 5;
+  }
+  facesLeft() {
+    return this._value % 3 === 0;
+  }
+  isDiagonal() {
+    return this._value % 2 === 0 && this._value !== 4;
+  }
+  setTo(dir) {
+    this._value = dir;
+  }
   fromChangeInXAndY(dx, dy) {
     this._value = directions.none;
     if (dx > 0) this.moveRight();
@@ -60,11 +72,11 @@ class Direction {
   }
   moveRight() {
     if (this.facesRight()) throw new Error("Direction: Invalid move right");
-    this._value += 1
+    this._value += 1;
   }
   moveDown() {
     if (this.facesDown()) throw new Error("Direction: Invalid move down");
-    this._value += 3
+    this._value += 3;
   }
   moveLeft() {
     if (this.facesLeft()) throw new Error("Direction: Invalid move left");
@@ -72,19 +84,21 @@ class Direction {
   }
   /**
    * Set the direction's internal value to directions.none
-  */
+   */
   reset() {
     this._value = directions.none;
   }
   toString() {
-    return Object.entries(directions).filter(([_, v]) => v == this._value)[0][0];
+    return Object.entries(directions).filter(([, v]) => v == this._value)[0][0];
   }
-  is(dir) {return this._value === dir}
+  is(dir) {
+    return this._value === dir;
+  }
   xAxisMultiplier() {
-    return this.facesRight()-this.facesLeft();
+    return this.facesRight() - this.facesLeft();
   }
   yAxisMultiplier() {
-    return this.facesDown()-this.facesUp();
+    return this.facesDown() - this.facesUp();
   }
 }
 

@@ -21,20 +21,22 @@
 
 import Location from "./Location.js";
 import { srandIntInRange, seedRoll } from "../global/utilities.js";
-import Building from "./Building.js";
-import {tileSize} from "../global/consts.js";
+import { tileSize } from "../global/consts.js";
 import Portal, { PortalType } from "../Entity/Portal.js";
 
 // the leght of chunk must be at least 10 tiles
 
 let buildingChance = 0.1; // => to consts.js
 
-let newStreet = (x1, y1, width, height) =>
-  ({ start: { x: x1, y: y1 }, width: width, height: height });
+let newStreet = (x1, y1, width, height) => ({
+  start: { x: x1, y: y1 },
+  width: width,
+  height: height,
+});
 
-class Travel extends Location{
-  constructor(game, distance, fromId, toId, background){
-    super(game, 20*(~~(distance/20)), 16);
+class Travel extends Location {
+  constructor(game, distance, fromId, toId, background) {
+    super(game, 20 * ~~(distance / 20), 16);
     this.chunkWidth = 20;
     this.distance = distance;
     this.background = background ?? "sand";
@@ -42,53 +44,58 @@ class Travel extends Location{
     this.toId = toId;
     this.game = game;
     // Spawn player on the left for now
-    this.playerSpawn = {x: 3*tileSize, y: this.heightPx - 3*tileSize};
+    this.playerSpawn = { x: 3 * tileSize, y: this.heightPx - 3 * tileSize };
     this.createLocation();
   }
 
   numberOfChunks() {
-    return ~~(this.distance/this.chunkWidth)
+    return ~~(this.distance / this.chunkWidth);
   }
-  
-  createLocation(){
-    this.array = new Array(this.width);
-    
-    for (let x = 0; x < this.width; ++x)
-      this.array[x] = new Array(this.height);
 
-    var preset = {streets: []};
-    preset.streets.push(newStreet(0,this.height - 3,this.width,1)); 
-    
-    for(let chunk = 0; chunk < this.numberOfChunks(); chunk++){
-      
-        // no event
-        // left building
-        let yStart = this.height - 5 - srandIntInRange(this.height - 5);
-        if(seedRoll(buildingChance)){
-          let xStart = this.chunkWidth/2 - 5 + srandIntInRange(2) + chunk*this.chunkWidth;
-          //this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
-          this.placeBuilding(xStart, yStart, 3, 2, "house", {});
-          preset.streets.push(newStreet(xStart+1,yStart+2 ,1,this.height-yStart-5)); 
-        }
-        // right building
-        if(seedRoll(buildingChance)){
-          let xStart = this.chunkWidth/2 + srandIntInRange(2) + chunk*this.chunkWidth;
-          //this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
-          this.placeBuilding(xStart, yStart, 3, 2, "house", {});
-          preset.streets.push(newStreet(xStart+1,yStart+2 ,1,this.height-yStart-4));
-        }
-  
+  createLocation() {
+    this.array = Array.from({ length: this.width }, () => Array.from({ length: this.height }));
+
+    var preset = { streets: [] };
+    preset.streets.push(newStreet(0, this.height - 3, this.width, 1));
+
+    for (let chunk = 0; chunk < this.numberOfChunks(); chunk++) {
+      // no event
+      // left building
+      let yStart = this.height - 5 - srandIntInRange(this.height - 5);
+      if (seedRoll(buildingChance)) {
+        let xStart = this.chunkWidth / 2 - 5 + srandIntInRange(2) + chunk * this.chunkWidth;
+        //this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
+        this.placeBuilding(xStart, yStart, 3, 2, "house", {});
+        preset.streets.push(newStreet(xStart + 1, yStart + 2, 1, this.height - yStart - 5));
+      }
+      // right building
+      if (seedRoll(buildingChance)) {
+        let xStart = this.chunkWidth / 2 + srandIntInRange(2) + chunk * this.chunkWidth;
+        //this.placeBuilding(xStart, yStart, new Building(this.game, 3, 2, "house"));
+        this.placeBuilding(xStart, yStart, 3, 2, "house", {});
+        preset.streets.push(newStreet(xStart + 1, yStart + 2, 1, this.height - yStart - 4));
+      }
     }
 
-    this.portals.push(new Portal(this.game,
-                                 "decoration-roadsign",
-                                 //(this.width-3)*tileSize, (this.height-4)*tileSize,
-                                 4*tileSize, (this.height-4)*tileSize,
-                                 PortalType.teleport(this.fromId)));
-    this.portals.push(new Portal(this.game,
-                                 "decoration-roadsign",
-                                 3*tileSize, (this.height-4)*tileSize,
-                                 PortalType.teleport(this.toId)));
+    this.portals.push(
+      new Portal(
+        this.game,
+        "decoration-roadsign",
+        //(this.width-3)*tileSize, (this.height-4)*tileSize,
+        4 * tileSize,
+        (this.height - 4) * tileSize,
+        PortalType.teleport(this.fromId),
+      ),
+    );
+    this.portals.push(
+      new Portal(
+        this.game,
+        "decoration-roadsign",
+        3 * tileSize,
+        (this.height - 4) * tileSize,
+        PortalType.teleport(this.toId),
+      ),
+    );
     this.placeStreets(preset);
     this.placeBackground(this.background);
     this.placeGenericDecoration();

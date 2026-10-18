@@ -2,21 +2,21 @@ import { htmlCreate } from "../global/utilities.js";
 import keyman from "../core/KeyboardManager.js";
 
 function kvForm(formOptions = []) {
-  let form = document.createElement('form');
+  let form = document.createElement("form");
   form.classList.add("kvForm");
 
-  let label = document.createElement('label');
-  label.style.color = 'white';
+  let label = document.createElement("label");
+  label.style.color = "white";
   label.innerHTML = "Input mode";
 
-  let select = document.createElement('select');
+  let select = document.createElement("select");
 
   formOptions.forEach((option) => {
     htmlCreate({
       what: "option",
       value: option,
       innerHTML: option,
-      appendTo: select
+      appendTo: select,
     });
   });
 
@@ -34,8 +34,7 @@ function kvForm(formOptions = []) {
  */
 function addInput(button, action, triggerListenerType, cancelListenerType) {
   let trigger = () => {
-    if (!keyman.requests.hasValue(action))
-      keyman.requests.set(`Simulated ${action}`, action);
+    if (!keyman.requests.hasValue(action)) keyman.requests.set(`Simulated ${action}`, action);
   };
   let cancel = () => {
     keyman.requests.deleteByValue(action);
@@ -50,7 +49,7 @@ function addInput(button, action, triggerListenerType, cancelListenerType) {
         return;
       }
       keyman.requests.set(`Simulated ${action}`, action);
-    }
+    };
   }
 
   button.listeners.push({ type: triggerListenerType, listener: trigger });
@@ -61,68 +60,76 @@ function addInput(button, action, triggerListenerType, cancelListenerType) {
   button.element.addEventListener(cancelListenerType, cancel);
 }
 
-/**
- * Provide a way for visualizing keyboard inputs
- */
 class KeyboardVisualizer {
   constructor(app, appendTo = document.body) {
     this.app = app;
 
     this.div = htmlCreate({
       classList: "kvDiv nodisp",
-      appendTo: appendTo
+      appendTo: appendTo,
     });
 
     this.inputModes = new Map([
-      ['Hover', this.hoverMode],
-      ['Toggle', this.toggleMode],
-      ['None', () => { }]
+      ["Hover", () => this.hoverMode()],
+      ["Toggle", () => this.toggleMode()],
+      ["None", () => {}],
     ]);
 
-    let { form, select } =
-      kvForm(Array.from(this.inputModes.keys()));
+    let { form, select } = kvForm(Array.from(this.inputModes.keys()));
 
     form.onchange = () => {
       let mode = select.options[select.selectedIndex].value;
       this.clearMode();
-      this.inputModes.get(mode).call(this);
+      this.inputModes.get(mode)();
     };
 
     this.div.appendChild(form);
 
     this.buttons = new Map([
-      ['Move Left', {
-        element: htmlCreate({
-          id: 'kvButtonLeft',
-          classList: "kvButton",
-          appendTo: this.div
-        }),
-        listeners: []
-      }],
-      ['Move Up', {
-        element: htmlCreate({
-          id: 'kvButtonUp',
-          classList: "kvButton",
-          appendTo: this.div
-        }),
-        listeners: []
-      }],
-      ['Move Right', {
-        element: htmlCreate({
-          id: 'kvButtonRight',
-          classList: "kvButton",
-          appendTo: this.div
-        }),
-        listeners: []
-      }],
-      ['Move Down', {
-        element: htmlCreate({
-          id: 'kvButtonDown',
-          classList: "kvButton",
-          appendTo: this.div
-        }),
-        listeners: []
-      }]
+      [
+        "Move Left",
+        {
+          element: htmlCreate({
+            id: "kvButtonLeft",
+            classList: "kvButton",
+            appendTo: this.div,
+          }),
+          listeners: [],
+        },
+      ],
+      [
+        "Move Up",
+        {
+          element: htmlCreate({
+            id: "kvButtonUp",
+            classList: "kvButton",
+            appendTo: this.div,
+          }),
+          listeners: [],
+        },
+      ],
+      [
+        "Move Right",
+        {
+          element: htmlCreate({
+            id: "kvButtonRight",
+            classList: "kvButton",
+            appendTo: this.div,
+          }),
+          listeners: [],
+        },
+      ],
+      [
+        "Move Down",
+        {
+          element: htmlCreate({
+            id: "kvButtonDown",
+            classList: "kvButton",
+            appendTo: this.div,
+          }),
+          listeners: [],
+        },
+      ],
     ]);
 
     this.hoverMode();
@@ -144,8 +151,7 @@ class KeyboardVisualizer {
     if (!this.isVisible()) return;
 
     this.buttons.forEach((button, action) => {
-      if (keyman.isActionRequested(action))
-        button.element.classList.add("active");
+      if (keyman.isActionRequested(action)) button.element.classList.add("active");
       else button.element.classList.remove("active");
     });
   }
@@ -160,12 +166,12 @@ class KeyboardVisualizer {
   }
   hoverMode() {
     this.buttons.forEach((button, action) => {
-      addInput(button, action, 'mouseover', 'mouseout');
+      addInput(button, action, "mouseover", "mouseout");
     });
   }
   toggleMode() {
     this.buttons.forEach((button, action) => {
-      addInput(button, action, 'click');
+      addInput(button, action, "click");
     });
   }
 }

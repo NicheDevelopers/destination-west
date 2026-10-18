@@ -27,7 +27,7 @@ class Item {
    * Constructor for item creation.
    * @param {string|Object} nameOrRecipe item name or recipe
    * @param {string} spriteName sprite name based on sprites
-   * @param {number} durability 
+   * @param {number} durability
    * @param {number} weight weight of item
    * @param {number} price price of item
    * @param {number} priceRetention
@@ -69,12 +69,12 @@ class Item {
     if (!recipe.recipeType)
       throw new Error(
         `Item recipe must have a 'recipeType' property.\n` +
-        `Recipe received: ${toPrettyJson(recipe)}`
+          `Recipe received: ${toPrettyJson(recipe)}`,
       );
     if (recipe.recipeType.name !== this.name)
       throw new Error(
         `Attempt to create an item of type ${this.name} ` +
-        `from a recipe indicating type ${recipe.type.name}`
+          `from a recipe indicating type ${recipe.type.name}`,
       );
     this.validateSpecialFields(recipe);
   }
@@ -84,15 +84,22 @@ class Item {
    * Mehtod meant to be overriden by subclasses.
    * @param {Object} recipe - item recipe
    */
-  static validateSpecialFields(recipe) { }
+  static validateSpecialFields(_recipe) {}
 
   /**
    * Method for deep copy of Item object. Generates new Sprite.
    * @returns {Item} deep copy Item
    */
   deepCopy() {
-    return new Item(this.name, this.spriteName, this.durability, this.weight,
-      this.price, this.priceRetention, this.isStackable);
+    return new Item(
+      this.name,
+      this.spriteName,
+      this.durability,
+      this.weight,
+      this.price,
+      this.priceRetention,
+      this.isStackable,
+    );
   }
 }
 export default Item;

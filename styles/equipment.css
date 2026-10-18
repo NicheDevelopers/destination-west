@@ -20,78 +20,76 @@
 */
 
 #equipment {
-    width: 75%;
-    height: 75%;
-    position:  absolute;
-    z-index: 1;
-    background-color: rgb(121, 70, 20);
+  width: 75%;
+  height: 75%;
+  position: absolute;
+  z-index: 1;
+  background-color: rgb(121, 70, 20);
 }
 
 #eq-list {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    overflow-y: scroll;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overflow-y: scroll;
 }
 
 #transfer {
-    width: 90%;
-    height: 75%;
-    position: absolute;
-    z-index: 1;
-    background-color: rgb(121, 70, 20);
+  width: 90%;
+  height: 75%;
+  position: absolute;
+  z-index: 1;
+  background-color: rgb(121, 70, 20);
 }
 
 #transfer-list {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    overflow-y: scroll;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overflow-y: scroll;
 }
 
-
 .list-info {
-    border: 2px solid black;
-    /* border-top: none; */
-    font-size: 40px;
-    margin: auto;
-    text-align: center;
-    /* display: table-row; */
+  border: 2px solid black;
+  /* border-top: none; */
+  font-size: 40px;
+  margin: auto;
+  text-align: center;
+  /* display: table-row; */
 }
 
 div.list-element img {
-    margin-left: 2%;
-    width: 80px;
-    height: 80px;
-    image-rendering: crisp-edges;
+  margin-left: 2%;
+  width: 80px;
+  height: 80px;
+  image-rendering: crisp-edges;
 }
 
 .list-element {
-    border: 2px solid black;
-    border-top: none;
-    font-size: xx-large;
-    margin: auto;
-    display: flex;
-    text-align: center;
-    align-items: center;
-    /* display: table-row; */
+  border: 2px solid black;
+  border-top: none;
+  font-size: xx-large;
+  margin: auto;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  /* display: table-row; */
 }
 
 .list-obj {
-    display: inline-block;
-    flex: 2;
-    text-align: left;
+  display: inline-block;
+  flex: 2;
+  text-align: left;
 }
 
 .window {
-    display: none;
-    justify-content:center;
-    align-items: center;
+  display: none;
+  justify-content: center;
+  align-items: center;
 }
 
 .window-background {
-    background-color: rgb(121, 70, 20);
-    border: 1px solid black;
+  background-color: rgb(121, 70, 20);
+  border: 1px solid black;
 }
-

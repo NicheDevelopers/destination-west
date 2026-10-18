@@ -19,17 +19,18 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import { ctx } from "../core/Browser.js";
 import { tileSize, playerParameters as pp } from "../global/consts.js";
 import { randIntInRange, roundToTile, validateOptions } from "../global/utilities.js";
-import { directions, Direction } from "../global/utilities.js";
+import { Direction } from "../global/utilities.js";
 import Animation from "../core/Animation.js";
 import Pathfinder from "../Pathfinder.js";
 
 const movementOptions = new Map([
-  ["playerControlled",
+  [
+    "playerControlled",
     "Boolean. Specifies whether the Movement is supposed to " +
-    "take movement action requests into account"]
+      "take movement action requests into account",
+  ],
 ]);
 
 /**
@@ -41,7 +42,7 @@ const movementOptions = new Map([
 class Momentum {
   constructor(baseMovementSpeed, sprintMultiplier, sneakMultiplier) {
     this.baseMovementSpeed = baseMovementSpeed;
-    
+
     this.direction = new Direction();
     this.speed = { x: 0, y: 0 };
 
@@ -56,13 +57,13 @@ class Momentum {
     this.nextMove = null;
 
     this.movementActions = new Map([
-      ['Move Up', "moveUp"],
-      ['Move Down', "moveDown"],
-      ['Move Left', "moveLeft"],
-      ['Move Right', "moveRight"]
+      ["Move Up", "moveUp"],
+      ["Move Down", "moveDown"],
+      ["Move Left", "moveLeft"],
+      ["Move Right", "moveRight"],
     ]);
   }
-  
+
   reset() {
     this.speed.x = 0;
     this.speed.y = 0;
@@ -73,9 +74,11 @@ class Momentum {
    * Returns base speed with current modifiers (sneak or sprint).
    */
   getCurrentMoveSpeed() {
-    return this.baseMovementSpeed *
+    return (
+      this.baseMovementSpeed *
       (this.sprinting ? this.sprintMultiplier : 1) *
-      (this.sneaking ? this.sneakMultiplier : 1);
+      (this.sneaking ? this.sneakMultiplier : 1)
+    );
   }
 
   /**
@@ -85,82 +88,85 @@ class Momentum {
    */
   manageInputs(keyman) {
     this.reset();
-    
-    if (this.sprintMode === 'hold') {
+
+    if (this.sprintMode === "hold") {
       this.sprinting = false;
     }
-    if (this.sneakMode === 'hold') {
+    if (this.sneakMode === "hold") {
       this.sneaking = false;
     }
-    keyman.manageInput(
-      'Toggle Sprint',
-      () => this.toggleSprint(),
-      { once: (this.sprintMode === 'toggle') });
+    keyman.manageInput("Toggle Sprint", () => this.toggleSprint(), {
+      once: this.sprintMode === "toggle",
+    });
 
-    keyman.manageInput(
-      'Toggle Sneak',
-      () => this.toggleSneak(),
-      { once: (this.sneakMode === 'toggle') });
+    keyman.manageInput("Toggle Sneak", () => this.toggleSneak(), {
+      once: this.sneakMode === "toggle",
+    });
 
     if (this.sprinting && this.sneaking) {
       this.sprinting = false;
       this.sneaking = false;
     }
-    
+
     this.movementActions.forEach((moveFn, action) => {
       if (keyman.isActionRequested(action)) {
         this[moveFn]();
       }
     });
-
   }
 
   setFromPathfinder(pathfinder, entity) {
     this.reset();
-    
+
     if (this.standing) {
       return;
     }
-    
+
     if (!this.nextMove) {
       this.standing = true;
       // set timer on random number of seconds <5;10) in which Entity will stay idle
-      let msMultiplier = 1000, standSeconds = randIntInRange(5, 10);
-      setTimeout(function () {
-        this.standing = false;
-        pathfinder.genNewPath();
-        this.nextMove = pathfinder.getNextMove();
-      }.bind(this), standSeconds * msMultiplier);
+      let msMultiplier = 1000,
+        standSeconds = randIntInRange(5, 10);
+      setTimeout(
+        function () {
+          this.standing = false;
+          pathfinder.genNewPath();
+          this.nextMove = pathfinder.getNextMove();
+        }.bind(this),
+        standSeconds * msMultiplier,
+      );
       return;
     }
-    
+
     let goalTile = this.nextMove.getCoords();
     let nextDirOnPath = this.nextMove.optimalDirection;
 
     let { x, y } = entity.getCenterPoint();
-    if (roundToTile(x) - goalTile.x === 0 &&
-      roundToTile(y) - goalTile.y === 0) {
-      if ((nextDirOnPath.facesLeft() && x % tileSize <= tileSize/2) ||
-	(nextDirOnPath.facesRight() && x % tileSize >= tileSize/2) ||
-	(nextDirOnPath.facesDown() && y % tileSize >= tileSize/2) ||
-	(nextDirOnPath.facesUp() && y % tileSize <= tileSize/2)) {
-	entity.moveTo(roundToTile(x)*tileSize + tileSize/2,
-		      roundToTile(y)*tileSize + tileSize/2);
-	this.nextMove = pathfinder.getNextMove();
-	if (!this.nextMove) 
-          return;
+    if (roundToTile(x) - goalTile.x === 0 && roundToTile(y) - goalTile.y === 0) {
+      if (
+        (nextDirOnPath.facesLeft() && x % tileSize <= tileSize / 2) ||
+        (nextDirOnPath.facesRight() && x % tileSize >= tileSize / 2) ||
+        (nextDirOnPath.facesDown() && y % tileSize >= tileSize / 2) ||
+        (nextDirOnPath.facesUp() && y % tileSize <= tileSize / 2)
+      ) {
+        entity.moveTo(
+          roundToTile(x) * tileSize + tileSize / 2,
+          roundToTile(y) * tileSize + tileSize / 2,
+        );
+        this.nextMove = pathfinder.getNextMove();
+        if (!this.nextMove) return;
       }
     }
     this.setFromDirection(nextDirOnPath);
   }
-  
+
   setFromDirection(direction) {
     if (direction.facesLeft()) return this.moveLeft();
     if (direction.facesRight()) return this.moveRight();
     if (direction.facesUp()) return this.moveUp();
     if (direction.facesDown()) return this.moveDown();
   }
-  
+
   moveLeft() {
     this.direction.moveLeft();
     this.speed.x -= this.getCurrentMoveSpeed();
@@ -186,26 +192,25 @@ class Momentum {
 }
 
 export default class Movement {
-  constructor(entity,
+  constructor(
+    entity,
     baseSpeed = pp.defaultPlayerSpeed,
     sprintMultiplier = pp.defaultSprintMultiplier,
-    sneakMultiplier = pp.defaultSneakMultiplier, options = {}) {
+    sneakMultiplier = pp.defaultSneakMultiplier,
+    options = {},
+  ) {
     validateOptions(options, movementOptions, "Movement");
-    
+
     this.entity = entity;
-    
+
     this.momentum = new Momentum(baseSpeed, sprintMultiplier, sneakMultiplier);
-    
+
     this.moveX = new Animation(this.entity, "x", baseSpeed);
     this.moveY = new Animation(this.entity, "y", baseSpeed);
-    
+
     this.playerControlled = options.playerControlled;
-    this.pathfinder = new Pathfinder(
-      this.entity.game,
-      this.entity,
-      false
-    );
-    
+    this.pathfinder = new Pathfinder(this.entity.game, this.entity, false);
+
     this.standing = false;
   }
 
@@ -228,7 +233,7 @@ export default class Movement {
     if (!this.playerControlled) {
       this.momentum.setFromPathfinder(this.pathfinder, this.entity);
     }
-    
+
     this.updateMovement();
     this.updateSprite();
   }
@@ -244,18 +249,15 @@ export default class Movement {
   updateSprite() {
     if (this.momentum.direction.facesLeft()) {
       this.entity.sprite.mirrored = true;
-    }
-    else if (this.momentum.direction.facesRight()) {
+    } else if (this.momentum.direction.facesRight()) {
       this.entity.sprite.mirrored = false;
     }
 
     if (this.moveX.speed !== 0 || this.moveY.speed !== 0) {
-      if (this.entity.sprite.animation.name !== "run")
-        this.entity.sprite.changeAnimation("run");
+      if (this.entity.sprite.animation.name !== "run") this.entity.sprite.changeAnimation("run");
       return;
     }
-    if (this.entity.sprite.animation.name !== "idle")
-      this.entity.sprite.changeAnimation("idle");
+    if (this.entity.sprite.animation.name !== "idle") this.entity.sprite.changeAnimation("idle");
   }
 
   /**
@@ -264,32 +266,38 @@ export default class Movement {
    * Move the entity using the final speed values.
    */
   updateMovement() {
-    let {speed: currentSpeed, direction} = this.momentum;
+    let { speed: currentSpeed, direction } = this.momentum;
     // Collisions
-    if (currentSpeed.y < 0 && direction.facesUp()
-      && this.entity.willCollide?.(0, currentSpeed.y)) {
+    if (currentSpeed.y < 0 && direction.facesUp() && this.entity.willCollide?.(0, currentSpeed.y)) {
       this.entity.moveTillCollision(0, currentSpeed.y);
       direction.moveDown();
       currentSpeed.x *= pp.defaultDiagonalOffset;
       currentSpeed.y = 0;
-    }
-    else if (currentSpeed.y > 0 && direction.facesDown()
-      && this.entity.willCollide?.(0, currentSpeed.y)) {
+    } else if (
+      currentSpeed.y > 0 &&
+      direction.facesDown() &&
+      this.entity.willCollide?.(0, currentSpeed.y)
+    ) {
       this.entity.moveTillCollision(0, currentSpeed.y);
       direction.moveUp();
       currentSpeed.x *= pp.defaultDiagonalOffset;
       currentSpeed.y = 0;
     }
 
-    if (currentSpeed.x < 0 && direction.facesLeft()
-      && this.entity.willCollide?.(currentSpeed.x, 0)) {
+    if (
+      currentSpeed.x < 0 &&
+      direction.facesLeft() &&
+      this.entity.willCollide?.(currentSpeed.x, 0)
+    ) {
       this.entity.moveTillCollision(currentSpeed.x, 0);
       direction.moveRight();
       currentSpeed.x = 0;
       currentSpeed.y *= pp.defaultDiagonalOffset;
-    }
-    else if (currentSpeed.x > 0 && direction.facesRight()
-      && this.entity.willCollide?.(currentSpeed.x, 0)) {
+    } else if (
+      currentSpeed.x > 0 &&
+      direction.facesRight() &&
+      this.entity.willCollide?.(currentSpeed.x, 0)
+    ) {
       this.entity.moveTillCollision(currentSpeed.x, 0);
       direction.moveLeft();
       currentSpeed.x = 0;
@@ -311,17 +319,16 @@ export default class Movement {
     this.moveX.next();
     this.moveY.next();
 
-    if (this.moveX.speed === 0 && this.moveY.speed === 0)
-      return;
+    if (this.moveX.speed === 0 && this.moveY.speed === 0) return;
 
     this.entity.updateTilePresence();
   }
-  
+
   /**
    * Calculates the change in entity's X position
    * that would be applied if no collisions were deteceted.
    */
-  getChangeX(speedX=this.momentum.speed.x) {
+  getChangeX(speedX = this.momentum.speed.x) {
     return this.moveX.getChangeInThisTick(speedX);
   }
 
@@ -329,7 +336,7 @@ export default class Movement {
    * Calculates the change in entity's Y position
    * that would be applied if no collisions were deteceted.
    */
-  getChangeY(speedY=this.momentum.speed.y) {
+  getChangeY(speedY = this.momentum.speed.y) {
     return this.moveY.getChangeInThisTick(speedY);
   }
 }

@@ -23,7 +23,7 @@
 
 import defaultKeybinds, { SpecialKey } from "../global/defaultKeybinds.js";
 import volumeMap from "../audio/volumeMap.js";
-import { State, stateManager } from "../global/stateManager.js"
+import { State, stateManager } from "../global/stateManager.js";
 import { createElement, htmlCreate } from "../global/utilities.js";
 
 class PauseMenu extends State {
@@ -36,37 +36,178 @@ class PauseMenu extends State {
     this.customVolumeMap = volumeMap;
     // create buttons and divs inside pauseMenu
     this.pauseMenu = document.getElementById("pause-menu");
-    const pauseMenuButtonsDiv = createElement("div", null, null, ["pause-menu-divs"], {}, "pause-menu-buttons-div", null);
-    const pauseMenuWantedDiv = createElement("div", null, null, ["pause-menu-divs"], {}, "pause-menu-wanted-div", null);
-    const pauseMenuWantedPoster = createElement("div", null, null, [], {}, "pause-menu-wanted-poster", null);
+    const pauseMenuButtonsDiv = createElement(
+      "div",
+      null,
+      null,
+      ["pause-menu-divs"],
+      {},
+      "pause-menu-buttons-div",
+      null,
+    );
+    const pauseMenuWantedDiv = createElement(
+      "div",
+      null,
+      null,
+      ["pause-menu-divs"],
+      {},
+      "pause-menu-wanted-div",
+      null,
+    );
+    const pauseMenuWantedPoster = createElement(
+      "div",
+      null,
+      null,
+      [],
+      {},
+      "pause-menu-wanted-poster",
+      null,
+    );
 
     // settingsMenu
     this.settingsMenu = createElement("div", null, null, [], {}, "settings-menu", null);
-    const exitSettingsButton = createElement("button", null, null, ["pause-menu-button", "button"], { position: "absolute", top: "3%", right: "3%" }, null, "Return");
-    const settingsActionLabel = createElement("div", null, null, [], { padding: "5px 0 10px 0" }, null, null);
-    const settingsActions = createElement("div", null, null, [], { width: "50%", display: "inline-block" }, null, "Actions:");
-    const settingsKeys = createElement("div", null, null, [], { width: "50%", display: "inline" }, null, "Keys:");
-    const settingsSounds = createElement("div", null, null, [], { width: "50%", display: "inline-block" }, null, "Sounds:");
-    const settingsVolumes = createElement("div", null, null, [], { display: "inline" }, null, "Volume:")
-    const settingsVolumeLabel = createElement("div", null, null, [], { padding: "20px 0 10px 0" }, null, null);
+    const exitSettingsButton = createElement(
+      "button",
+      null,
+      null,
+      ["pause-menu-button", "button"],
+      { position: "absolute", top: "3%", right: "3%" },
+      null,
+      "Return",
+    );
+    const settingsActionLabel = createElement(
+      "div",
+      null,
+      null,
+      [],
+      { padding: "5px 0 10px 0" },
+      null,
+      null,
+    );
+    const settingsActions = createElement(
+      "div",
+      null,
+      null,
+      [],
+      { width: "50%", display: "inline-block" },
+      null,
+      "Actions:",
+    );
+    const settingsKeys = createElement(
+      "div",
+      null,
+      null,
+      [],
+      { width: "50%", display: "inline" },
+      null,
+      "Keys:",
+    );
+    const settingsSounds = createElement(
+      "div",
+      null,
+      null,
+      [],
+      { width: "50%", display: "inline-block" },
+      null,
+      "Sounds:",
+    );
+    const settingsVolumes = createElement(
+      "div",
+      null,
+      null,
+      [],
+      { display: "inline" },
+      null,
+      "Volume:",
+    );
+    const settingsVolumeLabel = createElement(
+      "div",
+      null,
+      null,
+      [],
+      { padding: "20px 0 10px 0" },
+      null,
+      null,
+    );
 
     // exitMenu
     this.exitMenu = createElement("div", null, null, [], {}, "exit-menu", null);
-    const exitMenuPrompt = createElement("div", null, null, [], { padding: "0 0 35% 0" }, null, "Do you really want to exit?");
+    const exitMenuPrompt = createElement(
+      "div",
+      null,
+      null,
+      [],
+      { padding: "0 0 35% 0" },
+      null,
+      "Do you really want to exit?",
+    );
     // width of the prompt minus 2 widths of buttons (buttons are now 32% in width)
-    const exitMenuConfirmationButton = createElement("button", null, null, ["pause-menu-button", "exit-menu-button", "button"], { margin: "0 48% 0 0" }, null, "Yes");
+    const exitMenuConfirmationButton = createElement(
+      "button",
+      null,
+      null,
+      ["pause-menu-button", "exit-menu-button", "button"],
+      { margin: "0 48% 0 0" },
+      null,
+      "Yes",
+    );
     // this.exitMenuConfirmationButton = document.createElement("button");
-    const exitMenuRefusalButton = createElement("button", null, null, ["pause-menu-button", "exit-menu-button", "button"], {}, null, "No");
+    const exitMenuRefusalButton = createElement(
+      "button",
+      null,
+      null,
+      ["pause-menu-button", "exit-menu-button", "button"],
+      {},
+      null,
+      "No",
+    );
     const exitMenuDiv = document.createElement("div");
 
     //Pause menu main buttons
-    const resumeButton = createElement("button", null, null, ["pause-menu-button", "button"], {}, "pause-menu-resume-button", "Resume");
-    const settingsButton = createElement("button", null, null, ["pause-menu-button", "button"], {}, "pause-menu-settings-button", "Settings");
-    const saveButton = createElement("button", null, null, ["pause-menu-button", "button"], {}, "pause-menu-save-button", "Save");
-    const exitButton = createElement("button", null, null, ["pause-menu-button", "button"], {}, "pause-menu-exit-button", "Exit");
+    const resumeButton = createElement(
+      "button",
+      null,
+      null,
+      ["pause-menu-button", "button"],
+      {},
+      "pause-menu-resume-button",
+      "Resume",
+    );
+    const settingsButton = createElement(
+      "button",
+      null,
+      null,
+      ["pause-menu-button", "button"],
+      {},
+      "pause-menu-settings-button",
+      "Settings",
+    );
+    const saveButton = createElement(
+      "button",
+      null,
+      null,
+      ["pause-menu-button", "button"],
+      {},
+      "pause-menu-save-button",
+      "Save",
+    );
+    const exitButton = createElement(
+      "button",
+      null,
+      null,
+      ["pause-menu-button", "button"],
+      {},
+      "pause-menu-exit-button",
+      "Exit",
+    );
 
     // append created divs and buttons to corresponding parents
-    this.pauseMenu.append(pauseMenuButtonsDiv, pauseMenuWantedDiv, this.settingsMenu, this.exitMenu);
+    this.pauseMenu.append(
+      pauseMenuButtonsDiv,
+      pauseMenuWantedDiv,
+      this.settingsMenu,
+      this.exitMenu,
+    );
     pauseMenuWantedDiv.append(pauseMenuWantedPoster);
     pauseMenuButtonsDiv.append(resumeButton, settingsButton, saveButton, exitButton);
     this.settingsMenu.append(exitSettingsButton, settingsActionLabel);
@@ -78,27 +219,37 @@ class PauseMenu extends State {
     this.exitMenu.append(exitMenuDiv);
     exitMenuDiv.append(exitMenuPrompt, exitMenuConfirmationButton, exitMenuRefusalButton);
     // buttons eventListeners
-    resumeButton.addEventListener("click", () => { stateManager.toggleState(this) });
-    settingsButton.addEventListener("click", () => { this.enterSettingsMenu() });
-    exitSettingsButton.addEventListener("click", () => { this.exitSettingsMenu() });
-    exitButton.addEventListener("click", () => { this.enterExitMenu() });
-    exitMenuRefusalButton.addEventListener("click", () => { this.exitExitMenu() });
+    resumeButton.addEventListener("click", () => {
+      stateManager.toggleState(this);
+    });
+    settingsButton.addEventListener("click", () => {
+      this.enterSettingsMenu();
+    });
+    exitSettingsButton.addEventListener("click", () => {
+      this.exitSettingsMenu();
+    });
+    exitButton.addEventListener("click", () => {
+      this.enterExitMenu();
+    });
+    exitMenuRefusalButton.addEventListener("click", () => {
+      this.exitExitMenu();
+    });
   }
 
-  manageInputs(keyman) { }
+  manageInputs(_keyman) {}
 
-  update() { }
+  update() {}
 
   startHook() {
-    this.pauseMenu.style.display = 'flex';
+    this.pauseMenu.style.display = "flex";
     this.paused = true;
     this.game.togglePause();
   }
 
   endHook() {
-    this.pauseMenu.style.display = 'none';
-    this.exitMenu.style.display = 'none';
-    this.settingsMenu.style.display = 'none';
+    this.pauseMenu.style.display = "none";
+    this.exitMenu.style.display = "none";
+    this.settingsMenu.style.display = "none";
     this.paused = false;
     this.game.togglePause();
   }
@@ -113,14 +264,14 @@ class PauseMenu extends State {
         }
         let div = htmlCreate({
           classList: "keybind-container",
-          appendTo: this.settingsMenu
+          appendTo: this.settingsMenu,
         });
         htmlCreate({ innerText: action + ":", appendTo: div });
         htmlCreate({
           what: "button",
           classList: "pause-menu-button settings-menu-button button",
           innerText: key.capitalized(),
-          appendTo: htmlCreate({ classList: "button-container", appendTo: div })
+          appendTo: htmlCreate({ classList: "button-container", appendTo: div }),
         });
       });
     }
@@ -129,8 +280,24 @@ class PauseMenu extends State {
   // function loading volumeMap
   loadVolumeMap() {
     this.customVolumeMap.forEach((_value, key) => {
-      let div = createElement("div", null, null, [], { padding: "5px 0 10px 0", borderBottom: "2px solid brown" }, null, null);
-      let volume = createElement("div", null, null, [], { width: "50%", display: "inline-block" }, null, key.charAt(0).toUpperCase() + key.slice(1) + ":");
+      let div = createElement(
+        "div",
+        null,
+        null,
+        [],
+        { padding: "5px 0 10px 0", borderBottom: "2px solid brown" },
+        null,
+        null,
+      );
+      let volume = createElement(
+        "div",
+        null,
+        null,
+        [],
+        { width: "50%", display: "inline-block" },
+        null,
+        key.charAt(0).toUpperCase() + key.slice(1) + ":",
+      );
       let slider = document.createElement("input");
       slider.type = "range";
       slider.min = "0";
@@ -139,7 +306,7 @@ class PauseMenu extends State {
       div.append(volume);
       div.append(slider);
       this.settingsMenu.append(div);
-    })
+    });
   }
 
   // functions toggling settings menu
@@ -152,10 +319,10 @@ class PauseMenu extends State {
 
   //functions toggling exit menu
   enterExitMenu() {
-    this.exitMenu.style.display = 'flex';
+    this.exitMenu.style.display = "flex";
   }
   exitExitMenu() {
-    this.exitMenu.style.display = 'none';
+    this.exitMenu.style.display = "none";
   }
 }
 

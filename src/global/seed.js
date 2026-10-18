@@ -34,7 +34,7 @@ class Seed {
    * @param {function} errorCallback - A function to run if an error
    * occurs when running the callback. Proper handling is necessary
    * as the callback could potentially initialize a large part of the game.
-  */
+   */
   generate(seed = null, callback, errorCallback) {
     this.seed = seed ?? randIntInRange(0, 1000000);
 
@@ -42,24 +42,25 @@ class Seed {
     const seedBuffer = new TextEncoder().encode(this.seed);
 
     // hash the message
-    const hashBuffer = crypto.subtle.digest('SHA-256', seedBuffer)
-      .then((hashBuffer) => {
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const binaryArray = hashArray.map(
-          b => b.toString(2)
+    void crypto.subtle.digest("SHA-256", seedBuffer).then((hashBuffer) => {
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const binaryArray = hashArray
+        .map((b) =>
+          b
+            .toString(2)
             .padStart(8, "0")
             .split("")
-            .map(s => Number.parseInt(s)))
-          .flat();
-        this.bits = binaryArray;
-        this.generateFloats();
-        try {
-          callback(binaryArray);
-        }
-        catch (e) {
-          errorCallback(e);
-        }
-      });
+            .map((s) => Number.parseInt(s)),
+        )
+        .flat();
+      this.bits = binaryArray;
+      this.generateFloats();
+      try {
+        callback(binaryArray);
+      } catch (e) {
+        errorCallback(e);
+      }
+    });
   }
 
   /**

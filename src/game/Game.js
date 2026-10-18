@@ -27,10 +27,8 @@ import WorldMapDisplay from "../WorldMap/WorldMapDisplay.js";
 import PauseMenu from "../menu/PauseMenu.js";
 import EquipmentDisplay from "../Equipment/EquipmentDisplay.js";
 import Designer from "../misc/Designer.js";
-import Item from "../Item/Item.js";
 import { State, stateManager } from "../global/stateManager.js";
 import Npc from "../Entity/Npc.js";
-import Dialogue from "../Dialogue/Dialogue.ts";
 import DialogueDisplay from "../Dialogue/DialogueDisplay.ts";
 import Container from "../Entity/Container.js";
 import Portal, { PortalType } from "../Entity/Portal.js";
@@ -40,36 +38,33 @@ import Travel from "../Location/Travel.js";
 import Town from "../Location/Town.js";
 import { distance } from "../global/utilities.js";
 import Interactible from "../Entity/Interactible.js";
-import { tileSize } from "../global/consts.js";
-import {Notification, notifier} from "../global/notifier.js";
 import ChuckALuck from "../minigames/ChuckALuck.js";
 import revolverShoot from "../minigames/battle_minigames/revolverShoot.js";
 import revolverLoad from "../minigames/battle_minigames/revolverLoad.js";
-import Pathfinder from "../Pathfinder.js";
 import Trader from "../Entity/Trader.js";
 import seed from "../global/seed.js";
-import { createItem } from "../global/items.js";
 import { items } from "../global/items.js";
-import { FindQuestBuilder, FindQuestConfig, FindQuestType, ItemDistribution, ItemEntry } from '../Quest.js';
 import {
-  Combat,
-  CombatAction,
-  CombatConfig,
-  CombatInitiationType,
-  Difficulty,
-} from "../Combat/Combat.js";
+  FindQuestBuilder,
+  FindQuestConfig,
+  FindQuestType,
+  ItemDistribution,
+  ItemEntry,
+} from "../Quest.js";
+import { Combat, CombatConfig, CombatInitiationType, Difficulty } from "../Combat/Combat.js";
 import CombatDisplay from "../Combat/CombatDisplay.js";
 
 class Game extends State {
   constructor(app, callback) {
     super(true, { async: true });
     this.app = app;
-    seed.generate(null,
+    seed.generate(
+      null,
       () => {
         this.init();
         callback();
       },
-      (e) => this.app.crash(e)
+      (e) => this.app.crash(e),
     );
   }
 
@@ -92,11 +87,7 @@ class Game extends State {
 
     //this.testJacket = new ColoredSprite('jacket');
     //this.testPants = new ColoredSprite('pants');
-    this.player = new Player(
-      this,
-      this.currentTown.playerSpawn.x,
-      this.currentTown.playerSpawn.y,
-    );
+    this.player = new Player(this, this.currentTown.playerSpawn.x, this.currentTown.playerSpawn.y);
 
     let testMinigame = new ChuckALuck(this);
 
@@ -104,25 +95,24 @@ class Game extends State {
 
     let testMinigamer = new Interactible(this, "chuck-a-luck-table", 200, 200);
 
-    testMinigamer.interact = (who) => {
+    testMinigamer.interact = (_who) => {
       testMinigame.start();
     };
 
     let testShooting = new revolverShoot(this, 6);
     let testTarget = new Interactible(this, "torso", 100, 100);
-    testTarget.interact = (who) => {
+    testTarget.interact = (_who) => {
       stateManager.toggleState(testShooting);
-    }
+    };
     this.currentTown.npcs.push(testTarget);
 
     let testLoading = new revolverLoad(this, 6);
     let testLoader = new Interactible(this, "torso", 164, 100);
-    testLoader.interact = (who) => {
+    testLoader.interact = (_who) => {
       stateManager.toggleState(testLoading);
-    }
+    };
     this.currentTown.npcs.push(testLoader);
 
-    
     let testContainer = new Container(this, "barrel", 250, 250);
     testContainer.equipment.fillRecords([
       { recipe: items.whisky, quantity: 3 },
@@ -132,13 +122,7 @@ class Game extends State {
     ]);
 
     this.currentTown.portals.push(
-      new Portal(
-        this,
-        "decoration-roadsign",
-        64 * 4,
-        64 * 5,
-        PortalType.openMap(),
-      ),
+      new Portal(this, "decoration-roadsign", 64 * 4, 64 * 5, PortalType.openMap()),
     );
     this.currentTown.containers.push(testContainer);
     this.currentTown.npcs.push(testMinigamer);
@@ -155,16 +139,13 @@ class Game extends State {
     //----------------------------------------
     const type = FindQuestType.FindOnTheGround;
     const distribution = ItemDistribution.Even;
-    const entries = [
-      new ItemEntry(items.apple, 5),
-      new ItemEntry(items.brokenBottle, 3),
-    ];
+    const entries = [new ItemEntry(items.apple, 5), new ItemEntry(items.brokenBottle, 3)];
     const questConfig = new FindQuestConfig(type, entries, distribution);
     const builder = new FindQuestBuilder(testTrader, questConfig, null);
-    const valid = builder.validate();
-    //console.log(`Is quest valid?: ${valid}`);
-    const quest = builder.build();
-    //console.log(quest);
+    const _valid = builder.validate();
+    //console.log(`Is quest valid?: ${_valid}`);
+    const _quest = builder.build();
+    //console.log(_quest);
     //----------------------------------------
 
     this.currentTown.npcs.push(testTrader);
@@ -192,16 +173,10 @@ class Game extends State {
     const initType = CombatInitiationType.Normal;
     const difficulty = new Difficulty();
     const config = new CombatConfig(initType, difficulty);
-    const combat = new Combat(
-      this.player,
-      [OlBenjamin],
-      this.testEntity,
-      [],
-      config,
-    );
+    const combat = new Combat(this.player, [OlBenjamin], this.testEntity, [], config);
     this.combatDisplay = new CombatDisplay(this, combat);
 
-    this.testEntity.interact = (who) => {
+    this.testEntity.interact = (_who) => {
       this.combatDisplay.reset();
       stateManager.startState(this.combatDisplay);
     };
@@ -237,17 +212,11 @@ class Game extends State {
   manageInputs(keyman) {
     this.camera.manageInputs(keyman);
     this.player.manageInputs(keyman);
-    keyman.manageInput('Open Pause Menu',
-      (key) => stateManager.startState(this.pauseMenu, key)
-    );
-    keyman.manageInput('Open Designer',
-      (key) => stateManager.startState(this.designer, key)
-    );
-    keyman.manageInput('Open Map',
-      (key) => stateManager.startState(this.worldMapDisplay, key)
-    );
-    keyman.manageInput('Open Equipment',
-      (key) => stateManager.startState(this.equipmentDisplay, key)
+    keyman.manageInput("Open Pause Menu", (key) => stateManager.startState(this.pauseMenu, key));
+    keyman.manageInput("Open Designer", (key) => stateManager.startState(this.designer, key));
+    keyman.manageInput("Open Map", (key) => stateManager.startState(this.worldMapDisplay, key));
+    keyman.manageInput("Open Equipment", (key) =>
+      stateManager.startState(this.equipmentDisplay, key),
     );
   }
 

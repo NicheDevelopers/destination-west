@@ -21,13 +21,12 @@
 */
 
 import time from "./global/time.js";
-import { Browser, ctx } from "./core/Browser.js";
+import { Browser } from "./core/Browser.js";
 import keyman from "./core/KeyboardManager.js";
 import AudioPlayer from "./audio/AudioPlayer.js";
 import DebugView from "./debug/DebugView.js";
-import Animation from "./core/Animation.js";
 import Game from "./game/Game.js";
-import { stateManager } from "./global/stateManager.js"
+import { stateManager } from "./global/stateManager.js";
 import { notifier } from "./global/notifier.js";
 
 class App {
@@ -45,23 +44,22 @@ class App {
 
     this.debugView = new DebugView(this);
 
-    keyman.generalActions.set('Toggle Fullscreen', {
-      fn: () => this.browser.toggleFullscreen()
+    keyman.generalActions.set("Toggle Fullscreen", {
+      fn: () => this.browser.toggleFullscreen(),
     });
-    keyman.generalActions.set('Close Window', {
-      fn: () => stateManager.currentState.endState()
+    keyman.generalActions.set("Close Window", {
+      fn: () => stateManager.currentState.endState(),
     });
-    keyman.generalActions.set('Toggle Debug Mode', {
+    keyman.generalActions.set("Toggle Debug Mode", {
       fn: () => {
         this.debugging = !this.debugging;
         this.debugView.setVisibility(this.debugging);
-      }
+      },
     });
   }
 
   loop() {
-    this.animationFrameID =
-      window.requestAnimationFrame(() => this.loop());
+    this.animationFrameID = window.requestAnimationFrame(() => this.loop());
     try {
       time.update();
 
@@ -69,8 +67,7 @@ class App {
 
       stateManager.updateStates();
       notifier.update();
-    }
-    catch (e) {
+    } catch (e) {
       this.crash(e);
     }
   }

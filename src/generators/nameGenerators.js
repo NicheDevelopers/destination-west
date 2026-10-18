@@ -44,10 +44,6 @@ function genNpcName(sex, important) {
   return npcname;
 }
 
-/**
- * Create name for Town
- * @returns {string} name of town
- */
 function genTownName() {
   let part1 = arr1.srandomElement();
   let part2 = arr2.srandomElement();
@@ -55,13 +51,13 @@ function genTownName() {
   // if part1 is like: "Devil's" or "Bull's" get capital letter in part2
   if (part1[part1.length - 2] == "'") part2 = part2.charAt(0).toUpperCase() + part2.slice(1); //getting capital letter
 
-  // chance of getting capital letter in part2 depending on given percentageOfTwoNameTown 
+  // chance of getting capital letter in part2 depending on given percentageOfTwoNameTown
   if (seedRoll(percentageOfTwoNameTown)) part2 = part2.charAt(0).toUpperCase() + part2.slice(1); //getting capital letter
   // else nothing will change
 
   let townname = "";
   // case1 - if part2 begin with capital letter - add space
-  if (part2[0] >= 'A' && part2[0] <= 'Z') townname = part1 + " " + part2;
+  if (part2[0] >= "A" && part2[0] <= "Z") townname = part1 + " " + part2;
   //otherwise - if part2 begin with lower letter - without space
   else townname = part1 + part2;
   return townname;

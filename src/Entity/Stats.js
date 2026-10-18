@@ -11,32 +11,21 @@ export default class Stats {
     this.trust = 0;
   }
 
-  /**
-   * Modify a certain statistic value
-   */
   change(statName, changeValue) {
     if (this[statName] === undefined)
-      throw new Error(
-        `Attempt to modify a non existent statistic '${statName}'`
-      );
+      throw new Error(`Attempt to modify a non existent statistic '${statName}'`);
     this[statName] += changeValue;
   }
 
-  /**
-   * Check the status of a certain statistic value
-   */
   check(statName) {
     if (this[statName] === undefined)
       throw new Error(`Attempt to check a non existent statistic '${statName}'`);
 
-    if (this[statName] <= thresholds[statName].min)
-      return Stats.NONE;
+    if (this[statName] <= thresholds[statName].min) return Stats.NONE;
 
-    if (this[statName] <= thresholds[statName].medium)
-      return Stats.MODERATE;
+    if (this[statName] <= thresholds[statName].medium) return Stats.MODERATE;
 
-    if (this[statName] <= thresholds[statName].max)
-      return Stats.HIGH;
+    if (this[statName] <= thresholds[statName].max) return Stats.HIGH;
 
     return Stats.MAX;
   }

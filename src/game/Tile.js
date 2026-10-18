@@ -32,9 +32,12 @@ class Tile {
   constructor(typeName, x = 0, y = 0, options = {}) {
     this.typeName = typeName;
     this.options = options;
-    if (typeName.substring(0, 9) === 'building-' ||
-      typeName.substring(0, 11) === 'decoration-' ||
-      typeName.substring(0, 5) === 'path-') this.background = new Sprite('sand');
+    if (
+      typeName.substring(0, 9) === "building-" ||
+      typeName.substring(0, 11) === "decoration-" ||
+      typeName.substring(0, 5) === "path-"
+    )
+      this.background = new Sprite("sand");
     this.sprite = new Sprite(typeName, options);
     this.x = x;
     this.y = y;
@@ -44,12 +47,11 @@ class Tile {
     this.entities = [];
     this.items = [];
   }
-  
+
   getBoundingBox() {
-    return new Box(this.x, this.x+this.width,
-		   this.y, this.y+this.height);
+    return new Box(this.x, this.x + this.width, this.y, this.y + this.height);
   }
-  
+
   /**
      Checks whether there is an entity of certain type on a tile.
      @param {Class} entityClass - The class which members we are looking for on the tile (for example Player or Entity).
@@ -57,26 +59,23 @@ class Tile {
   hasEntityOfType(entityClass) {
     return this.entities.some((e) => e.constructor.name === entityClass.name);
   }
-  
+
   addEntity(entity) {
     this.entities.push(entity);
   }
-  
+
   removeEntity(entity) {
     this.entities = this.entities.filter((e) => e.id !== entity.id);
   }
-  
+
   draw(x, y, context = ctx) {
     this.background?.draw(x, y, context);
     this.sprite.draw(x, y, context);
   }
-  drawDebugInfo(cameraX, cameraY, context = ctx, options={}) {
-    if (this.hitbox)
-      this.hitbox.draw(cameraX, cameraY, context, options);
+  drawDebugInfo(cameraX, cameraY, context = ctx, options = {}) {
+    if (this.hitbox) this.hitbox.draw(cameraX, cameraY, context, options);
     else {
-      this.sprite.drawOverlay(
-	this.x-cameraX, this.y-cameraY,
-	options.color, context);
+      this.sprite.drawOverlay(this.x - cameraX, this.y - cameraY, options.color, context);
     }
   }
 }

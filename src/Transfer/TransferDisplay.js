@@ -19,67 +19,76 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { State, stateManager } from "../global/stateManager.js";
-import { tileSize, equipmentSpriteSize } from "../global/consts.js";
+import { State } from "../global/stateManager.js";
 import Transfer from "./Transfer.js";
 import { createElement } from "../global/utilities.js";
 
 class TransferDisplay extends State {
-  constructor(game){
-      super();
-      this.game = game;
-      this.transfer = null;
-      this.div = createElement('div', null, null, ["window"], {}, "transfer", null);
-      let gameContainer = document.querySelector("#game-container");
+  constructor(game) {
+    super();
+    this.game = game;
+    this.transfer = null;
+    this.div = createElement("div", null, null, ["window"], {}, "transfer", null);
+    let gameContainer = document.querySelector("#game-container");
 
-      this.divEqListPlayer = createElement('div', null, null, 
-        [], {}, "transfer-list", null
-      );
+    this.divEqListPlayer = createElement("div", null, null, [], {}, "transfer-list", null);
 
-      this.divEqListTransfer = createElement('div', null, null, 
-        [], {}, "transfer-list", null
-      );
+    this.divEqListTransfer = createElement("div", null, null, [], {}, "transfer-list", null);
 
-      this.div.appendChild(this.divEqListPlayer);
-      this.div.appendChild(this.divEqListTransfer);
+    this.div.appendChild(this.divEqListPlayer);
+    this.div.appendChild(this.divEqListTransfer);
 
-      gameContainer.appendChild(this.div);
+    gameContainer.appendChild(this.div);
   }
 
-  check_eq (i){
+  check_eq(i) {
     if (i === 0) return true; // player equipment
     return false; // transfer equipment
   }
 
   refresh() {
-    var childDivs = document.getElementById('transfer').children;
-    for (let i=0; i<childDivs.length; i++){
+    var childDivs = document.getElementById("transfer").children;
+    for (let i = 0; i < childDivs.length; i++) {
       var child = childDivs[i];
       let eqFlag = this.check_eq(i);
       var givenEquipment, transferEquipment;
-      if (eqFlag) { 
+      if (eqFlag) {
         givenEquipment = this.transfer.playerEquipment;
         transferEquipment = this.transfer.transferEquipment;
-      }
-      else {
+      } else {
         givenEquipment = this.transfer.transferEquipment;
         transferEquipment = this.transfer.playerEquipment;
       }
       // clear
-      while(child.firstChild){
+      while (child.firstChild) {
         child.removeChild(child.lastChild);
       }
       // add divs
-      let cashDiv = createElement('div', null, null, ["list-info"], {}, null, `Cash: ${givenEquipment.cash}`);
-      if (!this.transfer.trading){
-        let buttonGetCash = createElement('div', null, null, ["button", "eq-button"], {}, null, null);
+      let cashDiv = createElement(
+        "div",
+        null,
+        null,
+        ["list-info"],
+        {},
+        null,
+        `Cash: ${givenEquipment.cash}`,
+      );
+      if (!this.transfer.trading) {
+        let buttonGetCash = createElement(
+          "div",
+          null,
+          null,
+          ["button", "eq-button"],
+          {},
+          null,
+          null,
+        );
         buttonGetCash.innerText = "Get";
         buttonGetCash.addEventListener("click", () => {
-          if (eqFlag){
+          if (eqFlag) {
             transferEquipment.cash += givenEquipment.cash;
             givenEquipment.cash = 0;
-          }
-          else {
+          } else {
             givenEquipment.cash += transferEquipment.cash;
             transferEquipment.cash = 0;
           }
@@ -88,12 +97,28 @@ class TransferDisplay extends State {
         cashDiv.appendChild(buttonGetCash);
       }
       child.appendChild(cashDiv);
-      let sortDiv = createElement('div', null, null, ["list-info"], {}, null, "Sort by weight from");
+      let sortDiv = createElement(
+        "div",
+        null,
+        null,
+        ["list-info"],
+        {},
+        null,
+        "Sort by weight from",
+      );
 
-      for (let j = 0; j<2; j++){
-        let buttonSort = createElement('button', null, null, ["button", "eq-button"], {}, null, null);
-        let flag = ( j === 0 ) ? true : false;
-        buttonSort.addEventListener("click", () => { 
+      for (let j = 0; j < 2; j++) {
+        let buttonSort = createElement(
+          "button",
+          null,
+          null,
+          ["button", "eq-button"],
+          {},
+          null,
+          null,
+        );
+        let flag = j === 0 ? true : false;
+        buttonSort.addEventListener("click", () => {
           if (eqFlag) transferEquipment.sortByWeight(flag);
           else givenEquipment.sortByWeight(flag);
           this.refresh();
@@ -104,34 +129,60 @@ class TransferDisplay extends State {
       }
 
       child.appendChild(sortDiv);
-      
+
       for (let record of givenEquipment.records) {
-        child.appendChild(this.recordToListElement(record, eqFlag, givenEquipment, transferEquipment));
+        child.appendChild(
+          this.recordToListElement(record, eqFlag, givenEquipment, transferEquipment),
+        );
       }
 
-      let sumWeight = createElement('div', null, null, ["list-info"], {}, null, 
-        "Weight summary of all items: " + givenEquipment.sumWeight() + " / " + givenEquipment.maxWeight
+      let sumWeight = createElement(
+        "div",
+        null,
+        null,
+        ["list-info"],
+        {},
+        null,
+        "Weight summary of all items: " +
+          givenEquipment.sumWeight() +
+          " / " +
+          givenEquipment.maxWeight,
       );
       child.appendChild(sumWeight);
     }
   }
   recordToListElement(record, eqFlag, givenEquipment, transferEquipment) {
-    let div = createElement('div', null, null, ["list-element"], {}, null, null)
-    let nameDiv = createElement('div', null, null, ["list-obj"], {}, null, record.item.name);
-    let weightDiv = createElement('div', null, null, ["list-obj"], {
-        marginLeft: '5%'
-      }, null, record.getWeight());
-    let quantityDiv = createElement('div', null, null, ["list-obj"], {}, null, record.quantity);
-    let transferButton = createElement('button', null, null, ["button", "eq-button"], {}, null, null);
-    transferButton.addEventListener("click", () => { 
-      this.transfer.transferItem(record, givenEquipment, transferEquipment); 
-      this.refresh(); 
+    let div = createElement("div", null, null, ["list-element"], {}, null, null);
+    let nameDiv = createElement("div", null, null, ["list-obj"], {}, null, record.item.name);
+    let weightDiv = createElement(
+      "div",
+      null,
+      null,
+      ["list-obj"],
+      {
+        marginLeft: "5%",
+      },
+      null,
+      record.getWeight(),
+    );
+    let quantityDiv = createElement("div", null, null, ["list-obj"], {}, null, record.quantity);
+    let transferButton = createElement(
+      "button",
+      null,
+      null,
+      ["button", "eq-button"],
+      {},
+      null,
+      null,
+    );
+    transferButton.addEventListener("click", () => {
+      this.transfer.transferItem(record, givenEquipment, transferEquipment);
+      this.refresh();
     });
-    if (this.transfer.trading){
+    if (this.transfer.trading) {
       if (eqFlag) transferButton.innerText = "Sell";
       else transferButton.innerText = "Buy";
-    }
-    else {
+    } else {
       if (eqFlag) transferButton.innerText = "Right";
       else transferButton.innerText = "Left";
     }
@@ -145,12 +196,11 @@ class TransferDisplay extends State {
   setTransferWith(playerEq, transferEq, trading) {
     this.transfer = new Transfer(playerEq, transferEq, trading);
   }
-  
-  manageInput(keyman) {}
-  
-  update() {
-  }
-  
+
+  manageInput(_keyman) {}
+
+  update() {}
+
   startHook() {
     this.refresh();
     this.div.style.display = "flex";
@@ -158,6 +208,6 @@ class TransferDisplay extends State {
   endHook() {
     this.div.style.display = "none";
   }
-};
+}
 
 export default TransferDisplay;

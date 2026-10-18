@@ -19,27 +19,24 @@ class Npc extends Interactible {
     this.name = name ?? genNpcName(true, true);
     this.impaired = false;
     this.stats = new Stats();
-    
+
     addTraits(this, InventoryTrait(npcParameters.defaultNpcStartCash));
   }
-  
+
   changeStat(statName, changeValue) {
     this.stats.change(statName, changeValue);
   }
 
-  /**
-   * Check the status of a certain statistic value of this npc
-   */
   checkStat(statName) {
     return this.stats.check(statName);
   }
-  
+
   update() {
     if (!this.impaired) this.movement.update();
     this.sprite.next();
   }
   interact(who) {
-    this.sprite.mirrored = (who.x < this.x);
+    this.sprite.mirrored = who.x < this.x;
     this.dialogue = new Dialogue(who, this).fromText(testDialogue);
 
     this.game.startDialogue(this.dialogue);

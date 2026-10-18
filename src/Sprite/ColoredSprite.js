@@ -20,9 +20,7 @@
 */
 import { ctx } from "../core/Browser.js";
 import Sprite from "./Sprite.js";
-import { createCanvas,
-	 hexToRgb,
-	 PixelImage } from "../global/utilities.js";
+import { createCanvas, hexToRgb, PixelImage } from "../global/utilities.js";
 
 /**
  * Create sprites to display grayscale-source sprites in color
@@ -30,14 +28,20 @@ import { createCanvas,
 class ColoredSprite extends Sprite {
   constructor(spriteName, updateCallback, options) {
     super(spriteName, options);
-    this.color = '#000000';
+    this.color = "#000000";
     ({ canvas: this.canvas, context: this.offCtx } = createCanvas(this.width, this.height));
 
     this.offCtx.drawImage(
-      this.img, this.spriteSheetCol * this.width,
+      this.img,
+      this.spriteSheetCol * this.width,
       this.spriteSheetRow * this.height,
-      this.width, this.height, 0, 0,
-      this.width * this.scaleX, this.height * this.scaleY);
+      this.width,
+      this.height,
+      0,
+      0,
+      this.width * this.scaleX,
+      this.height * this.scaleY,
+    );
 
     this.image = new PixelImage().fromContext(this.offCtx);
 
@@ -47,34 +51,34 @@ class ColoredSprite extends Sprite {
      */
     this.brightness = new Uint8ClampedArray(this.image.pixelCount());
     this.alpha = new Uint8ClampedArray(this.image.pixelCount());
-    
+
     for (let x = 0; x < this.image.pixelCount(); ++x) {
-      this.brightness[x] = 255 - this.image.getDataAt(x*4);
-      this.alpha[x] = this.image.getDataAt(x*4 + 3);
+      this.brightness[x] = 255 - this.image.getDataAt(x * 4);
+      this.alpha[x] = this.image.getDataAt(x * 4 + 3);
     }
     this.img = new Image();
     this.img.onload = updateCallback;
-    this.setColor('#00FF00');
+    this.setColor("#00FF00");
   }
-  setColor(colorHex, areaID = 0) {
+  setColor(colorHex, _areaID = 0) {
     let rgb = hexToRgb(colorHex);
 
     for (let x = 0; x < this.image.pixelCount(); ++x) {
       if (this.image.pixel(x).a === 0) continue;
-      
+
       let br = this.brightness[x];
-      
+
       this.image.pixel(x).setColor({
-	r: rgb.r - br,
-	g: rgb.g - br,
-	b: rgb.b - br,
-	a: this.alpha[x]
+        r: rgb.r - br,
+        g: rgb.g - br,
+        b: rgb.b - br,
+        a: this.alpha[x],
       });
     }
     this.offCtx.clearRect(0, 0, this.width, this.height);
-    
+
     this.image.drawToContext(this.offCtx);
-    this.img.src = this.canvas.toDataURL('image/png');
+    this.img.src = this.canvas.toDataURL("image/png");
   }
   draw(x, y, context = ctx) {
     context.drawImage(this.img, x, y);

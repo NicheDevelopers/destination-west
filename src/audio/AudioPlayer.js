@@ -19,8 +19,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-
-import { soundKind } from "./Sound.js"
+import { soundKind } from "./Sound.js";
 import soundMap from "./soundMap.js";
 import volumeMap from "./volumeMap.js";
 
@@ -36,16 +35,14 @@ class AudioPlayer {
 
   /**
    * Plays a sound from the soundMap
-   * @param {string} soundName 
+   * @param {string} soundName
    * @param {Object} options - optional object with additional options
    * @param {number} options.delay - additional delay in ms before playing the sound
    */
-  play(soundName, options={}) {
+  play(soundName, options = {}) {
     const obtainedSound = this.soundMap.get(soundName);
     if (obtainedSound === undefined) {
-      throw new Error(
-        `Audio Player: No sound object found for name ${soundName}`
-      );
+      throw new Error(`Audio Player: No sound object found for name ${soundName}`);
     }
     // Cloning allows for multiple instances of the sound to be played at once
     if (options.delay) {
@@ -68,7 +65,7 @@ class AudioPlayer {
     if (vol < 0 || vol > 1)
       throw new Error(
         `Audio Player: Invalid volume argument for setMusicVolume.\n` +
-        `Allowed range: <0;1>, but argument is ${vol}`
+          `Allowed range: <0;1>, but argument is ${vol}`,
       );
     this.volumeMap.set(soundKind.Music, vol);
     return true;
@@ -78,7 +75,7 @@ class AudioPlayer {
     if (vol < 0 || vol > 1)
       throw new Error(
         `Audio Player: Invalid volume argument for setMenuMusicVolume.\n` +
-        `Allowed range: <0;1>, but argument is ${vol}`
+          `Allowed range: <0;1>, but argument is ${vol}`,
       );
     this.volumeMap.set(soundKind.MenuMusic, vol);
     return true;
@@ -88,31 +85,32 @@ class AudioPlayer {
     if (vol < 0 || vol > 1)
       throw new Error(
         `Audio Player: Invalid volume argument for setEffectVolume.\n` +
-        `Allowed range: <0;1>, but argument is ${vol}`
+          `Allowed range: <0;1>, but argument is ${vol}`,
       );
     this.volumeMap.set(soundKind.Effect, vol);
     return true;
   }
   setDialogueVolume(vol) {
     if (vol < 0 || vol > 1)
-      throw new Error(`Audio Player: Invalid volume argument for setDialogueVolume.\n` +
-        `Allowed range: <0;1>, but argument is ${vol}>`
+      throw new Error(
+        `Audio Player: Invalid volume argument for setDialogueVolume.\n` +
+          `Allowed range: <0;1>, but argument is ${vol}>`,
       );
     this.volumeMap.set(soundKind.Dialogue, vol);
     return true;
   }
 
   getMusicVolume() {
-    return this.volumeMap.get(soundKind.Music)
+    return this.volumeMap.get(soundKind.Music);
   }
   getMenuMusicVolume() {
-    return this.volumeMap.get(soundKind.MenuMusic)
+    return this.volumeMap.get(soundKind.MenuMusic);
   }
   getEffectVolume() {
-    return this.volumeMap.get(soundKind.Effect)
+    return this.volumeMap.get(soundKind.Effect);
   }
   getDialogueVolume() {
-    return this.volumeMap.get(soundKind.Dialogue)
+    return this.volumeMap.get(soundKind.Dialogue);
   }
 }
 

@@ -5,7 +5,7 @@ import { randIntInRange } from "../global/utilities.js";
  * Describes various variables that affect combat difficulty.
  * Created before the fight and passed as a parameter to `CombatConfig`
  **/
-export class Difficulty { }
+export class Difficulty {}
 
 /**
  * Enum listing types of Combat initiation.
@@ -16,9 +16,6 @@ export const CombatInitiationType = {
   Ambush: "Ambush",
 };
 
-/**
- * Configuration for starting a Combat instance
- **/
 export class CombatConfig {
   /**
    * Create a new CombatConfig
@@ -32,9 +29,6 @@ export class CombatConfig {
 }
 ////////////// END Combat Config //////////
 
-/**
- * Enum listing possible actions for an Entity in combat.
- **/
 const ActionType = {
   Attack: "Attack",
   Retreat: "Retreat",
@@ -42,9 +36,6 @@ const ActionType = {
   UseItem: "UseItem",
 };
 
-/**
- * Describes an action in combat.
- */
 class CombatActionProps {
   constructor(options = {}) {
     if (options.who === undefined)
@@ -70,7 +61,6 @@ class CombatActionProps {
 export const CombatAction = {
   Attack: (who, weapon, targets) => {
     return new CombatActionProps({
-      who: who,
       type: ActionType.Attack,
       who,
       weapon,
@@ -178,9 +168,6 @@ export class Combat {
     ]);
   }
 
-  /**
-   * Reset the combat to its initial state
-   **/
   reset() {
     this.turnIndex = 0;
   }
@@ -204,9 +191,9 @@ export class Combat {
     if (entityAtTurn !== action.who)
       throw new Error(
         "Attempt to execute an action out of turn.\n" +
-        `Expected: ${entityAtTurn.name}, got: ${action.who.name}\n` +
-        `Turn index: ${this.turnIndex}, ` +
-        `turn order: [${this.orderedByTurn.map((e) => e.name)}]`
+          `Expected: ${entityAtTurn.name}, got: ${action.who.name}\n` +
+          `Turn index: ${this.turnIndex}, ` +
+          `turn order: [${this.orderedByTurn.map((e) => e.name).join(",")}]`,
       );
 
     const actionResults = this.executorMap.get(action.type)(action);
@@ -216,9 +203,6 @@ export class Combat {
     return actionResults;
   }
 
-  /**
-   * Move to the next turn
-   */
   nextTurn() {
     this.turnIndex = ++this.turnIndex % this.orderedByTurn.length;
   }
@@ -229,22 +213,26 @@ export class Combat {
    @param {AttackType} attackType
    @returns {MiniGame} minigame that needs to be run
   **/
-  getMinigame(weapon, attackType) { }
+  getMinigame(_weapon, _attackType) {}
 
-  _executeAttack({ _, who, weapon, targets }) {
+  /** @this {void} */
+  _executeAttack({ targets }) {
     return targets.map((t) => {
       return new AttackHitResult(t, randIntInRange(5, 30));
     });
   }
-  _executeRetreat({ _, who }) {
+  /** @this {void} */
+  _executeRetreat({ who }) {
     return new RetreatResult(who, !!Math.round(Math.random()));
   }
-  _executeAbility({ _, who, ability, targets }) {
+  /** @this {void} */
+  _executeAbility({ targets }) {
     return targets.map((t) => {
       return new AbilityHitResult(t, null);
     });
   }
-  _executeUseItem({ _, who, item }) {
+  /** @this {void} */
+  _executeUseItem({ who, item }) {
     return new UseItemResult(who, item.effects);
   }
 

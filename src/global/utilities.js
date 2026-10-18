@@ -167,8 +167,7 @@ export function createElement(
   // needed test if element is equal to some given possibile outcomes
   let r = document.createElement(element);
   classes.forEach((styleClass) => r.classList.add(styleClass));
-  if (w != null && h != null)
-    r.setAttribute("style", `width: ${w}px; height: ${h}px`);
+  if (w != null && h != null) r.setAttribute("style", `width: ${w}px; height: ${h}px`);
   for (const styleName in styles) {
     r.style[styleName] = styles[styleName];
   }
@@ -190,8 +189,8 @@ export function distance({ x: x1, y: y1 }, { x: x2, y: y2 }) {
 }
 
 export function directedDistance(
-  { x: x1, y: y1, direction: dir1 },
-  { x: x2, y: y2, direction: dir2 },
+  { x: x1, y: y1, direction: _dir1 },
+  { x: x2, y: y2, direction: _dir2 },
 ) {
   return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
@@ -243,8 +242,7 @@ export function forbidProperty(obj, prop) {
     configurable: true,
     get: function () {
       throw new Error(
-        `Attempt to read ${prop} property which ` +
-        `is forbidden for ${obj.constructor.name}`
+        `Attempt to read ${prop} property which ` + `is forbidden for ${obj.constructor.name}`,
       );
     },
   });
@@ -366,9 +364,6 @@ export class ObjectSet {
   entries() {
     return this.elements;
   }
-  /**
-     Removes all objects stored in the ObjectSet
-  */
   clear() {
     this.elements.length = 0;
   }
@@ -438,7 +433,7 @@ Object.defineProperty(Array.prototype, "lastNthElement", {
     if (n < 0 || n > this.length - 1) {
       throw new Error(
         `Attempt to get lastNthElement (${n}) of array, ` +
-        `when array's last index is ${this.length - 1}`
+          `when array's last index is ${this.length - 1}`,
       );
     }
     return this[this.length - 1 - n];
@@ -457,8 +452,7 @@ export { Direction, directions };
 export function roll(chance) {
   if (chance < 0 || chance > 1) {
     throw new Error(
-      `Attempt to roll when chance of success ` +
-      `(${chance}) was not between 0 and 1`
+      `Attempt to roll when chance of success ` + `(${chance}) was not between 0 and 1`,
     );
   }
   if (randFloatInRange(0, 1) < chance) return true;
@@ -473,8 +467,7 @@ export function roll(chance) {
 export function seedRoll(chance) {
   if (chance < 0 || chance > 1) {
     throw new Error(
-      `Attempt to seedRoll when chance of success ` +
-      `(${chance}) was not between 0 and 1`
+      `Attempt to seedRoll when chance of success ` + `(${chance}) was not between 0 and 1`,
     );
   }
   if (seed.random() < chance) return true;
@@ -604,13 +597,13 @@ Object.defineProperty(String.prototype, "toNumber", {
 Object.defineProperty(Map.prototype, "keysArray", {
   value: function () {
     return Array.from(this.keys());
-  }
+  },
 });
 
 Object.defineProperty(Map.prototype, "valuesArray", {
   value: function () {
     return Array.from(this.values());
-  }
+  },
 });
 
 Number.prototype.clamp = function (min, max) {
@@ -652,7 +645,7 @@ export class ButtonList {
   /**
    * Adds a button to the ButtonList.
    * @param {string} buttonText - The text displayed on the button
-   * @param {function|ButtonList|ButtonList.BACK} action
+   * @param {function|ButtonList|string} action
    * - A callback function called when the button is pressed,
    * another ButtonList that replaces this one in the display, or
    * a the ButtonList.BACK static value that indicates going going
@@ -667,14 +660,15 @@ export class ButtonList {
       this.pushButton(
         buttonText,
         () => this.backCallback(),
-        (this.rowCount) ? `grid-row: ${this.rowCount}` : ""
+        this.rowCount ? `grid-row: ${this.rowCount}` : "",
       );
       return;
     }
     if (action?.constructor?.name !== "ButtonList")
       throw new Error(
         `Button actions need to be either a function, ` +
-        `a different ButtonList or ButtonList.BACK. Got: '${action}'`
+          `a different ButtonList or ButtonList.BACK. ` +
+          `Got: ${typeof action === "string" ? `'${action}'` : typeof action}`,
       );
 
     let otherList = action;
@@ -688,13 +682,15 @@ export class ButtonList {
    * to the `this.buttons` array. For internal use.
    */
   pushButton(buttonText, onclick, style = "") {
-    this.buttons.push(htmlCreate({
-      what: "button",
-      innerText: buttonText,
-      onclick: onclick,
-      style: style,
-      appendTo: this.div
-    }));
+    this.buttons.push(
+      htmlCreate({
+        what: "button",
+        innerText: buttonText,
+        onclick: onclick,
+        style: style,
+        appendTo: this.div,
+      }),
+    );
   }
 
   /**
@@ -703,8 +699,7 @@ export class ButtonList {
    * Used to signal the decision to the upper ButtonList.
    */
   backCallback() {
-    if (!this.parentList)
-      throw new Error(`Attempt to go back from a top-level ButtonList`);
+    if (!this.parentList) throw new Error(`Attempt to go back from a top-level ButtonList`);
     this.parentList.back();
   }
 
@@ -732,9 +727,6 @@ export class ButtonList {
     this.style();
   }
 
-  /**
-   * Append the ButtonList to the given node
-   */
   appendTo(node) {
     node.appendChild(this.div);
   }
@@ -752,16 +744,12 @@ export class ButtonList {
    * Removes all children from `this.div` and clears `this.div` styling.
    */
   clear() {
-    while (this.div.firstChild)
-      this.div.removeChild(this.div.firstChild);
+    while (this.div.firstChild) this.div.removeChild(this.div.firstChild);
 
     this.div.classList.remove("grid");
     this.div.style.gridTemplateRows = "";
   }
 
-  /**
-   * Brings the ButtonList to its initial state
-   */
   reset() {
     this.clear();
     this.buttons = [];
@@ -770,7 +758,7 @@ export class ButtonList {
 
   /**
    * Set the ButtonList to inherit the construction options of another ButtonList
-   * @param {ButtonList} otherList 
+   * @param {ButtonList} otherList
    * The ButtonList from which the construction options are to be inherited
    * @returns {ButtonList} this
    */
@@ -846,11 +834,9 @@ class Pixel {
   }
 
   isColor(color = {}) {
-    for (const comp in color)
-      if (this[comp] !== color[comp]) return false;
+    for (const comp in color) if (this[comp] !== color[comp]) return false;
     return true;
   }
-
 }
 
 /**
@@ -865,9 +851,6 @@ export class PixelImage {
     return new Proxy(this, { get: PixelImage.get, set: PixelImage.set });
   }
 
-  /**
-   * Load an image from a provided rendering context
-   */
   fromContext(ctx) {
     this.width = ctx.canvas.width;
     this.height = ctx.canvas.height;
@@ -877,21 +860,13 @@ export class PixelImage {
     return this;
   }
 
-  /**
-   * Load an image from the rendering context of a provided canvas
-   */
   fromCanvas(canvas) {
     this.width = canvas.width;
     this.height = canvas.height;
-    this.imgData = canvas
-      .getContext("2d")
-      .getImageData(0, 0, this.width, this.height);
+    this.imgData = canvas.getContext("2d").getImageData(0, 0, this.width, this.height);
     return this;
   }
 
-  /**
-   * Puts image data of the PixelImage to a provided rendering context
-   */
   drawToContext(ctx) {
     ctx.putImageData(this.imgData, 0, 0);
   }
@@ -923,8 +898,7 @@ export class PixelImage {
    * Get ImagaData entries with bound checking
    */
   getDataAt(index) {
-    if (!this.imgData)
-      throw new Error(`Attempt to read pixel data in unloaded PixelImage`);
+    if (!this.imgData) throw new Error(`Attempt to read pixel data in unloaded PixelImage`);
     if (index < 0 || index > this.width * this.height * 4)
       throw new Error(`getDataAt: index is out of bounds (${index})`);
     return this.imgData.data[index];
@@ -934,31 +908,27 @@ export class PixelImage {
    * Set ImagaData entries with bound checking
    */
   setDataAt(index, val) {
-    if (!this.imgData)
-      throw new Error(`Attempt to write pixel data in unloaded PixelImage`);
+    if (!this.imgData) throw new Error(`Attempt to write pixel data in unloaded PixelImage`);
     if (index < 0 || index > this.width * this.height * 4)
       throw new Error(`setDataAt: index is out of bounds (${index})`);
     this.imgData.data[index] = val;
   }
 
-  /**
-   * Get a Pixel at the specified index
-   */
   pixel(index) {
     return this[index % this.width][(index / this.width) | 0];
   }
 
   /**
    * The get handler of the PixelImage Proxy
+   * @this {void}
    */
-  static get(self, prop, receiver) {
+  static get(self, prop, _receiver) {
     if (!prop.isNumber()) return Reflect.get(...arguments);
     if (!self.imgData) throw new Error(`Attempt to read pixel in unloaded PixelImage`);
     let col = prop.toNumber();
     if (col < 0 || col >= self.width)
       throw new Error(
-        `Attempt to read pixel from column ${col} ` +
-        `in ${self.width}px width image`
+        `Attempt to read pixel from column ${col} ` + `in ${self.width}px width image`,
       );
 
     return new Proxy(self, {
@@ -969,10 +939,10 @@ export class PixelImage {
 
   /**
    * The set handler of the PixelImage Proxy
+   * @this {void}
    */
-  static set(self, prop, val, receiver) {
-    if (prop.isNumber())
-      throw new Error(`Direct assignment to PixelImage column is forbidden`);
+  static set(self, prop, _val, _receiver) {
+    if (prop.isNumber()) throw new Error(`Direct assignment to PixelImage column is forbidden`);
 
     return Reflect.set(...arguments);
   }
@@ -982,14 +952,12 @@ export class PixelImage {
    * PixelImage Proxy
    */
   static colGet(col) {
-    return (self, row, receiver) => {
-      if (!row.isNumber())
-        throw new Error(`Given image row is not a number: ${row}`);
+    return (self, row, _receiver) => {
+      if (!row.isNumber()) throw new Error(`Given image row is not a number: ${row}`);
       row = row.toNumber();
       if (row < 0 || row >= self.height)
         throw new Error(
-          `Attempt to read pixel from row ${row} ` +
-          `in ${self.height}px height image`
+          `Attempt to read pixel from row ${row} ` + `in ${self.height}px height image`,
         );
       let pixelIndex = (col + row * self.width) * 4;
 
@@ -1000,11 +968,12 @@ export class PixelImage {
   /**
    * A set handler for column proxies returned by the top-level
    * PixelImage Proxy
+   * @this {void}
    */
-  static colSet(self, prop, val, receiver) {
+  static colSet(_self, _prop, _val, _receiver) {
     throw new Error(
       `Direct assignment to PixelImage's Pixel is forbidden.` +
-      ` Use methods of the Pixel object instead.`
+        ` Use methods of the Pixel object instead.`,
     );
   }
 }
@@ -1035,20 +1004,13 @@ export class TwoWayMap {
     }
     this._map.set(key, value);
 
-    if (!this._pam.has(value))
-      this._pam.set(value, key);
+    if (!this._pam.has(value)) this._pam.set(value, key);
   }
 
-  /**
-   * Get the value that maps to the provided key
-   */
   getValue(key) {
     return this._map.get(key);
   }
 
-  /**
-   * Get the key that maps to the provided value
-   */
   getKey(value) {
     return this._pam.get(value);
   }
@@ -1095,9 +1057,6 @@ export class TwoWayMap {
     return this._map.size;
   }
 
-  /**
-   * Creates a copy of the TwoWayMap
-   */
   copy() {
     return new TwoWayMap(Array.from(this._map.entries()));
   }
@@ -1115,21 +1074,23 @@ export class TwoWayMap {
 }
 
 function jsonReplacer(key, value) {
-  if (typeof value === 'function') {
+  if (typeof value === "function") {
     return value.name;
   }
   return value;
 }
 
 export function toPrettyJson(obj) {
-  return JSON.stringify(obj, jsonReplacer, 2)
+  return JSON.stringify(obj, jsonReplacer, 2);
 }
 
 export function formatError(error) {
   if (!(error instanceof Error))
-    return `Warning: this error is not an instance of Error! ` +
+    return (
+      `Warning: this error is not an instance of Error! ` +
       `Please make sure to throw Error instances instead of strings.\n\n` +
-      `${error}`;
+      `${error}`
+    );
 
   return `${error.message}`;
 }
@@ -1137,7 +1098,6 @@ export function formatError(error) {
 export function makeErrorInfoHeader(error, appendTo) {
   const errorInfo = error.stack.split("\n").first.split("@");
   const errorFunction = errorInfo.first;
-  const errorLocation = errorInfo.last;
   const errorLocationText = errorInfo.last.split(/:[/][/].*?[//]/i).last;
 
   const content = `Thrown by ${errorFunction}() @ `;

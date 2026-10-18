@@ -25,8 +25,11 @@ import Tile from "../game/Tile.js";
 import Entity from "../Entity/Entity.js";
 import { ctx } from "../core/Browser.js";
 import { createCanvas, distance, seedRoll, comparePositions } from "../global/utilities.js";
-import { tileSize, percentageOfGenericDecoration as pGD,
-         focusParameters } from "../global/consts.js";
+import {
+  tileSize,
+  percentageOfGenericDecoration as pGD,
+  focusParameters,
+} from "../global/consts.js";
 import Building from "./Building.js";
 
 /* pathInfo keys describe the presence of paths on adjacent squares.
@@ -38,20 +41,20 @@ import Building from "./Building.js";
 
 const pathInfo = new Map([
   ["street", "street"],
-  ["00100010", ["path-narrow-side-1","path-narrow-side-2","path-narrow-side-3"]],
-  ["00100011", ["path-narrow-side-1","path-narrow-side-2","path-narrow-side-3"]],
-  ["01100010", ["path-narrow-side-1","path-narrow-side-2","path-narrow-side-3"]],
-  ["01110010", ["path-narrow-side-1","path-narrow-side-2","path-narrow-side-3"]], 
-  ["00001010", ["path-narrrow-corner-1","path-narrrow-corner-2"]],
-  ["00000010", ["path-narrow-end-1","path-narrow-end-2"]],
-  ["10001010", ["path-narrow-fork-1","path-narrow-fork-2"]],
-  ["10101010", ["path-narrow-crossroad-1","path-narrow-crossroad-2"]],
+  ["00100010", ["path-narrow-side-1", "path-narrow-side-2", "path-narrow-side-3"]],
+  ["00100011", ["path-narrow-side-1", "path-narrow-side-2", "path-narrow-side-3"]],
+  ["01100010", ["path-narrow-side-1", "path-narrow-side-2", "path-narrow-side-3"]],
+  ["01110010", ["path-narrow-side-1", "path-narrow-side-2", "path-narrow-side-3"]],
+  ["00001010", ["path-narrrow-corner-1", "path-narrrow-corner-2"]],
+  ["00000010", ["path-narrow-end-1", "path-narrow-end-2"]],
+  ["10001010", ["path-narrow-fork-1", "path-narrow-fork-2"]],
+  ["10101010", ["path-narrow-crossroad-1", "path-narrow-crossroad-2"]],
   ["11111111", ["path-wide-full-1"]],
-  ["11111110", ["path-wide-inner-corner-1","path-wide-inner-corner-2"]],
-  ["00111110", ["path-wide-side-1","path-wide-side-2"]],
-  ["01111110", ["path-wide-side-1","path-wide-side-2"]],
-  ["00111111", ["path-wide-side-1","path-wide-side-2"]],
-  ["00001110", ["path-wide-corner-1","path-wide-corner-2"]],
+  ["11111110", ["path-wide-inner-corner-1", "path-wide-inner-corner-2"]],
+  ["00111110", ["path-wide-side-1", "path-wide-side-2"]],
+  ["01111110", ["path-wide-side-1", "path-wide-side-2"]],
+  ["00111111", ["path-wide-side-1", "path-wide-side-2"]],
+  ["00001110", ["path-wide-corner-1", "path-wide-corner-2"]],
   //path-wide-fork
   //["11111010","path-wide-corner-1"],
   //path-wider-fork-left
@@ -70,7 +73,7 @@ class Location {
     this.widthPx = this.width * tileSize;
     this.heightPx = this.height * tileSize;
     this.awaitAssets = 0;
-    this.playerSpawn = {x: 0, y: 0 };
+    this.playerSpawn = { x: 0, y: 0 };
     //temporary
     this.containers = new Array();
     this.droppedItems = new Array();
@@ -86,24 +89,24 @@ class Location {
       setTimeout(() => this.prerender(), 0);
       return;
     }
-    let { canvas, context: offCtx } =
-      createCanvas(this.widthPx, this.heightPx);
+    let { canvas, context: offCtx } = createCanvas(this.widthPx, this.heightPx);
     offCtx.clearRect(0, 0, this.widthPx, this.heightPx);
 
     this.drawRaw(0, 0, offCtx);
     this.image = new Image(this.widthPx, this.heightPx);
-    this.image.onload = () => { this.created = true; };
-    this.image.src = canvas.toDataURL('image/png');
+    this.image.onload = () => {
+      this.created = true;
+    };
+    this.image.src = canvas.toDataURL("image/png");
   }
 
   // check if there's a builing in the 5x5 square surrounding a tile
-  nearToBuilding(xPos, yPos, maxDist=2) {
+  nearToBuilding(xPos, yPos, maxDist = 2) {
     for (let i = -maxDist; i <= maxDist; i++)
       for (let j = -maxDist; j <= maxDist; j++) {
         if (xPos + i < 0 || xPos + i >= this.array.length) continue;
         if (yPos + j < 0 || yPos + j >= this.array[0].length) continue;
-        if (this.array[xPos + i][yPos + j].hasEntityOfType(Building))
-	  return true;
+        if (this.array[xPos + i][yPos + j].hasEntityOfType(Building)) return true;
       }
     return false;
   }
@@ -115,11 +118,7 @@ class Location {
    * Tiles within a 5x5 square of a building are considered to be close to it.
    */
   placeGenericDecoration() {
-    let rural_generic_decorations = [
-      ["cactus-1x"],
-      ["small-stones-1"],
-      ["green-bush-1"]
-    ];
+    let rural_generic_decorations = [["cactus-1x"], ["small-stones-1"], ["green-bush-1"]];
 
     let town_generic_decorations = [
       //["roadsign", 1],
@@ -129,22 +128,26 @@ class Location {
 
     for (let i = 0; i < this.array.length; i++)
       for (let j = 0; j < this.array[0].length; j++) {
-        if (this.array[i][j].typeName !== 'sand') continue;
-	if (this.array[i][j].hasEntityOfType(Building)) continue;
-	
+        if (this.array[i][j].typeName !== "sand") continue;
+        if (this.array[i][j].hasEntityOfType(Building)) continue;
+
         let array = null;
-        
+
         if (!this.nearToBuilding(i, j) && seedRoll(pGD.town_percentage))
           array = town_generic_decorations;
         else if (!this.nearToBuilding(i, j) && seedRoll(pGD.rural_percentage))
           array = rural_generic_decorations;
-        
+
         if (array)
           this.decorations.push(
-	    new Entity(this.game, "decoration-" + array.srandomElement(),
-		       i * tileSize, j * tileSize,
-		       { hitbox: this.array })
-	  );
+            new Entity(
+              this.game,
+              "decoration-" + array.srandomElement(),
+              i * tileSize,
+              j * tileSize,
+              { hitbox: this.array },
+            ),
+          );
       }
   }
 
@@ -162,69 +165,74 @@ class Location {
       }
   }
 
-  placeBuilding(startX, startY, widthInTiles,
-		heightInTiles, buildingType, options) {
-    for (let y=startY; y<startY+heightInTiles; ++y) {
-      for (let x=startX; x<startX+widthInTiles; ++x) {
-	this.array[x][y] = new Tile("sand", x*tileSize, y*tileSize);
+  placeBuilding(startX, startY, widthInTiles, heightInTiles, buildingType, options) {
+    for (let y = startY; y < startY + heightInTiles; ++y) {
+      for (let x = startX; x < startX + widthInTiles; ++x) {
+        this.array[x][y] = new Tile("sand", x * tileSize, y * tileSize);
       }
     }
-    let width = widthInTiles*tileSize;
-    let height = heightInTiles*tileSize;
+    let width = widthInTiles * tileSize;
+    let height = heightInTiles * tileSize;
     let rcp = {
-      x: ~~(width/2),
-      y: ~~(height/2)
+      x: ~~(width / 2),
+      y: ~~(height / 2),
     };
     let bd = {
       left: width - rcp.x - 1,
       right: width - rcp.x - 1,
-      up: height - rcp.y - 1 - tileSize/2,
-      down: height - rcp.y - 1
+      up: height - rcp.y - 1 - tileSize / 2,
+      down: height - rcp.y - 1,
     };
-    this.buildings.push(new Building(
-      this.game,
-      startX*tileSize, startY*tileSize,
-      widthInTiles, heightInTiles,
-      buildingType,
-      Object.assign(options, {
-	hitbox: this.array,
-	relativeCenterPoint: rcp,
-	boundingDistance: bd
-      })));
+    this.buildings.push(
+      new Building(
+        this.game,
+        startX * tileSize,
+        startY * tileSize,
+        widthInTiles,
+        heightInTiles,
+        buildingType,
+        Object.assign(options, {
+          hitbox: this.array,
+          relativeCenterPoint: rcp,
+          boundingDistance: bd,
+        }),
+      ),
+    );
   }
 
   chooseStreet(streetArray, x, y) {
-    let string = '';
+    let string = "";
 
     console.assert(streetArray != undefined, "streetArray is undefined");
     const surrounding = [
-      [0, -1], [1, -1],
-      [1, 0], [1, 1], 
-      [0, 1], [-1, 1], 
-      [-1, 0], [-1, -1]
+      [0, -1],
+      [1, -1],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+      [-1, 1],
+      [-1, 0],
+      [-1, -1],
     ];
-    surrounding.forEach(place => {
+    surrounding.forEach((place) => {
       try {
-        streetArray[x + place[0]][y + place[1]] === 1 ? string += '1' : string += '0';
-      }
-      catch (e) {
-        if (e instanceof TypeError) string += '1'; else throw e;
+        string += streetArray[x + place[0]][y + place[1]] === 1 ? "1" : "0";
+      } catch (e) {
+        if (e instanceof TypeError) string += "1";
+        else throw e;
       }
     });
 
     for (const element of [0, 90, 180, 270]) {
-      if (pathInfo.has(string)) 
-        return [pathInfo.get(string).srandomElement(), element];
-      string = string.substring(2, 8) + string.substring(0, 2)
+      if (pathInfo.has(string)) return [pathInfo.get(string).srandomElement(), element];
+      string = string.substring(2, 8) + string.substring(0, 2);
     }
 
-    return [pathInfo.get('street'), 0];
-
+    return [pathInfo.get("street"), 0];
   }
 
   placeStreets(preset) {
-    let streetArray = new Array(this.width);
-    for (let x = 0; x < this.width; ++x) streetArray[x] = new Array(this.height);
+    let streetArray = Array.from({ length: this.width }, () => Array.from({ length: this.height }));
 
     preset.streets.forEach((street) => {
       for (let i = street.start.x; i < street.start.x + street.width; ++i)
@@ -238,13 +246,12 @@ class Location {
         for (let j = street.start.y; j < street.start.y + street.height; ++j) {
           this.awaitAssets++;
           let nameAndDegree = this.chooseStreet(streetArray, i, j);
-          if (streetArray[i][j] == 1) this.array[i][j] = new Tile(
-	    nameAndDegree[0], i * tileSize, j * tileSize,
-	    {
+          if (streetArray[i][j] == 1)
+            this.array[i][j] = new Tile(nameAndDegree[0], i * tileSize, j * tileSize, {
               rotation: nameAndDegree[1],
-	      callback: () => {
+              callback: () => {
                 this.awaitAssets--;
-              }
+              },
             });
         }
       }
@@ -265,19 +272,19 @@ class Location {
       this.focused = null;
     }
     let minDist = focusParameters.minDist;
-    
+
     let entities = this.getInteractibles();
 
     for (let item of entities) {
       let d = distance(item.getCenterPoint(), player.getCenterPoint());
 
-      if ((player.isFacingRight() &&
-	item.getCenterPoint().x > player.getCenterPoint().x) ||
-	(!player.isFacingRight() &&
-	  item.getCenterPoint().x < player.getCenterPoint().x)) {
-	d += focusParameters.facingPenalty;
+      if (
+        (player.isFacingRight() && item.getCenterPoint().x > player.getCenterPoint().x) ||
+        (!player.isFacingRight() && item.getCenterPoint().x < player.getCenterPoint().x)
+      ) {
+        d += focusParameters.facingPenalty;
       }
-      
+
       if (d < minDist) {
         minDist = d;
         this.focused = item;
@@ -287,14 +294,12 @@ class Location {
     if (!this.focused) return;
     this.focused.focus = true;
   }
-  
+
   draw(x = 0, y = 0, context = ctx, width = 672, height = 288) {
-    if (!this.created)
-      return;
-    context.drawImage(this.image, x, y, width, height,
-                      0, 0, width, height);
+    if (!this.created) return;
+    context.drawImage(this.image, x, y, width, height, 0, 0, width, height);
   }
-  
+
   drawRaw(x0 = 0, y0 = 0, context = ctx) {
     for (let x = 0; x < this.array.length; ++x)
       for (let y = 0; y < this.array[0].length; ++y) {
@@ -324,26 +329,23 @@ class Location {
       player,
     ].flat();
 
-    let sorted = arr.filter(e => !e.ignoreDepth)
+    let sorted = arr
+      .filter((e) => !e.ignoreDepth)
       .sort((e1, e2) => {
-	const y1 = (e1.y + e1?.relativeCenterPoint?.y) || e1.y+64;
-	const y2 = (e2.y + e2?.relativeCenterPoint?.y) || e2.y+64;
-	
-	return y1-y2;
+        const y1 = e1.y + e1?.relativeCenterPoint?.y || e1.y + 64;
+        const y2 = e2.y + e2?.relativeCenterPoint?.y || e2.y + 64;
+
+        return y1 - y2;
       });
-    
-    return [
-      arr.filter(e => e.ignoreDepth),
-      sorted
-    ];
+
+    return [arr.filter((e) => e.ignoreDepth), sorted];
   }
 
   update(player) {
-    this.npcs.forEach(npc => npc.update());
+    this.npcs.forEach((npc) => npc.update());
 
-    if (this.lastPlayerPos && comparePositions(player, this.lastPlayerPos))
-      return;
-    
+    if (this.lastPlayerPos && comparePositions(player, this.lastPlayerPos)) return;
+
     this.updateFocus(player);
     this.lastPlayerPos = { x: player.x, y: player.y };
   }

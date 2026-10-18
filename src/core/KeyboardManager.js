@@ -1,7 +1,10 @@
 import { TwoWayMap } from "../global/utilities.js";
 import { stateManager } from "../global/stateManager.js";
-import defaultKeybinds, { actions as specialActions, StateStartKey, CopyKey }
-  from "../global/defaultKeybinds.js";
+import defaultKeybinds, {
+  actions as specialActions,
+  StateStartKey,
+  CopyKey,
+} from "../global/defaultKeybinds.js";
 
 /* Prevent accidental game exit. To be used in the future
 window.onbeforeunload = (e) => {
@@ -10,9 +13,6 @@ window.onbeforeunload = (e) => {
   };
 */
 
-/**
- * Provide a simple interface for managing keyboard events
- */
 export class KeyboardManager {
   constructor() {
     /**
@@ -46,15 +46,13 @@ export class KeyboardManager {
   manageKeydown(event) {
     let key = event.key.toLowerCase();
 
-    if (this.ignore.has(key))
-      return;
+    if (this.ignore.has(key)) return;
 
     let action = this.getAction(key);
 
     if (action === specialActions.NONE) return;
 
-    if (action && !this.requests.hasValue(action))
-      this.requests.set(key, action);
+    if (action && !this.requests.hasValue(action)) this.requests.set(key, action);
   }
   manageKeyup(event) {
     let key = event.key.toLowerCase();
@@ -73,10 +71,9 @@ export class KeyboardManager {
    * @param callback - The function to call if the action has been requested
    * @param options.once [true] - Whether the input is meant to be managed
    * once per keypress (and not every tick while the key is down).
-  */
+   */
   manageInput(action, callback, options = {}) {
-    if (!this.isActionRequested(action))
-      return;
+    if (!this.isActionRequested(action)) return;
 
     let key = this.requests.getKey(action);
 
@@ -111,11 +108,9 @@ export class KeyboardManager {
    */
   bindsAt(stateName) {
     return this.stateBinds.get(stateName)?.map(([key, action]) => {
-      if (key instanceof StateStartKey)
-        return [stateManager.currentState.startKey, action];
+      if (key instanceof StateStartKey) return [stateManager.currentState.startKey, action];
 
-      if (key instanceof CopyKey)
-        return [this.bindsAt(key.state).getKey(key.action), action];
+      if (key instanceof CopyKey) return [this.bindsAt(key.state).getKey(key.action), action];
 
       return [key, action];
     }, true);
@@ -134,8 +129,7 @@ export class KeyboardManager {
    * Returns undefined otherwise.
    */
   getKey(action) {
-    return this.currentBinds()?.getKey(action) ??
-      this.bindsAt("general").getKey(action);
+    return this.currentBinds()?.getKey(action) ?? this.bindsAt("general").getKey(action);
   }
 
   /**
@@ -143,8 +137,7 @@ export class KeyboardManager {
    * or in the general keybinds. Returns undefined if the key is not bound in either.
    */
   getAction(key) {
-    return this.currentBinds()?.getValue(key) ??
-      this.bindsAt("general").getValue(key);
+    return this.currentBinds()?.getValue(key) ?? this.bindsAt("general").getValue(key);
   }
 
   clearInputs() {

@@ -43,8 +43,7 @@ export class FindQuestBuilder {
     this.availabilityCondition = availaibilityCondition;
   }
   validate() {
-    let res =
-      this.questGiver instanceof Npc && this.config instanceof FindQuestConfig;
+    let res = this.questGiver instanceof Npc && this.config instanceof FindQuestConfig;
     if (!res) {
       throw new Error("Attempt to create a quest with invalid argument types");
     }
@@ -54,7 +53,7 @@ export class FindQuestBuilder {
   _generateItems() {
     return this.config.entries
       .map((e) => {
-        return new Array(e.numOfItems).fill().map(() => createItem(e.itemObj));
+        return Array.from({ length: e.numOfItems }, () => createItem(e.itemObj));
       })
       .flat();
   }

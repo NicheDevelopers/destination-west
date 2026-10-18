@@ -3,12 +3,33 @@
 # For information on SAST configuration see:
 # https://docs.gitlab.com/ee/user/application_security/sast/
 
+include:
+  - remote: 'https://raw.githubusercontent.com/voidzero-dev/setup-vp/v1.21.2/gitlab/setup-vp.yml'
+    inputs:
+      setup-ref: 'v1.21.2'
+
+lint:
+  stage: lint
+  extends: .setup-vp
+  image: node:24
+  script:
+  - vp lint --deny-warnings
+
+fmt:
+  stage: lint
+  extends: .setup-vp
+  image: node:24
+  script:
+  - vp fmt --check
+
 pages:
   stage: deploy
+  extends: .setup-vp
+  image: node:24
   script:
-  - mkdir .public
-  - cp -r * .public
-  - mv .public public
+  - vp run build
+  - rm -rf public
+  - mv dist public
   artifacts:
     paths:
     - public
@@ -84,6 +105,7 @@ sast postprocessing:
     - kics-iac-sast
 
 stages:
+- lint
 - security
 - security_postprocessing
 - deploy

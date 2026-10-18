@@ -31,7 +31,7 @@ class RevolverLoadingGame extends State {
     this.gameContainer = document.querySelector("#game-container");
     this.game = game;
     this.mainDiv = htmlCreate({
-      "background-image": `url("../img/battle_assets/revolver_minigame/revolver-firing-board.png")`,
+      "background-image": `url("img/battle_assets/revolver_minigame/revolver-firing-board.png")`,
       id: "shooting-range",
       appendTo: this.gameContainer
     });
@@ -50,7 +50,7 @@ class RevolverLoadingGame extends State {
       direction = direction == 0 ? 'left' : 'right';
       this.arrowDirections.push(direction);
       this.arrowDivs.push(htmlCreate({
-        "background-image": `url("../img/battle_assets/revolver_minigame/revolver-load-` + direction + `.png")`,
+        "background-image": `url("img/battle_assets/revolver_minigame/revolver-load-` + direction + `.png")`,
         id: arrowid,
         left: (25 + 10 * (i % 3)) + "%",
         top: 5 + 50 * ~~(i / 3) + "%",
@@ -89,7 +89,7 @@ class RevolverLoadingGame extends State {
       return;
     }
     if (playerDirection == this.arrowDirections[this.currentArrow]) {
-      this.arrowDivs[this.currentArrow].style.backgroundImage = `url("../img/battle_assets/revolver_minigame/revolver-load-` + this.arrowDirections[this.currentArrow] + `-correct.png")`;
+      this.arrowDivs[this.currentArrow].style.backgroundImage = `url("img/battle_assets/revolver_minigame/revolver-load-` + this.arrowDirections[this.currentArrow] + `-correct.png")`;
       this.soundAgent.play("revolver-load");
       ++this.successfulLoads;
       ++this.currentArrow;
@@ -97,7 +97,7 @@ class RevolverLoadingGame extends State {
         this.soundAgent.play("revolver-roll", { delay: 300 });
       return;
     }
-    this.arrowDivs[this.currentArrow].style.backgroundImage = `url("../img/battle_assets/revolver_minigame/revolver-load-` + this.arrowDirections[this.currentArrow] + `-incorrect.png")`;
+    this.arrowDivs[this.currentArrow].style.backgroundImage = `url("img/battle_assets/revolver_minigame/revolver-load-` + this.arrowDirections[this.currentArrow] + `-incorrect.png")`;
     ++this.currentArrow;
     if (this.currentArrow >= this.bullets)
       this.soundAgent.play("revolver-roll", { delay: 300 });

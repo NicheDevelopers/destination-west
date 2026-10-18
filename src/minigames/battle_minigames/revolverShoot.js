@@ -31,7 +31,7 @@ class RevolverShootingGame extends State {
     let gameContainer = document.querySelector("#game-container");
     this.game = game;
     this.mainDiv = htmlCreate({
-      "background-image": `url("../img/battle_assets/revolver_minigame/revolver-firing-board.png")`,
+      "background-image": `url("img/battle_assets/revolver_minigame/revolver-firing-board.png")`,
       id: "shooting-range",
       appendTo: gameContainer
     });
@@ -72,7 +72,7 @@ class RevolverShootingGame extends State {
         // no, we can't just use colored divs, i want those to look like actual bullets
         // which someone will need to draw (i can do it, i just need time)
         {
-          "background-image": `url("../img/battle_assets/revolver_minigame/revolver-firing-particle.png")`,
+          "background-image": `url("img/battle_assets/revolver_minigame/revolver-firing-particle.png")`,
           id: bulletid,
           left: bulletlefts[i] + "%",
           className: "bullet",

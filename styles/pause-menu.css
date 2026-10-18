@@ -78,7 +78,7 @@
 }
 
 #pause-menu-wanted-poster {
-    background-image: url("../img/pauseMenu-wantedPoster.jpg");
+    background-image: url("/img/pauseMenu-wantedPoster.jpg");
     height: calc(100% - 20px);
     width: calc(70% - 20px);
     margin: 10px;

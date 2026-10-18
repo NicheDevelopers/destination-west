@@ -19,27 +19,28 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Sprite from "../Sprite/Sprite.js"
+import Sprite from "../Sprite/Sprite.js";
 import { generateID } from "../global/utilities.js";
 import { tileSize } from "../global/consts.js";
 import { notifier, Notification } from "../global/notifier.js";
 import { addTraits, centerPointTrait } from "../traits.js";
 
-class DroppedItem{
+class DroppedItem {
   constructor(item) {
-    this.item = item,
+    this.item = item;
     this.sprite = new Sprite("decoration-big-bag-3x");
     this.loadedFocusedSprite = false;
-    this.focusedSprite = new Sprite("decoration-big-bag-3x",
-				    { outline: true, callback:
-				      () => this.loadedFocusedSprite = true });
+    this.focusedSprite = new Sprite("decoration-big-bag-3x", {
+      outline: true,
+      callback: () => (this.loadedFocusedSprite = true),
+    });
     this.focus = false;
     this.x = null;
     this.y = null;
     this.id = generateID(DroppedItem);
     addTraits(this, centerPointTrait());
   }
-  
+
   draw(cameraX, cameraY) {
     if (this.focus && this.loadedFocusedSprite) {
       this.focusedSprite.draw(this.x - cameraX, this.y - cameraY);
@@ -47,21 +48,20 @@ class DroppedItem{
     }
     this.sprite.draw(this.x - cameraX, this.y - cameraY);
   }
-  
+
   interact(who) {
     if (who.equipment.put(this.item)) {
-      who.game.currentTown.droppedItems =
-	who.game.currentTown.droppedItems.filter(
-	  (i) => i.id !== this.id);
+      who.game.currentTown.droppedItems = who.game.currentTown.droppedItems.filter(
+        (i) => i.id !== this.id,
+      );
     }
     notifier.send(new Notification(`Picked up ${this.item.name}`, this.item.spriteName));
   }
 
   setPositionTo(pos) {
-    this.x = pos.x - tileSize/2;
-    this.y = pos.y - tileSize/2;
+    this.x = pos.x - tileSize / 2;
+    this.y = pos.y - tileSize / 2;
   }
-  
 }
 
 export default DroppedItem;

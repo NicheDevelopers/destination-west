@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import { State, stateManager } from "../global/stateManager.js"
+import { State, stateManager } from "../global/stateManager.js";
 import { createElement, randIntInRange } from "../global/utilities.js";
 import { chuckALuckParameters as cal } from "../global/consts.js";
 
@@ -31,88 +31,114 @@ class ChuckALuck extends State {
 
     this.score = 0;
 
-    this.mainDiv = createElement('div', null, null, [], {}, "minigame-table", null);
+    this.mainDiv = createElement("div", null, null, [], {}, "minigame-table", null);
 
     this.mainDiv.style.display = "none";
 
     this.diceState = [6, 6, 6];
-    this.diceSprites = ['url("img/minigame_assets/dice_1.png")',
-                        'url("img/minigame_assets/dice_2.png")', 
-                        'url("img/minigame_assets/dice_3.png")', 
-                        'url("img/minigame_assets/dice_4.png")', 
-                        'url("img/minigame_assets/dice_5.png")', 
-                        'url("img/minigame_assets/dice_6.png")'];
+    this.diceSprites = [
+      'url("img/minigame_assets/dice_1.png")',
+      'url("img/minigame_assets/dice_2.png")',
+      'url("img/minigame_assets/dice_3.png")',
+      'url("img/minigame_assets/dice_4.png")',
+      'url("img/minigame_assets/dice_5.png")',
+      'url("img/minigame_assets/dice_6.png")',
+    ];
     this.chosenNumbers = [];
-    
-    this.diceAreaDiv = createElement('div', null, null, [], {}, "dice-area", null)
-    this.diceAreaDiv.addEventListener("click", () => {this.rollTheDice()});
+
+    this.diceAreaDiv = createElement("div", null, null, [], {}, "dice-area", null);
+    this.diceAreaDiv.addEventListener("click", () => {
+      this.rollTheDice();
+    });
     this.diceDivs = [];
 
-    for(let i = 0; i < 3; ++i){
-      let div = createElement('div', null, null, ["dice"], {
-        top: `${i * (cal.diceSize + cal.diceGap)}px`,
-        backgroundImage: this.diceSprites[this.diceState[i] - 1],
-        }, `dice-${i+1}`, null);
+    for (let i = 0; i < 3; ++i) {
+      let div = createElement(
+        "div",
+        null,
+        null,
+        ["dice"],
+        {
+          top: `${i * (cal.diceSize + cal.diceGap)}px`,
+          backgroundImage: this.diceSprites[this.diceState[i] - 1],
+        },
+        `dice-${i + 1}`,
+        null,
+      );
       this.diceDivs.push(div);
       this.diceAreaDiv.appendChild(div);
     }
 
-    this.bettingAreaDiv = createElement('div', null, null, [], {}, "betting-area", null);
+    this.bettingAreaDiv = createElement("div", null, null, [], {}, "betting-area", null);
     this.bettingDivs = [];
-    for(let i = 0; i < 6; ++i){
+    for (let i = 0; i < 6; ++i) {
       //move the next div N spaces (space width = 63) and N - 1 betting spaces (betting space width = 128) to the left, loop every three iterations
-      let top = `${(cal.verticalOffset + (cal.bettingSpotSize + cal.verticalGap) * (~~(i / 3)))}px`;
+      let top = `${cal.verticalOffset + (cal.bettingSpotSize + cal.verticalGap) * ~~(i / 3)}px`;
       //move the div two betting space heights lower(height of one = 128), increase by two betting spaces every 3 iterations (one row)
-      let left = `${(cal.horizontalGap * (i % 3 + 1) + cal.bettingSpotSize * (i % 3))}px`;
-      let div = createElement('div', null, null, ["betting-spot"], {
-        left: left,
-        top: top
-        }, `bet-on-${i+1}`, null);
-      div.addEventListener("click", () => {this.addChoice(i + 1)});
+      let left = `${cal.horizontalGap * ((i % 3) + 1) + cal.bettingSpotSize * (i % 3)}px`;
+      let div = createElement(
+        "div",
+        null,
+        null,
+        ["betting-spot"],
+        {
+          left: left,
+          top: top,
+        },
+        `bet-on-${i + 1}`,
+        null,
+      );
+      div.addEventListener("click", () => {
+        this.addChoice(i + 1);
+      });
       this.bettingDivs.push(div);
       this.bettingAreaDiv.appendChild(div);
     }
 
-    this.scoreDiv = createElement('div', null, null, ["score-text"], {}, "score-text", "Choose up to 3 numbers.");
-    this.bettingAreaDiv.appendChild(this.scoreDiv)
+    this.scoreDiv = createElement(
+      "div",
+      null,
+      null,
+      ["score-text"],
+      {},
+      "score-text",
+      "Choose up to 3 numbers.",
+    );
+    this.bettingAreaDiv.appendChild(this.scoreDiv);
 
     this.mainDiv.appendChild(this.diceAreaDiv);
     this.mainDiv.appendChild(this.bettingAreaDiv);
     gameContainer.appendChild(this.mainDiv);
   }
-  
+
   manageInput(keyman) {
-    keyman.manageRequest(
-      'Toggle Pause Menu',
-      () => stateManager.toggleState(this)
-    );
+    keyman.manageRequest("Toggle Pause Menu", () => stateManager.toggleState(this));
   }
-  
-  update() {
-  }
-  
+
+  update() {}
+
   start() {
     stateManager.toggleState(this);
-    this.refresh()
+    this.refresh();
   }
 
   refresh() {
-    if (this.chosenNumbers.length === 0){
+    if (this.chosenNumbers.length === 0) {
       this.renderWithoutBet();
       return;
     }
     this.renderWithBet();
   }
 
-  renderWithoutBet(){
+  renderWithoutBet() {
     this.scoreDiv.innerText = "Choose up to 3 numbers.";
     this.update();
   }
 
-  renderWithBet(){
+  renderWithBet() {
     let text = "Current score: " + this.score + "\n Chosen numbers: ";
-    for(let i = 0; i < this.chosenNumbers.length; ++i){
-      if(i + 1 === this.chosenNumbers.length){
+    for (let i = 0; i < this.chosenNumbers.length; ++i) {
+      if (i + 1 === this.chosenNumbers.length) {
         text += this.chosenNumbers[i] + ".";
         continue;
       }
@@ -122,19 +148,18 @@ class ChuckALuck extends State {
     this.update();
   }
 
-  addChoice(number){
-    if(this.chosenNumbers.length < 3)
-      this.chosenNumbers.push(number);
+  addChoice(number) {
+    if (this.chosenNumbers.length < 3) this.chosenNumbers.push(number);
     this.refresh();
   }
 
-  rollTheDice(){
-    if(this.chosenNumbers.length === 0){
+  rollTheDice() {
+    if (this.chosenNumbers.length === 0) {
       this.scoreDiv.innerText = "You must first choose at least one number!";
       return;
     }
     let interval = setInterval(() => {
-      this.rerollDices()
+      this.rerollDices();
     }, 10);
     setTimeout(() => {
       clearInterval(interval);
@@ -148,9 +173,9 @@ class ChuckALuck extends State {
     this.rerollDices();
     let multiplier = 0;
     let scoreJudge = [...this.diceState];
-    for(let number of this.chosenNumbers){
+    for (let number of this.chosenNumbers) {
       // console.log(number, this.chosenNumbers);
-      if(scoreJudge.includes(number)){
+      if (scoreJudge.includes(number)) {
         this.score += 1;
         multiplier += 1;
         scoreJudge.popFirst(number);
@@ -161,15 +186,15 @@ class ChuckALuck extends State {
     return multiplier;
   }
 
-  rerollDices(){
-    for(let i = 0; i < this.diceState.length; ++i){
+  rerollDices() {
+    for (let i = 0; i < this.diceState.length; ++i) {
       this.diceState[i] = randIntInRange(1, 7);
       this.diceDivs[i].style.backgroundImage = this.diceSprites[this.diceState[i] - 1];
     }
   }
 
-  updateScoreText (multiplier){
-    if(multiplier > 0) {
+  updateScoreText(multiplier) {
+    if (multiplier > 0) {
       let display_multiplier = multiplier + 1;
       this.scoreDiv.innerText = "You won " + display_multiplier + "x your bet!";
       return;
@@ -182,7 +207,7 @@ class ChuckALuck extends State {
   }
   endHook() {
     this.mainDiv.style.display = "none";
-    this.score = 0; 
+    this.score = 0;
     this.chosenNumbers = [];
     /*
       should we set score to zero after ending game?

@@ -19,8 +19,6 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import Tile from "../game/Tile.js";
-import { tileSize } from "../global/consts.js";
 import Entity from "../Entity/Entity.js";
 
 class Building extends Entity {

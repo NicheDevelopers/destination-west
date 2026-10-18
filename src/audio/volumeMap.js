@@ -25,7 +25,7 @@ const volumeMap = new Map([
   [soundKind.Music, 1],
   [soundKind.MenuMusic, 1],
   [soundKind.Effect, 1],
-  [soundKind.Dialogue, 1]
+  [soundKind.Dialogue, 1],
 ]);
 
 export default volumeMap;

@@ -21,9 +21,6 @@
 
 import { htmlCreate, formatError, makeErrorInfoHeader } from "../global/utilities.js";
 
-/**
- * Class for dealing with browser-specific methods, requests
- */
 class Browser {
   constructor(app) {
     this.app = app;
@@ -31,22 +28,22 @@ class Browser {
 
   toggleFullscreen() {
     if (document.fullscreenElement) {
-      document.exitFullscreen();
+      void document.exitFullscreen();
       return;
     }
-    document.documentElement.requestFullscreen();
+    void document.documentElement.requestFullscreen();
   }
 
   displayError(error) {
     let errorMessageBox = htmlCreate({
       id: "error-message-box",
-      appendTo: document.querySelector("#game-container")
+      appendTo: document.querySelector("#game-container"),
     });
 
     htmlCreate({
       what: "h1",
       innerText: "An error occurred",
-      appendTo: errorMessageBox
+      appendTo: errorMessageBox,
     });
 
     makeErrorInfoHeader(error, errorMessageBox);
@@ -54,7 +51,7 @@ class Browser {
     htmlCreate({
       what: "span",
       innerText: formatError(error),
-      appendTo: errorMessageBox
+      appendTo: errorMessageBox,
     });
   }
 }
@@ -65,7 +62,6 @@ const gc = document.querySelector("#game-canvas");
  * The canvas rendering context for the canvas #game-canvas
  */
 const ctx = gc.getContext("2d");
-
 
 export function getGameCanvasSizeX() {
   return gc.scrollWidth;

@@ -1,4 +1,3 @@
-
 /*
   file: src/Weapon.js
   purpose: Define the Weapon class
@@ -32,21 +31,20 @@ class Weapon extends Item {
   }
 
   static validateSpecialFields(recipe) {
-    const props = ['type', 'damage', 'critChance', 'critMultiplier', 'durabilityLossPerUse'];
+    const props = ["type", "damage", "critChance", "critMultiplier", "durabilityLossPerUse"];
     const throwValidationError = (prop) => {
       throw new Error(
         `Weapon recipe must have a '${prop}' property.\n` +
-        `Recipe received: ${JSON.stringify(recipe)}`
+          `Recipe received: ${JSON.stringify(recipe)}`,
       );
-    }
+    };
     for (const prop of props) {
-      if (!recipe[prop])
-        throwValidationError(prop);
+      if (!recipe[prop]) throwValidationError(prop);
     }
   }
 
   reduceDurability(times) {
-    this.durability -= this.durabilityLossPerUse * times
+    this.durability -= this.durabilityLossPerUse * times;
   }
 }
 

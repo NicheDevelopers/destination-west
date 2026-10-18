@@ -19,8 +19,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { ctx,  getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser.js";
-import { tileSize, camSettings, camStates } from "../global/consts.js";
+import { ctx, getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser.js";
+import { camSettings, camStates } from "../global/consts.js";
 import { makeEven } from "../global/utilities.js";
 import { MultiAnimation } from "./Animation.js";
 
@@ -33,13 +33,13 @@ class Camera {
   constructor(game) {
     this.state = camStates.FOCUSED;
     this.focusedEntity = game.player;
-    
+
     /**
        The coordinates of the currently focused spot
     */
     this.x = this.focusedEntity.getCenterPoint().x;
-    this.y =  this.focusedEntity.getCenterPoint().y;
-    
+    this.y = this.focusedEntity.getCenterPoint().y;
+
     //console.log('focus: ', this.focus);
 
     /* Browsers sometimes struggle to position scaled elements perfectly.
@@ -47,57 +47,57 @@ class Camera {
        scale it up more than should be needed.
     */
     this.zoomSafetyMultiplier = camSettings.zoomSafetyMultiplier;
-    
+
     this.zoomMin = camSettings.zoomMin;
     this.zoomMax = camSettings.zoomMax;
     this.zoomSpeed = camSettings.zoomSpeed;
 
     // Run zoom's setter
     this.zoom = camSettings.zoom;
-    
-    window.addEventListener('resize', () => this.updateSize());
-    window.addEventListener('fullscreenchange', () => this.updateSize());
+
+    window.addEventListener("resize", () => this.updateSize());
+    window.addEventListener("fullscreenchange", () => this.updateSize());
     this.game = game;
 
     // Array of draw functions to be run after drawing everything else
     this.debugDraws = [];
-    
+
     // Array of draw functions to be run after drawing everything else
     // elements are deleted after drawing
     this.singleDebugDraws = [];
   }
-  
-  setFocusedEntity(entity,
-		   newZoom=camSettings.entityFocusZoom,
-		   animationTime=camSettings.focusChangeTime) {
-    this.animation =
-      new MultiAnimation(this, ['x', 'y', 'zoom'], [],
-			 { endAfter: animationTime });
+
+  setFocusedEntity(
+    entity,
+    newZoom = camSettings.entityFocusZoom,
+    animationTime = camSettings.focusChangeTime,
+  ) {
+    this.animation = new MultiAnimation(this, ["x", "y", "zoom"], [], { endAfter: animationTime });
     this.animation.goal = [
       () => entity.getCenterPoint().x,
       () => entity.getCenterPoint().y,
-      newZoom
+      newZoom,
     ];
 
     this.animation.quantums = [1, 1, 0.01];
-        
+
     this.focusedEntity = entity;
 
     this.state = camStates.ANIMATING;
   }
-  
-  addDebugDraw(fun, options={}) {
+
+  addDebugDraw(fun, options = {}) {
     if (options.once) {
       this.singleDebugDraws.push(fun);
       return;
     }
     this.debugDraws.push(fun);
   }
-  
+
   removeDebugDraw(index) {
     this.debugDraws.splice(index, 1);
   }
-  
+
   updateSize() {
     const gcon = document.querySelector("#game-container");
     const gc = document.querySelector("#game-canvas");
@@ -112,65 +112,64 @@ class Camera {
 
   manageInputs(keyman) {
     keyman.manageInput(
-      'Camera zoom in',
+      "Camera zoom in",
       () => {
         if (this.zoom < this.zoomMax) {
           this.zoom += this.zoomSpeed * time.delta;
         }
       },
-      { once: false }
+      { once: false },
     );
     keyman.manageInput(
-      'Camera zoom out',
+      "Camera zoom out",
       () => {
         if (this.zoom > this.zoomMin) {
           this.zoom -= this.zoomSpeed * time.delta;
         }
       },
-      { once: false }
+      { once: false },
     );
   }
-  
-  render(options={}) {
+
+  render(options = {}) {
     ctx.clearRect(0, 0, this.width, this.height);
     if (this.state === camStates.FOCUSED) {
       this.x = this.focusedEntity.getCenterPoint().x;
       this.y = this.focusedEntity.getCenterPoint().y;
-    }
-    else if (this.state === camStates.ANIMATING) {
+    } else if (this.state === camStates.ANIMATING) {
       if (!this.animation.next()) {
-	// Animation finished
-	this.state = camStates.FOCUSED;
+        // Animation finished
+        this.state = camStates.FOCUSED;
       }
     }
-    
-    const topLeftX = Math.max(0, Math.min(
-      this.x - this.width / 2,
-      this.game.currentTown.widthPx - this.width));
-        
-    const topLeftY = Math.max(0, Math.min(
-      this.y - this.height / 2,
-      this.game.currentTown.heightPx - this.height));
+
+    const topLeftX = Math.max(
+      0,
+      Math.min(this.x - this.width / 2, this.game.currentTown.widthPx - this.width),
+    );
+
+    const topLeftY = Math.max(
+      0,
+      Math.min(this.y - this.height / 2, this.game.currentTown.heightPx - this.height),
+    );
 
     let t = this.game.currentTown;
     t.draw(topLeftX, topLeftY, ctx, this.width, this.height);
     let [ignoringDepth, byDepth] = t.entitiesByDepth(t, this.game.player);
     for (const e of ignoringDepth) {
       e.draw(topLeftX, topLeftY);
-      if (options.debug && e.drawDebugInfo)
-	e.drawDebugInfo(topLeftX, topLeftY);
+      if (options.debug && e.drawDebugInfo) e.drawDebugInfo(topLeftX, topLeftY);
     }
     for (const e of byDepth) {
       e.draw(topLeftX, topLeftY);
-      if (options.debug && e.drawDebugInfo)
-	e.drawDebugInfo(topLeftX, topLeftY);
+      if (options.debug && e.drawDebugInfo) e.drawDebugInfo(topLeftX, topLeftY);
     }
     if (this.game.app.debugging) {
-      this.debugDraws.forEach((draw, ix) => {
-	draw(topLeftX, topLeftY);
+      this.debugDraws.forEach((draw, _ix) => {
+        draw(topLeftX, topLeftY);
       });
       this.singleDebugDraws.forEach((draw) => {
-	draw(topLeftX, topLeftY);
+        draw(topLeftX, topLeftY);
       });
       this.singleDebugDraws.length = 0;
     }
@@ -180,13 +179,10 @@ class Camera {
     this._zoom = newZoom;
     this.updateSize();
   }
-  
+
   get zoom() {
     return this._zoom;
   }
 }
 
 export default Camera;
-
-
-

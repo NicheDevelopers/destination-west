@@ -4,42 +4,49 @@
 # https://docs.gitlab.com/ee/user/application_security/sast/
 
 include:
-  - remote: 'https://raw.githubusercontent.com/voidzero-dev/setup-vp/v1.21.2/gitlab/setup-vp.yml'
+  - remote: "https://raw.githubusercontent.com/voidzero-dev/setup-vp/v1.21.2/gitlab/setup-vp.yml"
     inputs:
-      setup-ref: 'v1.21.2'
+      setup-ref: "v1.21.2"
 
 lint:
   stage: lint
   extends: .setup-vp
   image: node:24
   script:
-  - vp lint --deny-warnings
+    - vp lint --deny-warnings
 
 fmt:
   stage: lint
   extends: .setup-vp
   image: node:24
   script:
-  - vp fmt --check
+    - vp fmt --check
+
+test:
+  stage: test
+  extends: .setup-vp
+  image: node:24
+  script:
+    - vp test
 
 pages:
   stage: deploy
   extends: .setup-vp
   image: node:24
   script:
-  - vp run build
-  - rm -rf public
-  - mv dist public
+    - vp run build
+    - rm -rf public
+    - mv dist public
   artifacts:
     paths:
-    - public
+      - public
   only:
-  - main
-  
+    - main
+
 variables:
   # Setting this variable will affect all Security templates
   # (SAST, Dependency Scanning, ...)
-  TEMPLATE_REGISTRY_HOST: 'registry.gitlab.com'
+  TEMPLATE_REGISTRY_HOST: "registry.gitlab.com"
   SECURE_ANALYZERS_PREFIX: "$TEMPLATE_REGISTRY_HOST/security-products"
   SAST_IMAGE_SUFFIX: ""
 
@@ -99,13 +106,14 @@ sast postprocessing:
   artifacts:
     reports:
       sast:
-        - 'report.json'
+        - "report.json"
     when: always
   dependencies:
     - kics-iac-sast
 
 stages:
-- lint
-- security
-- security_postprocessing
-- deploy
+  - lint
+  - test
+  - security
+  - security_postprocessing
+  - deploy

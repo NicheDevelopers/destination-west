@@ -24,10 +24,9 @@
 import presets from "./townPresets.js";
 import { generateID } from "../global/utilities.js";
 import Location from "./Location.js";
-import Building from "./Building.js";
 import { defaultTownHeight, defaultTownWidth } from "../global/consts.js";
 import { genTownName } from "../generators/nameGenerators.js";
-import {tileSize} from "../global/consts.js";
+import { tileSize } from "../global/consts.js";
 
 class Town extends Location {
   constructor(game, x, y, numBldInTown = {}) {
@@ -41,17 +40,16 @@ class Town extends Location {
     this.visited = false;
     this.connectedTowns = new Array();
     this.lastPlayerPos = null;
-    this.playerSpawn = {x: 3*tileSize, y: 5*tileSize};
+    this.playerSpawn = { x: 3 * tileSize, y: 5 * tileSize };
   }
-  
+
   createTown() {
     // see https://gitlab.com/niche-devs/destination-west/-/wikis/Technical-Documentation/Classes/Town/Town-Presets
-    this.array = new Array(this.width);
-    for (let x = 0; x < this.width; ++x) this.array[x] = new Array(this.height);
+    this.array = Array.from({ length: this.width }, () => Array.from({ length: this.height }));
     let preset = presets.srandomElement();
     this.placeStreets(preset);
     this.placeBuildings(preset);
-    this.placeBackground('sand');
+    this.placeBackground("sand");
     this.placeGenericDecoration();
     this.prerender();
   }
@@ -62,36 +60,31 @@ class Town extends Location {
     // building positions and sizes
     let numBlds = buildings.length;
     let requiredNumBlds = 0;
-    if (this.numBldInTown.saloon !== undefined) 
-      requiredNumBlds += this.numBldInTown.saloon;
-    if (this.numBldInTown.sheriff !== undefined) 
-      requiredNumBlds += this.numBldInTown.sheriff;
-    if (this.numBldInTown.house !== undefined) 
-      requiredNumBlds += this.numBldInTown.house;
-    if (requiredNumBlds > numBlds) 
-      requiredNumBlds = numBlds;
+    if (this.numBldInTown.saloon !== undefined) requiredNumBlds += this.numBldInTown.saloon;
+    if (this.numBldInTown.sheriff !== undefined) requiredNumBlds += this.numBldInTown.sheriff;
+    if (this.numBldInTown.house !== undefined) requiredNumBlds += this.numBldInTown.house;
+    if (requiredNumBlds > numBlds) requiredNumBlds = numBlds;
     let counter = 0;
     let toPlace;
 
-    ['saloon', 'sheriff', 'house'].forEach((place) => {
+    ["saloon", "sheriff", "house"].forEach((place) => {
       if (!this.numBldInTown[place]) toPlace = 0;
-      else if (this.numBldInTown[place] + counter < numBlds)
-        toPlace = this.numBldInTown[place];
+      else if (this.numBldInTown[place] + counter < numBlds) toPlace = this.numBldInTown[place];
       else toPlace = numBlds - counter;
       for (let i = 0; i < toPlace; i++) {
-	this.awaitAssets++;
-	this.placeBuilding(
-	  buildings[counter].xStart,
+        this.awaitAssets++;
+        this.placeBuilding(
+          buildings[counter].xStart,
           buildings[counter].yStart,
           buildings[counter].xTiles,
           buildings[counter].yTiles,
           place,
-	  { callback: () => this.awaitAssets-- });
-	counter++;
+          { callback: () => this.awaitAssets-- },
+        );
+        counter++;
       }
     });
   }
-
 }
 
 export default Town;

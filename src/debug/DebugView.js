@@ -15,7 +15,7 @@ export default class DebugView {
     this.div = htmlCreate({
       id: "dev-settings",
       classList: "nodisp",
-      appendTo: document.body
+      appendTo: document.body,
     });
 
     this.fpsDisplay = htmlCreate({
@@ -25,7 +25,7 @@ export default class DebugView {
       onclick: () => {
         this.fpsSettings.classList.toggle("nodisp");
       },
-      appendTo: this.div
+      appendTo: this.div,
     });
 
     this.fpsSimDisplay = htmlCreate({
@@ -35,14 +35,14 @@ export default class DebugView {
       onclick: () => {
         this.fpsSettings.classList.toggle("nodisp");
       },
-      appendTo: this.div
+      appendTo: this.div,
     });
 
     this.fpsSettings = htmlCreate({
       id: "fps-settings",
       innerText: "Developer Settings",
       classList: "nodisp",
-      appendTo: this.div
+      appendTo: this.div,
     });
 
     this.closeFpsSettings = htmlCreate({
@@ -50,16 +50,17 @@ export default class DebugView {
       onclick: () => {
         this.fpsSettings.classList.add("nodisp");
       },
-      appendTo: this.fpsSettings
+      appendTo: this.fpsSettings,
     });
 
     this.timeScaleRow = htmlCreate({
       innerText: "Time scale: ",
-      title: `A value by which time differences are multipled by` +
+      title:
+        `A value by which time differences are multipled by` +
         ` to simulate shorter or longer game update delays (simulate` +
         ` a different time speed / scale)`,
       "font-size": "25px",
-      appendTo: this.fpsSettings
+      appendTo: this.fpsSettings,
     });
     this.timeScaleInput = htmlCreate({
       what: "input",
@@ -72,16 +73,17 @@ export default class DebugView {
       onchange: (i) => {
         time.speed = Number(i.target.value);
       },
-      appendTo: this.timeScaleRow
+      appendTo: this.timeScaleRow,
     });
 
     this.simSettingsRow = htmlCreate({
       innerText: "Show simulated FPS: ",
-      title: `Simulated FPS is calculated using the given timescale` +
+      title:
+        `Simulated FPS is calculated using the given timescale` +
         ` and represents the refresh frequency as perceived from the` +
         ` game loop perspective`,
       "font-size": "25px",
-      appendTo: this.fpsSettings
+      appendTo: this.fpsSettings,
     });
 
     this.showSimInput = htmlCreate({
@@ -89,28 +91,27 @@ export default class DebugView {
       type: "checkbox",
       checked: true,
       onchange: (i) => {
-        if (i.target.checked)
-          this.fpsSimDisplay.classList.remove("nodisp");
+        if (i.target.checked) this.fpsSimDisplay.classList.remove("nodisp");
         else this.fpsSimDisplay.classList.add("nodisp");
       },
-      appendTo: this.simSettingsRow
+      appendTo: this.simSettingsRow,
     });
 
     this.gameSeedRow = htmlCreate({
       innerText: `Game seed: ${seed.seed}`,
       title: `The seed used to generate the world`,
       "font-size": "25px",
-      appendTo: this.fpsSettings
+      appendTo: this.fpsSettings,
     });
 
-    this.fpsCounter = new Animation(this, '()updateFpsCounter', 5);
+    this.fpsCounter = new Animation(this, "()updateFpsCounter", 5);
 
     this.setVisibility(this.app.debugging);
   }
 
   updateFpsCounter() {
     this.fpsDisplay.innerText = numberPad(time.getRealFps(), -1, 2);
-    this.fpsSimDisplay.innerText = "sim:" + numberPad(time.getFps(), -1, 2).padStart(7, ' ');
+    this.fpsSimDisplay.innerText = "sim:" + numberPad(time.getFps(), -1, 2).padStart(7, " ");
   }
 
   setVisibility(visible) {

@@ -23,7 +23,7 @@ import time from "../global/time.js";
 import "../global/utilities.js";
 
 const ac = {
-  speed: 300
+  speed: 300,
 };
 
 class AnimationProperty {
@@ -85,42 +85,36 @@ class AnimationProperty {
     */
     this.goal = undefined;
 
-    this.isFunction = (propertyName.substring(0, 2) === '()');
+    this.isFunction = propertyName.substring(0, 2) === "()";
 
-    if (this.isFunction)
-      this.name = propertyName.substring(2);
+    if (this.isFunction) this.name = propertyName.substring(2);
 
     /**
        An array of keys leading to the property. For example if
        the animation is supposed to modify host.prop.x this array
        will be: ["prop", "x"].
     */
-    let propertyPath = propertyName.split('.');
+    let propertyPath = propertyName.split(".");
     if (propertyPath.length > 1) {
       this.name = propertyPath.last;
-      this.host = propertyPath.slice(0, propertyPath.length - 1)
-        .reduce((acc, val) => {
-          if (acc[val] === undefined) {
-            throw new Error(
-              `Field '${val}' of object ` +
-              `'${acc.constructor.name}' is undefined`
-            );
-          }
-          return acc[val];
-        }, this.host);
+      this.host = propertyPath.slice(0, propertyPath.length - 1).reduce((acc, val) => {
+        if (acc[val] === undefined) {
+          throw new Error(`Field '${val}' of object ` + `'${acc.constructor.name}' is undefined`);
+        }
+        return acc[val];
+      }, this.host);
     }
 
     if (this.value === undefined)
       throw new Error(
         `Attempt to animate a nonexistent property '${this.name}' ` +
-        `of host '${this.host.constructor.name}' (host of the whole ` +
-        `animation is '${host.constructor.name}')`
+          `of host '${this.host.constructor.name}' (host of the whole ` +
+          `animation is '${host.constructor.name}')`,
       );
   }
 
   set value(newValue) {
-    if (this.isFunction)
-      throw new Error(`Function property value reassignment is not allowed!`);
+    if (this.isFunction) throw new Error(`Function property value reassignment is not allowed!`);
 
     //console.log(`setting ${this.name} to ${newValue} (object ${this.host} follows)`, this.host);
     this.host[this.name] = newValue;
@@ -135,8 +129,7 @@ class AnimationProperty {
   }
 
   get goal() {
-    if (typeof this._goal === "function")
-      return this._goal();
+    if (typeof this._goal === "function") return this._goal();
     return this._goal;
   }
 
@@ -148,8 +141,9 @@ class AnimationProperty {
   goalReached() {
     if (this.goal === undefined) return null;
     if (this.goal === null) return true;
-    return (this.speed >= 0 && this.value >= this.goal) ||
-      (this.speed <= 0 && this.value <= this.goal);
+    return (
+      (this.speed >= 0 && this.value >= this.goal) || (this.speed <= 0 && this.value <= this.goal)
+    );
   }
 
   /**
@@ -233,13 +227,11 @@ export default class Animation {
   getChangeInThisTick(speed = this.property.speed, logStackChange = false) {
     const p = this.property;
     let change = (speed * time.delta) / 1000;
-    let changesInThisTick = Math.floor(
-      (p.changeStack + change) / p.quantum);
+    let changesInThisTick = Math.floor((p.changeStack + change) / p.quantum);
 
     change -= changesInThisTick * p.quantum;
 
-    if (logStackChange)
-      console.log(p.changeStack, change);
+    if (logStackChange) console.log(p.changeStack, change);
 
     return changesInThisTick * p.quantum;
   }
@@ -262,8 +254,7 @@ export default class Animation {
      not been reached, false if the goal has been reached
    */
   next() {
-    if (this.property.goalReached())
-      return false;
+    if (this.property.goalReached()) return false;
 
     let changeNow = this.tick();
 
@@ -276,8 +267,7 @@ export default class Animation {
 
     this.property.value += changeNow;
 
-    if (this._changeCallback && changeNow !== 0)
-      this._changeCallback();
+    if (this._changeCallback && changeNow !== 0) this._changeCallback();
 
     if (this.property.goalReached()) {
       // Make value equal the goal value exactly
@@ -292,9 +282,6 @@ export default class Animation {
   }
 }
 
-/**
-   An animation of multiple properties
-*/
 export class MultiAnimation {
   /**
   Create an animation
@@ -310,14 +297,13 @@ export class MultiAnimation {
     this.animations = [];
 
     for (let i = 0; i < propertyNames.length; ++i) {
-      this.animations.push(
-        new Animation(this.host, propertyNames[i], speeds[i] ?? ac.speed));
+      this.animations.push(new Animation(this.host, propertyNames[i], speeds[i] ?? ac.speed));
       if (this.animations.last.isFunction)
         throw new Error(`Function properties not yet allowed in MultiAnimations`);
     }
 
     this.options = {
-      endAfter: options.endAfter ?? null
+      endAfter: options.endAfter ?? null,
     };
 
     if (this.options.endAfter) {
@@ -333,8 +319,7 @@ export class MultiAnimation {
     if (this.options.endAfter) {
       this.adjustSpeeds((this.options._endTime - time.now) / 1000);
     }
-    return this.animations.map((anim) => anim.next())
-      .some((result) => result);
+    return this.animations.map((anim) => anim.next()).some((result) => result);
   }
 
   finish() {
@@ -356,8 +341,7 @@ export class MultiAnimation {
 
     for (const animation of this.animations) {
       // v = s/t
-      if (animation.goal !== null)
-        animation.speed = animation.property.leftToGoal() / timeToFinish;
+      if (animation.goal !== null) animation.speed = animation.property.leftToGoal() / timeToFinish;
     }
     //console.log('to do: ', this.getGoalStates());
     //console.log('speeds adjusted to: ', this.animations.map((a) => a.speed));
@@ -369,9 +353,11 @@ export class MultiAnimation {
   */
   set goal(goals) {
     if (goals?.length !== this.animations.length) {
-      throw new Error(`Setting the goal of the Multianimation with an array ` +
-      `of incorrect size. Expected: ${this.animations.length}, ` +
-      `got: ${goals?.length}`);
+      throw new Error(
+        `Setting the goal of the Multianimation with an array ` +
+          `of incorrect size. Expected: ${this.animations.length}, ` +
+          `got: ${goals?.length}`,
+      );
     }
 
     for (let i = 0; i < goals.length; ++i) {

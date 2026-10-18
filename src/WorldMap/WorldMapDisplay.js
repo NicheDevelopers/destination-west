@@ -20,132 +20,140 @@
 */
 
 import { createCanvas, createElement } from "../global/utilities.js";
-import { State, stateManager } from "../global/stateManager.js";
+import { State } from "../global/stateManager.js";
 import { mapParameters, townSizes, worldMapDisplay as wmd } from "../global/consts.js";
 
 class WorldMapDisplay extends State {
   constructor(game) {
     super();
     this.game = game;
-    this.actions = ['Toggle Map Display'];
+    this.actions = ["Toggle Map Display"];
     this.div = createElement(
-      'div', mapParameters.displayWidth, mapParameters.displayHeight, ['map-canvas-div'], {
-	position: 'absolute',
-	display: 'none',
-	zIndex: '1'
-      });
+      "div",
+      mapParameters.displayWidth,
+      mapParameters.displayHeight,
+      ["map-canvas-div"],
+      {
+        position: "absolute",
+        display: "none",
+        zIndex: "1",
+      },
+    );
     this.mapCanvas = createCanvas(mapParameters.displayWidth, mapParameters.displayHeight).canvas;
-    this.mapCanvas.id = 'map-canvas';
+    this.mapCanvas.id = "map-canvas";
     //this.mapCanvas.style.background = 'rgba(150,130,100, 0.8)';
     this.div.appendChild(this.mapCanvas);
-    document.getElementById('game-container').appendChild(this.div);
-    this.drawnDivs = new Array(this.game.worldMap.locations.length).fill(false);
+    document.getElementById("game-container").appendChild(this.div);
+    this.drawnDivs = Array.from({ length: this.game.worldMap.locations.length }, () => false);
   }
 
   draw() {
     let map = this.game.worldMap;
-    let map_ctx = this.mapCanvas.getContext('2d');
-    map_ctx.fillStyle = 'white';
+    let map_ctx = this.mapCanvas.getContext("2d");
+    map_ctx.fillStyle = "white";
     map_ctx.font = "20px Verdana";
     map_ctx.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
     for (let i = this.div.childNodes.length - 1; i >= 0; i--) {
       const childNode = this.div.childNodes[i];
-      if (childNode.tagName !== 'CANVAS') {
+      if (childNode.tagName !== "CANVAS") {
         this.div.removeChild(childNode);
       }
     }
-    let visibleTowns =
-      [...new Set(
+    let visibleTowns = [
+      ...new Set(
         this.game.worldMap.locations
           .filter((t) => t.visited)
           .map((m) => m.connectedLocations)
           .flat()
-          .concat(this.game.worldMap.locations
-          .filter((t) => t.visited)
-          .map((x) => x.ID)))];
+          .concat(this.game.worldMap.locations.filter((t) => t.visited).map((x) => x.ID)),
+      ),
+    ];
 
     // Draw all connections so that they get completely overlapped by towns
     for (const location of map.locations) {
       for (let connection of location.connectedLocations) {
         let other = this.game.worldMap.getByID(connection);
         if (location.visited && (other.visited || visibleTowns.includes(other.ID))) {
-          drawLine(map_ctx, location.x, location.y, other.x, other.y, 'black', 3);
+          drawLine(map_ctx, location.x, location.y, other.x, other.y, "black", 3);
         }
       }
     }
 
     for (let town of map.locations) {
-      map_ctx.fillStyle = 'white';
+      map_ctx.fillStyle = "white";
       let size = this.computeTownSize(town);
 
       // if the town has been visited, is the current town or can be reached from the current town, draw it
-      if (town.visited ||
+      if (
+        town.visited ||
         this.game.worldMap.locations
           .filter((t) => t.visited)
           .map((m) => m.connectedLocations)
-          .some((e) => e.includes(town.ID))) {
-        if (this.game.currentTown.connectedLocations?.includes(town.ID) && town.ID !== this.game.currentTown.ID) {
-          let d = createElement('div', 80, 80, [`town-div`], {
-            display: 'block',
-            position: 'absolute',
-            height: size * 2 + 'px',
-            width: size * 2 + 'px',
-            left: town.x - size + 'px',
-            top: town.y - size + 'px',
-            'border-radius': '100%'
+          .some((e) => e.includes(town.ID))
+      ) {
+        if (
+          this.game.currentTown.connectedLocations?.includes(town.ID) &&
+          town.ID !== this.game.currentTown.ID
+        ) {
+          let d = createElement("div", 80, 80, [`town-div`], {
+            display: "block",
+            position: "absolute",
+            height: size * 2 + "px",
+            width: size * 2 + "px",
+            left: town.x - size + "px",
+            top: town.y - size + "px",
+            "border-radius": "100%",
           });
           d.dataset.id = town.ID;
-          d.addEventListener('click', (evt) => {
+          d.addEventListener("click", (evt) => {
             this.game.travel(evt.target.dataset.id);
-          })
+          });
           this.div.appendChild(d);
         }
         //this.drawnDivs[town.ID] = true;
-        let townColor = 'black';
-        if (this.game.currentTown.ID == town.ID) townColor = 'green';
-        if (this.game.currentTown.connectedLocations?.includes(town.ID)) townColor = 'red';
+        let townColor = "black";
+        if (this.game.currentTown.ID == town.ID) townColor = "green";
+        if (this.game.currentTown.connectedLocations?.includes(town.ID)) townColor = "red";
         drawCircle(map_ctx, town.x, town.y, size, 2, townColor);
       }
-
     }
     for (let t of visibleTowns.map((r) => this.game.worldMap.getByID(r))) {
-      map_ctx.fillStyle = 'white';
+      map_ctx.fillStyle = "white";
       map_ctx.fillText(t.name, t.x + wmd.townNameOffsetX, t.y + wmd.townNameOffsetY);
     }
   }
 
   computeTownSize(town) {
     // make the last town large
-    if (town.ID === this.game.worldMap.locations.last.ID)
-      return townSizes.large;
+    if (town.ID === this.game.worldMap.locations.last.ID) return townSizes.large;
     if (town.connectedLocations.length < wmd.lowConnection) return townSizes.small;
     else if (town.connectedLocations.length < wmd.mediumConnection) return townSizes.medium;
     else if (town.connectedLocations.length < wmd.highConnection) return townSizes.large;
   }
 
-  manageInput(keyman) {}
-  
+  manageInput(_keyman) {}
+
   update() {}
 
   startHook() {
     this.draw();
-    this.div.style.display = 'block';
+    this.div.style.display = "block";
   }
   endHook() {
-    this.div.style.display = 'none';
+    this.div.style.display = "none";
   }
 }
 
 function drawCircle(ctx, x, y, radius, strokeWidth, color) {
-  ctx.beginPath()
-  ctx.arc(x, y, radius, 0, 2 * Math.PI, false)
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
   ctx.fillStyle = color;
-  ctx.fill()
-  ctx.lineWidth = strokeWidth
+  ctx.fill();
+  ctx.lineWidth = strokeWidth;
   ctx.strokeStyle = color;
   ctx.stroke();
-  ctx.strokeStyle = 'black';
-  ctx.fillStyle = 'black';
+  ctx.strokeStyle = "black";
+  ctx.fillStyle = "black";
 }
 
 function drawLine(ctx, start_x, start_y, end_x, end_y, strokeStyle, lineWidth) {

@@ -20,41 +20,41 @@
 */
 
 .notification {
-    display: flex;
-    position: absolute;
-    justify-content: center;
-    align-items: center;
-    height: 1%;
-    top: 5%;
-    background-color: whitesmoke;
-    z-index: 3;
-    border-radius: 1cm;
-    font-size: 24px;
-    padding: 24px;    
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  height: 1%;
+  top: 5%;
+  background-color: whitesmoke;
+  z-index: 3;
+  border-radius: 1cm;
+  font-size: 24px;
+  padding: 24px;
 }
 
 .slide-up {
-    transform: translateY(-1000%);
+  transform: translateY(-1000%);
 }
 
 @keyframes slideUp {
-    from {
-        transform: translateY(0);
-        scale: 100%;
-    }
-    to {
-        transform: translateY(-1000%);
-        scale: 20%;
-    }
+  from {
+    transform: translateY(0);
+    scale: 100%;
+  }
+  to {
+    transform: translateY(-1000%);
+    scale: 20%;
+  }
 }
 
 @keyframes slideDown {
-    from {
-        transform: translateY(-1000%);
-        scale: 20%;
-    }
-    to {
-        transform: translateY(0);
-        scale: 100%;
-    }
+  from {
+    transform: translateY(-1000%);
+    scale: 20%;
+  }
+  to {
+    transform: translateY(0);
+    scale: 100%;
+  }
 }

@@ -24,18 +24,11 @@ class DialogueDisplay extends State {
     this.reset();
   }
 
-  /**
-   * Brings the DialogueDisplay to its initial state
-   */
   reset(): void {
     this.dialogue = null;
     this.div.innerHTML = "";
   }
 
-  /**
-   * Sets a dialogue to be displayed
-   * @param dialogue - The new dialogue
-   */
   setDialogue(dialogue: Dialogue): void {
     this.reset();
     this.dialogue = dialogue;

@@ -20,92 +20,92 @@
 */
 
 #pause-menu {
-    color: lightgray;
-    display: none;
-    width: 36%;
-    height: 31%;
-    background: #663a31;
-    z-index: 2;
+  color: lightgray;
+  display: none;
+  width: 36%;
+  height: 31%;
+  background: #663a31;
+  z-index: 2;
 }
 
 .keybind-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 2px solid brown;
-    padding: 2% 0 4% 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid brown;
+  padding: 2% 0 4% 0;
 }
 
 .keybind-container div {
-    flex: 1;
+  flex: 1;
 }
 
 .button-container {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .button.pause-menu-button {
-    color: lightgray;
-    border-color: #edc2a0;
-    width: fit-content;
-    --box-shadow-color: #695b40;
-    background: #663a31;
-    --hover-color: #744036;
-    height: 2em;
-    width: 4em;
+  color: lightgray;
+  border-color: #edc2a0;
+  width: fit-content;
+  --box-shadow-color: #695b40;
+  background: #663a31;
+  --hover-color: #744036;
+  height: 2em;
+  width: 4em;
 }
 
 .settings-menu-button {
-    height: 100%;
-    width: 9.5%;
+  height: 100%;
+  width: 9.5%;
 }
 
 .exit-menu-button {
-    height: 22%;
-    width: 32%;
+  height: 22%;
+  width: 32%;
 }
 
 #pause-menu-buttons-div {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 #pause-menu-buttons-div .button {
-    margin: auto;
-    width: 6em;
+  margin: auto;
+  width: 6em;
 }
 
 #pause-menu-wanted-poster {
-    background-image: url("/img/pauseMenu-wantedPoster.jpg");
-    height: calc(100% - 20px);
-    width: calc(70% - 20px);
-    margin: 10px;
+  background-image: url("/img/pauseMenu-wantedPoster.jpg");
+  height: calc(100% - 20px);
+  width: calc(70% - 20px);
+  margin: 10px;
 }
 
 .pause-menu-divs {
-    flex: 50%;
+  flex: 50%;
 }
 
 #settings-menu {
-    display: none;
-    position: absolute;
-    background: #663a31;
-    width: 100%;
-    height: 100%;
-    padding: 30px 0 12px 12px;
-    overflow: scroll;
-    flex-direction: column;
+  display: none;
+  position: absolute;
+  background: #663a31;
+  width: 100%;
+  height: 100%;
+  padding: 30px 0 12px 12px;
+  overflow: scroll;
+  flex-direction: column;
 }
 
 #exit-menu {
-    display: none;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    flex-direction: column;
-    padding: 10% 0 0 0;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.6);
+  display: none;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  padding: 10% 0 0 0;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
 }

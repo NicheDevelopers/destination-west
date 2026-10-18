@@ -19,8 +19,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { State, stateManager } from "../../global/stateManager.js"
-import { createElement, randIntInRange } from "../../global/utilities.js";
+import { State } from "../../global/stateManager.js";
+import { randIntInRange } from "../../global/utilities.js";
 import { htmlCreate } from "../../global/utilities.js";
 import AudioPlayer from "../../audio/AudioPlayer.js";
 
@@ -33,7 +33,7 @@ class RevolverShootingGame extends State {
     this.mainDiv = htmlCreate({
       "background-image": `url("img/battle_assets/revolver_minigame/revolver-firing-board.png")`,
       id: "shooting-range",
-      appendTo: gameContainer
+      appendTo: gameContainer,
     });
     this.mainDiv.style.display = "none";
 
@@ -50,56 +50,49 @@ class RevolverShootingGame extends State {
 
     this.bulletDivs = new Array();
     //17.5% should be the leftmost bound of accepting a shot as a success, 22 - rightmost
-    let bulletRange = { left: 40, right: 80 }
-    let bulletOffset = 10 // we don't want more than one bullet in the same space
+    let bulletRange = { left: 40, right: 80 };
+    let bulletOffset = 10; // we don't want more than one bullet in the same space
     // array of randomized bullet positions
     let bulletlefts = new Array();
     for (let i = 0; i < this.bullets; ++i) {
       let position = randIntInRange(bulletRange.left, bulletRange.right);
-      position += (bulletOffset - (position % bulletOffset));
+      position += bulletOffset - (position % bulletOffset);
       while (bulletlefts.includes(position)) {
         position = randIntInRange(bulletRange.left, bulletRange.right);
-        position += (bulletOffset - (position % bulletOffset));
+        position += bulletOffset - (position % bulletOffset);
       }
       bulletlefts.push(position);
     }
     // make sure the positions are sorted by distance in ascending order, so that the animation and logic works well
-    bulletlefts.sort();
+    bulletlefts.sort((a, b) => a - b);
 
     for (let i = 0; i < this.bullets; ++i) {
       let bulletid = "bullet" + i;
-      this.bulletDivs.push(htmlCreate(
-        // no, we can't just use colored divs, i want those to look like actual bullets
-        // which someone will need to draw (i can do it, i just need time)
-        {
-          "background-image": `url("img/battle_assets/revolver_minigame/revolver-firing-particle.png")`,
-          id: bulletid,
-          left: bulletlefts[i] + "%",
-          className: "bullet",
-          transition: "left " + (bulletlefts[i] / bulletRange.left) + "s linear",
-          appendTo: this.mainDiv
-        }));
+      this.bulletDivs.push(
+        htmlCreate(
+          // no, we can't just use colored divs, i want those to look like actual bullets
+          // which someone will need to draw (i can do it, i just need time)
+          {
+            "background-image": `url("img/battle_assets/revolver_minigame/revolver-firing-particle.png")`,
+            id: bulletid,
+            left: bulletlefts[i] + "%",
+            className: "bullet",
+            transition: "left " + bulletlefts[i] / bulletRange.left + "s linear",
+            appendTo: this.mainDiv,
+          },
+        ),
+      );
       this.bulletDivs[i].style.display = "flex";
     }
-
-
   }
 
   start() {
     console.log("Startuje");
   }
-  /**
-   Function run every tick this state is active
-   */
-  update() {
-    
-  }
+  update() {}
 
   manageInputs(keyman) {
-    keyman.manageInput(
-      'Shoot',
-      () => this.checkShot(),
-    );
+    keyman.manageInput("Shoot", () => this.checkShot());
   }
 
   checkShot() {

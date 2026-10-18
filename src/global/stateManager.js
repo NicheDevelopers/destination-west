@@ -20,10 +20,9 @@
 */
 
 import time from "./time.js";
-import { generateID } from "./utilities.js"
+import { generateID } from "./utilities.js";
 import keyman from "../core/KeyboardManager.js";
-import defaultKeybinds, { actions as specialActions }
-  from "./defaultKeybinds.js";
+import defaultKeybinds, { actions as specialActions } from "./defaultKeybinds.js";
 
 class State {
   constructor(fundamental = false, options = { async: false }) {
@@ -41,8 +40,7 @@ class State {
       // Validate the state when the constructor finishes,
       // before the next game tick
       setTimeout(() => this.validate(), 0);
-    }
-    else {
+    } else {
       // If the state is prepared asynchronously, the `validate`
       // function should be called manually. This is checked after 5 seconds.
       setTimeout(() => {
@@ -53,8 +51,8 @@ class State {
         if (!this.validated)
           throw new Error(
             `Async state '${this.name}' was not validated. ` +
-            `(validate check timed out after 5 seconds) ` +
-            `The 'validate' function should be called manually.`
+              `(validate check timed out after 5 seconds) ` +
+              `The 'validate' function should be called manually.`,
           );
       }, 5000);
     }
@@ -70,7 +68,7 @@ class State {
    * The member objects' `mangeInputs` functions work the same, creating
    * a recursive mechanism.
    */
-  manageInputs(keyman) { }
+  manageInputs(_keyman) {}
 
   /**
    * An internal test function to verify that the state is correctly
@@ -88,34 +86,33 @@ class State {
       },
       isActionRequested: (input) => {
         managedInputs.push(input);
-      }
+      },
     };
     this.manageInputs(keymanMock);
 
-    let thisStateKeybinds = defaultKeybinds[this.name]
-      ?.map(bind => bind.last);
+    let thisStateKeybinds = defaultKeybinds[this.name]?.map((bind) => bind[1]);
 
     for (const input of managedInputs) {
       if (!thisStateKeybinds?.includes(input))
-        throw new Error(`Validation failed: ` +
-          `State '${this.name}' manages action '${input}', which ` +
-          `is not bound to it.`
+        throw new Error(
+          `Validation failed: ` +
+            `State '${this.name}' manages action '${input}', which ` +
+            `is not bound to it.`,
         );
     }
 
     for (const input of thisStateKeybinds ?? []) {
-      if (input === null || input === specialActions.NONE)
-        continue;
+      if (input === null || input === specialActions.NONE) continue;
       if (!managedInputs.includes(input))
-        throw new Error(`Validation failed: ` +
-          `Action '${input}' is not managed by state '${this.name}'`
+        throw new Error(
+          `Validation failed: ` + `Action '${input}' is not managed by state '${this.name}'`,
         );
     }
 
     this.validated = true;
   }
-  startHook() { }
-  endHook() { }
+  startHook() {}
+  endHook() {}
   endState() {
     stateManager.endState(this);
   }
@@ -128,12 +125,9 @@ class StateManager {
     this.lastUpdateTime = time.now;
     this.maxUpdateTime = 100;
 
-    /**
-     * Indicates whether the game loop has crashed
-     */
     this.crashed = false;
   }
-  pushState(state, startKey = undefined) {
+  pushState(state, startKey) {
     state.startKey = startKey;
     state.startHook();
     this.stateStack.push(state);
@@ -165,24 +159,22 @@ class StateManager {
 
     keyman.manageGeneralInputs();
     for (let state of this.stateStack.slice().reverse()) {
-      if (state.id === this.stateStack.last.id)
-        state.manageInputs(keyman);
+      if (state.id === this.stateStack.last.id) state.manageInputs(keyman);
       state.update();
       if (this.stateChanged()) {
         keyman.clearInputs();
         this.previousState.manageInputs(keyman);
         break;
       }
-      if (state.fundamental)
-        break;
+      if (state.fundamental) break;
     }
   }
   // if cond is true, pop and run endhook, else push and run starthook
-  toggleState(state, startKey = undefined) {
-    (this.currentState.id === state.id) ?
-      this.popState() : this.pushState(state, startKey)
+  toggleState(state, startKey) {
+    if (this.currentState.id === state.id) this.popState();
+    else this.pushState(state, startKey);
   }
-  startState(state, startKey = undefined) {
+  startState(state, startKey) {
     if (this.currentState.id === state.id)
       throw new Error(`Attempt to start a state which is already the current state`);
     this.pushState(state, startKey);

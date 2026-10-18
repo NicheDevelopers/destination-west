@@ -5,14 +5,7 @@ import {
   defaultBd,
   cashMinMaxParameters as cashParam,
 } from "./global/consts.js";
-import {
-  generateID,
-  tileAt,
-  pointToTileCoord,
-  ObjectSet,
-  Direction,
-  randIntInRange,
-} from "./global/utilities.js";
+import { ObjectSet, Direction, randIntInRange } from "./global/utilities.js";
 import Hitbox from "./game/HitboxClass.js";
 import Movement from "./game/Movement.js";
 
@@ -32,8 +25,8 @@ export function addTraits(obj, ...traits) {
       if (specialProps.has(prop)) continue;
       if (obj[prop] !== undefined)
         throw new Error(
-          `Adding trait would override property ` +
-          `${prop} of ${obj.constructor.name}`);
+          `Adding trait would override property ` + `${prop} of ${obj.constructor.name}`,
+        );
       obj[prop] = trait[prop];
     }
     if (trait._after_) {
@@ -57,8 +50,7 @@ export function InventoryTrait(
         x: this.getCenterPoint().x,
         y: this.getCenterPoint().y,
       });
-      if (!this.game)
-        console.error("InventoryTrait in a class without a Game field.");
+      if (!this.game) console.error("InventoryTrait in a class without a Game field.");
       this.game.currentTown.droppedItems.push(droppedItem);
       this.game.currentTown.updateFocus(this.game.player);
     },
@@ -85,12 +77,7 @@ export function centerPointTrait(rcp = defaultRcp) {
   };
 }
 
-export function HitboxTrait(
-  self,
-  locationArray,
-  rcp = defaultRcp,
-  bd = defaultBd,
-) {
+export function HitboxTrait(self, locationArray, rcp = defaultRcp, bd = defaultBd) {
   return {
     _name_: "HitboxTrait",
     _before_() {
@@ -104,7 +91,7 @@ export function HitboxTrait(
       if (this.isAtTile(tileX, tileY))
         throw new Error(
           `attempt to add an entity (${self.constructor.name}) ` +
-          `to the same tile twice (coords: (${tileX}, ${tileY}))`
+            `to the same tile twice (coords: (${tileX}, ${tileY}))`,
         );
       if (!this.locationArray[tileX][tileY]) return; // omit tiles out of bounds
       this.tileHashSet.add({ x: tileX, y: tileY });
@@ -187,9 +174,9 @@ export function HitboxTrait(
     */
     moveTillCollision(speedX, speedY) {
       if (speedX * speedY !== 0)
-        throw new Error (
+        throw new Error(
           `moveTillCollision only supports one axis movement. ` +
-          `One speed has to be 0. Speeds provided: X=${speedX}, Y=${speedY}.`
+            `One speed has to be 0. Speeds provided: X=${speedX}, Y=${speedY}.`,
         );
 
       let dx = this.movement.getChangeX(speedX);
@@ -243,4 +230,4 @@ export function MovementTrait(self, speed, sprintMp, sneakMp, options) {
   };
 }
 
-export function CollideTrait() { }
+export function CollideTrait() {}

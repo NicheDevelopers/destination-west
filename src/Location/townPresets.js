@@ -22,10 +22,12 @@
 import { PixelImage, createCanvas } from "../global/utilities.js";
 import { townPalette } from "../global/consts.js";
 
-let newBuilding = (x1, y1, x2, y2) =>
-  ({ xStart: x1, yStart: y1, xTiles: x2, yTiles: y2 });
-let newStreet = (x1, y1, width, height) =>
-  ({ start: { x: x1, y: y1 }, width: width, height: height });
+let newBuilding = (x1, y1, x2, y2) => ({ xStart: x1, yStart: y1, xTiles: x2, yTiles: y2 });
+let newStreet = (x1, y1, width, height) => ({
+  start: { x: x1, y: y1 },
+  width: width,
+  height: height,
+});
 
 const preset1 = {
   buildings: [
@@ -38,7 +40,7 @@ const preset1 = {
     newBuilding(20, 12, 5, 3),
     newBuilding(18, 2, 4, 2),
     newBuilding(16, 7, 4, 3),
-    newBuilding(15, 2, 3, 2)
+    newBuilding(15, 2, 3, 2),
   ],
   streets: [
     newStreet(0, 4, 42, 2),
@@ -46,8 +48,8 @@ const preset1 = {
     newStreet(27, 10, 4, 1),
     newStreet(27, 15, 4, 1),
     newStreet(19, 15, 6, 1),
-    newStreet(15, 10, 10, 1)
-  ]
+    newStreet(15, 10, 10, 1),
+  ],
 };
 
 const preset2 = {
@@ -61,7 +63,7 @@ const preset2 = {
     newBuilding(28, 3, 3, 2),
     newBuilding(12, 11, 3, 2),
     newBuilding(8, 11, 3, 2),
-    newBuilding(31, 2, 3, 3)
+    newBuilding(31, 2, 3, 3),
   ],
   streets: [
     newStreet(19, 5, 3, 9),
@@ -69,8 +71,8 @@ const preset2 = {
     newStreet(20, 5, 22, 2),
     newStreet(15, 8, 4, 1),
     newStreet(22, 14, 6, 1),
-    newStreet(22, 10, 3, 1)
-  ]
+    newStreet(22, 10, 3, 1),
+  ],
 };
 
 const preset3 = {
@@ -86,14 +88,14 @@ const preset3 = {
     newBuilding(9, 4, 3, 2),
     newBuilding(30, 4, 3, 2),
     newBuilding(5, 4, 3, 2),
-    newBuilding(33, 4, 3, 2)
+    newBuilding(33, 4, 3, 2),
   ],
   streets: [
     newStreet(0, 6, 42, 3),
     newStreet(18, 9, 3, 12),
     newStreet(13, 13, 5, 1),
-    newStreet(21, 12, 10, 1)
-  ]
+    newStreet(21, 12, 10, 1),
+  ],
 };
 
 const preset4 = {
@@ -108,19 +110,18 @@ const preset4 = {
     newBuilding(10, 4, 3, 3),
     newBuilding(13, 5, 3, 2),
     newBuilding(32, 10, 4, 2),
-    newBuilding(8, 10, 3, 2)
+    newBuilding(8, 10, 3, 2),
   ],
   streets: [
     newStreet(0, 12, 42, 3),
     newStreet(30, 0, 2, 12),
     newStreet(10, 7, 20, 1),
-    newStreet(15, 7, 1, 5)
-  ]
+    newStreet(15, 7, 1, 5),
+  ],
 };
 
 const preset5 = {
   buildings: [
-
     //newBuilding(16, 11, 5, 2),
     //newBuilding(21, 11, 5, 2),
     newBuilding(11, 6, 3, 3),
@@ -145,8 +146,8 @@ const preset5 = {
     newStreet(9, 5, 1, 5),
     newStreet(13, 10, 1, 5),
     newStreet(27, 5, 1, 5),
-    newStreet(33, 10, 1, 5)
-  ]
+    newStreet(33, 10, 1, 5),
+  ],
 };
 
 const preset6 = {
@@ -161,13 +162,9 @@ const preset6 = {
     newBuilding(12, 5, 3, 2),
     newBuilding(12, 12, 4, 2),
     newBuilding(29, 11, 3, 3),
-    newBuilding(34, 5, 3, 2)
+    newBuilding(34, 5, 3, 2),
   ],
-  streets: [
-    newStreet(0, 7, 42, 3),
-    newStreet(10, 14, 30, 2),
-    newStreet(19, 10, 1, 4)
-  ]
+  streets: [newStreet(0, 7, 42, 3), newStreet(10, 14, 30, 2), newStreet(19, 10, 1, 4)],
 };
 
 const preset7 = {
@@ -183,15 +180,15 @@ const preset7 = {
     newBuilding(30, 14, 3, 3),
     newBuilding(20, 3, 3, 2),
     newBuilding(10, 8, 3, 2),
-    newBuilding(31, 8, 3, 2)
+    newBuilding(31, 8, 3, 2),
   ],
   streets: [
     newStreet(14, 5, 10, 1),
     newStreet(0, 10, 42, 3),
     newStreet(15, 17, 20, 1),
     newStreet(13, 5, 1, 5),
-    newStreet(25, 13, 1, 4)
-  ]
+    newStreet(25, 13, 1, 4),
+  ],
 };
 
 const preset8 = {
@@ -207,15 +204,15 @@ const preset8 = {
     newBuilding(24, 8, 3, 2),
     newBuilding(28, 8, 4, 2),
     newBuilding(7, 8, 3, 2),
-    newBuilding(32, 8, 3, 2)
+    newBuilding(32, 8, 3, 2),
   ],
   streets: [
     newStreet(0, 10, 42, 3),
     newStreet(15, 5, 10, 1),
     newStreet(19, 5, 1, 5),
     newStreet(20, 13, 2, 4),
-    newStreet(11, 17, 16, 1)
-  ]
+    newStreet(11, 17, 16, 1),
+  ],
 };
 
 const preset9 = {
@@ -230,11 +227,9 @@ const preset9 = {
     newBuilding(7, 8, 3, 2),
     newBuilding(36, 8, 3, 2),
     newBuilding(3, 8, 3, 2),
-    newBuilding(39, 8, 3, 2)
+    newBuilding(39, 8, 3, 2),
   ],
-  streets: [
-    newStreet(0, 10, 42, 3)
-  ]
+  streets: [newStreet(0, 10, 42, 3)],
 };
 
 /**
@@ -243,11 +238,11 @@ const preset9 = {
  * are described in the "townPaletter" constant variable.
  */
 export class LocationInfo {
-  constructor(){
+  constructor() {
     this.preset = {
       buildings: [],
       streets: [],
-    }
+    };
   }
 
   /**
@@ -261,14 +256,14 @@ export class LocationInfo {
    * @param {number[][]} matrix - binary matrix to set fields to ones
    * @returns {*} - modifies matrix
    */
-  _markAsChecked(x,y, dx, dy, matrix) {
+  _markAsChecked(x, y, dx, dy, matrix) {
     for (let j = y; j <= dy + y; j++) {
-      for (let  i = x; i <= dx + x; i++) {
-	matrix[i][j] = 1;
+      for (let i = x; i <= dx + x; i++) {
+        matrix[i][j] = 1;
       }
     }
   }
-  
+
   /**
    * Helper function to create newBuilding and/or newStreet
    * and populate the preset field with buildings and streets.
@@ -280,16 +275,18 @@ export class LocationInfo {
    * @param {number[][]} matrix - binary matrix to set fields to ones
    * @returns {*} - pushes new buildings/streets into preset field
    */
-  _createBuilding(x, y, image, palette, matrix){
+  _createBuilding(x, y, image, palette, matrix) {
     for (const color of Object.keys(palette)) {
       if (!image[x][y].isColor(palette[color])) continue;
-    
+
       let objWidth = 0;
       let objHeight = 0;
-	
-      while (image[x+objWidth][y].isColor(palette[color]) && x+objWidth < image.width - 1) objWidth++;
-      while (image[x][y+objHeight].isColor(palette[color]) && y+objHeight < image.height - 1) objHeight++;
-    
+
+      while (image[x + objWidth][y].isColor(palette[color]) && x + objWidth < image.width - 1)
+        objWidth++;
+      while (image[x][y + objHeight].isColor(palette[color]) && y + objHeight < image.height - 1)
+        objHeight++;
+
       this._markAsChecked(x, y, objWidth, objHeight, matrix);
       if (color === "street") this.preset.streets.push(newStreet(x, y, objWidth, objHeight));
       else this.preset.buildings.push(newBuilding(x, y, objWidth, objHeight));
@@ -307,8 +304,8 @@ export class LocationInfo {
   _createLocation(image, matrix, palette) {
     for (let y = 0; y < image.height; y++) {
       for (let x = 0; x < image.width; x++) {
-	if (matrix[x][y]) continue;
-	this._createBuilding(x, y, image, palette, matrix);
+        if (matrix[x][y]) continue;
+        this._createBuilding(x, y, image, palette, matrix);
       }
     }
   }
@@ -324,10 +321,12 @@ export class LocationInfo {
     presetImg.onload = () => {
       const { context: offContext } = createCanvas(presetImg.width, presetImg.height);
       offContext.drawImage(presetImg, 0, 0);
-      const checkMatrix = Array(presetImg.width).fill(0).map(()=>Array(presetImg.height).fill(0));
+      const checkMatrix = Array(presetImg.width)
+        .fill(0)
+        .map(() => Array(presetImg.height).fill(0));
       let image = new PixelImage().fromContext(offContext);
-      this._createLocation(image, checkMatrix, townPalette)
-    }
+      this._createLocation(image, checkMatrix, townPalette);
+    };
   }
 }
 

@@ -25,9 +25,6 @@ import Animation from "../core/Animation.js";
 import { allowProperty } from "../global/utilities.js";
 import { animatedSprite as as } from "../global/consts.js";
 
-/**
- * Create sprites to make display and animation simple
- */
 class AnimatedSprite extends Sprite {
   constructor(spriteName, options) {
     super(spriteName, options);
@@ -52,7 +49,7 @@ class AnimatedSprite extends Sprite {
       return;
     }
     this.animationSpeed = options.animationSpeed ?? as.defaultAnimationSpeed;
-    this.animationController = new Animation(this, '()alterFrame', this.animationSpeed);
+    this.animationController = new Animation(this, "()alterFrame", this.animationSpeed);
   }
 
   /**
@@ -62,8 +59,7 @@ class AnimatedSprite extends Sprite {
   changeAnimation(animationName) {
     if (!this.animations.has(animationName))
       throw new Error(
-        'Sprite: Attempted to change to an animation that' +
-        ` does not exist: ${animationName}`
+        "Sprite: Attempted to change to an animation that" + ` does not exist: ${animationName}`,
       );
 
     this.animation = this.animations.get(animationName);
@@ -87,9 +83,7 @@ class AnimatedSprite extends Sprite {
    */
   animate(interval = as.defaultIntervalTime, framesPerInterval = as.defaultFramesPerInterval) {
     this.animating = true;
-    this.intervalID = setInterval(
-      () => this.alterFrame(framesPerInterval),
-      interval);
+    this.intervalID = setInterval(() => this.alterFrame(framesPerInterval), interval);
   }
 
   /**
@@ -98,10 +92,7 @@ class AnimatedSprite extends Sprite {
    */
   alterFrame(frameCount = as.defaultFrameCount) {
     if (!this.animation)
-      throw new Error(
-        'Sprite: Attempted to cycle an animation ' +
-        'which was not defined'
-      );
+      throw new Error("Sprite: Attempted to cycle an animation " + "which was not defined");
     this.frame = (this.frame + frameCount) % this.animation.frames;
   }
 
@@ -110,12 +101,18 @@ class AnimatedSprite extends Sprite {
   }
 
   draw(x, y, context = ctx) {
-    let row = (this.mirrored) ? this.animation.mirroredRow : this.animation.row;
-    context.drawImage(this.img,
+    let row = this.mirrored ? this.animation.mirroredRow : this.animation.row;
+    context.drawImage(
+      this.img,
       this.frame * this.width,
       row * this.height,
-      this.width, this.height, x, y,
-      this.width, this.height);
+      this.width,
+      this.height,
+      x,
+      y,
+      this.width,
+      this.height,
+    );
   }
 }
 

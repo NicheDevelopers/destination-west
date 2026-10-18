@@ -1,5 +1,5 @@
 import { srandIntInRange, resetIdFor } from "../global/utilities.js";
-import { mapParameters as mp } from "../global/consts.js"
+import { mapParameters as mp } from "../global/consts.js";
 import Town from "../Location/Town.js";
 
 function distance([x1, y1], [x2, y2]) {
@@ -19,8 +19,7 @@ class WorldMap {
   getByID(id) {
     if (id > this.locations.length - 1 || id < 0) {
       throw new Error(
-        `WorldMap: no town with ID ${id} - locations ` +
-        `length is ${this.locations.length}`
+        `WorldMap: no town with ID ${id} - locations ` + `length is ${this.locations.length}`,
       );
     }
     return this.locations[id];
@@ -32,7 +31,7 @@ class WorldMap {
     let locations = new Array();
 
     for (let i = 0; i < numOfLocations; i++) {
-      let [x, y] = this._getValidCoordinates(locations)
+      let [x, y] = this._getValidCoordinates(locations);
       locations.push(new Town(this.game, x, y, { sheriff: 1, house: 2, saloon: 11 }));
     }
     this.locations = locations;
@@ -49,7 +48,7 @@ class WorldMap {
   }
 
   _locationsConnected() {
-    return this._dfs(this.locations).length == this.locations.length
+    return this._dfs(this.locations).length == this.locations.length;
   }
 
   intoNeighborList() {
@@ -62,15 +61,15 @@ class WorldMap {
 
   _dfs() {
     let g = this.intoNeighborList();
-    let visited = [this.locations[this.locations.length - 1].ID]
+    let visited = [this.locations[this.locations.length - 1].ID];
     const dfsUtil = (g, start) => {
-      visited.push(start)
+      visited.push(start);
       for (let v of g.get(start)) {
         if (!visited.includes(v)) {
           dfsUtil(g, v);
         }
       }
-    }
+    };
     let start = 0;
     dfsUtil(g, start);
     return visited;
@@ -78,15 +77,17 @@ class WorldMap {
 
   _getValidCoordinates(existingLocations) {
     while (true) {
-      let [x, y] = [srandIntInRange(mp.paddingX, mp.displayWidth - mp.paddingX),
-      srandIntInRange(mp.paddingY, mp.displayHeight - mp.paddingY)];
-      if (existingLocations.none((t) =>
-        distance([t.x, t.y], [x, y]) < mp.minDistanceBetweenLocations)) {
+      let [x, y] = [
+        srandIntInRange(mp.paddingX, mp.displayWidth - mp.paddingX),
+        srandIntInRange(mp.paddingY, mp.displayHeight - mp.paddingY),
+      ];
+      if (
+        existingLocations.none((t) => distance([t.x, t.y], [x, y]) < mp.minDistanceBetweenLocations)
+      ) {
         return [x, y];
       }
     }
   }
-
 }
 
 export default WorldMap;

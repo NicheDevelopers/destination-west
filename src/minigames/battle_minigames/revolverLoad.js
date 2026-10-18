@@ -19,10 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { State, stateManager } from "../../global/stateManager.js"
-import { createElement, randIntInRange } from "../../global/utilities.js";
+import { State } from "../../global/stateManager.js";
+import { randIntInRange } from "../../global/utilities.js";
 import { htmlCreate } from "../../global/utilities.js";
-import AudioPlayer from "../../audio/AudioPlayer.js"
+import AudioPlayer from "../../audio/AudioPlayer.js";
 
 class RevolverLoadingGame extends State {
   constructor(game, bullets) {
@@ -33,7 +33,7 @@ class RevolverLoadingGame extends State {
     this.mainDiv = htmlCreate({
       "background-image": `url("img/battle_assets/revolver_minigame/revolver-firing-board.png")`,
       id: "shooting-range",
-      appendTo: this.gameContainer
+      appendTo: this.gameContainer,
     });
     this.soundAgent = new AudioPlayer();
 
@@ -47,16 +47,19 @@ class RevolverLoadingGame extends State {
     for (let i = 0; i < this.bullets; ++i) {
       let arrowid = "arrow" + i;
       let direction = randIntInRange(0, 2);
-      direction = direction == 0 ? 'left' : 'right';
+      direction = direction == 0 ? "left" : "right";
       this.arrowDirections.push(direction);
-      this.arrowDivs.push(htmlCreate({
-        "background-image": `url("img/battle_assets/revolver_minigame/revolver-load-` + direction + `.png")`,
-        id: arrowid,
-        left: (25 + 10 * (i % 3)) + "%",
-        top: 5 + 50 * ~~(i / 3) + "%",
-        className: "arrow",
-        appendTo: this.mainDiv
-      }));
+      this.arrowDivs.push(
+        htmlCreate({
+          "background-image":
+            `url("img/battle_assets/revolver_minigame/revolver-load-` + direction + `.png")`,
+          id: arrowid,
+          left: 25 + 10 * (i % 3) + "%",
+          top: 5 + 50 * ~~(i / 3) + "%",
+          className: "arrow",
+          appendTo: this.mainDiv,
+        }),
+      );
       this.arrowDivs[i].style.display = "flex";
     }
     this.mainDiv.style.display = "none";
@@ -68,19 +71,11 @@ class RevolverLoadingGame extends State {
     console.log("Startuje");
   }
 
-  update() {
-
-  }
+  update() {}
 
   manageInputs(keyman) {
-    keyman.manageInput(
-      'Load Left',
-      () => this.checkLoad('left')
-    );
-    keyman.manageInput(
-      'Load Right',
-      () => this.checkLoad('right')
-    );
+    keyman.manageInput("Load Left", () => this.checkLoad("left"));
+    keyman.manageInput("Load Right", () => this.checkLoad("right"));
   }
 
   checkLoad(playerDirection) {
@@ -89,18 +84,22 @@ class RevolverLoadingGame extends State {
       return;
     }
     if (playerDirection == this.arrowDirections[this.currentArrow]) {
-      this.arrowDivs[this.currentArrow].style.backgroundImage = `url("img/battle_assets/revolver_minigame/revolver-load-` + this.arrowDirections[this.currentArrow] + `-correct.png")`;
+      this.arrowDivs[this.currentArrow].style.backgroundImage =
+        `url("img/battle_assets/revolver_minigame/revolver-load-` +
+        this.arrowDirections[this.currentArrow] +
+        `-correct.png")`;
       this.soundAgent.play("revolver-load");
       ++this.successfulLoads;
       ++this.currentArrow;
-      if (this.currentArrow >= this.bullets)
-        this.soundAgent.play("revolver-roll", { delay: 300 });
+      if (this.currentArrow >= this.bullets) this.soundAgent.play("revolver-roll", { delay: 300 });
       return;
     }
-    this.arrowDivs[this.currentArrow].style.backgroundImage = `url("img/battle_assets/revolver_minigame/revolver-load-` + this.arrowDirections[this.currentArrow] + `-incorrect.png")`;
+    this.arrowDivs[this.currentArrow].style.backgroundImage =
+      `url("img/battle_assets/revolver_minigame/revolver-load-` +
+      this.arrowDirections[this.currentArrow] +
+      `-incorrect.png")`;
     ++this.currentArrow;
-    if (this.currentArrow >= this.bullets)
-      this.soundAgent.play("revolver-roll", { delay: 300 });
+    if (this.currentArrow >= this.bullets) this.soundAgent.play("revolver-roll", { delay: 300 });
   }
 
   startHook() {

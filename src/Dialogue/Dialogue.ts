@@ -51,9 +51,6 @@ export class Dialogue {
    * The currently displayed DialogueUnit, taken from the currentLabel
    */
   private currentUnit: DialogueUnit | undefined;
-  /**
-   * The current Label being displayed
-   */
   private currentLabel: Label;
   private animation: Animation | null = null;
 
@@ -78,10 +75,6 @@ export class Dialogue {
     this.fromText(await response.text());
   }
 
-  /**
-   * Load dialogue content from a string
-   * @param text - The dialogue content
-   */
   fromText(text: string): this {
     this.parseDialogue(text);
     this.currentLabel = this.getLabel(Label.START);

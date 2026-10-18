@@ -1,9 +1,6 @@
 import Dialogue from "../Dialogue/Dialogue.ts";
 import traderDialogue from "../Dialogue/trader_dialogue.dwd?raw";
-import { State, stateManager } from "../global/stateManager.js";
-import Entity from "./Entity.js";
 import Npc from "./Npc.js";
-import { ButtonList } from "../global/utilities.js";
 
 class Trader extends Npc {
   /**
@@ -17,9 +14,6 @@ class Trader extends Npc {
     super(game, x, y, name);
   }
 
-  /**
-   * Update method for every game tick
-   */
   update() {
     this.sprite.next();
   }
@@ -29,9 +23,9 @@ class Trader extends Npc {
    * @param {Entity} who who is interacting with class - mostly (only one) will be the Player class
    */
   interact(who) {
-    this.sprite.mirrored = (who.x < this.x);
+    this.sprite.mirrored = who.x < this.x;
     this.dialogue = new Dialogue(who, this).fromText(traderDialogue);
-    
+
     this.game.startDialogue(this.dialogue);
   }
 }

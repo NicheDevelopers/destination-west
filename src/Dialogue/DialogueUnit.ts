@@ -46,9 +46,6 @@ export abstract class DialogueUnit {
    */
   verify(_dialogue: Dialogue): void {}
 
-  /**
-   * Bring this Unit to its initial state
-   */
   reset(): void {}
 
   /**
@@ -60,9 +57,6 @@ export abstract class DialogueUnit {
   static readonly OPERATION: unique symbol = Symbol("Dialogue Operation");
 }
 
-/**
- * A DialogueUnit representing a single dialogue text line
- */
 export class DialogueLine extends DialogueUnit {
   /**
    * The number of currently displayed letters of `text`
@@ -107,9 +101,6 @@ export class DialogueLine extends DialogueUnit {
   }
 }
 
-/**
- * A DialogueUnit representing a dialogue menu with options
- */
 export class DialogueMenu extends DialogueUnit {
   /**
    * Non-special labels the choices of this menu lead to
@@ -249,16 +240,10 @@ export class Label {
     return this.canStep() && this.nextUnit === undefined;
   }
 
-  /**
-   * Push elements to the units array of the label
-   */
   push(...units: DialogueUnit[]): void {
     this.units.push(...units);
   }
 
-  /**
-   * The last unit of this label.
-   */
   get last(): DialogueUnit | undefined {
     return this.units.at(-1);
   }
@@ -279,9 +264,6 @@ export class Label {
     }
   }
 
-  /**
-   * Bring this Label to its initial state
-   */
   reset(): void {
     this.n = -1;
     for (const unit of this.units) {

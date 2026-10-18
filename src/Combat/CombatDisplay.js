@@ -2,8 +2,8 @@ import { State } from "../global/stateManager.js";
 import { AttackType, CombatAction } from "./Combat.js";
 import { ButtonList, htmlCreate } from "../global/utilities.js";
 import { ctx } from "../core/Browser.js";
-import { Dialogue } from "../Dialogue/Dialogue.js";
-import { DialogueLine } from "../Dialogue/DialogueUnit.js";
+import { Dialogue } from "../Dialogue/Dialogue.ts";
+import { DialogueLine } from "../Dialogue/DialogueUnit.ts";
 import { items } from "../global/items.js";
 
 export default class CombatDisplay extends State {

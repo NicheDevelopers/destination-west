@@ -4,7 +4,8 @@
 import Interactible from "./Interactible.js";
 import { addTraits, InventoryTrait } from "../traits.js";
 import { genNpcName } from "../generators/nameGenerators.js";
-import Dialogue from "../Dialogue/Dialogue.js";
+import Dialogue from "../Dialogue/Dialogue.ts";
+import testDialogue from "../Dialogue/test_dialogue.dwd?raw";
 import { npcParameters } from "../global/consts.js";
 import Stats from "./Stats.js";
 
@@ -39,7 +40,7 @@ class Npc extends Interactible {
   }
   interact(who) {
     this.sprite.mirrored = (who.x < this.x);
-    this.dialogue = new Dialogue(who, this, "src/Dialogue/test_dialogue.dwd");
+    this.dialogue = new Dialogue(who, this).fromText(testDialogue);
 
     this.game.startDialogue(this.dialogue);
   }

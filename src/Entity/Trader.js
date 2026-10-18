@@ -1,4 +1,5 @@
-import Dialogue from "../Dialogue/Dialogue.js";
+import Dialogue from "../Dialogue/Dialogue.ts";
+import traderDialogue from "../Dialogue/trader_dialogue.dwd?raw";
 import { State, stateManager } from "../global/stateManager.js";
 import Entity from "./Entity.js";
 import Npc from "./Npc.js";
@@ -29,7 +30,7 @@ class Trader extends Npc {
    */
   interact(who) {
     this.sprite.mirrored = (who.x < this.x);
-    this.dialogue = new Dialogue(who, this, "src/Dialogue/trader_dialogue.dwd");
+    this.dialogue = new Dialogue(who, this).fromText(traderDialogue);
     
     this.game.startDialogue(this.dialogue);
   }

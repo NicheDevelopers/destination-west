@@ -19,7 +19,6 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-"use-strict";
 import App from "./src/App.js";
 import SpriteLoader from "./src/Sprite/SpriteLoader.js";
 

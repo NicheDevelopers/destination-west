@@ -19,8 +19,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import Item from "./Item.js";
-import { toPrettyJson as toJson } from "../utilities/utilities.js";
-import type { RecipeConsumable } from "../global/items.js";
+import { toPrettyJson as toJson } from "@/utilities/utilities.js";
+import type { RecipeConsumable } from "@/global/items.js";
 
 type EffectName = "health" | "accuracy";
 

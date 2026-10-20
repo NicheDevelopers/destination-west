@@ -19,8 +19,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import time from "../global/time.js";
-import "../utilities/utilities.js";
+import time from "@/global/time.js";
+import "@/utilities/utilities.js";
 
 const ac = {
   speed: 300,

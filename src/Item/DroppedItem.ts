@@ -19,11 +19,11 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Sprite from "../Sprite/Sprite.js";
-import { generateID, type Point } from "../utilities/utilities.js";
-import { TILE_SIZE } from "../global/consts.js";
-import { notifier, Notification } from "../global/notifier.js";
-import { addTraits, centerPointTrait } from "../traits.js";
+import Sprite from "@/Sprite/Sprite.js";
+import { generateID, type Point } from "@/utilities/utilities.js";
+import { TILE_SIZE } from "@/global/consts.js";
+import { notifier, Notification } from "@/global/notifier.js";
+import { addTraits, centerPointTrait } from "@/traits.js";
 import type Item from "./Item.js";
 
 class DroppedItem {

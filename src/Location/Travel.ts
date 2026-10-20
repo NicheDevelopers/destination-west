@@ -20,11 +20,11 @@
 */
 
 import Location from "./Location.js";
-import { srandIntInRange, seedRoll } from "../utilities/random.js";
-import { TILE_SIZE } from "../global/consts.js";
-import Portal, { PortalType } from "../Entity/Portal.js";
+import { srandIntInRange, seedRoll } from "@/utilities/random.js";
+import { TILE_SIZE } from "@/global/consts.js";
+import Portal, { PortalType } from "@/Entity/Portal.js";
 import type { StreetPreset } from "./townPresets.js";
-import type Game from "../game/Game.js";
+import type Game from "@/game/Game.js";
 
 // the leght of chunk must be at least 10 tiles
 

@@ -20,14 +20,14 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import time from "./global/time.js";
-import { Browser } from "./core/Browser.js";
-import keyman from "./core/KeyboardManager.js";
-import AudioPlayer from "./audio/AudioPlayer.js";
-import DebugView from "./debug/DebugView.js";
-import Game from "./game/Game.js";
-import { stateManager } from "./global/stateManager.js";
-import { notifier } from "./global/notifier.js";
+import time from "@/global/time.js";
+import { Browser } from "@/core/Browser.js";
+import keyman from "@/core/KeyboardManager.js";
+import AudioPlayer from "@/audio/AudioPlayer.js";
+import DebugView from "@/debug/DebugView.js";
+import Game from "@/game/Game.js";
+import { stateManager } from "@/global/stateManager.js";
+import { notifier } from "@/global/notifier.js";
 
 class App {
   constructor() {

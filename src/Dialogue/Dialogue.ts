@@ -1,7 +1,7 @@
-import Stats from "../Entity/Stats.js";
-import type Equipment from "../Equipment/Equipment.js";
-import type Game from "../game/Game.js";
-import type Animation from "../core/Animation.js";
+import Stats from "@/Entity/Stats.js";
+import type Equipment from "@/Equipment/Equipment.js";
+import type Game from "@/game/Game.js";
+import type Animation from "@/core/Animation.js";
 import {
   DialogueUnit,
   DialogueLine,

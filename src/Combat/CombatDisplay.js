@@ -1,10 +1,10 @@
-import { State } from "../global/stateManager.js";
+import { State } from "@/global/stateManager.js";
 import { AttackType, CombatAction } from "./Combat.js";
-import { ButtonList } from "../utilities/ButtonList.js";
-import { htmlCreate } from "../utilities/dom.js";
-import { ctx } from "../core/Browser.js";
-import { Dialogue } from "../Dialogue/Dialogue.ts";
-import { items } from "../global/items.js";
+import { ButtonList } from "@/utilities/ButtonList.js";
+import { htmlCreate } from "@/utilities/dom.js";
+import { ctx } from "@/core/Browser.js";
+import { Dialogue } from "@/Dialogue/Dialogue.ts";
+import { items } from "@/global/items.js";
 
 export default class CombatDisplay extends State {
   constructor(game, combat) {

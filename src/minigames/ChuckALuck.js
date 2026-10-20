@@ -18,10 +18,10 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import { State, stateManager } from "../global/stateManager.js";
-import { createElement } from "../utilities/dom.js";
-import { randIntInRange } from "../utilities/random.js";
-import { CHUCK_A_LUCK_PARAMETERS as cal } from "../global/consts.js";
+import { State, stateManager } from "@/global/stateManager.js";
+import { createElement } from "@/utilities/dom.js";
+import { randIntInRange } from "@/utilities/random.js";
+import { CHUCK_A_LUCK_PARAMETERS as cal } from "@/global/consts.js";
 
 class ChuckALuck extends State {
   constructor(game) {

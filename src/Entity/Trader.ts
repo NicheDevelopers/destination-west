@@ -1,7 +1,7 @@
-import Dialogue from "../Dialogue/Dialogue.ts";
-import traderDialogue from "../Dialogue/trader_dialogue.dwd?raw";
-import type Game from "../game/Game.ts";
-import type { Point } from "../utilities/utilities.ts";
+import Dialogue from "@/Dialogue/Dialogue.ts";
+import traderDialogue from "@/Dialogue/trader_dialogue.dwd?raw";
+import type Game from "@/game/Game.ts";
+import type { Point } from "@/utilities/utilities.ts";
 import type Entity from "./Entity.ts";
 import Npc from "./Npc.js";
 

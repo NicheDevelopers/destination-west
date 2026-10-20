@@ -19,16 +19,16 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import AnimatedSprite from "../Sprite/AnimatedSprite.js";
-import { ANIMATION_SPEED, DEFAULT_ENTITY_HP } from "../global/consts.js";
-import { generateID, validateOptions, type Point } from "../utilities/utilities.js";
-import { addTraits, centerPointTrait, HitboxTrait, MovementTrait } from "../traits.js";
-import imgInfo from "../static/imgInfo.js";
-import SpriteLoader from "../Sprite/SpriteLoader.js";
-import type Hitbox from "../game/HitboxClass.js";
-import type Game from "../game/Game.js";
-import type Sprite from "../Sprite/Sprite.js";
-import type Tile from "../game/Tile.js";
+import AnimatedSprite from "@/Sprite/AnimatedSprite.js";
+import { ANIMATION_SPEED, DEFAULT_ENTITY_HP } from "@/global/consts.js";
+import { generateID, validateOptions, type Point } from "@/utilities/utilities.js";
+import { addTraits, centerPointTrait, HitboxTrait, MovementTrait } from "@/traits.js";
+import imgInfo from "@/static/imgInfo.js";
+import SpriteLoader from "@/Sprite/SpriteLoader.js";
+import type Hitbox from "@/game/HitboxClass.js";
+import type Game from "@/game/Game.js";
+import type Sprite from "@/Sprite/Sprite.js";
+import type Tile from "@/game/Tile.js";
 
 const entityOptions = new Map([
   ["animated", "Boolean. Determines whether the entity has an animated sprite"],

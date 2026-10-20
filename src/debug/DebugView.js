@@ -1,9 +1,9 @@
 import KeyboardVisualizer from "./KeyboardVisualizer.js";
-import { htmlCreate } from "../utilities/dom.js";
-import { numberPad } from "../utilities/utilities.js";
-import Animation from "../core/Animation.js";
-import time from "../global/time.js";
-import seed from "../global/seed.js";
+import { htmlCreate } from "@/utilities/dom.js";
+import { numberPad } from "@/utilities/utilities.js";
+import Animation from "@/core/Animation.js";
+import time from "@/global/time.js";
+import seed from "@/global/seed.js";
 
 /**
  * Create and manage a group of HTML elements useful for debugging

@@ -1,7 +1,7 @@
 import Entity from "./Entity.js";
-import Sprite from "../Sprite/Sprite.js";
-import type Game from "../game/Game.js";
-import type { Point } from "../utilities/utilities.js";
+import Sprite from "@/Sprite/Sprite.js";
+import type Game from "@/game/Game.js";
+import type { Point } from "@/utilities/utilities.js";
 
 class Interactible extends Entity {
   private loadedFocusedSprite: boolean;

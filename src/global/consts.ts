@@ -1,4 +1,4 @@
-import type { Point } from "../utilities/utilities.js";
+import type { Point } from "@/utilities/utilities.js";
 
 export const TILE_SIZE = 64;
 export const DEFAULT_EQUIPMENT_SIZE = 100;

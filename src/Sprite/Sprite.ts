@@ -18,19 +18,19 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import { ctx } from "../core/Browser.js";
+import { ctx } from "@/core/Browser.js";
 import {
   TILE_SIZE,
   SPRITE_SCALE,
   DEFAULT_HITBOX_HEIGHT,
   AUTO_BOUNDARY_X_LOOSENESS,
-} from "../global/consts.js";
-import { createCanvas } from "../utilities/dom.js";
-import { randIntInRange } from "../utilities/random.js";
-import { forbidProperty } from "../utilities/utilities.js";
-import { PixelImage } from "../utilities/PixelImage.js";
-import type { Point, Size } from "../utilities/utilities.js";
-import imgInfo from "../static/imgInfo.js";
+} from "@/global/consts.js";
+import { createCanvas } from "@/utilities/dom.js";
+import { randIntInRange } from "@/utilities/random.js";
+import { forbidProperty } from "@/utilities/utilities.js";
+import { PixelImage } from "@/utilities/PixelImage.js";
+import type { Point, Size } from "@/utilities/utilities.js";
+import imgInfo from "@/static/imgInfo.js";
 
 function toKey(name: string, rotation: number | undefined, outline: boolean | undefined): string {
   return name + "/" + (rotation === undefined ? "n" : rotation) + "/" + (outline ? "y" : "n");

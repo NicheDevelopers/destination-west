@@ -2,6 +2,7 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   base: "./",
+  resolve: { tsconfigPaths: true },
   build: {
     // Game code compares `constructor.name` at runtime; minification would mangle it.
     rolldownOptions: { output: { keepNames: true } },

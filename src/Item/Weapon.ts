@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import type { RecipeWeapon } from "../global/items.js";
+import type { RecipeWeapon } from "@/global/items.js";
 import Item from "./Item.js";
 
 class Weapon extends Item {

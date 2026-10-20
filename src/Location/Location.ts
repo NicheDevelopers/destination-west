@@ -21,26 +21,26 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Tile from "../game/Tile.js";
-import Entity from "../Entity/Entity.js";
-import { ctx } from "../core/Browser.js";
-import { createCanvas } from "../utilities/dom.js";
-import { distance, comparePositions, type Point } from "../utilities/utilities.js";
-import { seedRoll } from "../utilities/random.js";
+import Tile from "@/game/Tile.js";
+import Entity from "@/Entity/Entity.js";
+import { ctx } from "@/core/Browser.js";
+import { createCanvas } from "@/utilities/dom.js";
+import { distance, comparePositions, type Point } from "@/utilities/utilities.js";
+import { seedRoll } from "@/utilities/random.js";
 import {
   TILE_SIZE,
   PERCENTAGE_OF_GENERIC_DECORATION as pGD,
   FOCUS_PARAMETERS,
-} from "../global/consts.js";
+} from "@/global/consts.js";
 import Building, { type BuildingType } from "./Building.js";
 import type { StreetPreset } from "./townPresets.js";
-import type Game from "../game/Game.js";
-import type Player from "../Entity/Player.js";
-import type Interactible from "../Entity/Interactible.js";
-import type Container from "../Entity/Container.js";
-import type Portal from "../Entity/Portal.js";
-import type DroppedItem from "../Item/DroppedItem.js";
-import type { EntityOptions } from "../Entity/Entity.js";
+import type Game from "@/game/Game.js";
+import type Player from "@/Entity/Player.js";
+import type Interactible from "@/Entity/Interactible.js";
+import type Container from "@/Entity/Container.js";
+import type Portal from "@/Entity/Portal.js";
+import type DroppedItem from "@/Item/DroppedItem.js";
+import type { EntityOptions } from "@/Entity/Entity.js";
 
 export type LocationInteractible = DroppedItem | Interactible;
 

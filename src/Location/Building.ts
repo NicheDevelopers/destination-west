@@ -19,9 +19,9 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import Entity, { type EntityOptions } from "../Entity/Entity.js";
-import type Game from "../game/Game.js";
-import type { Point } from "../utilities/utilities.js";
+import Entity, { type EntityOptions } from "@/Entity/Entity.js";
+import type Game from "@/game/Game.js";
+import type { Point } from "@/utilities/utilities.js";
 
 export type BuildingType = "saloon" | "sheriff" | "house";
 

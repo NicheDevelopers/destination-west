@@ -1,4 +1,4 @@
-import seed from "../global/seed.js";
+import seed from "@/global/seed.js";
 
 /**
  * Return a random float.

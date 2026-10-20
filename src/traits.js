@@ -1,15 +1,15 @@
-import Equipment from "./Equipment/Equipment.js";
+import Equipment from "@/Equipment/Equipment.js";
 import {
   DEFAULT_EQUIPMENT_SIZE,
   DEFAULT_RCP,
   DEFAULT_BD,
   CASH_MIN_MAX_PARAMETERS as cashParam,
-} from "./global/consts.js";
-import { ObjectSet } from "./utilities/ObjectSet.js";
-import { Direction } from "./utilities/utilities.js";
-import { randIntInRange } from "./utilities/random.js";
-import Hitbox from "./game/HitboxClass.js";
-import Movement from "./game/Movement.js";
+} from "@/global/consts.js";
+import { ObjectSet } from "@/utilities/ObjectSet.js";
+import { Direction } from "@/utilities/utilities.js";
+import { randIntInRange } from "@/utilities/random.js";
+import Hitbox from "@/game/HitboxClass.js";
+import Movement from "@/game/Movement.js";
 
 let specialProps = new Set(["_name_", "_before_", "_after_"]);
 

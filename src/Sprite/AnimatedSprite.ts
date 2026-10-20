@@ -19,12 +19,12 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { ctx } from "../core/Browser.js";
+import { ctx } from "@/core/Browser.js";
 import Sprite, { type SheetInfo, type SpriteOptions } from "./Sprite.js";
-import Animation from "../core/Animation.js";
-import type { AnimationInfo, AnimationName } from "../static/imgInfo.js";
-import { allowProperty } from "../utilities/utilities.js";
-import { ANIMATED_SPRITE as as } from "../global/consts.js";
+import Animation from "@/core/Animation.js";
+import type { AnimationInfo, AnimationName } from "@/static/imgInfo.js";
+import { allowProperty } from "@/utilities/utilities.js";
+import { ANIMATED_SPRITE as as } from "@/global/consts.js";
 
 // TODO: sanity check - these types are not used mostly in codebase, but probably it is what author want to do
 export type AnimatedSpriteOptions = SpriteOptions & {

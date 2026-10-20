@@ -19,10 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { seedRoll } from "../utilities/random.js";
+import { seedRoll } from "@/utilities/random.js";
 import { maleNames, femaleNames, nicknames, surnames } from "./npcNames.js";
 import { arr1, arr2 } from "./townNames.js";
-import { PERCENTAGE_OF_TWO_NAME_TOWN } from "../global/consts.js";
+import { PERCENTAGE_OF_TWO_NAME_TOWN } from "@/global/consts.js";
 
 /**
  * Create name for NPCs

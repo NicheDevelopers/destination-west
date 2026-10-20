@@ -20,39 +20,39 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Camera from "../core/Camera.js";
+import Camera from "@/core/Camera.js";
 import Tile from "./Tile.js";
-import Player from "../Entity/Player.js";
-import WorldMapDisplay from "../WorldMap/WorldMapDisplay.js";
-import PauseMenu from "../menu/PauseMenu.js";
-import EquipmentDisplay from "../Equipment/EquipmentDisplay.js";
-import Designer from "../misc/Designer.js";
-import { State, stateManager } from "../global/stateManager.js";
-import Npc from "../Entity/Npc.js";
-import DialogueDisplay from "../Dialogue/DialogueDisplay.ts";
-import Container from "../Entity/Container.js";
-import Portal, { PortalType } from "../Entity/Portal.js";
-import TransferDisplay from "../Transfer/TransferDisplay.js";
-import WorldMap from "../WorldMap/WorldMap.js";
-import Travel from "../Location/Travel.js";
-import Town from "../Location/Town.js";
-import { distance } from "../utilities/utilities.js";
-import Interactible from "../Entity/Interactible.js";
-import ChuckALuck from "../minigames/ChuckALuck.js";
-import revolverShoot from "../minigames/battle_minigames/revolverShoot.js";
-import revolverLoad from "../minigames/battle_minigames/revolverLoad.js";
-import Trader from "../Entity/Trader.js";
-import seed from "../global/seed.js";
-import { items } from "../global/items.js";
+import Player from "@/Entity/Player.js";
+import WorldMapDisplay from "@/WorldMap/WorldMapDisplay.js";
+import PauseMenu from "@/menu/PauseMenu.js";
+import EquipmentDisplay from "@/Equipment/EquipmentDisplay.js";
+import Designer from "@/misc/Designer.js";
+import { State, stateManager } from "@/global/stateManager.js";
+import Npc from "@/Entity/Npc.js";
+import DialogueDisplay from "@/Dialogue/DialogueDisplay.ts";
+import Container from "@/Entity/Container.js";
+import Portal, { PortalType } from "@/Entity/Portal.js";
+import TransferDisplay from "@/Transfer/TransferDisplay.js";
+import WorldMap from "@/WorldMap/WorldMap.js";
+import Travel from "@/Location/Travel.js";
+import Town from "@/Location/Town.js";
+import { distance } from "@/utilities/utilities.js";
+import Interactible from "@/Entity/Interactible.js";
+import ChuckALuck from "@/minigames/ChuckALuck.js";
+import revolverShoot from "@/minigames/battle_minigames/revolverShoot.js";
+import revolverLoad from "@/minigames/battle_minigames/revolverLoad.js";
+import Trader from "@/Entity/Trader.js";
+import seed from "@/global/seed.js";
+import { items } from "@/global/items.js";
 import {
   FindQuestBuilder,
   FindQuestConfig,
   FindQuestType,
   ItemDistribution,
   ItemEntry,
-} from "../Quest.js";
-import { Combat, CombatConfig, CombatInitiationType, Difficulty } from "../Combat/Combat.js";
-import CombatDisplay from "../Combat/CombatDisplay.js";
+} from "@/Quest.js";
+import { Combat, CombatConfig, CombatInitiationType, Difficulty } from "@/Combat/Combat.js";
+import CombatDisplay from "@/Combat/CombatDisplay.js";
 
 class Game extends State {
   worldMap!: WorldMap;

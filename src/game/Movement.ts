@@ -19,14 +19,14 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import { TILE_SIZE, PLAYER_PARAMETERS as pp, type InputMode } from "../global/consts.js";
-import { randIntInRange } from "../utilities/random.js";
-import { roundToTile, validateOptions, type Point } from "../utilities/utilities.js";
-import { Direction } from "../utilities/utilities.js";
-import Animation from "../core/Animation.js";
-import Pathfinder from "../Pathfinder.js";
-import type { KeyboardManager } from "../core/KeyboardManager.js";
-import type AnimatedSprite from "../Sprite/AnimatedSprite.js";
+import { TILE_SIZE, PLAYER_PARAMETERS as pp, type InputMode } from "@/global/consts.js";
+import { randIntInRange } from "@/utilities/random.js";
+import { roundToTile, validateOptions, type Point } from "@/utilities/utilities.js";
+import { Direction } from "@/utilities/utilities.js";
+import Animation from "@/core/Animation.js";
+import Pathfinder from "@/Pathfinder.js";
+import type { KeyboardManager } from "@/core/KeyboardManager.js";
+import type AnimatedSprite from "@/Sprite/AnimatedSprite.js";
 import type Game from "./Game.js";
 
 const movementOptions = new Map([

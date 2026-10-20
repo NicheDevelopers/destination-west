@@ -20,7 +20,7 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { TILE_SIZE } from "../global/consts.js";
+import { TILE_SIZE } from "@/global/consts.js";
 import { randIntInRange, srandIntInRange } from "./random.js";
 import type { Comparator } from "./extensions.js";
 
@@ -171,8 +171,8 @@ Object.defineProperty(Array.prototype, "lastNthElement", {
   },
 });
 
-import { DIRECTIONS } from "../global/consts.js";
-import Direction from "../game/Direction.js";
+import { DIRECTIONS } from "@/global/consts.js";
+import Direction from "@/game/Direction.js";
 export { Direction, DIRECTIONS };
 
 Object.defineProperty(Array.prototype, "popFirst", {

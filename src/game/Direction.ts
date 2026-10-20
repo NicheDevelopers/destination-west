@@ -33,7 +33,7 @@
       
 */
 
-import { DIRECTIONS, type DirectionValue } from "../global/consts.js";
+import { DIRECTIONS, type DirectionValue } from "@/global/consts.js";
 
 class Direction {
   private value: DirectionValue;

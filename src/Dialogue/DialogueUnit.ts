@@ -1,6 +1,6 @@
-import Animation from "../core/Animation.js";
-import { DIALOGUE_PARAMETERS } from "../global/consts.js";
-import { ButtonList } from "../utilities/ButtonList.js";
+import Animation from "@/core/Animation.js";
+import { DIALOGUE_PARAMETERS } from "@/global/consts.js";
+import { ButtonList } from "@/utilities/ButtonList.js";
 import type Dialogue from "./Dialogue.ts";
 
 /**

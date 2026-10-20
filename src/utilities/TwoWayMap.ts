@@ -3,8 +3,8 @@
  * All the keys within a TwoWayMap are unique, but more than
  * one key could lead to the same value. If that's the case, calling getKey()
  * will return the key that was added first.
- * @param {Array} array - An array of key-value pairs to initialize the TwoWayMap
- * @param {boolean} ignoreDuplicates [false] - Whether to ignore duplicate keys
+ * @param array - An array of key-value pairs to initialize the TwoWayMap
+ * @param ignoreDuplicates - Whether to ignore duplicate keys
  * and leave original values mapped to them during creation from the provided array.
  * The default behavior is to throw an error in such case.
  */

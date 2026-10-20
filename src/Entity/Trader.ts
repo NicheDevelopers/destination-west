@@ -18,7 +18,7 @@ class Trader extends Npc {
 
   /**
    * Interaction method with Trader
-   * @param {Entity} who who is interacting with class - mostly (only one) will be the Player class
+   * @param who who is interacting with class - mostly (only one) will be the Player class
    */
   interact(who: Entity) {
     this.sprite.mirrored = who.pos.x < this.pos.x;

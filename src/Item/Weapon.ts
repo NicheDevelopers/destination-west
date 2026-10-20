@@ -50,7 +50,6 @@ class Weapon extends Item {
 
   /**
    * Method for deep copy of Item object. Generates new Sprite.
-   * @returns {Weapon} deep copy Item
    */
   deepCopy(): Weapon {
     const copy = new Weapon(this.recipe);

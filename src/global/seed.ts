@@ -27,7 +27,7 @@ class Seed {
 
   /**
    * Generates an array of bits based on given seed.
-   * @param {function} callback - A function to run on completion
+   * @param callback - A function to run on completion
    * of the seed generation. The seed bits array is passed as
    * an argument to this function.
    */

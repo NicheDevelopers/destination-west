@@ -16,18 +16,10 @@ class EquipmentDisplay extends State {
     this.equipment = equipment;
     this.game = game;
     this.actions = ["Toggle Equipment Display"];
-    this.div = createElement(
-      "div",
-      null,
-      null,
-      ["window"],
-      {},
-      "equipment",
-      null,
-    ) as HTMLDivElement;
+    this.div = createElement("div", null, null, ["window"], {}, "equipment", null);
     const gameContainer = document.querySelector("#game-container");
     if (!gameContainer) throw new Error("Missing #game-container element");
-    this.divEqList = createElement("div", null, null, [], {}, "eq-list", null) as HTMLDivElement;
+    this.divEqList = createElement("div", null, null, [], {}, "eq-list", null);
     this.div.appendChild(this.divEqList);
     gameContainer.appendChild(this.div);
   }
@@ -86,15 +78,7 @@ class EquipmentDisplay extends State {
   }
 
   private recordToListElement(record: EquipmentRecord): HTMLDivElement {
-    const div = createElement(
-      "div",
-      null,
-      null,
-      ["list-element"],
-      {},
-      null,
-      null,
-    ) as HTMLDivElement;
+    const div = createElement("div", null, null, ["list-element"], {}, null, null);
     const nameDiv = createElement(
       "div",
       null,

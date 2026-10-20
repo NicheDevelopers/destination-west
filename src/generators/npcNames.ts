@@ -1,7 +1,7 @@
 // arrays holding name and surname to generate full name of the NPC
 
 //name
-const maleNames = [
+const maleNames: string[] = [
   "Joseph",
   "Leon",
   "Alvin",
@@ -38,7 +38,7 @@ const maleNames = [
   "Oliver",
   "Levi",
 ];
-const femaleNames = [
+const femaleNames: string[] = [
   "Catherine",
   "Olive",
   "Adeline",
@@ -73,7 +73,7 @@ const femaleNames = [
 ];
 
 //nickname
-const nicknames = [
+const nicknames: string[] = [
   "the Kid",
   "Demon Eyes",
   "Serpent",
@@ -114,7 +114,7 @@ const nicknames = [
 ];
 
 //surname
-const surnames = [
+const surnames: string[] = [
   "White",
   "Whitney",
   "Wall",

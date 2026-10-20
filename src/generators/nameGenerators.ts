@@ -1,21 +1,27 @@
 import { seedRoll } from "@/utilities/random.js";
 import { maleNames, femaleNames, nicknames, surnames } from "./npcNames.js";
-import { arr1, arr2 } from "./townNames.js";
+import { townNamePrefixes, townNameSuffixes } from "./townNames.js";
 import { PERCENTAGE_OF_TWO_NAME_TOWN } from "@/global/consts.js";
+
+function drawPart(parts: string[]): string {
+  const part = parts.srandomElement();
+  if (part === undefined) throw new Error("Attempt to draw a name part from an empty list");
+  return part;
+}
 
 /**
  * Create name for NPCs
- * @param {boolean} sex true if male, otherwise false
- * @param {boolean} important true if NPC will be important, if so NPC will get nickname, otherwise none
- * @returns {string} created name
+ * @param sex true if male, otherwise false
+ * @param important true if NPC will be important, if so NPC will get nickname, otherwise none
+ * @returns created name
  */
-function genNpcName(sex, important) {
+function genNpcName(sex: boolean, important: boolean): string {
   // selecting part of arrays by drawing indexes
   let part1;
-  if (sex) part1 = maleNames.srandomElement();
-  else part1 = femaleNames.srandomElement();
-  let part2 = nicknames.srandomElement();
-  let part3 = surnames.srandomElement();
+  if (sex) part1 = drawPart(maleNames);
+  else part1 = drawPart(femaleNames);
+  let part2 = drawPart(nicknames);
+  let part3 = drawPart(surnames);
 
   let npcname;
   if (important) npcname = part1 + " " + "'" + part2 + "'" + " " + part3;
@@ -23,9 +29,9 @@ function genNpcName(sex, important) {
   return npcname;
 }
 
-function genTownName() {
-  let part1 = arr1.srandomElement();
-  let part2 = arr2.srandomElement();
+function genTownName(): string {
+  let part1 = drawPart(townNamePrefixes);
+  let part2 = drawPart(townNameSuffixes);
 
   // if part1 is like: "Devil's" or "Bull's" get capital letter in part2
   if (part1[part1.length - 2] == "'") part2 = part2.charAt(0).toUpperCase() + part2.slice(1); //getting capital letter

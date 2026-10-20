@@ -1,5 +1,6 @@
 import KeyboardVisualizer from "./KeyboardVisualizer.js";
-import { htmlCreate, numberPad } from "../global/utilities.js";
+import { htmlCreate } from "../utilities/dom.js";
+import { numberPad } from "../utilities/utilities.js";
 import Animation from "../core/Animation.js";
 import time from "../global/time.js";
 import seed from "../global/seed.js";
@@ -63,7 +64,7 @@ export default class DebugView {
       appendTo: this.fpsSettings,
     });
     this.timeScaleInput = htmlCreate({
-      what: "input",
+      tagName: "input",
       id: "time-scale-input",
       type: "number",
       min: "0.1",
@@ -87,7 +88,7 @@ export default class DebugView {
     });
 
     this.showSimInput = htmlCreate({
-      what: "input",
+      tagName: "input",
       type: "checkbox",
       checked: true,
       onchange: (i) => {

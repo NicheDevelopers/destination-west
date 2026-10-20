@@ -21,7 +21,7 @@
 
 import { State } from "../global/stateManager.js";
 import Transfer from "./Transfer.js";
-import { createElement } from "../global/utilities.js";
+import { createElement } from "../utilities/dom.js";
 
 class TransferDisplay extends State {
   constructor(game) {

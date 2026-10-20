@@ -20,7 +20,7 @@
 */
 
 import time from "./time.js";
-import { generateID } from "./utilities.js";
+import { generateID } from "../utilities/utilities.js";
 import keyman from "../core/KeyboardManager.js";
 import defaultKeybinds, { actions as specialActions } from "./defaultKeybinds.js";
 

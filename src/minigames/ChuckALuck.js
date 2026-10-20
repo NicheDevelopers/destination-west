@@ -19,8 +19,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 import { State, stateManager } from "../global/stateManager.js";
-import { createElement, randIntInRange } from "../global/utilities.js";
-import { chuckALuckParameters as cal } from "../global/consts.js";
+import { createElement } from "../utilities/dom.js";
+import { randIntInRange } from "../utilities/random.js";
+import { CHUCK_A_LUCK_PARAMETERS as cal } from "../global/consts.js";
 
 class ChuckALuck extends State {
   constructor(game) {

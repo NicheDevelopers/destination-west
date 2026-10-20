@@ -20,7 +20,7 @@
 */
 
 import time from "../global/time.js";
-import "../global/utilities.js";
+import "../utilities/utilities.js";
 
 const ac = {
   speed: 300,

@@ -21,7 +21,8 @@
 */
 
 import ColoredSprite from "../Sprite/ColoredSprite.js";
-import { createElement, createCanvas, hex_to_rgb, rgb_to_hex } from "../global/utilities.js";
+import { createElement, createCanvas } from "../utilities/dom.js";
+import { hexToRgb, rgbToHex } from "../utilities/color.js";
 import { State } from "../global/stateManager.js";
 
 /**
@@ -101,7 +102,9 @@ class Designer extends State {
 
     div.appendChild(coloringDiv);
 
-    this.div = document.querySelector("#game-container").appendChild(div);
+    const gameContainer = document.querySelector("#game-container");
+    if (!gameContainer) throw new Error("Missing #game-container element");
+    this.div = gameContainer.appendChild(div);
 
     this.clothes = {
       pants: new ColoredSprite("pants", () => this.update()),
@@ -110,22 +113,21 @@ class Designer extends State {
 
     for (let i = 0; i < 3; ++i) {
       this.colorSliders[i].addEventListener("change", () => {
-        let rgbValues = [
-          this.colorSliders[0].value,
-          this.colorSliders[1].value,
-          this.colorSliders[2].value,
-        ];
-        this.input.value = rgb_to_hex(rgbValues);
-        this.clothes[this.currentElement].setColor(rgb_to_hex(rgbValues));
+        let rgbValues = { r: 0, g: 0, b: 0 };
+        rgbValues.r = parseInt(this.colorSliders[0].value);
+        rgbValues.g = parseInt(this.colorSliders[1].value);
+        rgbValues.b = parseInt(this.colorSliders[2].value);
+        this.input.value = rgbToHex(rgbValues);
+        this.clothes[this.currentElement].setColor(rgbToHex(rgbValues));
       });
     }
 
     this.input.addEventListener("change", () => {
-      let newColors = hex_to_rgb(this.input.value);
+      let newColors = hexToRgb(this.input.value);
       console.log("Inside eventlistener: ", newColors);
-      for (let i = 0; i < 3; ++i) {
-        this.colorSliders[i].value = newColors[i];
-      }
+      this.colorSliders[0].value = newColors.r.toString();
+      this.colorSliders[1].value = newColors.g.toString();
+      this.colorSliders[2].value = newColors.b.toString();
       this.clothes[this.currentElement].setColor(this.input.value);
     });
 
@@ -170,7 +172,7 @@ function newMenuButton(name, designer, setName = name) {
   button.style.display = "block";
   button.style.border = "2px solid black";
 
-  if (setName.substr(-4) === "Menu") {
+  if (setName.endsWith("Menu")) {
     button.onclick = () => {
       designer.changeMenu(setName);
     };
@@ -180,10 +182,12 @@ function newMenuButton(name, designer, setName = name) {
     designer.currentElement = setName;
     designer.input.value = designer.clothes[setName].color;
     designer.input.style.display = "block";
-    let rgbColor = hex_to_rgb(designer.input.value);
+    let rgbColor = hexToRgb(designer.input.value);
+    designer.colorSliders[0].value = rgbColor.r.toString();
+    designer.colorSliders[1].value = rgbColor.g.toString();
+    designer.colorSliders[2].value = rgbColor.b.toString();
     for (let i = 0; i < 3; ++i) {
       designer.colorSliders[i].style.display = "block";
-      designer.colorSliders[i].value = rgbColor[i];
     }
   };
   return button;

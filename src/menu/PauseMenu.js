@@ -24,7 +24,7 @@
 import defaultKeybinds, { SpecialKey } from "../global/defaultKeybinds.js";
 import volumeMap from "../audio/volumeMap.js";
 import { State, stateManager } from "../global/stateManager.js";
-import { createElement, htmlCreate } from "../global/utilities.js";
+import { createElement, htmlCreate } from "../utilities/dom.js";
 
 class PauseMenu extends State {
   constructor(game) {
@@ -268,7 +268,7 @@ class PauseMenu extends State {
         });
         htmlCreate({ innerText: action + ":", appendTo: div });
         htmlCreate({
-          what: "button",
+          tagName: "button",
           classList: "pause-menu-button settings-menu-button button",
           innerText: key.capitalized(),
           appendTo: htmlCreate({ classList: "button-container", appendTo: div }),

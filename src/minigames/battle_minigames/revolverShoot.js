@@ -20,8 +20,8 @@
 */
 
 import { State } from "../../global/stateManager.js";
-import { randIntInRange } from "../../global/utilities.js";
-import { htmlCreate } from "../../global/utilities.js";
+import { randIntInRange } from "../../utilities/random.js";
+import { htmlCreate } from "../../utilities/dom.js";
 import AudioPlayer from "../../audio/AudioPlayer.js";
 
 class RevolverShootingGame extends State {
@@ -38,7 +38,7 @@ class RevolverShootingGame extends State {
     this.mainDiv.style.display = "none";
 
     // array of floats, whose values determine whether a shot was accurate or not
-    this.borders = new Array();
+    this.borders = [];
     this.soundAgent = new AudioPlayer();
 
     this.bullets = bullets >= 3 ? 3 : bullets;
@@ -48,12 +48,12 @@ class RevolverShootingGame extends State {
     this.currentBullet = 0; // index of the first bullet which hasn't been interacted with yet
     this.successfulShots = 0;
 
-    this.bulletDivs = new Array();
+    this.bulletDivs = [];
     //17.5% should be the leftmost bound of accepting a shot as a success, 22 - rightmost
     let bulletRange = { left: 40, right: 80 };
     let bulletOffset = 10; // we don't want more than one bullet in the same space
     // array of randomized bullet positions
-    let bulletlefts = new Array();
+    let bulletlefts = [];
     for (let i = 0; i < this.bullets; ++i) {
       let position = randIntInRange(bulletRange.left, bulletRange.right);
       position += bulletOffset - (position % bulletOffset);

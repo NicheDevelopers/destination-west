@@ -1,4 +1,4 @@
-import { TwoWayMap } from "../global/utilities.js";
+import { TwoWayMap } from "../utilities/TwoWayMap.js";
 import { stateManager } from "../global/stateManager.js";
 import defaultKeybinds, {
   actions as specialActions,

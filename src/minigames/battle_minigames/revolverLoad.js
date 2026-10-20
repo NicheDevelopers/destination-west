@@ -20,8 +20,8 @@
 */
 
 import { State } from "../../global/stateManager.js";
-import { randIntInRange } from "../../global/utilities.js";
-import { htmlCreate } from "../../global/utilities.js";
+import { randIntInRange } from "../../utilities/random.js";
+import { htmlCreate } from "../../utilities/dom.js";
 import AudioPlayer from "../../audio/AudioPlayer.js";
 
 class RevolverLoadingGame extends State {
@@ -41,9 +41,9 @@ class RevolverLoadingGame extends State {
     if (this.bullets <= 0) {
       error("Loading minigame initiated with a negative count of bullets!");
     }
-    this.arrowDivs = new Array();
+    this.arrowDivs = [];
     // array which stores respective arrows' direction, so that there's no need to extract it later from file names or something else
-    this.arrowDirections = new Array();
+    this.arrowDirections = [];
     for (let i = 0; i < this.bullets; ++i) {
       let arrowid = "arrow" + i;
       let direction = randIntInRange(0, 2);

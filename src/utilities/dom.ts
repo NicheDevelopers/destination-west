@@ -50,32 +50,28 @@ export function htmlCreate(
 
 /**
  * Create HTML elements
- * @param {string} element name of element
- * @param {number} [w = null] - width
- * @param {number} [h = null] - height
- * @param {string[]} [classes = []] - array of css classes
- * @param {Record<string, string>} [styles = {}] - object containing style properties
- * @param {string} [id = null] - id of the element
- * @param {string} [text = null] - inner text of element
- * @returns {Element} created element
+ * @param element name of element
+ * @param w - width
+ * @param h - height
+ * @param classes - array of css classes
+ * @param styles - object containing style properties
+ * @param id - id of the element
+ * @param text - inner text of element
  */
-export function createElement(
-  element: string,
+export function createElement<K extends keyof HTMLElementTagNameMap>(
+  element: K,
   w: number | null = null,
   h: number | null = null,
   classes: string[] = [],
   styles: Record<string, string> = {},
   id?: string | null | undefined,
   text: string | null = null,
-): HTMLElement {
+): HTMLElementTagNameMap[K] {
   // needed test if element is equal to some given possibile outcomes
   let r = document.createElement(element);
   classes.forEach((styleClass) => r.classList.add(styleClass));
   if (w != null && h != null) r.setAttribute("style", `width: ${w}px; height: ${h}px`);
-  const style = r.style as unknown as Record<string, string>;
-  for (const styleName in styles) {
-    style[styleName] = styles[styleName];
-  }
+  Object.assign(r.style, styles);
   r.innerText = text ?? "";
   if (id === undefined || id === null) return r;
   r.setAttribute("id", `${id}`);

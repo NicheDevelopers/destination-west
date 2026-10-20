@@ -24,7 +24,7 @@ class Pixel {
   }
   /**
    * Sets the pixel's color components accordint to the provided object
-   * @param color {RGBA} - An object with r, g, b, a keys
+   * @param color - An object with r, g, b, a keys
    * @example
    * pixel.setColor({r: 255});
    * // sets the red component of the pixel's color to the maximum value

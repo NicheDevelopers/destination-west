@@ -1,5 +1,4 @@
 import type Item from "@/Item/Item.js";
-import DroppedItem from "@/Item/DroppedItem.js";
 import { createItem, type Recipe } from "@/global/items.js";
 import { generateID } from "@/utilities/utilities.js";
 import { notifier, Notification } from "@/global/notifier.js";
@@ -114,9 +113,9 @@ class Equipment {
     else record.quantity -= 1;
   }
 
-  drop(record: EquipmentRecord): DroppedItem {
+  drop(record: EquipmentRecord): Item {
     this.reduceQuantity(record);
-    return new DroppedItem(record.item);
+    return record.item;
   }
 
   transfer(record: EquipmentRecord, trading = false): Item {

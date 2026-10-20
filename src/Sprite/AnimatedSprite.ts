@@ -90,8 +90,8 @@ class AnimatedSprite extends Sprite {
   }
   /**
    * Start animating the current animation in intervals
-   @param {number} [interval=as.defaultIntervalTime] - The time between intervals in miliseconds
-   @param {number} [framesPerInterval=as.defaultFramesPerInterval] - The number of frames to cycle through after each interval
+   @param interval - The time between intervals in miliseconds
+   @param framesPerInterval - The number of frames to cycle through after each interval
    */
   animate(
     interval: number = as.defaultIntervalTime,
@@ -103,7 +103,7 @@ class AnimatedSprite extends Sprite {
 
   /**
    * Switch the current frame of an animation
-   @param {number} [frameCount=as.defaultFrameCount] - The number of frames to cycle through
+   @param frameCount - The number of frames to cycle through
    */
   alterFrame(frameCount: number = as.defaultFrameCount): void {
     if (!this.animation)

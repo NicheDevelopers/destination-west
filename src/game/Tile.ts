@@ -55,7 +55,7 @@ class Tile {
      @param entityClass - The class which members we are looking for on the tile (for example Player or Entity).
    */
   hasEntityOfType(entityClass: abstract new (...args: never[]) => Entity): boolean {
-    return this.entities.some((e) => e.constructor.name === entityClass.name);
+    return this.entities.some((e) => e.constructor === entityClass);
   }
 
   addEntity(entity: EntityWithHitbox): void {

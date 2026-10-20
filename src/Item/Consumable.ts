@@ -55,7 +55,6 @@ class Consumable extends Item {
 
   /**
    * Method for deep copy of Item object. Generates new Sprite.
-   * @returns {Consumable} deep copy Item
    */
   deepCopy(): Consumable {
     const copy = new Consumable(this.recipe);

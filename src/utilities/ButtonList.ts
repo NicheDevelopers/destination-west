@@ -2,10 +2,9 @@ import { htmlCreate } from "./dom.js";
 
 /**
  * Easily create nested button lists
- * @param {object} options
- * @param {object} options.callbackArgument
+ * @param options.callbackArgument
  * An argument passed to the callback functions of the buttons.
- * @param {number} options.rowCount
+ * @param options.rowCount
  * If provided, the grid layout will be used for the ButtonList instead of flex.
  * This parameter specifies the number of columns in the grid layout.
  * If added, the ButtonList.BACK option will be automatically set to the last button
@@ -46,8 +45,8 @@ export class ButtonList {
 
   /**
    * Adds a button to the ButtonList.
-   * @param {string} buttonText - The text displayed on the button
-   * @param {function|ButtonList|string} action
+   * @param buttonText - The text displayed on the button
+   * @param action
    * - A callback function called when the button is pressed,
    * another ButtonList that replaces this one in the display, or
    * a the ButtonList.BACK static value that indicates going going
@@ -160,9 +159,9 @@ export class ButtonList {
 
   /**
    * Set the ButtonList to inherit the construction options of another ButtonList
-   * @param {ButtonList} otherList
+   * @param otherList
    * The ButtonList from which the construction options are to be inherited
-   * @returns {ButtonList} this
+   * @returns this
    */
   inherit(otherList: ButtonList): ButtonList {
     this.callbackArgument = otherList.callbackArgument;

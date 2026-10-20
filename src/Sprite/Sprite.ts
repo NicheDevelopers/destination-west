@@ -17,7 +17,7 @@ function toKey(name: string, rotation: number | undefined, outline: boolean | un
 }
 
 const cachedSprites: Map<string, HTMLImageElement> = new Map(); // String -> Image
-const cacheCallbacks: Map<string, Function[]> = new Map(); // String -> functions[]
+const cacheCallbacks: Map<string, (() => void)[]> = new Map(); // String -> functions[]
 
 export type SpriteOptions = {
   scale?: number;
@@ -358,8 +358,8 @@ class Sprite {
 
   /**
    * Draw the sprite on the #game-canvas
-   * @param {number} x - Position x of the draw location
-   * @param {number} y - Position y of the draw location
+   * @param x - Position x of the draw location
+   * @param y - Position y of the draw location
    */
   draw(
     x: number,

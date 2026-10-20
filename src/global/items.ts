@@ -4,8 +4,7 @@ import Weapon from "@/Item/Weapon.js";
 
 /**
  * Create an item from an item recipe
- * @param {Recipe} recipe - an item recipe from the items enum
- * @returns {Item} - the newly created item
+ * @param recipe - an item recipe from the items enum
  */
 export function createItem(recipe: Recipe): Item {
   //return new recipe.type(recipe);

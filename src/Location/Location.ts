@@ -16,10 +16,11 @@ import type Player from "@/Entity/Player.js";
 import type Interactible from "@/Entity/Interactible.js";
 import type Container from "@/Entity/Container.js";
 import type Portal from "@/Entity/Portal.js";
-import type DroppedItem from "@/Item/DroppedItem.js";
+import DroppedItem from "@/Item/DroppedItem.js";
+import type Item from "@/Item/Item.js";
 import type { EntityOptions } from "@/Entity/Entity.js";
 
-export type LocationInteractible = DroppedItem | Interactible;
+export type LocationInteractible = Interactible;
 
 // Members added at runtime by centerPointTrait (traits.js is not typed yet)
 type CenterPointed = { getCenterPoint(): Point; relativeCenterPoint?: Point };
@@ -259,6 +260,10 @@ class Location {
         }
       }
     });
+  }
+
+  dropItem(item: Item, pos: Point): void {
+    this.droppedItems.push(new DroppedItem(this.game, item, pos));
   }
 
   getInteractibles(): LocationInteractible[] {

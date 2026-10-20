@@ -24,7 +24,7 @@ class WorldMapDisplay extends State {
         display: "none",
         zIndex: "1",
       },
-    ) as HTMLDivElement;
+    );
     const { canvas, context } = createCanvas(
       MAP_PARAMETERS.displayWidth,
       MAP_PARAMETERS.displayHeight,

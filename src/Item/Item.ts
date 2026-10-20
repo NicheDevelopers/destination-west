@@ -33,7 +33,6 @@ class Item {
 
   /**
    * Validate item recipe for this particular item type.
-   * @param {Recipe} recipe - item recipe
    */
   static validateRecipe(recipe: Recipe): void {
     // if (!recipe.recipeType)
@@ -52,13 +51,11 @@ class Item {
   /**
    * Validate whether the recipe has all the necessary fields to create this specific type of item.
    * Method meant to be overridden by subclasses.
-   * @param {Recipe} recipe - item recipe
    */
   static validateSpecialFields(_recipe: Recipe): void {}
 
   /**
    * Method for deep copy of Item object. Generates new Sprite.
-   * @returns {Item} deep copy Item
    */
   deepCopy(): Item {
     const copy = new Item(this.recipe);

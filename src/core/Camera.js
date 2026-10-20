@@ -20,8 +20,8 @@
 */
 
 import { ctx, getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser.js";
-import { camSettings, camStates } from "../global/consts.js";
-import { makeEven } from "../global/utilities.js";
+import { CAM_SETTINGS, CAM_STATES } from "../global/consts.js";
+import { makeEven } from "../utilities/utilities.js";
 import { MultiAnimation } from "./Animation.js";
 
 import time from "../global/time.js";
@@ -31,14 +31,13 @@ import time from "../global/time.js";
 */
 class Camera {
   constructor(game) {
-    this.state = camStates.FOCUSED;
+    this.state = CAM_STATES.FOCUSED;
     this.focusedEntity = game.player;
 
     /**
        The coordinates of the currently focused spot
     */
-    this.x = this.focusedEntity.getCenterPoint().x;
-    this.y = this.focusedEntity.getCenterPoint().y;
+    this.pos = this.focusedEntity.getCenterPoint();
 
     //console.log('focus: ', this.focus);
 
@@ -46,14 +45,14 @@ class Camera {
        In order to prevent leaving empty space around the canvas we
        scale it up more than should be needed.
     */
-    this.zoomSafetyMultiplier = camSettings.zoomSafetyMultiplier;
+    this.zoomSafetyMultiplier = CAM_SETTINGS.zoomSafetyMultiplier;
 
-    this.zoomMin = camSettings.zoomMin;
-    this.zoomMax = camSettings.zoomMax;
-    this.zoomSpeed = camSettings.zoomSpeed;
+    this.zoomMin = CAM_SETTINGS.zoomMin;
+    this.zoomMax = CAM_SETTINGS.zoomMax;
+    this.zoomSpeed = CAM_SETTINGS.zoomSpeed;
 
     // Run zoom's setter
-    this.zoom = camSettings.zoom;
+    this.zoom = CAM_SETTINGS.zoom;
 
     window.addEventListener("resize", () => this.updateSize());
     window.addEventListener("fullscreenchange", () => this.updateSize());
@@ -69,10 +68,12 @@ class Camera {
 
   setFocusedEntity(
     entity,
-    newZoom = camSettings.entityFocusZoom,
-    animationTime = camSettings.focusChangeTime,
+    newZoom = CAM_SETTINGS.entityFocusZoom,
+    animationTime = CAM_SETTINGS.focusChangeTime,
   ) {
-    this.animation = new MultiAnimation(this, ["x", "y", "zoom"], [], { endAfter: animationTime });
+    this.animation = new MultiAnimation(this, ["pos.x", "pos.y", "zoom"], [], {
+      endAfter: animationTime,
+    });
     this.animation.goal = [
       () => entity.getCenterPoint().x,
       () => entity.getCenterPoint().y,
@@ -83,7 +84,7 @@ class Camera {
 
     this.focusedEntity = entity;
 
-    this.state = camStates.ANIMATING;
+    this.state = CAM_STATES.ANIMATING;
   }
 
   addDebugDraw(fun, options = {}) {
@@ -133,24 +134,25 @@ class Camera {
 
   render(options = {}) {
     ctx.clearRect(0, 0, this.width, this.height);
-    if (this.state === camStates.FOCUSED) {
-      this.x = this.focusedEntity.getCenterPoint().x;
-      this.y = this.focusedEntity.getCenterPoint().y;
-    } else if (this.state === camStates.ANIMATING) {
+    if (this.state === CAM_STATES.FOCUSED) {
+      // Mutate instead of reassigning, animations keep a reference to `pos`
+      // TODO: rethink this/maybe improve animations to work without mutating
+      Object.assign(this.pos, this.focusedEntity.getCenterPoint());
+    } else if (this.state === CAM_STATES.ANIMATING) {
       if (!this.animation.next()) {
         // Animation finished
-        this.state = camStates.FOCUSED;
+        this.state = CAM_STATES.FOCUSED;
       }
     }
 
     const topLeftX = Math.max(
       0,
-      Math.min(this.x - this.width / 2, this.game.currentTown.widthPx - this.width),
+      Math.min(this.pos.x - this.width / 2, this.game.currentTown.widthPx - this.width),
     );
 
     const topLeftY = Math.max(
       0,
-      Math.min(this.y - this.height / 2, this.game.currentTown.heightPx - this.height),
+      Math.min(this.pos.y - this.height / 2, this.game.currentTown.heightPx - this.height),
     );
 
     let t = this.game.currentTown;

@@ -19,10 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { seedRoll } from "../global/utilities.js";
+import { seedRoll } from "../utilities/random.js";
 import { maleNames, femaleNames, nicknames, surnames } from "./npcNames.js";
 import { arr1, arr2 } from "./townNames.js";
-import { percentageOfTwoNameTown } from "../global/consts.js";
+import { PERCENTAGE_OF_TWO_NAME_TOWN } from "../global/consts.js";
 
 /**
  * Create name for NPCs
@@ -51,8 +51,8 @@ function genTownName() {
   // if part1 is like: "Devil's" or "Bull's" get capital letter in part2
   if (part1[part1.length - 2] == "'") part2 = part2.charAt(0).toUpperCase() + part2.slice(1); //getting capital letter
 
-  // chance of getting capital letter in part2 depending on given percentageOfTwoNameTown
-  if (seedRoll(percentageOfTwoNameTown)) part2 = part2.charAt(0).toUpperCase() + part2.slice(1); //getting capital letter
+  // chance of getting capital letter in part2 depending on given PERCENTAGE_OF_TWO_NAME_TOWN
+  if (seedRoll(PERCENTAGE_OF_TWO_NAME_TOWN)) part2 = part2.charAt(0).toUpperCase() + part2.slice(1); //getting capital letter
   // else nothing will change
 
   let townname = "";

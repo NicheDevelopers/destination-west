@@ -1,6 +1,6 @@
 import Animation from "../core/Animation.js";
-import { dialogueParameters } from "../global/consts.js";
-import { ButtonList } from "../global/utilities.js";
+import { DIALOGUE_PARAMETERS } from "../global/consts.js";
+import { ButtonList } from "../utilities/ButtonList.js";
 import type Dialogue from "./Dialogue.ts";
 
 /**
@@ -86,7 +86,7 @@ export class DialogueLine extends DialogueUnit {
   }
 
   override setupAnimation(changeCallback: () => void): Animation {
-    const animation = new Animation(this, "n", dialogueParameters.lettersPerSecond);
+    const animation = new Animation(this, "n", DIALOGUE_PARAMETERS.lettersPerSecond);
     animation.goal = this.text.length;
     animation.setChangeCallback(changeCallback);
     return animation;

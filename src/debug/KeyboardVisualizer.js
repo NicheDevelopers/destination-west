@@ -1,4 +1,4 @@
-import { htmlCreate } from "../global/utilities.js";
+import { htmlCreate } from "../utilities/dom.js";
 import keyman from "../core/KeyboardManager.js";
 
 function kvForm(formOptions = []) {
@@ -13,7 +13,7 @@ function kvForm(formOptions = []) {
 
   formOptions.forEach((option) => {
     htmlCreate({
-      what: "option",
+      tagName: "option",
       value: option,
       innerHTML: option,
       appendTo: select,

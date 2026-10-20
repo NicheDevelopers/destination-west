@@ -1,11 +1,13 @@
 import Equipment from "./Equipment/Equipment.js";
 import {
-  defaultEquipmentSize,
-  defaultRcp,
-  defaultBd,
-  cashMinMaxParameters as cashParam,
+  DEFAULT_EQUIPMENT_SIZE,
+  DEFAULT_RCP,
+  DEFAULT_BD,
+  CASH_MIN_MAX_PARAMETERS as cashParam,
 } from "./global/consts.js";
-import { ObjectSet, Direction, randIntInRange } from "./global/utilities.js";
+import { ObjectSet } from "./utilities/ObjectSet.js";
+import { Direction } from "./utilities/utilities.js";
+import { randIntInRange } from "./utilities/random.js";
 import Hitbox from "./game/HitboxClass.js";
 import Movement from "./game/Movement.js";
 
@@ -37,7 +39,7 @@ export function addTraits(obj, ...traits) {
 
 export function InventoryTrait(
   startCash,
-  equipmentSize = defaultEquipmentSize,
+  equipmentSize = DEFAULT_EQUIPMENT_SIZE,
   itemRecipeList = [],
 ) {
   startCash = startCash ?? randIntInRange(cashParam.minCash, cashParam.maxCash);
@@ -46,10 +48,7 @@ export function InventoryTrait(
     equipment: new Equipment(equipmentSize, startCash, itemRecipeList),
     dropItem: function (record) {
       let droppedItem = this.equipment.drop(record);
-      droppedItem.setPositionTo({
-        x: this.getCenterPoint().x,
-        y: this.getCenterPoint().y,
-      });
+      droppedItem.setPositionTo(this.getCenterPoint());
       if (!this.game) console.error("InventoryTrait in a class without a Game field.");
       this.game.currentTown.droppedItems.push(droppedItem);
       this.game.currentTown.updateFocus(this.game.player);
@@ -57,27 +56,27 @@ export function InventoryTrait(
   };
 }
 
-export function centerPointTrait(rcp = defaultRcp) {
+export function centerPointTrait(rcp = DEFAULT_RCP) {
   return {
     _name_: "centerPointTrait",
     relativeCenterPoint: rcp,
     getCenterPoint() {
       return {
-        x: this.x + this.relativeCenterPoint.x,
-        y: this.y + this.relativeCenterPoint.y,
+        x: this.pos.x + this.relativeCenterPoint.x,
+        y: this.pos.y + this.relativeCenterPoint.y,
       };
     },
     /**
        Move the entity to match its center point to the given coordinates
     */
     moveTo(x, y) {
-      this.x = x - this.relativeCenterPoint.x;
-      this.y = y - this.relativeCenterPoint.y;
+      this.pos.x = x - this.relativeCenterPoint.x;
+      this.pos.y = y - this.relativeCenterPoint.y;
     },
   };
 }
 
-export function HitboxTrait(self, locationArray, rcp = defaultRcp, bd = defaultBd) {
+export function HitboxTrait(self, locationArray, rcp = DEFAULT_RCP, bd = DEFAULT_BD) {
   return {
     _name_: "HitboxTrait",
     _before_() {
@@ -198,10 +197,10 @@ export function HitboxTrait(self, locationArray, rcp = defaultRcp, bd = defaultB
 
       // Snapped a non-zero distance
       if (Math.sign(dx)) {
-        this.x += Math.sign(dx) * snappedPixelCount;
+        this.pos.x += Math.sign(dx) * snappedPixelCount;
         this.movement.moveX.clearChangeStack();
       } else {
-        this.y += Math.sign(dy) * snappedPixelCount;
+        this.pos.y += Math.sign(dy) * snappedPixelCount;
         this.movement.moveY.clearChangeStack();
       }
     },

@@ -1,5 +1,5 @@
 import Player from "../Entity/Player.js";
-import { randIntInRange } from "../global/utilities.js";
+import { randIntInRange } from "../utilities/random.js";
 
 /**
  * Describes various variables that affect combat difficulty.

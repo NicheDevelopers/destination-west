@@ -1,24 +1,3 @@
-/*
-  file: src/npcNames.js
-  purpose: define arrays used in NPC name generation
-  author: Oskar Kiliańczyk <https://gitlab.com/oskkil>
-  
-  This file is part of 'Destination West'.
-  
-  'Destination West' is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License,
-  or (at your option) any later version.
-
-  'Destination West' is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-  or FITNESS FOR A PARTICULAR PURPOSE.
-  See the GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License along with
-  'Destination West'. If not, see <https://www.gnu.org/licenses/>.
-*/
-
 // arrays holding name and surname to generate full name of the NPC
 
 //name

@@ -1,9 +1,9 @@
-import { srandIntInRange } from "../utilities/random.js";
-import { resetIdFor, distance } from "../utilities/utilities.js";
-import type { Point } from "../utilities/utilities.js";
-import { MAP_PARAMETERS as mp } from "../global/consts.js";
-import Town from "../Location/Town.js";
-import type Game from "../game/Game.js";
+import { srandIntInRange } from "@/utilities/random.js";
+import { resetIdFor, distance } from "@/utilities/utilities.js";
+import type { Point } from "@/utilities/utilities.js";
+import { MAP_PARAMETERS as mp } from "@/global/consts.js";
+import Town from "@/Location/Town.js";
+import type Game from "@/game/Game.js";
 
 class WorldMap {
   private readonly game: Game;

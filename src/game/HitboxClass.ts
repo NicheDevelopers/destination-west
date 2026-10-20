@@ -19,12 +19,12 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import { ctx } from "../core/Browser.js";
-import type Entity from "../Entity/Entity.js";
-import { TILE_SIZE, type DirectionValue } from "../global/consts.js";
-import { pointToTileCoord, generateID, type Point } from "../utilities/utilities.js";
-import { ObjectSet } from "../utilities/ObjectSet.js";
-import { DIRECTIONS, Direction } from "../utilities/utilities.js";
+import { ctx } from "@/core/Browser.js";
+import type Entity from "@/Entity/Entity.js";
+import { TILE_SIZE, type DirectionValue } from "@/global/consts.js";
+import { pointToTileCoord, generateID, type Point } from "@/utilities/utilities.js";
+import { ObjectSet } from "@/utilities/ObjectSet.js";
+import { DIRECTIONS, Direction } from "@/utilities/utilities.js";
 import type Tile from "./Tile.js";
 
 function fillTileArea(tileCoords: Point[]): Point[] {

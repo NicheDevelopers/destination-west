@@ -19,7 +19,7 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import { TILE_SIZE } from "../global/consts.js";
+import { TILE_SIZE } from "@/global/consts.js";
 
 export type AnimationName = "idle" | "run";
 

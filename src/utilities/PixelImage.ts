@@ -1,4 +1,4 @@
-import { TRANSPARENCY_ALPHA_TOLERANCE } from "../global/consts.js";
+import { TRANSPARENCY_ALPHA_TOLERANCE } from "@/global/consts.js";
 import "./utilities.js"; // String prototype extensions
 
 /**

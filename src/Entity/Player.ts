@@ -23,13 +23,13 @@
 
 import Entity from "./Entity.js";
 
-import { PLAYER_PARAMETERS as pp } from "../global/consts.js";
+import { PLAYER_PARAMETERS as pp } from "@/global/consts.js";
 
-import { addTraits, InventoryTrait } from "../traits.js";
+import { addTraits, InventoryTrait } from "@/traits.js";
 
-import { ctx } from "../core/Browser.js";
-import type { Point } from "../utilities/utilities.js";
-import type Game from "../game/Game.js";
+import { ctx } from "@/core/Browser.js";
+import type { Point } from "@/utilities/utilities.js";
+import type Game from "@/game/Game.js";
 
 class Player extends Entity {
   constructor(game: Game, pos: Point) {

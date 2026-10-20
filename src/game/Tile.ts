@@ -19,14 +19,14 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Sprite, { type SpriteOptions } from "../Sprite/Sprite.js";
+import Sprite, { type SpriteOptions } from "@/Sprite/Sprite.js";
 
-import { ctx } from "../core/Browser.js";
-import { TILE_SIZE } from "../global/consts.js";
+import { ctx } from "@/core/Browser.js";
+import { TILE_SIZE } from "@/global/consts.js";
 
-import Hitbox, { Box } from "../game/HitboxClass.js";
-import type Entity from "../Entity/Entity.js";
-import type { Point } from "../utilities/utilities.js";
+import Hitbox, { Box } from "@/game/HitboxClass.js";
+import type Entity from "@/Entity/Entity.js";
+import type { Point } from "@/utilities/utilities.js";
 
 const backgroundPrefixes = ["building-", "decoration-", "path-"];
 

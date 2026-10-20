@@ -1,6 +1,6 @@
-import Item from "../Item/Item.js";
-import Consumable from "../Item/Consumable.js";
-import Weapon from "../Item/Weapon.js";
+import Item from "@/Item/Item.js";
+import Consumable from "@/Item/Consumable.js";
+import Weapon from "@/Item/Weapon.js";
 
 /**
  * Create an item from an item recipe

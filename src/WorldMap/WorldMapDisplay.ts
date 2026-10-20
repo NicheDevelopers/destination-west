@@ -19,11 +19,11 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { createCanvas, createElement } from "../utilities/dom.js";
-import { State } from "../global/stateManager.js";
-import { MAP_PARAMETERS, TOWN_SIZES, WORLD_MAP_DISPLAY as wmd } from "../global/consts.js";
-import Town from "../Location/Town.js";
-import type Game from "../game/Game.js";
+import { createCanvas, createElement } from "@/utilities/dom.js";
+import { State } from "@/global/stateManager.js";
+import { MAP_PARAMETERS, TOWN_SIZES, WORLD_MAP_DISPLAY as wmd } from "@/global/consts.js";
+import Town from "@/Location/Town.js";
+import type Game from "@/game/Game.js";
 
 class WorldMapDisplay extends State {
   private readonly game: Game;

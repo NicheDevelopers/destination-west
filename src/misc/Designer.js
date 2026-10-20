@@ -20,10 +20,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import ColoredSprite from "../Sprite/ColoredSprite.js";
-import { createElement, createCanvas } from "../utilities/dom.js";
-import { hexToRgb, rgbToHex } from "../utilities/color.js";
-import { State } from "../global/stateManager.js";
+import ColoredSprite from "@/Sprite/ColoredSprite.js";
+import { createElement, createCanvas } from "@/utilities/dom.js";
+import { hexToRgb, rgbToHex } from "@/utilities/color.js";
+import { State } from "@/global/stateManager.js";
 
 /**
  * Create an interface for designing colored sprites

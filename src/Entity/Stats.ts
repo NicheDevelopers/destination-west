@@ -1,4 +1,4 @@
-import { STAT_THRESHOLDS as thresholds } from "../global/consts.js";
+import { STAT_THRESHOLDS as thresholds } from "@/global/consts.js";
 
 export type StatName = "anger" | "respect" | "trust";
 

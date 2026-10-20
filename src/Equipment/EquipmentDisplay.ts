@@ -1,6 +1,6 @@
-import { createElement } from "../utilities/dom.js";
-import { State } from "../global/stateManager.js";
-import type Game from "../game/Game.js";
+import { createElement } from "@/utilities/dom.js";
+import { State } from "@/global/stateManager.js";
+import type Game from "@/game/Game.js";
 import type Equipment from "./Equipment.ts";
 import type { EquipmentRecord } from "./Equipment.ts";
 

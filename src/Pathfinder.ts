@@ -3,18 +3,18 @@ import {
   DEFAULT_TOWN_WIDTH as dTW,
   TILE_SIZE as tS,
   type DirectionValue,
-} from "./global/consts.js";
+} from "@/global/consts.js";
 import {
   Direction,
   DIRECTIONS,
   roundToTile,
   pointToTileCoord,
   type Point,
-} from "./utilities/utilities.js";
-import { randIntInRange } from "./utilities/random.js";
-import { ctx } from "./core/Browser.js";
-import type Game from "./game/Game.js";
-import type Tile from "./game/Tile.js";
+} from "@/utilities/utilities.js";
+import { randIntInRange } from "@/utilities/random.js";
+import { ctx } from "@/core/Browser.js";
+import type Game from "@/game/Game.js";
+import type Tile from "@/game/Tile.js";
 
 type PathNode = {
   gridPos: Point;

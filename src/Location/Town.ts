@@ -22,13 +22,13 @@
 */
 
 import presets, { type TownPreset } from "./townPresets.js";
-import { generateID, type Point } from "../utilities/utilities.js";
+import { generateID, type Point } from "@/utilities/utilities.js";
 import Location from "./Location.js";
 import type { BuildingType } from "./Building.js";
-import { DEFAULT_TOWN_HEIGHT, DEFAULT_TOWN_WIDTH } from "../global/consts.js";
-import { genTownName } from "../generators/nameGenerators.js";
-import { TILE_SIZE } from "../global/consts.js";
-import type Game from "../game/Game.js";
+import { DEFAULT_TOWN_HEIGHT, DEFAULT_TOWN_WIDTH } from "@/global/consts.js";
+import { genTownName } from "@/generators/nameGenerators.js";
+import { TILE_SIZE } from "@/global/consts.js";
+import type Game from "@/game/Game.js";
 
 export type BuildingCounts = Partial<Record<BuildingType, number>>;
 

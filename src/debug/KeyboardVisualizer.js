@@ -1,5 +1,5 @@
-import { htmlCreate } from "../utilities/dom.js";
-import keyman from "../core/KeyboardManager.js";
+import { htmlCreate } from "@/utilities/dom.js";
+import keyman from "@/core/KeyboardManager.js";
 
 function kvForm(formOptions = []) {
   let form = document.createElement("form");

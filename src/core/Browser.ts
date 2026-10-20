@@ -19,8 +19,8 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import type App from "../App.js";
-import { htmlCreate, makeErrorInfoHeader } from "../utilities/dom.js";
+import type App from "@/App.js";
+import { htmlCreate, makeErrorInfoHeader } from "@/utilities/dom.js";
 
 class Browser {
   readonly app: App;

@@ -1,5 +1,5 @@
-import Npc from "./Entity/Npc.js";
-import { createItem } from "./global/items.js";
+import Npc from "@/Entity/Npc.js";
+import { createItem } from "@/global/items.js";
 
 export class Quest {
   constructor(npcs, items, { success, failure }) {

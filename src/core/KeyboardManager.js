@@ -1,10 +1,10 @@
-import { TwoWayMap } from "../utilities/TwoWayMap.js";
-import { stateManager } from "../global/stateManager.js";
+import { TwoWayMap } from "@/utilities/TwoWayMap.js";
+import { stateManager } from "@/global/stateManager.js";
 import defaultKeybinds, {
   actions as specialActions,
   StateStartKey,
   CopyKey,
-} from "../global/defaultKeybinds.js";
+} from "@/global/defaultKeybinds.js";
 
 /* Prevent accidental game exit. To be used in the future
 window.onbeforeunload = (e) => {

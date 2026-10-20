@@ -19,9 +19,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Sprite from "../Sprite/Sprite.js";
-import type { Recipe } from "../global/items.js";
-import { generateID } from "../utilities/utilities.js";
+import Sprite from "@/Sprite/Sprite.js";
+import type { Recipe } from "@/global/items.js";
+import { generateID } from "@/utilities/utilities.js";
 
 class Item {
   readonly id: number;

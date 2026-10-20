@@ -19,10 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { State } from "../../global/stateManager.js";
-import { randIntInRange } from "../../utilities/random.js";
-import { htmlCreate } from "../../utilities/dom.js";
-import AudioPlayer from "../../audio/AudioPlayer.js";
+import { State } from "@/global/stateManager.js";
+import { randIntInRange } from "@/utilities/random.js";
+import { htmlCreate } from "@/utilities/dom.js";
+import AudioPlayer from "@/audio/AudioPlayer.js";
 
 class RevolverLoadingGame extends State {
   constructor(game, bullets) {

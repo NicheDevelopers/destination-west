@@ -19,9 +19,9 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { State } from "../global/stateManager.js";
+import { State } from "@/global/stateManager.js";
 import Transfer from "./Transfer.js";
-import { createElement } from "../utilities/dom.js";
+import { createElement } from "@/utilities/dom.js";
 
 class TransferDisplay extends State {
   constructor(game) {

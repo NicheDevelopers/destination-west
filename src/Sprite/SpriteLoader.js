@@ -1,5 +1,5 @@
 import Sprite from "./Sprite.js";
-import imgInfo from "../static/imgInfo.js";
+import imgInfo from "@/static/imgInfo.js";
 
 /**
  * A list of sprites to load in the format:

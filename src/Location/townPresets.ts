@@ -19,10 +19,10 @@
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PixelImage, type RGBA } from "../utilities/PixelImage.js";
-import { createCanvas } from "../utilities/dom.js";
-import { TOWN_PALETTE } from "../global/consts.js";
-import type { Point } from "../utilities/utilities.js";
+import { PixelImage, type RGBA } from "@/utilities/PixelImage.js";
+import { createCanvas } from "@/utilities/dom.js";
+import { TOWN_PALETTE } from "@/global/consts.js";
+import type { Point } from "@/utilities/utilities.js";
 
 export type BuildingPreset = { gridPos: Point; xTiles: number; yTiles: number };
 export type StreetPreset = { start: Point; width: number; height: number };

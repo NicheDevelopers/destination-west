@@ -1,9 +1,9 @@
-import { State } from "../global/stateManager.js";
-import { FOCUS_BACK_TO_PLAYER_TIME as focusTime } from "../global/consts.js";
-import { htmlCreate } from "../utilities/dom.js";
-import type { KeyboardManager } from "../core/KeyboardManager.js";
-import type Camera from "../core/Camera.js";
-import type Game from "../game/Game.js";
+import { State } from "@/global/stateManager.js";
+import { FOCUS_BACK_TO_PLAYER_TIME as focusTime } from "@/global/consts.js";
+import { htmlCreate } from "@/utilities/dom.js";
+import type { KeyboardManager } from "@/core/KeyboardManager.js";
+import type Camera from "@/core/Camera.js";
+import type Game from "@/game/Game.js";
 import type Dialogue from "./Dialogue.ts";
 
 class DialogueDisplay extends State {

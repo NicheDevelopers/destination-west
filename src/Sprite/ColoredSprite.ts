@@ -18,11 +18,11 @@
   You should have received a copy of the GNU General Public License along with
   'Destination West'. If not, see <https://www.gnu.org/licenses/>.
 */
-import { ctx } from "../core/Browser.js";
+import { ctx } from "@/core/Browser.js";
 import Sprite from "./Sprite.js";
-import { createCanvas } from "../utilities/dom.js";
-import { hexToRgb } from "../utilities/color.js";
-import { PixelImage } from "../utilities/PixelImage.js";
+import { createCanvas } from "@/utilities/dom.js";
+import { hexToRgb } from "@/utilities/color.js";
+import { PixelImage } from "@/utilities/PixelImage.js";
 
 /**
  * Create sprites to display grayscale-source sprites in color

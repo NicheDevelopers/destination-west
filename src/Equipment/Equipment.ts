@@ -1,8 +1,8 @@
-import type Item from "../Item/Item.js";
-import DroppedItem from "../Item/DroppedItem.js";
-import { createItem, type Recipe } from "../global/items.js";
-import { generateID } from "../utilities/utilities.js";
-import { notifier, Notification } from "../global/notifier.js";
+import type Item from "@/Item/Item.js";
+import DroppedItem from "@/Item/DroppedItem.js";
+import { createItem, type Recipe } from "@/global/items.js";
+import { generateID } from "@/utilities/utilities.js";
+import { notifier, Notification } from "@/global/notifier.js";
 
 export interface EquipmentItemRecipe {
   recipe: Recipe;

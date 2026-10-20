@@ -1,17 +1,17 @@
-// import AnimatedSprite from "../Sprite/AnimatedSprite.js";
+// import AnimatedSprite from "@/Sprite/AnimatedSprite.js";
 // import Entity from "./Entity.js";
-// import {ANIMATION_SPEED} from "../global/consts.js";
+// import {ANIMATION_SPEED} from "@/global/consts.js";
 import Interactible from "./Interactible.js";
-import { addTraits, InventoryTrait } from "../traits.js";
-import { genNpcName } from "../generators/nameGenerators.js";
-import Dialogue from "../Dialogue/Dialogue.ts";
-import testDialogue from "../Dialogue/test_dialogue.dwd?raw";
-import { NPC_PARAMETERS } from "../global/consts.js";
+import { addTraits, InventoryTrait } from "@/traits.js";
+import { genNpcName } from "@/generators/nameGenerators.js";
+import Dialogue from "@/Dialogue/Dialogue.ts";
+import testDialogue from "@/Dialogue/test_dialogue.dwd?raw";
+import { NPC_PARAMETERS } from "@/global/consts.js";
 import Stats, { type StatLevel, type StatName } from "./Stats.js";
-import type { Point } from "../utilities/utilities.ts";
-import type Game from "../game/Game.ts";
-import type AnimatedSprite from "../Sprite/AnimatedSprite.js";
-import type Movement from "../game/Movement.js";
+import type { Point } from "@/utilities/utilities.ts";
+import type Game from "@/game/Game.ts";
+import type AnimatedSprite from "@/Sprite/AnimatedSprite.js";
+import type Movement from "@/game/Movement.js";
 class Npc extends Interactible {
   private impaired: boolean;
   private stats: Stats;

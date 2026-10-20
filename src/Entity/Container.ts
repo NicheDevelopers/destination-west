@@ -1,8 +1,8 @@
-import { addTraits, InventoryTrait } from "../traits.js";
+import { addTraits, InventoryTrait } from "@/traits.js";
 import Interactible from "./Interactible.js";
-import { stateManager } from "../global/stateManager.js";
-import type { Point } from "../utilities/utilities.js";
-import type Game from "../game/Game.js";
+import { stateManager } from "@/global/stateManager.js";
+import type { Point } from "@/utilities/utilities.js";
+import type Game from "@/game/Game.js";
 import type Entity from "./Entity.js";
 
 class Container extends Interactible {

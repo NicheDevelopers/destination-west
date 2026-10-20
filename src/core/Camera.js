@@ -20,11 +20,11 @@
 */
 
 import { ctx, getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser.js";
-import { CAM_SETTINGS, CAM_STATES } from "../global/consts.js";
-import { makeEven } from "../utilities/utilities.js";
+import { CAM_SETTINGS, CAM_STATES } from "@/global/consts.js";
+import { makeEven } from "@/utilities/utilities.js";
 import { MultiAnimation } from "./Animation.js";
 
-import time from "../global/time.js";
+import time from "@/global/time.js";
 
 /**
  Class that makes rendering fragments of the world easier

@@ -1,4 +1,4 @@
-import Sprite from "../Sprite/Sprite.js";
+import Sprite from "@/Sprite/Sprite.js";
 import { DEFAULT_NOTIFICATION_TIMEOUT } from "./consts.js";
 
 class Queue {

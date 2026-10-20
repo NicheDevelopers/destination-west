@@ -1,27 +1,69 @@
-<!--VITE PLUS START-->
+# Destination West
 
-# Using Vite+, the Unified Toolchain for the Web
+A western adventure game that runs in the browser. Everything is drawn on one `<canvas>`, there's no framework and no runtime dependencies. It starts in `index.js`, which creates `App` from `src/App.js`.
 
-This project is using Vite+, a unified toolchain built on top of Vite, Rolldown, Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. Vite+ wraps runtime management, package management, and frontend tooling in a single global CLI called `vp`. Vite+ is distinct from Vite, and it invokes Vite through `vp dev` and `vp build`. Run `vp help` to print a list of commands and `vp <command> --help` for information about a specific command.
+## Commands
 
-Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.dev/guide/.
+We use [Vite+](https://viteplus.dev/guide/), so run everything through `vp`, not `npm`, `pnpm` or `npx`. Docs are in `node_modules/vite-plus/docs`.
 
-## Built-in Commands vs Scripts
+```sh
+vp install   # dependencies
+vp dev       # dev server
+vp test      # tests
+vp check     # format + lint + type check
+vp fmt       # format only
+```
 
-`vp <name>` runs a built-in command. `vp run <name>` runs a `package.json` script or a `vite.config.ts` task. Scripts cannot overwrite built-ins, so `vp dev` and `vp run dev` may do different things. Check `package.json` and `vite.config.ts` first, and run `vp run <name>` when the project defines a script or task with that name.
+CI runs `vp lint --deny-warnings`, `vp fmt --check` and `vp test`. We're halfway through moving from JS to TS, so `vp check` already shows errors on `main`. Just don't add new ones to the files you change.
 
-## Tool Versions
+## Where things are
 
-Run `vp toolchain` to show versions and relationships in the active Vite+
-release. Add a tool name to select part of the graph. For example, run
-`vp toolchain vite`. Use `--global` to ignore the local `vite-plus` package. Use
-`vp why <package>` to show the package-manager dependency graph.
+- `src/`: game code, one folder per feature (`Entity/`, `Location/`, `Dialogue/`, `Combat/`, ...)
+- `src/core/`, `src/global/`, `src/utilities/`: shared code
+- `src/Dialogue/*.dwd`: dialogues in our own format, imported with `?raw`
+- `public/`: images and sounds
+- `styles/`: CSS, pulled in by `main.css`
 
-## Review Checklist
+## Writing code
 
-- [ ] Run `vp install` after pulling remote changes and before getting started.
-- [ ] Run `vp check` and `vp test` to format, lint, type check and test changes.
-- [ ] Check if there are `vite.config.ts` tasks or `package.json` scripts necessary for validation, run via `vp run <script>`.
-- [ ] If setup, runtime, or package-manager behavior looks wrong, run `vp env doctor` and include its output when asking for help.
+Write code someone new to the project can read top to bottom and understand the first time.
 
-<!--VITE PLUS END-->
+- Use plain loops, `if`s and early returns. If a one-liner, nested ternary or chain of calls takes effort to read, write it out over a few lines instead.
+- No base class, factory, generic or option until there's a second thing that actually needs it.
+- No exports or types nobody uses, no wrapper functions called once, no checks for things that can't happen, no type gymnastics when a plain type works.
+- Name things well enough that they don't need a comment.
+- Don't add comments or JSDoc that repeat what the code says, but leave existing ones alone.
+
+## Cleanup
+
+When you work on something, clean up the code you're in:
+
+- Rename unclear variables.
+- Split long functions.
+- Delete dead code and unused imports.
+
+Keep the cleanup to the functions and files you're already changing. If you notice something bigger, or something outside what you're working on, don't fix it on the side. Mention it at the end so it can be done separately, even if nobody asked.
+
+## Conventions
+
+- Write new files in TS.
+- Use the `@/` alias for imports from other folders (`@/game/Game.js`) and `./` within the same folder.
+- Import from `vite-plus` and `vite-plus/test`, not `vite` or `vitest`.
+- Tests go next to the code they test, as `*.test.ts`.
+- Private members in TS are `private x`, not `_x`.
+- Some code checks `constructor.name` at runtime, so renaming a class can break things.
+
+## Moving a file from JS to TS
+
+Split it into separate commits so `git log --follow` still works and each diff is easy to review:
+
+1. `git mv x.js x.ts` and commit just the rename.
+2. Add types without changing the logic.
+3. Clean up, if needed.
+
+## Git
+
+- The repo is on GitLab.
+- Branches are named `<issue>-short-name`.
+- Commit messages look like `<issue>: Add thing`.
+- No `Co-Authored-By` or other AI attribution lines.

@@ -1,6 +1,6 @@
 // arrays holding parts of string to generate full name of the Town
 
-const arr1 = [
+const townNamePrefixes: string[] = [
   "Copper",
   "Wide",
   "Lead",
@@ -38,7 +38,7 @@ const arr1 = [
   "Dodge",
 ];
 
-const arr2 = [
+const townNameSuffixes: string[] = [
   "city",
   "wood",
   "stone",
@@ -78,4 +78,4 @@ const arr2 = [
   "ton",
 ];
 
-export { arr1, arr2 };
+export { townNamePrefixes, townNameSuffixes };

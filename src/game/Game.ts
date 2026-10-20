@@ -36,6 +36,7 @@ class Game extends State {
   worldMap!: WorldMap;
   worldMapDisplay!: WorldMapDisplay;
   currentTown!: Town | Travel;
+  transferDisplay!: TransferDisplay;
 
   constructor(app, callback) {
     super(true, { async: true });
@@ -218,7 +219,7 @@ class Game extends State {
     stateManager.startState(this.dialogueDisplay, stateChangeKey);
   }
 
-  startTransfer(...args) {
+  startTransfer(...args: Parameters<TransferDisplay["setTransferWith"]>) {
     this.transferDisplay.setTransferWith(...args);
     stateManager.startState(this.transferDisplay);
   }

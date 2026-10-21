@@ -49,6 +49,7 @@ Keep the cleanup to the functions and files you're already changing. If you noti
 ## Conventions
 
 - Write new files in TS.
+- Name files after the class they export (`Game.ts`, `TransferDisplay.ts`). Other new files use kebab-case (`dev-setup.ts`).
 - Use the `@/` alias for imports from other folders (`@/game/Game`) and `./` within the same folder. Leave out the `.js`/`.ts` extension.
 - Import from `vite-plus` and `vite-plus/test`, not `vite` or `vitest`.
 - Tests go next to the code they test, as `*.test.ts`.

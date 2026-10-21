@@ -1,5 +1,5 @@
 import { TwoWayMap } from "@/lib/TwoWayMap";
-import { stateManager } from "./stateManager";
+import { stateManager } from "@/engine/state/StateManager";
 import { actions as specialActions, StateStartKey, CopyKey, type SpecialKey } from "./keybinds";
 
 /* Prevent accidental game exit. To be used in the future

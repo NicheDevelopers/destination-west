@@ -1,4 +1,4 @@
-import { State } from "@/engine/stateManager";
+import { State } from "@/engine/state/State";
 import { randIntInRange } from "@/lib/random";
 import { htmlCreate } from "@/lib/dom";
 import AudioPlayer from "@/engine/audio/AudioPlayer";

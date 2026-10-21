@@ -71,7 +71,7 @@ class ColoredSprite extends Sprite {
     this.image.drawToContext(this.offCtx);
     this.img.src = this.canvas.toDataURL("image/png");
   }
-  draw(x: number, y: number, context = ctx) {
+  override draw(x: number, y: number, context = ctx) {
     context.drawImage(this.img, x, y);
   }
 }

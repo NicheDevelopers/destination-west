@@ -116,7 +116,7 @@ class AnimatedSprite extends Sprite {
     return durations[frame];
   }
 
-  draw(x: number, y: number, context = ctx): void {
+  override draw(x: number, y: number, context = ctx): void {
     if (!context) throw new Error("AnimatedSprite: No context provided to draw on");
     if (!this.animation) throw new Error("AnimatedSprite: Attempted to draw without an animation");
     const img = animationImage(this.animation.src);

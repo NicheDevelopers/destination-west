@@ -1,5 +1,5 @@
 import Interactible from "./Interactible";
-import { stateManager } from "@/engine/stateManager";
+import { stateManager } from "@/engine/state/StateManager";
 
 export const PortalType = {
   openMap: () => {

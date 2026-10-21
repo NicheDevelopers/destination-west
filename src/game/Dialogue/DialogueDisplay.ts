@@ -1,4 +1,4 @@
-import { State } from "@/engine/stateManager";
+import { State } from "@/engine/state/State";
 import { FOCUS_BACK_TO_PLAYER_TIME as focusTime } from "@/game/consts";
 import { htmlCreate } from "@/lib/dom";
 import type { KeyboardManager } from "@/engine/KeyboardManager";

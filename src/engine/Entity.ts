@@ -62,8 +62,6 @@ class Entity {
   id: number;
   sprite: Sprite | AnimatedSprite;
   hitbox: Hitbox | null;
-  callback: () => void;
-  isDead: boolean;
   ignoreDepth: boolean;
 
   constructor(typeName: Entity["typeName"], pos: Point, options: EntityOptions = {}) {

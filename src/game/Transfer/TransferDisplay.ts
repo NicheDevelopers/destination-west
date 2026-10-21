@@ -1,4 +1,4 @@
-import { State } from "@/engine/stateManager";
+import { State } from "@/engine/state/State";
 import Transfer from "./Transfer";
 import { createElement } from "@/lib/dom";
 import type Game from "@/game/Game";

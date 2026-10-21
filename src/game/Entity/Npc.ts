@@ -42,15 +42,15 @@ class Npc extends Interactible {
     return this.stats.check(statName);
   }
 
-  update(): void {
+  override update(): void {
     if (!this.impaired) this.movement.update();
     this.sprite.next();
   }
 
-  drawDebugInfo(cameraX: number, cameraY: number): void {
+  override drawDebugInfo(cameraX: number, cameraY: number): void {
     this.movement.pathfinder.drawDebugInfo(cameraX, cameraY);
   }
-  interact(who) {
+  override interact(who) {
     this.sprite.mirrored = who.pos.x < this.pos.x;
     this.dialogue = new Dialogue(who, this).fromText(testDialogue);
 

@@ -27,7 +27,7 @@ class Interactible extends Entity {
    */
   interact(_who: Entity, _key?: string): void {}
 
-  draw(cameraX: number, cameraY: number): void {
+  override draw(cameraX: number, cameraY: number): void {
     if (
       this.focus &&
       this.loadedFocusedSprite &&

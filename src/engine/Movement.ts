@@ -216,7 +216,6 @@ export default class Movement {
   moveY: Animation;
   playerControlled: boolean | undefined;
   pathfinder: Pathfinder;
-  standing: boolean;
   /** Time in ms the entity stays out of breath, counting down once it stops sprinting */
   outOfBreathTime: number = 0;
 
@@ -232,13 +231,11 @@ export default class Movement {
 
     this.momentum = new Momentum(baseSpeed, sprintMultiplier, sneakMultiplier);
 
-    this.moveX = new Animation(this.entity, "pos.x", baseSpeed);
-    this.moveY = new Animation(this.entity, "pos.y", baseSpeed);
+    this.moveX = new Animation(this.entity.pos, "x", baseSpeed);
+    this.moveY = new Animation(this.entity.pos, "y", baseSpeed);
 
     this.playerControlled = options.playerControlled;
     this.pathfinder = new Pathfinder(this.entity.locationArray, this.entity, false);
-
-    this.standing = false;
   }
 
   get direction(): Direction {

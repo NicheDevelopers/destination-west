@@ -6,13 +6,13 @@ import type Entity from "@/engine/Entity";
 import Npc from "./Npc";
 
 class Trader extends Npc {
-  dialogue: Dialogue | null = null;
+  override dialogue: Dialogue | null = null;
 
   constructor(game: Game, pos: Point, name: string) {
     super(game, pos, name);
   }
 
-  update(): void {
+  override update(): void {
     this.sprite.next();
   }
 
@@ -20,7 +20,7 @@ class Trader extends Npc {
    * Interaction method with Trader
    * @param who who is interacting with class - mostly (only one) will be the Player class
    */
-  interact(who: Entity) {
+  override interact(who: Entity) {
     this.sprite.mirrored = who.pos.x < this.pos.x;
     this.dialogue = new Dialogue(who, this).fromText(traderDialogue);
 

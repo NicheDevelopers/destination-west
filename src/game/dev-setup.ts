@@ -1,4 +1,4 @@
-import { stateManager } from "@/engine/stateManager";
+import { stateManager } from "@/engine/state/StateManager";
 import Npc from "@/game/Entity/Npc";
 import Container from "@/game/Entity/Container";
 import Portal, { PortalType } from "@/game/Entity/Portal";

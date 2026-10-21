@@ -17,7 +17,7 @@ class Consumable extends Item {
     this.effects = recipe.effects;
   }
 
-  static validateSpecialFields(recipe: RecipeConsumable): void {
+  static override validateSpecialFields(recipe: RecipeConsumable): void {
     if (!recipe.effects)
       throw new Error(
         `Consumable recipe must have an 'effects' property.\n` +
@@ -56,7 +56,7 @@ class Consumable extends Item {
   /**
    * Method for deep copy of Item object. Generates new Sprite.
    */
-  deepCopy(): Consumable {
+  override deepCopy(): Consumable {
     const copy = new Consumable(this.recipe);
     copy.durability = this.durability;
     return copy;

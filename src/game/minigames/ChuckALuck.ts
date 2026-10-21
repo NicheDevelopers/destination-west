@@ -1,4 +1,5 @@
-import { State, stateManager } from "@/engine/stateManager";
+import { State } from "@/engine/state/State";
+import { stateManager } from "@/engine/state/StateManager";
 import { createElement } from "@/lib/dom";
 import { randIntInRange } from "@/lib/random";
 import { CHUCK_A_LUCK_PARAMETERS as cal } from "@/game/consts";

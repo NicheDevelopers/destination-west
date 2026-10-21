@@ -22,9 +22,7 @@ class Tile {
   gridPos: Point;
   width: number;
   height: number;
-  walkable: boolean;
   entities: EntityWithHitbox[];
-  items: unknown[];
   hitbox?: Hitbox;
 
   /**
@@ -39,9 +37,7 @@ class Tile {
     this.gridPos = gridPos;
     this.width = this.sprite.width;
     this.height = this.sprite.height;
-    this.walkable = true;
     this.entities = [];
-    this.items = [];
   }
 
   getBoundingBox(): Box {

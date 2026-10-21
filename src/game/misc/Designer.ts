@@ -1,7 +1,7 @@
 import ColoredSprite from "@/engine/Sprite/ColoredSprite";
 import { createElement, createCanvas } from "@/lib/dom";
 import { hexToRgb, rgbToHex } from "@/lib/color";
-import { State } from "@/engine/stateManager";
+import { State } from "@/engine/state/State";
 import type Game from "@/game/Game";
 
 type MenuName = "mainMenu" | "headMenu" | "torsoMenu" | "legsMenu";

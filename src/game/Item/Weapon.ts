@@ -18,7 +18,7 @@ class Weapon extends Item {
     this.durabilityLossPerUse = recipe.durabilityLossPerUse;
   }
 
-  static validateSpecialFields(recipe: RecipeWeapon): void {
+  static override validateSpecialFields(recipe: RecipeWeapon): void {
     const props: (keyof RecipeWeapon)[] = [
       "weaponType",
       "damage",
@@ -51,7 +51,7 @@ class Weapon extends Item {
   /**
    * Method for deep copy of Item object. Generates new Sprite.
    */
-  deepCopy(): Weapon {
+  override deepCopy(): Weapon {
     const copy = new Weapon(this.recipe);
     copy.durability = this.durability;
     return copy;

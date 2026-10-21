@@ -1,19 +1,43 @@
 import defaultKeybinds from "@/game/defaultKeybinds";
 import { SpecialKey } from "@/engine/keybinds";
+import type { Keybinds } from "@/engine/KeyboardManager";
+import type { SoundKind } from "@/engine/audio/Sound";
 import volumeMap from "@/game/audio/volumeMap";
 import { State, stateManager } from "@/engine/stateManager";
 import { createElement, htmlCreate } from "@/lib/dom";
+import type Game from "@/game/Game";
 
 class PauseMenu extends State {
-  constructor(game) {
+  readonly game: Game;
+  private customKeybinds: Keybinds = defaultKeybinds;
+  private customVolumeMap: Map<SoundKind, number> = volumeMap;
+  private pauseMenu: HTMLElement;
+  private settingsMenu: HTMLDivElement;
+  private exitMenu: HTMLDivElement;
+
+  constructor(game: PauseMenu["game"]) {
     super(true);
-    // basic functions
     this.game = game;
-    this.paused = false;
-    this.customKeybinds = defaultKeybinds;
-    this.customVolumeMap = volumeMap;
-    // create buttons and divs inside pauseMenu
-    this.pauseMenu = document.getElementById("pause-menu");
+
+    const pauseMenu = document.getElementById("pause-menu");
+    if (!pauseMenu) throw new Error("Missing #pause-menu element");
+    this.pauseMenu = pauseMenu;
+
+    this.settingsMenu = createElement("div", null, null, [], {}, "settings-menu", null);
+    this.fillSettingsMenu();
+
+    this.exitMenu = createElement("div", null, null, [], {}, "exit-menu", null);
+    this.fillExitMenu();
+
+    this.pauseMenu.append(
+      this.createMainButtons(),
+      this.createWantedPoster(),
+      this.settingsMenu,
+      this.exitMenu,
+    );
+  }
+
+  private createMainButtons(): HTMLDivElement {
     const pauseMenuButtonsDiv = createElement(
       "div",
       null,
@@ -23,6 +47,58 @@ class PauseMenu extends State {
       "pause-menu-buttons-div",
       null,
     );
+    const resumeButton = createElement(
+      "button",
+      null,
+      null,
+      ["pause-menu-button", "button"],
+      {},
+      "pause-menu-resume-button",
+      "Resume",
+    );
+    const settingsButton = createElement(
+      "button",
+      null,
+      null,
+      ["pause-menu-button", "button"],
+      {},
+      "pause-menu-settings-button",
+      "Settings",
+    );
+    const saveButton = createElement(
+      "button",
+      null,
+      null,
+      ["pause-menu-button", "button"],
+      {},
+      "pause-menu-save-button",
+      "Save",
+    );
+    const exitButton = createElement(
+      "button",
+      null,
+      null,
+      ["pause-menu-button", "button"],
+      {},
+      "pause-menu-exit-button",
+      "Exit",
+    );
+    pauseMenuButtonsDiv.append(resumeButton, settingsButton, saveButton, exitButton);
+
+    resumeButton.addEventListener("click", () => {
+      stateManager.toggleState(this);
+    });
+    settingsButton.addEventListener("click", () => {
+      this.enterSettingsMenu();
+    });
+    exitButton.addEventListener("click", () => {
+      this.enterExitMenu();
+    });
+
+    return pauseMenuButtonsDiv;
+  }
+
+  private createWantedPoster(): HTMLDivElement {
     const pauseMenuWantedDiv = createElement(
       "div",
       null,
@@ -41,9 +117,11 @@ class PauseMenu extends State {
       "pause-menu-wanted-poster",
       null,
     );
+    pauseMenuWantedDiv.append(pauseMenuWantedPoster);
+    return pauseMenuWantedDiv;
+  }
 
-    // settingsMenu
-    this.settingsMenu = createElement("div", null, null, [], {}, "settings-menu", null);
+  private fillSettingsMenu(): void {
     const exitSettingsButton = createElement(
       "button",
       null,
@@ -108,8 +186,19 @@ class PauseMenu extends State {
       null,
     );
 
-    // exitMenu
-    this.exitMenu = createElement("div", null, null, [], {}, "exit-menu", null);
+    this.settingsMenu.append(exitSettingsButton, settingsActionLabel);
+    settingsActionLabel.append(settingsActions, settingsKeys);
+    this.loadKeybinds();
+    this.settingsMenu.append(settingsVolumeLabel);
+    settingsVolumeLabel.append(settingsSounds, settingsVolumes);
+    this.loadVolumeMap();
+
+    exitSettingsButton.addEventListener("click", () => {
+      this.exitSettingsMenu();
+    });
+  }
+
+  private fillExitMenu(): void {
     const exitMenuPrompt = createElement(
       "div",
       null,
@@ -129,7 +218,6 @@ class PauseMenu extends State {
       null,
       "Yes",
     );
-    // this.exitMenuConfirmationButton = document.createElement("button");
     const exitMenuRefusalButton = createElement(
       "button",
       null,
@@ -141,106 +229,37 @@ class PauseMenu extends State {
     );
     const exitMenuDiv = document.createElement("div");
 
-    //Pause menu main buttons
-    const resumeButton = createElement(
-      "button",
-      null,
-      null,
-      ["pause-menu-button", "button"],
-      {},
-      "pause-menu-resume-button",
-      "Resume",
-    );
-    const settingsButton = createElement(
-      "button",
-      null,
-      null,
-      ["pause-menu-button", "button"],
-      {},
-      "pause-menu-settings-button",
-      "Settings",
-    );
-    const saveButton = createElement(
-      "button",
-      null,
-      null,
-      ["pause-menu-button", "button"],
-      {},
-      "pause-menu-save-button",
-      "Save",
-    );
-    const exitButton = createElement(
-      "button",
-      null,
-      null,
-      ["pause-menu-button", "button"],
-      {},
-      "pause-menu-exit-button",
-      "Exit",
-    );
-
-    // append created divs and buttons to corresponding parents
-    this.pauseMenu.append(
-      pauseMenuButtonsDiv,
-      pauseMenuWantedDiv,
-      this.settingsMenu,
-      this.exitMenu,
-    );
-    pauseMenuWantedDiv.append(pauseMenuWantedPoster);
-    pauseMenuButtonsDiv.append(resumeButton, settingsButton, saveButton, exitButton);
-    this.settingsMenu.append(exitSettingsButton, settingsActionLabel);
-    settingsActionLabel.append(settingsActions, settingsKeys);
-    this.loadKeybinds();
-    this.settingsMenu.append(settingsVolumeLabel);
-    settingsVolumeLabel.append(settingsSounds, settingsVolumes);
-    this.loadVolumeMap();
     this.exitMenu.append(exitMenuDiv);
     exitMenuDiv.append(exitMenuPrompt, exitMenuConfirmationButton, exitMenuRefusalButton);
-    // buttons eventListeners
-    resumeButton.addEventListener("click", () => {
-      stateManager.toggleState(this);
-    });
-    settingsButton.addEventListener("click", () => {
-      this.enterSettingsMenu();
-    });
-    exitSettingsButton.addEventListener("click", () => {
-      this.exitSettingsMenu();
-    });
-    exitButton.addEventListener("click", () => {
-      this.enterExitMenu();
-    });
+
     exitMenuRefusalButton.addEventListener("click", () => {
       this.exitExitMenu();
     });
   }
 
-  manageInputs(_keyman) {}
+  update(): void {}
 
-  update() {}
-
-  startHook() {
+  override startHook(): void {
     this.pauseMenu.style.display = "flex";
-    this.paused = true;
     this.game.togglePause();
   }
 
-  endHook() {
+  override endHook(): void {
     this.pauseMenu.style.display = "none";
     this.exitMenu.style.display = "none";
     this.settingsMenu.style.display = "none";
-    this.paused = false;
     this.game.togglePause();
   }
 
   // functions displaying settings
-  loadKeybinds() {
+  loadKeybinds(): void {
     for (const category in this.customKeybinds) {
-      this.customKeybinds[category].forEach(([key, action]) => {
+      for (const [key, action] of this.customKeybinds[category]) {
         if (key instanceof SpecialKey) {
           // TODO - implement special key display in settings
-          return;
+          continue;
         }
-        let div = htmlCreate({
+        const div = htmlCreate({
           classList: "keybind-container",
           appendTo: this.settingsMenu,
         });
@@ -251,14 +270,14 @@ class PauseMenu extends State {
           innerText: key.capitalized(),
           appendTo: htmlCreate({ classList: "button-container", appendTo: div }),
         });
-      });
+      }
     }
   }
 
   // function loading volumeMap
-  loadVolumeMap() {
-    this.customVolumeMap.forEach((_value, key) => {
-      let div = createElement(
+  loadVolumeMap(): void {
+    for (const soundKind of this.customVolumeMap.keys()) {
+      const div = createElement(
         "div",
         null,
         null,
@@ -267,16 +286,16 @@ class PauseMenu extends State {
         null,
         null,
       );
-      let volume = createElement(
+      const volume = createElement(
         "div",
         null,
         null,
         [],
         { width: "50%", display: "inline-block" },
         null,
-        key.charAt(0).toUpperCase() + key.slice(1) + ":",
+        soundKind.capitalized() + ":",
       );
-      let slider = document.createElement("input");
+      const slider = document.createElement("input");
       slider.type = "range";
       slider.min = "0";
       slider.max = "1";
@@ -284,22 +303,22 @@ class PauseMenu extends State {
       div.append(volume);
       div.append(slider);
       this.settingsMenu.append(div);
-    });
+    }
   }
 
   // functions toggling settings menu
-  enterSettingsMenu() {
+  enterSettingsMenu(): void {
     this.settingsMenu.style.display = "flex";
   }
-  exitSettingsMenu() {
+  exitSettingsMenu(): void {
     this.settingsMenu.style.display = "none";
   }
 
   //functions toggling exit menu
-  enterExitMenu() {
+  enterExitMenu(): void {
     this.exitMenu.style.display = "flex";
   }
-  exitExitMenu() {
+  exitExitMenu(): void {
     this.exitMenu.style.display = "none";
   }
 }

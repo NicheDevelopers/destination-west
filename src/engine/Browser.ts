@@ -1,0 +1,60 @@
+import type App from "./App";
+import { htmlCreate, makeErrorInfoHeader } from "@/lib/dom";
+
+class Browser {
+  readonly app: App;
+
+  constructor(app: App) {
+    this.app = app;
+  }
+
+  toggleFullscreen(): void {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+      return;
+    }
+    void document.documentElement.requestFullscreen();
+  }
+
+  displayError(error: Error): void {
+    let errorMessageBox = htmlCreate({
+      id: "error-message-box",
+      appendTo: document.querySelector("#game-container"),
+    });
+
+    htmlCreate({
+      tagName: "h1",
+      innerText: "An error occurred",
+      appendTo: errorMessageBox,
+    });
+
+    makeErrorInfoHeader(error, errorMessageBox);
+
+    htmlCreate({
+      tagName: "span",
+      innerText: error.message,
+      appendTo: errorMessageBox,
+    });
+  }
+}
+
+const gc = document.querySelector("#game-canvas") as HTMLCanvasElement;
+if (!gc) throw new Error("Missing #game-canvas element");
+
+const gameContext = gc.getContext("2d");
+if (!gameContext) throw new Error("Failed to get 2D rendering context for #game-canvas");
+
+/**
+ * The canvas rendering context for the canvas #game-canvas
+ */
+const ctx: CanvasRenderingContext2D = gameContext;
+
+export function getGameCanvasSizeX(): number {
+  return gc.scrollWidth;
+}
+
+export function getGameCanvasSizeY(): number {
+  return gc.scrollHeight;
+}
+
+export { Browser, ctx };

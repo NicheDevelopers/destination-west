@@ -1,36 +1,36 @@
-import Camera from "@/core/Camera.js";
-import Tile from "./Tile.js";
-import Player from "@/Entity/Player.js";
-import WorldMapDisplay from "@/WorldMap/WorldMapDisplay.js";
-import PauseMenu from "@/menu/PauseMenu.js";
-import EquipmentDisplay from "@/Equipment/EquipmentDisplay.js";
-import Designer from "@/misc/Designer.js";
-import { State, stateManager } from "@/global/stateManager.js";
-import Npc from "@/Entity/Npc.js";
-import DialogueDisplay from "@/Dialogue/DialogueDisplay.ts";
-import Container from "@/Entity/Container.js";
-import Portal, { PortalType } from "@/Entity/Portal.js";
-import TransferDisplay from "@/Transfer/TransferDisplay.js";
-import WorldMap from "@/WorldMap/WorldMap.js";
-import Travel from "@/Location/Travel.js";
-import Town from "@/Location/Town.js";
-import { distance } from "@/utilities/utilities.js";
-import Interactible from "@/Entity/Interactible.js";
-import ChuckALuck from "@/minigames/ChuckALuck.js";
-import revolverShoot from "@/minigames/battle_minigames/revolverShoot.js";
-import revolverLoad from "@/minigames/battle_minigames/revolverLoad.js";
-import Trader from "@/Entity/Trader.js";
-import seed from "@/global/seed.js";
-import { items } from "@/global/items.js";
+import Camera from "@/engine/Camera";
+import Tile from "@/engine/Tile";
+import Player from "@/game/Entity/Player";
+import WorldMapDisplay from "@/game/WorldMap/WorldMapDisplay";
+import PauseMenu from "@/game/menu/PauseMenu";
+import EquipmentDisplay from "@/game/Equipment/EquipmentDisplay";
+import Designer from "@/game/misc/Designer";
+import { State, stateManager } from "@/engine/stateManager";
+import Npc from "@/game/Entity/Npc";
+import DialogueDisplay from "@/game/Dialogue/DialogueDisplay";
+import Container from "@/game/Entity/Container";
+import Portal, { PortalType } from "@/game/Entity/Portal";
+import TransferDisplay from "@/game/Transfer/TransferDisplay";
+import WorldMap from "@/game/WorldMap/WorldMap";
+import Travel from "@/game/Location/Travel";
+import Town from "@/game/Location/Town";
+import { distance } from "@/lib/utilities";
+import Interactible from "@/game/Entity/Interactible";
+import ChuckALuck from "@/game/minigames/ChuckALuck";
+import revolverShoot from "@/game/minigames/battle_minigames/revolverShoot";
+import revolverLoad from "@/game/minigames/battle_minigames/revolverLoad";
+import Trader from "@/game/Entity/Trader";
+import seed from "@/lib/seed";
+import { items } from "./items";
 import {
   FindQuestBuilder,
   FindQuestConfig,
   FindQuestType,
   ItemDistribution,
   ItemEntry,
-} from "@/Quest.js";
-import { Combat, CombatConfig, CombatInitiationType, Difficulty } from "@/Combat/Combat.js";
-import CombatDisplay from "@/Combat/CombatDisplay.js";
+} from "./Quest";
+import { Combat, CombatConfig, CombatInitiationType, Difficulty } from "@/game/Combat/Combat";
+import CombatDisplay from "@/game/Combat/CombatDisplay";
 
 class Game extends State {
   worldMap!: WorldMap;
@@ -73,7 +73,7 @@ class Game extends State {
 
     let testMinigame = new ChuckALuck(this);
 
-    this.camera = new Camera(this);
+    this.camera = new Camera(this.player);
 
     let testMinigamer = new Interactible(this, "chuck-a-luck-table", { x: 200, y: 200 });
 
@@ -182,6 +182,7 @@ class Game extends State {
     }
 
     Object.assign(this.player.pos, this.currentTown.playerSpawn);
+    this.player.changeLocation(this.currentTown.array);
     this.worldMapDisplay.draw();
   }
 
@@ -207,7 +208,7 @@ class Game extends State {
   update() {
     this.player.update();
     this.currentTown.update(this.player);
-    this.camera.render({ debug: this.app.debugging });
+    this.camera.render(this.currentTown, this.player, { debug: this.app.debugging });
   }
 
   togglePause() {

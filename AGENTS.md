@@ -1,6 +1,6 @@
 # Destination West
 
-A western adventure game that runs in the browser. Everything is drawn on one `<canvas>`, there's no framework and no runtime dependencies. It starts in `index.js`, which creates `App` from `src/App.js`.
+A western adventure game that runs in the browser. Everything is drawn on one `<canvas>`, there's no framework and no runtime dependencies. It starts in `index.js`, which runs `src/game/main.ts`.
 
 ## Commands
 
@@ -18,9 +18,11 @@ CI runs `vp lint --deny-warnings`, `vp fmt --check` and `vp test`. We're halfway
 
 ## Where things are
 
-- `src/`: game code, one folder per feature (`Entity/`, `Location/`, `Dialogue/`, `Combat/`, ...)
-- `src/core/`, `src/global/`, `src/utilities/`: shared code
-- `src/Dialogue/*.dwd`: dialogues in our own format, imported with `?raw`
+- `src/engine/`: game loop, rendering, input, states, sprites, audio playback, movement, hitboxes, tiles, base `Entity`, debug view
+- `src/game/`: Destination West itself, one folder per feature (`Entity/`, `Location/`, `Dialogue/`, `Combat/`, ...), plus game data (`consts.ts`, `items.ts`, `imgInfo.ts`, keybinds)
+- `src/lib/`: generic helpers that don't know about the engine or the game
+- Imports only go `game → engine → lib`. Lint enforces it.
+- `src/game/Dialogue/*.dwd`: dialogues in our own format, imported with `?raw`
 - `public/`: images and sounds
 - `styles/`: CSS, pulled in by `main.css`
 
@@ -47,7 +49,7 @@ Keep the cleanup to the functions and files you're already changing. If you noti
 ## Conventions
 
 - Write new files in TS.
-- Use the `@/` alias for imports from other folders (`@/game/Game.js`) and `./` within the same folder.
+- Use the `@/` alias for imports from other folders (`@/game/Game`) and `./` within the same folder. Leave out the `.js`/`.ts` extension.
 - Import from `vite-plus` and `vite-plus/test`, not `vite` or `vitest`.
 - Tests go next to the code they test, as `*.test.ts`.
 - Private members in TS are `private x`, not `_x`.
@@ -63,6 +65,7 @@ Split it into separate commits so `git log --follow` still works and each diff i
 
 ## Git
 
+- Never commit unless explicitly asked to. Leave changes in the working tree for review.
 - The repo is on GitLab.
 - Branches are named `<issue>-short-name`.
 - Commit messages look like `<issue>: Add thing`.

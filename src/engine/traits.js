@@ -184,15 +184,6 @@ export function HitboxTrait(self, locationArray, rcp = DEFAULT_RCP, bd = DEFAULT
       }
     },
     /**
-     * Check whether this hitbox intersects with a tile on provided coordinates
-     * @param {Object {x: tileX, y: tileY}} tileCoords - Tile coordinates object
-     */
-    intersectsWithTileOn(tileCoords) {
-      return this.hitbox
-        .getBoundingBox()
-        .intersects(this.locationArray[tileCoords.x][tileCoords.y]);
-    },
-    /**
      * Returns an array of intersecting tiles' coordinates
      */
     getIntersectingTileCoordinates() {

@@ -2,7 +2,7 @@ import time from "./time";
 import { Browser } from "./Browser";
 import keyman from "./KeyboardManager";
 import DebugView from "@/engine/debug/DebugView";
-import { stateManager } from "./stateManager";
+import { stateManager } from "@/engine/state/StateManager";
 import { notifier } from "./notifier";
 
 class App {

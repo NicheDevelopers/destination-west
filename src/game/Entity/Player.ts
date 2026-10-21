@@ -62,7 +62,7 @@ class Player extends Entity {
     this.game.updateFocus();
   }
 
-  drawDebugInfo(cameraX, cameraY) {
+  override drawDebugInfo(cameraX, cameraY) {
     let x = this.movement.getChangeX();
     let y = this.movement.getChangeY();
 

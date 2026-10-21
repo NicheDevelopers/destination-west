@@ -3,7 +3,8 @@ import { SpecialKey } from "@/engine/keybinds";
 import type { Keybinds } from "@/engine/KeyboardManager";
 import type { SoundKind } from "@/engine/audio/Sound";
 import volumeMap from "@/game/audio/volumeMap";
-import { State, stateManager } from "@/engine/stateManager";
+import { State } from "@/engine/state/State";
+import { stateManager } from "@/engine/state/StateManager";
 import { createElement, htmlCreate } from "@/lib/dom";
 import type Game from "@/game/Game";
 

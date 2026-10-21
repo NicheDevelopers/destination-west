@@ -1,8 +1,9 @@
 import KeyboardVisualizer from "./KeyboardVisualizer";
 import { htmlCreate } from "@/lib/dom";
 import { numberPad } from "@/lib/utilities";
-import Animation from "@/engine/Animation";
 import time from "@/engine/time";
+
+const FPS_COUNTER_INTERVAL_MS = 200;
 
 /**
  * Create and manage a group of HTML elements useful for debugging
@@ -19,7 +20,7 @@ export default class DebugView {
   simSettingsRow: HTMLElement;
   showSimInput: HTMLElement;
   gameSeedRow: HTMLElement;
-  fpsCounter: Animation;
+  private lastFpsCounterUpdate = 0;
 
   constructor(visible: boolean) {
     this.keyVisualizer = new KeyboardVisualizer();
@@ -117,8 +118,6 @@ export default class DebugView {
       appendTo: this.fpsSettings,
     });
 
-    this.fpsCounter = new Animation(this, "()updateFpsCounter", 5);
-
     this.setVisibility(visible);
   }
 
@@ -126,7 +125,7 @@ export default class DebugView {
     this.gameSeedRow.innerText = `Game seed: ${seed}`;
   }
 
-  updateFpsCounter(): void {
+  private updateFpsCounter(): void {
     this.fpsDisplay.innerText = numberPad(time.getRealFps(), -1, 2);
     this.fpsSimDisplay.innerText = "sim:" + numberPad(time.getFps(), -1, 2).padStart(7, " ");
   }
@@ -145,6 +144,9 @@ export default class DebugView {
 
   update(): void {
     this.keyVisualizer.update();
-    this.fpsCounter.next();
+    if (time.now - this.lastFpsCounterUpdate >= FPS_COUNTER_INTERVAL_MS) {
+      this.lastFpsCounterUpdate = time.now;
+      this.updateFpsCounter();
+    }
   }
 }

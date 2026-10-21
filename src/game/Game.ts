@@ -4,7 +4,8 @@ import WorldMapDisplay from "@/game/WorldMap/WorldMapDisplay";
 import PauseMenu from "@/game/menu/PauseMenu";
 import EquipmentDisplay from "@/game/Equipment/EquipmentDisplay";
 import Designer from "@/game/misc/Designer";
-import { State, stateManager } from "@/engine/stateManager";
+import { State } from "@/engine/state/State";
+import { stateManager } from "@/engine/state/StateManager";
 import DialogueDisplay from "@/game/Dialogue/DialogueDisplay";
 import TransferDisplay from "@/game/Transfer/TransferDisplay";
 import WorldMap from "@/game/WorldMap/WorldMap";
@@ -76,7 +77,7 @@ class Game extends State {
     this.worldMapDisplay.draw();
   }
 
-  manageInputs(keyman) {
+  override manageInputs(keyman) {
     this.camera.manageInputs(keyman);
     this.player.manageInputs(keyman);
     keyman.manageInput("Open Pause Menu", (key) => stateManager.startState(this.pauseMenu, key));

@@ -20,7 +20,7 @@ class DroppedItem extends Interactible {
     this.item = item;
   }
 
-  interact(who: Player) {
+  override interact(who: Player) {
     if (who.equipment.put(this.item)) {
       who.game.currentTown.droppedItems = who.game.currentTown.droppedItems.filter(
         (i) => i.id !== this.id,

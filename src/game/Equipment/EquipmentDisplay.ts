@@ -1,5 +1,5 @@
 import { createElement } from "@/lib/dom";
-import { State } from "@/engine/stateManager";
+import { State } from "@/engine/state/State";
 import type Game from "@/game/Game";
 import type Equipment from "./Equipment";
 import type { EquipmentRecord } from "./Equipment";

@@ -1,4 +1,4 @@
-import { State } from "@/engine/stateManager";
+import { State } from "@/engine/state/State";
 import { AttackType, CombatAction, type Combat } from "./Combat";
 import { ButtonList } from "@/lib/ButtonList";
 import { htmlCreate } from "@/lib/dom";

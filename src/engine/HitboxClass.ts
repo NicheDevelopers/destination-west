@@ -196,18 +196,7 @@ export default class Hitbox {
   }
 
   willCollide(dx: number, dy: number, other: Hitbox): boolean {
-    if (other.entity.walkable) return false;
-    if (this.getBoundingBox(dx, dy).intersects(other.getBoundingBox())) {
-      //console.log(other);
-      return true;
-    }
-    return false;
-  }
-
-  collides(other: Hitbox): boolean {
-    if (other.entity.walkable) return false;
-    this.visualizationFunction((cx, cy) => other.draw(cx, cy, ctx, { color: "transparent" }));
-    return this.getBoundingBox().intersects(other.getBoundingBox());
+    return this.getBoundingBox(dx, dy).intersects(other.getBoundingBox());
   }
 
   visualizeCollisions(fun: (drawFun: (cx: number, cy: number) => void) => void): void {

@@ -1,5 +1,5 @@
 import { createCanvas, createElement } from "@/lib/dom";
-import { State } from "@/engine/stateManager";
+import { State } from "@/engine/state/State";
 import { MAP_PARAMETERS, TOWN_SIZES, WORLD_MAP_DISPLAY as wmd } from "@/game/consts";
 import Town from "@/game/Location/Town";
 import type Game from "@/game/Game";
@@ -113,11 +113,11 @@ class WorldMapDisplay extends State {
 
   update(): void {}
 
-  startHook(): void {
+  override startHook(): void {
     this.draw();
     this.div.style.display = "block";
   }
-  endHook(): void {
+  override endHook(): void {
     this.div.style.display = "none";
   }
 }

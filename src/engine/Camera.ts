@@ -1,7 +1,7 @@
 import { ctx, getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser";
 import { CAM_SETTINGS, CAM_STATES } from "./consts";
 import { makeEven, type Point } from "@/lib/utilities";
-import { MultiAnimation } from "./Animation";
+import Animation, { MultiAnimation } from "./Animation";
 import type { KeyboardManager } from "./KeyboardManager";
 
 import time from "./time";
@@ -90,9 +90,14 @@ class Camera {
     newZoom: number = CAM_SETTINGS.entityFocusZoom,
     animationTime: number = CAM_SETTINGS.focusChangeTime,
   ): void {
-    this.animation = new MultiAnimation(this, ["pos.x", "pos.y", "zoom"], [], {
-      endAfter: animationTime,
-    });
+    this.animation = new MultiAnimation(
+      [
+        new Animation(this.pos, "x", 0),
+        new Animation(this.pos, "y", 0),
+        new Animation(this, "zoom", 0),
+      ],
+      { endAfter: animationTime },
+    );
     this.animation.goal = [
       () => entity.getCenterPoint().x,
       () => entity.getCenterPoint().y,

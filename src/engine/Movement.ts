@@ -302,7 +302,7 @@ export default class Movement {
    */
   updateBreath(sprinting: boolean): void {
     if (sprinting) this.outOfBreathTime = mp.outOfBreathSeconds * 1000;
-    else this.outOfBreathTime = Math.max(0, this.outOfBreathTime - (time.delta ?? 0));
+    else this.outOfBreathTime = Math.max(0, this.outOfBreathTime - time.delta);
   }
 
   /**

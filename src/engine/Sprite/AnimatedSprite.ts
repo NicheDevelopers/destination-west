@@ -95,7 +95,7 @@ class AnimatedSprite extends Sprite {
   next(): void {
     if (!this.animation) throw new Error("AnimatedSprite: No animation to advance");
     const frameCount = this.animation.frameDurations.length;
-    this.frameTime += (time.delta ?? 0) * this.tempo;
+    this.frameTime += time.delta * this.tempo;
 
     while (this.frameTime >= this.frameDuration(this.animation, this.frame)) {
       const lastFrame = this.frame === frameCount - 1;

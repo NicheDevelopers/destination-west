@@ -2,6 +2,7 @@ import Stats from "@/game/Entity/Stats";
 import type Equipment from "@/game/Equipment/Equipment";
 import type Game from "@/game/Game";
 import type Animation from "@/engine/Animation";
+import type { Point } from "@/lib/utilities";
 import {
   DialogueUnit,
   DialogueLine,
@@ -17,6 +18,7 @@ import {
 export interface Speaker {
   name: string;
   equipment: Equipment;
+  getCenterPoint(): Point;
 }
 
 /**

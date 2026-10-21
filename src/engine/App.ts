@@ -6,14 +6,19 @@ import { stateManager } from "./stateManager";
 import { notifier } from "./notifier";
 
 class App {
+  animationFrameID: number;
+  debugging: boolean;
+  browser: Browser;
+  debugView: DebugView;
+
   constructor() {
-    this.animationFrameID = null;
+    this.animationFrameID = 0;
 
     this.debugging = false;
 
     this.browser = new Browser(this);
 
-    this.debugView = new DebugView(this);
+    this.debugView = new DebugView(this.debugging);
 
     keyman.generalActions.set("Toggle Fullscreen", {
       fn: () => this.browser.toggleFullscreen(),
@@ -29,7 +34,7 @@ class App {
     });
   }
 
-  loop() {
+  loop(): void {
     this.animationFrameID = window.requestAnimationFrame(() => this.loop());
     try {
       time.update();
@@ -46,11 +51,12 @@ class App {
   /**
    * Run when an error occurs in the game loop or in some asynchronous callback.
    */
-  crash(error) {
+  crash(error: unknown): void {
     stateManager.crashed = true;
     keyman.detach();
     window.cancelAnimationFrame(this.animationFrameID);
-    this.browser.displayError(error);
+    if (error instanceof Error) this.browser.displayError(error);
+    else this.browser.displayError(new Error(String(error)));
     console.error(error);
   }
 }

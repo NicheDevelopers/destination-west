@@ -1,15 +1,57 @@
 import { ctx, getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser";
 import { CAM_SETTINGS, CAM_STATES } from "./consts";
-import { makeEven } from "@/lib/utilities";
+import { makeEven, type Point } from "@/lib/utilities";
 import { MultiAnimation } from "./Animation";
+import type { KeyboardManager } from "./KeyboardManager";
 
 import time from "./time";
+
+interface FocusableEntity {
+  getCenterPoint(): Point;
+}
+
+interface DrawableEntity {
+  draw(cameraX: number, cameraY: number): void;
+  drawDebugInfo?(cameraX: number, cameraY: number): void;
+}
+
+interface RenderedLocation {
+  widthPx: number;
+  heightPx: number;
+  draw(
+    x: number,
+    y: number,
+    context: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+  ): void;
+  entitiesByDepth(
+    location: RenderedLocation,
+    player: FocusableEntity,
+  ): [DrawableEntity[], DrawableEntity[]];
+}
+
+type DebugDraw = (cameraX: number, cameraY: number) => void;
 
 /**
  Class that makes rendering fragments of the world easier
 */
 class Camera {
-  constructor(focusedEntity) {
+  state: number;
+  focusedEntity: FocusableEntity;
+  pos: Point;
+  zoomSafetyMultiplier: number;
+  zoomMin: number;
+  zoomMax: number;
+  zoomSpeed: number;
+  debugDraws: DebugDraw[];
+  singleDebugDraws: DebugDraw[];
+  animation: MultiAnimation | null = null;
+  width = 0;
+  height = 0;
+  private currentZoom: number = CAM_SETTINGS.zoom;
+
+  constructor(focusedEntity: FocusableEntity) {
     this.state = CAM_STATES.FOCUSED;
     this.focusedEntity = focusedEntity;
 
@@ -30,8 +72,7 @@ class Camera {
     this.zoomMax = CAM_SETTINGS.zoomMax;
     this.zoomSpeed = CAM_SETTINGS.zoomSpeed;
 
-    // Run zoom's setter
-    this.zoom = CAM_SETTINGS.zoom;
+    this.updateSize();
 
     window.addEventListener("resize", () => this.updateSize());
     window.addEventListener("fullscreenchange", () => this.updateSize());
@@ -45,10 +86,10 @@ class Camera {
   }
 
   setFocusedEntity(
-    entity,
-    newZoom = CAM_SETTINGS.entityFocusZoom,
-    animationTime = CAM_SETTINGS.focusChangeTime,
-  ) {
+    entity: FocusableEntity,
+    newZoom: number = CAM_SETTINGS.entityFocusZoom,
+    animationTime: number = CAM_SETTINGS.focusChangeTime,
+  ): void {
     this.animation = new MultiAnimation(this, ["pos.x", "pos.y", "zoom"], [], {
       endAfter: animationTime,
     });
@@ -65,7 +106,7 @@ class Camera {
     this.state = CAM_STATES.ANIMATING;
   }
 
-  addDebugDraw(fun, options = {}) {
+  addDebugDraw(fun: DebugDraw, options: { once?: boolean } = {}): void {
     if (options.once) {
       this.singleDebugDraws.push(fun);
       return;
@@ -73,23 +114,25 @@ class Camera {
     this.debugDraws.push(fun);
   }
 
-  removeDebugDraw(index) {
+  removeDebugDraw(index: number): void {
     this.debugDraws.splice(index, 1);
   }
 
-  updateSize() {
-    const gcon = document.querySelector("#game-container");
-    const gc = document.querySelector("#game-canvas");
-    gc.width = makeEven(Math.ceil(gcon.scrollWidth / this.zoom));
-    gc.height = makeEven(Math.ceil(gcon.scrollHeight / this.zoom));
-    gc.style.transform = `scale(${this.zoomSafetyMultiplier * this.zoom})`;
+  updateSize(): void {
+    const gameContainer = document.querySelector("#game-container");
+    const gameCanvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
+    if (!gameContainer || !gameCanvas) {
+      throw new Error("Missing #game-container or #game-canvas element");
+    }
+
+    gameCanvas.width = makeEven(Math.ceil(gameContainer.scrollWidth / this.zoom));
+    gameCanvas.height = makeEven(Math.ceil(gameContainer.scrollHeight / this.zoom));
+    gameCanvas.style.transform = `scale(${this.zoomSafetyMultiplier * this.zoom})`;
     this.width = getGameCanvasSizeX();
     this.height = getGameCanvasSizeY();
-    this.centerX = this.width / 2;
-    this.centerY = this.height / 2;
   }
 
-  manageInputs(keyman) {
+  manageInputs(keyman: Pick<KeyboardManager, "manageInput">): void {
     keyman.manageInput(
       "Camera zoom in",
       () => {
@@ -110,13 +153,17 @@ class Camera {
     );
   }
 
-  render(location, player, options = {}) {
+  render(
+    location: RenderedLocation,
+    player: FocusableEntity,
+    options: { debug?: boolean } = {},
+  ): void {
     ctx.clearRect(0, 0, this.width, this.height);
     if (this.state === CAM_STATES.FOCUSED) {
       // Mutate instead of reassigning, animations keep a reference to `pos`
       // TODO: rethink this/maybe improve animations to work without mutating
       Object.assign(this.pos, this.focusedEntity.getCenterPoint());
-    } else if (this.state === CAM_STATES.ANIMATING) {
+    } else if (this.state === CAM_STATES.ANIMATING && this.animation) {
       if (!this.animation.next()) {
         // Animation finished
         this.state = CAM_STATES.FOCUSED;
@@ -144,23 +191,23 @@ class Camera {
       if (options.debug && e.drawDebugInfo) e.drawDebugInfo(topLeftX, topLeftY);
     }
     if (options.debug) {
-      this.debugDraws.forEach((draw, _ix) => {
+      for (const draw of this.debugDraws) {
         draw(topLeftX, topLeftY);
-      });
-      this.singleDebugDraws.forEach((draw) => {
+      }
+      for (const draw of this.singleDebugDraws) {
         draw(topLeftX, topLeftY);
-      });
+      }
       this.singleDebugDraws.length = 0;
     }
   }
 
-  set zoom(newZoom) {
-    this._zoom = newZoom;
+  set zoom(newZoom: number) {
+    this.currentZoom = newZoom;
     this.updateSize();
   }
 
-  get zoom() {
-    return this._zoom;
+  get zoom(): number {
+    return this.currentZoom;
   }
 }
 

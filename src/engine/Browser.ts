@@ -19,7 +19,7 @@ class Browser {
   displayError(error: Error): void {
     let errorMessageBox = htmlCreate({
       id: "error-message-box",
-      appendTo: document.querySelector("#game-container"),
+      appendTo: document.querySelector("#game-container") ?? document.body,
     });
 
     htmlCreate({

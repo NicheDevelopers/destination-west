@@ -1,7 +1,12 @@
 import { htmlCreate } from "@/lib/dom";
 import keyman from "@/engine/KeyboardManager";
 
-function kvForm(formOptions = []) {
+type VisualizerButton = {
+  element: HTMLElement;
+  listeners: { type: string; listener: () => void }[];
+};
+
+function kvForm(formOptions: string[] = []): { form: HTMLFormElement; select: HTMLSelectElement } {
   let form = document.createElement("form");
   form.classList.add("kvForm");
 
@@ -32,7 +37,12 @@ function kvForm(formOptions = []) {
  @param triggerListenerType - The name of the event listener type to trigger the action
  @param cancelListenerType - The name of the event listener type to cancel the action
  */
-function addInput(button, action, triggerListenerType, cancelListenerType) {
+function addInput(
+  button: VisualizerButton,
+  action: string,
+  triggerListenerType: string,
+  cancelListenerType?: string,
+): void {
   let trigger = () => {
     if (!keyman.requests.hasValue(action)) keyman.requests.set(`Simulated ${action}`, action);
   };
@@ -61,9 +71,11 @@ function addInput(button, action, triggerListenerType, cancelListenerType) {
 }
 
 class KeyboardVisualizer {
-  constructor(app, appendTo = document.body) {
-    this.app = app;
+  div: HTMLElement;
+  inputModes: Map<string, () => void>;
+  buttons: Map<string, VisualizerButton>;
 
+  constructor(appendTo: Node = document.body) {
     this.div = htmlCreate({
       classList: "kvDiv nodisp",
       appendTo: appendTo,
@@ -80,7 +92,7 @@ class KeyboardVisualizer {
     form.onchange = () => {
       let mode = select.options[select.selectedIndex].value;
       this.clearMode();
-      this.inputModes.get(mode)();
+      this.inputModes.get(mode)?.();
     };
 
     this.div.appendChild(form);
@@ -135,7 +147,7 @@ class KeyboardVisualizer {
     this.hoverMode();
   }
 
-  setVisibility(visible) {
+  setVisibility(visible: boolean): void {
     if (visible) {
       this.div.classList.remove("nodisp");
       return;
@@ -143,11 +155,11 @@ class KeyboardVisualizer {
     this.div.classList.add("nodisp");
   }
 
-  isVisible() {
+  isVisible(): boolean {
     return !this.div.classList.contains("nodisp");
   }
 
-  update() {
+  update(): void {
     if (!this.isVisible()) return;
 
     this.buttons.forEach((button, action) => {
@@ -156,7 +168,7 @@ class KeyboardVisualizer {
     });
   }
 
-  clearMode() {
+  clearMode(): void {
     this.buttons.forEach((button) => {
       button.listeners.forEach((listener) => {
         button.element.removeEventListener(listener.type, listener.listener);
@@ -164,12 +176,12 @@ class KeyboardVisualizer {
       button.listeners = [];
     });
   }
-  hoverMode() {
+  hoverMode(): void {
     this.buttons.forEach((button, action) => {
       addInput(button, action, "mouseover", "mouseout");
     });
   }
-  toggleMode() {
+  toggleMode(): void {
     this.buttons.forEach((button, action) => {
       addInput(button, action, "click");
     });

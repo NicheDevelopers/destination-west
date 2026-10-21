@@ -1,12 +1,23 @@
 import { TILE_SIZE } from "@/global/consts.js";
 
-export type AnimationName = "idle" | "run";
+export type AnimationName = "idle" | "walk" | "run" | "death";
 
 export interface AnimationInfo {
   name: AnimationName;
-  row: number;
-  frames: number;
-  mirroredRow?: number;
+  /** Sheet with the frames left to right, top to bottom, drawn at 1 art pixel per pixel */
+  src: string;
+  /** How long each frame is shown, in ms, in sheet order */
+  frameDurations: number[];
+  /** Frame durations used instead while out of breath (after sprinting) */
+  outOfBreathFrameDurations?: number[];
+  /** Whether the animation starts over after the last frame (default) or holds it */
+  loop?: boolean;
+  /** Art pixels per second the feet move at normal tempo; used to keep feet from sliding */
+  groundSpeed?: number;
+}
+
+function uniformDurations(frameCount: number, duration: number): number[] {
+  return Array.from({ length: frameCount }, () => duration);
 }
 
 export interface ImageInfoType {
@@ -19,6 +30,8 @@ export interface ImageInfoType {
   spriteHeight?: number;
   defaultAnimation?: AnimationName;
   animations?: Map<AnimationName, AnimationInfo>;
+  /** Art x coordinate a mirrored sprite is flipped around (default: the frame centre) */
+  mirrorAxis?: number;
   random?: boolean;
   nocollision?: boolean;
   nodepth?: boolean;
@@ -268,51 +281,57 @@ const imgInfo: Map<string, ImageInfoType> = new Map([
     ),
   ],
   [
+    // Sheets exported from docs/art-pipeline/Gunslinger_order; the art faces right
     "player",
-    createImage(
-      "img/player.png",
-      74,
-      100,
-      0,
-      0,
-      74,
-      100,
-      "idle",
-      new Map([
-        ["idle", { name: "idle", row: 0, frames: 3, mirroredRow: 1 }],
-        ["run", { name: "run", row: 2, frames: 6, mirroredRow: 3 }],
+    {
+      src: "img/gunslinger/idle.png",
+      width: 32,
+      height: 32,
+      spriteWidth: 32,
+      spriteHeight: 32,
+      mirrorAxis: 15.5,
+      defaultAnimation: "idle",
+      animations: new Map([
+        [
+          "idle",
+          {
+            name: "idle",
+            src: "img/gunslinger/idle.png",
+            // Rested breathing holds the exhaled pose (first frame) for two frames
+            frameDurations: [400, 200, 200, 200, 200],
+            outOfBreathFrameDurations: uniformDurations(5, 200),
+          },
+        ],
+        [
+          "walk",
+          {
+            name: "walk",
+            src: "img/gunslinger/walk.png",
+            frameDurations: uniformDurations(8, 100),
+            groundSpeed: 30,
+          },
+        ],
+        [
+          "run",
+          {
+            name: "run",
+            src: "img/gunslinger/run.png",
+            frameDurations: uniformDurations(8, 100),
+            groundSpeed: 65,
+          },
+        ],
+        [
+          "death",
+          {
+            name: "death",
+            src: "img/gunslinger/death.png",
+            frameDurations: uniformDurations(26, 90),
+            loop: false,
+          },
+        ],
       ]),
-    ),
+    },
   ],
-  // [
-  //   "player",
-  //   {
-  //     src: "img/player.png",
-  //     spriteHeight: 74,
-  //     spriteWidth: 100,
-  //     defaultAnimation: "idle",
-  //     animations: new Map([
-  //       [
-  //         "idle",
-  //         {
-  //           name: "idle",
-  //           row: 0,
-  //           frames: 3,
-  //           mirroredRow: 1,
-  //         },
-  //       ],
-  //       [
-  //         "run",
-  //         {
-  //           name: "run",
-  //           row: 2,
-  //           frames: 6,
-  //           mirroredRow: 3,
-  //         },
-  //       ],
-  //     ]),
-  //   },
-  // ],
 ]);
 
 const townPropList = [

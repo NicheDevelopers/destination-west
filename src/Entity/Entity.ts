@@ -1,5 +1,5 @@
 import AnimatedSprite from "@/Sprite/AnimatedSprite.js";
-import { ANIMATION_SPEED, DEFAULT_ENTITY_HP } from "@/global/consts.js";
+import { DEFAULT_ENTITY_HP } from "@/global/consts.js";
 import { generateID, validateOptions, type Point } from "@/utilities/utilities.js";
 import { addTraits, centerPointTrait, HitboxTrait, MovementTrait } from "@/traits.js";
 import imgInfo from "@/static/imgInfo.js";
@@ -84,11 +84,7 @@ class Entity {
     if (!options.animated) {
       this.sprite = SpriteLoader.getSprite(typeName, {});
       options.callback?.();
-    } else
-      this.sprite = new AnimatedSprite(typeName, {
-        animationSpeed: ANIMATION_SPEED,
-        callback: options.callback,
-      });
+    } else this.sprite = new AnimatedSprite(typeName, { callback: options.callback });
 
     const imgInfoEntry = imgInfo.get(typeName);
     if (!imgInfoEntry)

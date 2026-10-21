@@ -171,7 +171,7 @@ class Sprite {
   }
 
   getSpriteHitboxInfo(
-    options: Size = { width: this.width, height: this.height },
+    options: Size = { width: this.width * this.scaleX, height: this.height * this.scaleY },
   ): SpriteHitboxInfo {
     if (!this.img?.complete) {
       throw new Error(`Attempt to getSpriteHitboxInfo of an unloaded sprite: ${this.typeName}`);
@@ -187,8 +187,8 @@ class Sprite {
       pixel can be found within the image
     */
     let startX, endX;
-    for (let x = 0; x < this.width; ++x) {
-      for (let y = 0; y < this.height; ++y) {
+    for (let x = 0; x < options.width; ++x) {
+      for (let y = 0; y < options.height; ++y) {
         if (!image[x][y].isTransparent()) {
           startX = x;
           break;
@@ -197,8 +197,8 @@ class Sprite {
       if (startX !== undefined) break;
     }
 
-    for (let x = this.width - 1; x >= 0; --x) {
-      for (let y = 0; y < this.height; ++y) {
+    for (let x = options.width - 1; x >= 0; --x) {
+      for (let y = 0; y < options.height; ++y) {
         if (!image[x][y].isTransparent()) {
           endX = x;
           break;
@@ -215,8 +215,8 @@ class Sprite {
       meaning when it comes to hitbox dimensions
     */
     let endY;
-    for (let y = this.height - 1; y >= 0; --y) {
-      for (let x = 0; x < this.width; ++x) {
+    for (let y = options.height - 1; y >= 0; --y) {
+      for (let x = 0; x < options.width; ++x) {
         if (!image[x][y].isTransparent()) {
           endY = y;
           break;

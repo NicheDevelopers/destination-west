@@ -1,9 +1,17 @@
 import time from "./time";
 import { generateID } from "@/lib/utilities";
-import keyman from "./KeyboardManager";
+import keyman, { type KeyboardManager } from "./KeyboardManager";
 import { actions as specialActions } from "./keybinds";
 
-class State {
+type InputManager = Pick<KeyboardManager, "manageInput" | "isActionRequested">;
+
+abstract class State {
+  id: number;
+  fundamental: boolean;
+  async: boolean;
+  validated: boolean;
+  startKey: string | null = null;
+
   constructor(fundamental = false, options = { async: false }) {
     this.id = generateID(State);
     this.fundamental = fundamental;
@@ -36,7 +44,7 @@ class State {
       }, 5000);
     }
   }
-  get name() {
+  get name(): string {
     return this.constructor.name;
   }
   /**
@@ -47,7 +55,9 @@ class State {
    * The member objects' `mangeInputs` functions work the same, creating
    * a recursive mechanism.
    */
-  manageInputs(_keyman) {}
+  manageInputs(_keyman: InputManager): void {}
+
+  abstract update(): void;
 
   /**
    * An internal test function to verify that the state is correctly
@@ -57,14 +67,15 @@ class State {
    * with 0 delay in the constructor. If the state is prepared asycnhronously,
    * it should be called manually.
    */
-  validate() {
-    let managedInputs = [];
-    let keymanMock = {
+  validate(): void {
+    let managedInputs: string[] = [];
+    let keymanMock: InputManager = {
       manageInput: (input) => {
         managedInputs.push(input);
       },
       isActionRequested: (input) => {
         managedInputs.push(input);
+        return false;
       },
     };
     this.manageInputs(keymanMock);
@@ -81,7 +92,7 @@ class State {
     }
 
     for (const input of thisStateKeybinds ?? []) {
-      if (input === null || input === specialActions.NONE) continue;
+      if (input === specialActions.NONE) continue;
       if (!managedInputs.includes(input))
         throw new Error(
           `Validation failed: ` + `Action '${input}' is not managed by state '${this.name}'`,
@@ -90,14 +101,20 @@ class State {
 
     this.validated = true;
   }
-  startHook() {}
-  endHook() {}
-  endState() {
+  startHook(): void {}
+  endHook(): void {}
+  endState(): void {
     stateManager.endState(this);
   }
 }
 
 class StateManager {
+  stateStack: State[];
+  previousState: State | null;
+  lastUpdateTime: number;
+  maxUpdateTime: number;
+  crashed: boolean;
+
   constructor() {
     this.stateStack = [];
     this.previousState = null;
@@ -106,59 +123,64 @@ class StateManager {
 
     this.crashed = false;
   }
-  pushState(state, startKey) {
+  pushState(state: State, startKey: string | null = null): void {
     state.startKey = startKey;
     state.startHook();
     this.stateStack.push(state);
   }
-  popState() {
+  popState(): void {
     this.currentState.endHook();
     this.stateStack.pop();
   }
-  get currentState() {
-    return this.stateStack.last;
+  get currentState(): State {
+    const state = this.stateStack.last;
+    if (!state) throw new Error(`No state has been started yet`);
+    return state;
   }
-  currentStateIs(state) {
+  currentStateIs(state: State): boolean {
     return state.id === this.currentState.id;
   }
-  nthUnderCurrent(n) {
+  nthUnderCurrent(n: number): State {
     return this.stateStack.lastNthElement(n);
   }
-  stateChanged() {
+  stateChanged(): boolean {
     return this.currentState !== this.previousState;
   }
-  updateStates() {
+  updateStates(): void {
     if (time.now - this.lastUpdateTime > this.maxUpdateTime) {
       // Cancelling update due to exceeding the maximum allowed udpate time
       this.lastUpdateTime = time.now;
       return;
     }
     this.lastUpdateTime = time.now;
-    this.previousState = this.currentState;
+    if (this.stateStack.length === 0) return;
+
+    const previousState = this.currentState;
+    this.previousState = previousState;
 
     keyman.manageGeneralInputs();
     for (let state of this.stateStack.slice().reverse()) {
-      if (state.id === this.stateStack.last.id) state.manageInputs(keyman);
+      if (state.id === this.currentState.id) state.manageInputs(keyman);
       state.update();
       if (this.stateChanged()) {
         keyman.clearInputs();
-        this.previousState.manageInputs(keyman);
+        previousState.manageInputs(keyman);
         break;
       }
       if (state.fundamental) break;
     }
   }
-  // if cond is true, pop and run endhook, else push and run starthook
-  toggleState(state, startKey) {
+  // If the state is the current one, pop it and run its endHook, else push it and run its startHook
+  toggleState(state: State, startKey: string | null = null): void {
     if (this.currentState.id === state.id) this.popState();
     else this.pushState(state, startKey);
   }
-  startState(state, startKey) {
+  startState(state: State, startKey: string | null = null): void {
     if (this.currentState.id === state.id)
       throw new Error(`Attempt to start a state which is already the current state`);
     this.pushState(state, startKey);
   }
-  endState(state) {
+  endState(state: State): void {
     if (this.currentState.id !== state.id)
       throw new Error(`Attempt to end a state which is not the current state`);
     this.popState();
@@ -168,7 +190,7 @@ class StateManager {
    * startKey is set to the key that caused the state change.
    * @param {string} key - The key that was pressed
    */
-  potentialStateChange(key) {
+  potentialStateChange(key: string): void {
     if (this.stateChanged()) {
       this.currentState.startKey = key;
     }

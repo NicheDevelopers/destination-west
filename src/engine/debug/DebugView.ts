@@ -9,9 +9,21 @@ import seed from "@/lib/seed";
  * Create and manage a group of HTML elements useful for debugging
  */
 export default class DebugView {
-  constructor(app) {
-    this.app = app;
-    this.keyVisualizer = new KeyboardVisualizer(app);
+  keyVisualizer: KeyboardVisualizer;
+  div: HTMLElement;
+  fpsDisplay: HTMLElement;
+  fpsSimDisplay: HTMLElement;
+  fpsSettings: HTMLElement;
+  closeFpsSettings: HTMLElement;
+  timeScaleRow: HTMLElement;
+  timeScaleInput: HTMLElement;
+  simSettingsRow: HTMLElement;
+  showSimInput: HTMLElement;
+  gameSeedRow: HTMLElement;
+  fpsCounter: Animation;
+
+  constructor(visible: boolean) {
+    this.keyVisualizer = new KeyboardVisualizer();
 
     this.div = htmlCreate({
       id: "dev-settings",
@@ -71,8 +83,8 @@ export default class DebugView {
       max: "10.0",
       step: "0.1",
       value: "1.0",
-      onchange: (i) => {
-        time.speed = Number(i.target.value);
+      onchange: (event: Event) => {
+        time.speed = Number((event.target as HTMLInputElement).value);
       },
       appendTo: this.timeScaleRow,
     });
@@ -91,8 +103,9 @@ export default class DebugView {
       tagName: "input",
       type: "checkbox",
       checked: true,
-      onchange: (i) => {
-        if (i.target.checked) this.fpsSimDisplay.classList.remove("nodisp");
+      onchange: (event: Event) => {
+        if ((event.target as HTMLInputElement).checked)
+          this.fpsSimDisplay.classList.remove("nodisp");
         else this.fpsSimDisplay.classList.add("nodisp");
       },
       appendTo: this.simSettingsRow,
@@ -107,15 +120,15 @@ export default class DebugView {
 
     this.fpsCounter = new Animation(this, "()updateFpsCounter", 5);
 
-    this.setVisibility(this.app.debugging);
+    this.setVisibility(visible);
   }
 
-  updateFpsCounter() {
+  updateFpsCounter(): void {
     this.fpsDisplay.innerText = numberPad(time.getRealFps(), -1, 2);
     this.fpsSimDisplay.innerText = "sim:" + numberPad(time.getFps(), -1, 2).padStart(7, " ");
   }
 
-  setVisibility(visible) {
+  setVisibility(visible: boolean): void {
     this.keyVisualizer.setVisibility(visible);
     if (visible) {
       this.div.classList.remove("nodisp");
@@ -123,11 +136,11 @@ export default class DebugView {
     }
     this.div.classList.add("nodisp");
   }
-  isVisible() {
+  isVisible(): boolean {
     return !this.div.classList.contains("nodisp");
   }
 
-  update() {
+  update(): void {
     this.keyVisualizer.update();
     this.fpsCounter.next();
   }

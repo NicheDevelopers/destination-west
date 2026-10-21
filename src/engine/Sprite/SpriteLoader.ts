@@ -1,6 +1,6 @@
-import Sprite from "./Sprite";
+import Sprite, { type SpriteOptions } from "./Sprite";
 import { preloadAnimationImages } from "./AnimatedSprite";
-import { setImgInfo } from "./imgInfo";
+import { setImgInfo, type ImageInfoType } from "./imgInfo";
 
 /**
  * SpriteLoader is a class for using preloaded sprites.
@@ -12,14 +12,16 @@ import { setImgInfo } from "./imgInfo";
  * so they are asynchronous by nature.
  */
 class SpriteLoader {
+  /**
+   *  Mapping: SpriteRecipe -> Sprite
+   */
+  loadedSprites: Map<string, Sprite>;
+
   constructor() {
-    /**
-     *  Mapping: SpriteRecipe -> Sprite
-     */
     this.loadedSprites = new Map();
   }
 
-  loadSprites(imgInfo) {
+  loadSprites(imgInfo: Map<string, ImageInfoType>): Promise<unknown[]> {
     setImgInfo(imgInfo);
     /**
      * A list of sprites to load in the format:
@@ -29,11 +31,11 @@ class SpriteLoader {
      * Currently only Sprites (and not subclasses) are supported, but that's
      * enough to handle sprite loading issues.
      */
-    const spritesToLoad = imgInfo.keys().map((key) => [key, {}]);
+    const spritesToLoad: [string, SpriteOptions][] = Array.from(imgInfo.keys(), (key) => [key, {}]);
     return Promise.all([
       preloadAnimationImages(),
       ...spritesToLoad.map((args) => {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
           const [typeName, options] = args;
           const originalCallback = options.callback;
           const sprite = new Sprite(
@@ -52,10 +54,10 @@ class SpriteLoader {
     ]);
   }
 
-  getSprite(...args) {
-    const [typeName, options] = args;
-    const recipe = Sprite.createRecipe(...args);
-    if (!this.loadedSprites.has(recipe)) {
+  getSprite(typeName: string, options: SpriteOptions): Sprite {
+    const recipe = Sprite.createRecipe(typeName, options);
+    const sprite = this.loadedSprites.get(recipe);
+    if (!sprite) {
       const recipeDesc = Sprite.getRecipeDescription(recipe);
       const argsLine = `[${typeName}, ${JSON.stringify(options)}],`;
       throw new Error(
@@ -63,7 +65,7 @@ class SpriteLoader {
           `Add it to SpriteLoader.js with the following line:\n${argsLine}`,
       );
     }
-    return this.loadedSprites.get(recipe);
+    return sprite;
   }
 }
 

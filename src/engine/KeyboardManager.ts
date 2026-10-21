@@ -1,6 +1,6 @@
 import { TwoWayMap } from "@/lib/TwoWayMap";
 import { stateManager } from "./stateManager";
-import { actions as specialActions, StateStartKey, CopyKey } from "./keybinds";
+import { actions as specialActions, StateStartKey, CopyKey, type SpecialKey } from "./keybinds";
 
 /* Prevent accidental game exit. To be used in the future
 window.onbeforeunload = (e) => {
@@ -9,12 +9,25 @@ window.onbeforeunload = (e) => {
   };
 */
 
+type Keybinds = Record<string, [string | SpecialKey, string][]>;
+
+type InputOptions = { once?: boolean };
+
+type GeneralAction = { fn: (key: string) => void; flags?: InputOptions };
+
 export class KeyboardManager {
+  /**
+   * A map, mapping state names to their keybinds
+   */
+  stateBinds: Map<string, TwoWayMap<string | SpecialKey, string>>;
+  keybinds: Keybinds = {};
+  generalActions: Map<string, GeneralAction>;
+  requests: TwoWayMap<string, string>;
+  ignore: Map<string, boolean>;
+  private onKeyDown: (event: KeyboardEvent) => void;
+  private onKeyUp: (event: KeyboardEvent) => void;
+
   constructor() {
-    /**
-     * A map, mapping state names to their keybinds
-     * @type {Map<string, TwoWayMap>}
-     */
     this.stateBinds = new Map();
 
     this.generalActions = new Map();
@@ -29,7 +42,7 @@ export class KeyboardManager {
     document.addEventListener("keyup", this.onKeyUp);
   }
 
-  load(keybinds) {
+  load(keybinds: Keybinds): void {
     this.keybinds = keybinds;
     this.stateBinds = new Map();
 
@@ -38,7 +51,7 @@ export class KeyboardManager {
     }
   }
 
-  manageKeydown(event) {
+  manageKeydown(event: KeyboardEvent): void {
     let key = event.key.toLowerCase();
 
     if (this.ignore.has(key)) return;
@@ -49,13 +62,13 @@ export class KeyboardManager {
 
     if (action && !this.requests.hasValue(action)) this.requests.set(key, action);
   }
-  manageKeyup(event) {
+  manageKeyup(event: KeyboardEvent): void {
     let key = event.key.toLowerCase();
     this.ignore.delete(key);
 
     this.requests.deleteByKey(key);
   }
-  isActionRequested(action) {
+  isActionRequested(action: string): boolean {
     return this.requests.hasValue(action);
   }
 
@@ -67,14 +80,14 @@ export class KeyboardManager {
    * @param options.once [true] - Whether the input is meant to be managed
    * once per keypress (and not every tick while the key is down).
    */
-  manageInput(action, callback, options = {}) {
+  manageInput(action: string, callback: (key: string) => void, options: InputOptions = {}): void {
     if (!this.isActionRequested(action)) return;
 
     let key = this.requests.getKey(action);
 
     if (!key) return;
 
-    if (options.once === undefined || options?.once) {
+    if (options.once === undefined || options.once) {
       this.requests.deleteByValue(action);
       this.ignore.set(key, true);
     }
@@ -82,16 +95,13 @@ export class KeyboardManager {
     callback(key);
 
     stateManager.potentialStateChange(key);
-
-    return;
   }
 
   /**
    * Manages requests for actions stored in generalActions
    */
-  manageGeneralInputs() {
-    for (const name of this.generalActions.keys()) {
-      let action = this.generalActions.get(name);
+  manageGeneralInputs(): void {
+    for (const [name, action] of this.generalActions) {
       this.manageInput(name, action.fn, action.flags);
     }
   }
@@ -101,11 +111,17 @@ export class KeyboardManager {
    * The TwoWayMap is prepared for usage by replacing special keys
    * with their actual values.
    */
-  bindsAt(stateName) {
+  bindsAt(stateName: string): TwoWayMap<string | SpecialKey, string> | undefined {
     return this.stateBinds.get(stateName)?.map(([key, action]) => {
-      if (key instanceof StateStartKey) return [stateManager.currentState.startKey, action];
+      if (key instanceof StateStartKey) return [stateManager.currentState.startKey ?? key, action];
 
-      if (key instanceof CopyKey) return [this.bindsAt(key.state).getKey(key.action), action];
+      if (key instanceof CopyKey) {
+        const copiedKey = this.bindsAt(key.state)?.getKey(key.action);
+        if (copiedKey === undefined) {
+          throw new Error(`Cannot copy unbound action '${key.action}' of state '${key.state}'`);
+        }
+        return [copiedKey, action];
+      }
 
       return [key, action];
     }, true);
@@ -114,7 +130,7 @@ export class KeyboardManager {
   /**
    * Returns the TwoWayMap of keybinds of the current state.
    */
-  currentBinds() {
+  currentBinds(): TwoWayMap<string | SpecialKey, string> | undefined {
     return this.bindsAt(stateManager.currentState.name);
   }
 
@@ -123,19 +139,19 @@ export class KeyboardManager {
    * available within the current state or the "general" bind collection.
    * Returns undefined otherwise.
    */
-  getKey(action) {
-    return this.currentBinds()?.getKey(action) ?? this.bindsAt("general").getKey(action);
+  getKey(action: string): string | SpecialKey | undefined {
+    return this.currentBinds()?.getKey(action) ?? this.bindsAt("general")?.getKey(action);
   }
 
   /**
    * Attempts to get the action bound to a key in the current state
    * or in the general keybinds. Returns undefined if the key is not bound in either.
    */
-  getAction(key) {
-    return this.currentBinds()?.getValue(key) ?? this.bindsAt("general").getValue(key);
+  getAction(key: string): string | undefined {
+    return this.currentBinds()?.getValue(key) ?? this.bindsAt("general")?.getValue(key);
   }
 
-  clearInputs() {
+  clearInputs(): void {
     // IMPROVEMENT TODO:
     // Translate requests between states: if a key is pressed in one state
     // and the same key is bound to a different action in another state,
@@ -149,7 +165,7 @@ export class KeyboardManager {
   /**
    * Detach the KeyboardManager from the document, removing all event listeners.
    */
-  detach() {
+  detach(): void {
     document.removeEventListener("keydown", this.onKeyDown);
     document.removeEventListener("keyup", this.onKeyUp);
   }

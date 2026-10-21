@@ -1,9 +1,15 @@
 class Time {
+  speed: number;
+  now: number;
+  previous: number = 0;
+  realTimeDelta: number = 0;
+  delta: number = 0;
+
   constructor() {
     this.speed = 1;
     this.now = Date.now();
   }
-  update() {
+  update(): void {
     this.previous = this.now;
     this.now = Date.now();
     this.realTimeDelta = this.now - this.previous;
@@ -13,7 +19,7 @@ class Time {
      Get the simulated framerate (increasing time speed
      decreases framerate and vice versa)
   */
-  getFps() {
+  getFps(): number {
     if (!this.delta) return 0;
     return 1000 / this.delta;
   }
@@ -22,7 +28,7 @@ class Time {
     update() function be called if the delay between the calls
     was equal to the current `this.delta` value)
    */
-  getRealFps() {
+  getRealFps(): number {
     if (!this.realTimeDelta) return 0;
     return 1000 / this.realTimeDelta;
   }

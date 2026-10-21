@@ -14,7 +14,7 @@ vp check     # format + lint + type check
 vp fmt       # format only
 ```
 
-CI runs `vp lint --deny-warnings`, `vp fmt --check` and `vp test`. We're halfway through moving from JS to TS, so `vp check` already shows errors on `main`. Just don't add new ones to the files you change.
+CI and the pre-commit hook (`.vite-hooks/pre-commit`) run `vp lint --deny-warnings`, `vp fmt --check` and `vp test`. We're halfway through moving from JS to TS, so `vp check` already shows errors on `main`. Just don't add new ones to the files you change.
 
 ## Where things are
 

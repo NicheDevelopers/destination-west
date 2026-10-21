@@ -1,4 +1,5 @@
 import Sprite from "./Sprite.js";
+import { preloadAnimationImages } from "./AnimatedSprite.js";
 import imgInfo from "@/static/imgInfo.js";
 
 /**
@@ -29,8 +30,9 @@ class SpriteLoader {
   }
 
   loadSprites() {
-    return Promise.all(
-      spritesToLoad.map((args) => {
+    return Promise.all([
+      preloadAnimationImages(),
+      ...spritesToLoad.map((args) => {
         return new Promise((resolve) => {
           const [typeName, options] = args;
           const originalCallback = options.callback;
@@ -47,7 +49,7 @@ class SpriteLoader {
           this.loadedSprites.set(recipe, sprite);
         });
       }),
-    );
+    ]);
   }
 
   getSprite(...args) {

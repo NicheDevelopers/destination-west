@@ -1,8 +1,9 @@
 import type { Point } from "@/utilities/utilities.js";
 
 export const TILE_SIZE = 64;
+// World pixels per art pixel: art is drawn on a 32 px tile grid, the world uses 64 px tiles
+export const PIXEL_SCALE = 2;
 export const DEFAULT_EQUIPMENT_SIZE = 100;
-export const ANIMATION_SPEED = 9;
 export const SPRITE_SCALE = 1;
 export const DEFAULT_TOWN_WIDTH = 42;
 export const DEFAULT_TOWN_HEIGHT = 20;
@@ -49,24 +50,26 @@ export const AUTO_BOUNDARY_X_LOOSENESS = 0.2;
 export type InputMode = "hold" | "toggle";
 
 export const PLAYER_PARAMETERS = {
-  defaultPlayerSpeed: 150,
+  defaultPlayerSpeed: 80,
   defaultDiagonalOffset: Math.sqrt(2) / 2,
-  defaultSprintMultiplier: 1.5,
+  defaultSprintMultiplier: 2,
   defaultSneakMultiplier: 0.5,
+  // How long the player stays out of breath after sprinting
+  outOfBreathSeconds: 4,
   defaultSprintMode: "hold" as InputMode,
   defaultSneakMode: "hold" as InputMode,
   playerBd: {
     up: 2,
-    left: 14,
-    right: 14,
+    left: 8,
+    right: 8,
     down: 2,
   },
-  playerRcp: { x: 48, y: 70 },
+  playerRcp: { x: 31, y: 61 },
   defaultStartCash: 100,
 };
 
 export const NPC_PARAMETERS = {
-  defaultNpcSpeed: 130,
+  defaultNpcSpeed: 70,
   defaultNpcStartCash: 150,
 };
 
@@ -140,13 +143,6 @@ export const WORLD_MAP_DISPLAY = {
   lowConnection: 3,
   mediumConnection: 5,
   highConnection: 10,
-};
-
-export const ANIMATED_SPRITE = {
-  defaultIntervalTime: 110,
-  defaultFramesPerInterval: 1,
-  defaultAnimationSpeed: 8,
-  defaultFrameCount: 1,
 };
 
 export const DIRECTIONS = {

@@ -1,8 +1,14 @@
-import { TILE_SIZE, PLAYER_PARAMETERS as pp, type InputMode } from "@/global/consts.js";
+import {
+  TILE_SIZE,
+  PIXEL_SCALE,
+  PLAYER_PARAMETERS as pp,
+  type InputMode,
+} from "@/global/consts.js";
 import { randIntInRange } from "@/utilities/random.js";
 import { roundToTile, validateOptions, type Point } from "@/utilities/utilities.js";
 import { Direction } from "@/utilities/utilities.js";
 import Animation from "@/core/Animation.js";
+import time from "@/global/time.js";
 import Pathfinder from "@/Pathfinder.js";
 import type { KeyboardManager } from "@/core/KeyboardManager.js";
 import type AnimatedSprite from "@/Sprite/AnimatedSprite.js";
@@ -215,6 +221,8 @@ export default class Movement {
   playerControlled: boolean | undefined;
   pathfinder: Pathfinder;
   standing: boolean;
+  /** Time in ms the entity stays out of breath, counting down once it stops sprinting */
+  outOfBreathTime: number = 0;
 
   constructor(
     entity: MovingEntity,
@@ -270,17 +278,35 @@ export default class Movement {
    * the current movement
    */
   updateSprite(): void {
+    const sprite = this.entity.sprite;
     if (this.momentum.direction.facesLeft()) {
-      this.entity.sprite.mirrored = true;
+      sprite.mirrored = true;
     } else if (this.momentum.direction.facesRight()) {
-      this.entity.sprite.mirrored = false;
+      sprite.mirrored = false;
     }
 
-    if (this.moveX.speed !== 0 || this.moveY.speed !== 0) {
-      if (this.entity.sprite.animation?.name !== "run") this.entity.sprite.changeAnimation("run");
+    const speed = Math.hypot(this.moveX.speed, this.moveY.speed);
+    this.updateBreath(speed !== 0 && this.momentum.sprinting);
+    sprite.outOfBreath = this.outOfBreathTime > 0;
+
+    if (speed !== 0) {
+      const animationName = this.momentum.sprinting ? "run" : "walk";
+      if (sprite.animation?.name !== animationName) sprite.changeAnimation(animationName);
+      // Play the legs at the pace the entity actually moves, so the feet don't slide
+      const groundSpeed = sprite.animation?.groundSpeed;
+      sprite.tempo = groundSpeed ? speed / (groundSpeed * PIXEL_SCALE) : 1;
       return;
     }
-    if (this.entity.sprite.animation?.name !== "idle") this.entity.sprite.changeAnimation("idle");
+    if (sprite.animation?.name !== "idle") sprite.changeAnimation("idle");
+    sprite.tempo = 1;
+  }
+
+  /**
+   * Sprinting leaves the entity out of breath for a while after it stops
+   */
+  updateBreath(sprinting: boolean): void {
+    if (sprinting) this.outOfBreathTime = pp.outOfBreathSeconds * 1000;
+    else this.outOfBreathTime = Math.max(0, this.outOfBreathTime - (time.delta ?? 0));
   }
 
   /**

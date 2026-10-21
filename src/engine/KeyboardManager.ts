@@ -9,7 +9,7 @@ window.onbeforeunload = (e) => {
   };
 */
 
-type Keybinds = Record<string, [string | SpecialKey, string][]>;
+export type Keybinds = Record<string, [string | SpecialKey, string][]>;
 
 type InputOptions = { once?: boolean };
 

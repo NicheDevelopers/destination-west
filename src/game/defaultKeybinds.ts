@@ -1,4 +1,5 @@
 import { StateStartKey, CopyKey, actions } from "@/engine/keybinds";
+import type { Keybinds } from "@/engine/KeyboardManager";
 
 /**
  * A collection of arrays describing keybinds in particular states.
@@ -6,9 +7,8 @@ import { StateStartKey, CopyKey, actions } from "@/engine/keybinds";
  * by it. `actions.NONE` can be used to disable a keybind.
  * Note: Order matters! The first keybind that matches a keypress will be used.
  * This also applies to special keys.
- * @type {Object.<string, Array<[string|import("@/engine/keybinds").SpecialKey, string]>>}
  */
-const defaultKeybinds = {
+const defaultKeybinds: Keybinds = {
   general: [
     [new StateStartKey(), "Close Window"],
     ["escape", "Close Window"],

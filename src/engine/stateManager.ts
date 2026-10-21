@@ -8,41 +8,15 @@ type InputManager = Pick<KeyboardManager, "manageInput" | "isActionRequested">;
 abstract class State {
   id: number;
   fundamental: boolean;
-  async: boolean;
-  validated: boolean;
   startKey: string | null = null;
 
-  constructor(fundamental = false, options = { async: false }) {
+  constructor(fundamental = false) {
     this.id = generateID(State);
     this.fundamental = fundamental;
-    /**
-     * Indicates whether the state is prepared asynchronously, i.e. it's
-     * not ready to validate its inputs immediately after construction.
-     * (like Game with its `init` function)
-     */
-    this.async = options.async;
-    this.validated = false;
 
-    if (!this.async) {
-      // Validate the state when the constructor finishes,
-      // before the next game tick
-      setTimeout(() => this.validate(), 0);
-    } else {
-      // If the state is prepared asynchronously, the `validate`
-      // function should be called manually. This is checked after 5 seconds.
-      setTimeout(() => {
-        if (stateManager.crashed) {
-          // If the game loop has crashed, the validation could falsely indicate an error
-          return;
-        }
-        if (!this.validated)
-          throw new Error(
-            `Async state '${this.name}' was not validated. ` +
-              `(validate check timed out after 5 seconds) ` +
-              `The 'validate' function should be called manually.`,
-          );
-      }, 5000);
-    }
+    // Validate the state when the constructor finishes,
+    // before the next game tick
+    setTimeout(() => this.validate(), 0);
   }
   get name(): string {
     return this.constructor.name;
@@ -64,8 +38,7 @@ abstract class State {
    * managing its inputs. This function should be called when the state
    * is ready to call `manageInputs`.
    * By default `validate` is called using a setTimeout
-   * with 0 delay in the constructor. If the state is prepared asycnhronously,
-   * it should be called manually.
+   * with 0 delay in the constructor.
    */
   validate(): void {
     let managedInputs: string[] = [];
@@ -98,8 +71,6 @@ abstract class State {
           `Validation failed: ` + `Action '${input}' is not managed by state '${this.name}'`,
         );
     }
-
-    this.validated = true;
   }
   startHook(): void {}
   endHook(): void {}
@@ -113,15 +84,12 @@ class StateManager {
   previousState: State | null;
   lastUpdateTime: number;
   maxUpdateTime: number;
-  crashed: boolean;
 
   constructor() {
     this.stateStack = [];
     this.previousState = null;
     this.lastUpdateTime = time.now;
     this.maxUpdateTime = 100;
-
-    this.crashed = false;
   }
   pushState(state: State, startKey: string | null = null): void {
     state.startKey = startKey;

@@ -52,7 +52,6 @@ class App {
    * Run when an error occurs in the game loop or in some asynchronous callback.
    */
   crash(error: unknown): void {
-    stateManager.crashed = true;
     keyman.detach();
     window.cancelAnimationFrame(this.animationFrameID);
     if (error instanceof Error) this.browser.displayError(error);

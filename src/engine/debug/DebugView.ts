@@ -3,7 +3,6 @@ import { htmlCreate } from "@/lib/dom";
 import { numberPad } from "@/lib/utilities";
 import Animation from "@/engine/Animation";
 import time from "@/engine/time";
-import seed from "@/lib/seed";
 
 /**
  * Create and manage a group of HTML elements useful for debugging
@@ -112,7 +111,7 @@ export default class DebugView {
     });
 
     this.gameSeedRow = htmlCreate({
-      innerText: `Game seed: ${seed.seed}`,
+      innerText: "Game seed: ",
       title: `The seed used to generate the world`,
       "font-size": "25px",
       appendTo: this.fpsSettings,
@@ -121,6 +120,10 @@ export default class DebugView {
     this.fpsCounter = new Animation(this, "()updateFpsCounter", 5);
 
     this.setVisibility(visible);
+  }
+
+  showSeed(seed: number): void {
+    this.gameSeedRow.innerText = `Game seed: ${seed}`;
   }
 
   updateFpsCounter(): void {

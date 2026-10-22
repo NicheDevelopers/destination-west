@@ -20,7 +20,7 @@ export class TwoWayMap<T, V> {
   set(key: T, value: V, ignoreDuplicates: boolean = false) {
     if (this.keyToValue.has(key)) {
       if (ignoreDuplicates) return;
-      throw new Error(`Key '${key}' is already present in the TwoWayMap`);
+      throw new Error(`Key '${String(key)}' is already present in the TwoWayMap`);
     }
     this.keyToValue.set(key, value);
 

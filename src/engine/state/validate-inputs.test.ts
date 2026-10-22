@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
-import keyman from "@/engine/KeyboardManager";
+import keyboardManager from "@/engine/KeyboardManager";
 import { actions as specialActions } from "@/engine/keybinds";
 import { State, type InputManager } from "./State";
 import { validateInputs } from "./validate-inputs";
@@ -12,9 +12,9 @@ class Menu extends State {
     super();
     this.managedActions = managedActions;
   }
-  override manageInputs(keyman: InputManager): void {
+  override manageInputs(keyboardManager: InputManager): void {
     for (const action of this.managedActions) {
-      keyman.manageInput(action, () => {});
+      keyboardManager.manageInput(action, () => {});
     }
   }
   update(): void {}
@@ -23,7 +23,7 @@ class Menu extends State {
 vi.useFakeTimers();
 
 beforeEach(() => {
-  keyman.load({
+  keyboardManager.load({
     Menu: [
       ["escape", "Close"],
       ["tab", specialActions.NONE],

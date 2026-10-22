@@ -10,7 +10,7 @@ class Interactible extends Entity {
   focus: boolean;
 
   constructor(game: Game, typeName: string, pos: Point, options: EntityOptions = {}) {
-    super(typeName, pos, { hitbox: game.currentTown.array, ...options });
+    super(typeName, pos, { hitbox: game.currentTown.tiles, ...options });
     this.game = game;
     this.loadedFocusedSprite = false;
     this.focusedSprite = new Sprite(typeName, {

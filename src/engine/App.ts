@@ -1,6 +1,6 @@
 import time from "./time";
 import { Browser } from "./Browser";
-import keyman from "./KeyboardManager";
+import keyboardManager from "./KeyboardManager";
 import DebugView from "@/engine/debug/DebugView";
 import { stateManager } from "@/engine/state/StateManager";
 import { notifier } from "./notifier";
@@ -20,13 +20,13 @@ class App {
 
     this.debugView = new DebugView(this.debugging);
 
-    keyman.generalActions.set("Toggle Fullscreen", {
+    keyboardManager.generalActions.set("Toggle Fullscreen", {
       fn: () => this.browser.toggleFullscreen(),
     });
-    keyman.generalActions.set("Close Window", {
+    keyboardManager.generalActions.set("Close Window", {
       fn: () => stateManager.currentState.endState(),
     });
-    keyman.generalActions.set("Toggle Debug Mode", {
+    keyboardManager.generalActions.set("Toggle Debug Mode", {
       fn: () => {
         this.debugging = !this.debugging;
         this.debugView.setVisibility(this.debugging);
@@ -52,7 +52,7 @@ class App {
    * Run when an error occurs in the game loop or in some asynchronous callback.
    */
   crash(error: unknown): void {
-    keyman.detach();
+    keyboardManager.detach();
     window.cancelAnimationFrame(this.animationFrameID);
     if (error instanceof Error) this.browser.displayError(error);
     else this.browser.displayError(new Error(String(error)));

@@ -230,10 +230,10 @@ export class Combat {
 }
 
 /**
-   1. Gracz wybiera akcję w menu
-   2. CombatDisplay pyta Combat jaką minigierkę wykonać (opt.)
-   3. CombatDisplay przeprowadza wskazaną minigierkę (opt.)
-   4. CombatDisplay podaje zdefiniowaną w ten sposób akcję (np Atak A -> B bronią K z wynikiem minigierki X) do Combata
-   5. Combat oblicza swój nowy stan
-   6. CombatDisplay wyświetla nowy stan
+   1. The player picks an action in the menu
+   2. CombatDisplay asks Combat which minigame to run (optional)
+   3. CombatDisplay runs that minigame (optional)
+   4. CombatDisplay passes the resulting action to Combat (e.g. Attack A -> B with weapon K and minigame result X)
+   5. Combat computes its new state
+   6. CombatDisplay displays the new state
  **/

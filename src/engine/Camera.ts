@@ -1,4 +1,4 @@
-import { ctx, getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser";
+import { ctx, gameCanvas, gameContainer, getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser";
 import { CAM_SETTINGS, CAM_STATES } from "./consts";
 import { makeEven, type Point } from "@/lib/utilities";
 import Animation, { MultiAnimation } from "./Animation";
@@ -111,12 +111,12 @@ class Camera {
     this.state = CAM_STATES.ANIMATING;
   }
 
-  addDebugDraw(fun: DebugDraw, options: { once?: boolean } = {}): void {
+  addDebugDraw(debugDraw: DebugDraw, options: { once?: boolean } = {}): void {
     if (options.once) {
-      this.singleDebugDraws.push(fun);
+      this.singleDebugDraws.push(debugDraw);
       return;
     }
-    this.debugDraws.push(fun);
+    this.debugDraws.push(debugDraw);
   }
 
   removeDebugDraw(index: number): void {
@@ -124,12 +124,6 @@ class Camera {
   }
 
   updateSize(): void {
-    const gameContainer = document.querySelector("#game-container");
-    const gameCanvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
-    if (!gameContainer || !gameCanvas) {
-      throw new Error("Missing #game-container or #game-canvas element");
-    }
-
     gameCanvas.width = makeEven(Math.ceil(gameContainer.scrollWidth / this.zoom));
     gameCanvas.height = makeEven(Math.ceil(gameContainer.scrollHeight / this.zoom));
     gameCanvas.style.transform = `scale(${this.zoomSafetyMultiplier * this.zoom})`;
@@ -137,8 +131,8 @@ class Camera {
     this.height = getGameCanvasSizeY();
   }
 
-  manageInputs(keyman: Pick<KeyboardManager, "manageInput">): void {
-    keyman.manageInput(
+  manageInputs(keyboardManager: Pick<KeyboardManager, "manageInput">): void {
+    keyboardManager.manageInput(
       "Camera zoom in",
       () => {
         if (this.zoom < this.zoomMax) {
@@ -147,7 +141,7 @@ class Camera {
       },
       { once: false },
     );
-    keyman.manageInput(
+    keyboardManager.manageInput(
       "Camera zoom out",
       () => {
         if (this.zoom > this.zoomMin) {

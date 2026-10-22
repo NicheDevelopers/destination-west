@@ -19,7 +19,7 @@ class Browser {
   displayError(error: Error): void {
     let errorMessageBox = htmlCreate({
       id: "error-message-box",
-      appendTo: document.querySelector("#game-container") ?? document.body,
+      appendTo: gameContainer,
     });
 
     htmlCreate({
@@ -38,10 +38,12 @@ class Browser {
   }
 }
 
-const gc = document.querySelector("#game-canvas") as HTMLCanvasElement;
-if (!gc) throw new Error("Missing #game-canvas element");
+const gameContainer = document.getElementById("game-container")!;
 
-const gameContext = gc.getContext("2d");
+const gameCanvas = document.querySelector("#game-canvas") as HTMLCanvasElement;
+if (!gameCanvas) throw new Error("Missing #game-canvas element");
+
+const gameContext = gameCanvas.getContext("2d");
 if (!gameContext) throw new Error("Failed to get 2D rendering context for #game-canvas");
 
 /**
@@ -50,11 +52,11 @@ if (!gameContext) throw new Error("Failed to get 2D rendering context for #game-
 const ctx: CanvasRenderingContext2D = gameContext;
 
 export function getGameCanvasSizeX(): number {
-  return gc.scrollWidth;
+  return gameCanvas.scrollWidth;
 }
 
 export function getGameCanvasSizeY(): number {
-  return gc.scrollHeight;
+  return gameCanvas.scrollHeight;
 }
 
-export { Browser, ctx };
+export { Browser, ctx, gameCanvas, gameContainer };

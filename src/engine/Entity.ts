@@ -3,7 +3,7 @@ import { DEFAULT_ENTITY_HP, DEFAULT_RCP } from "./consts";
 import { generateID, validateOptions, type Point } from "@/lib/utilities";
 import { imgInfo } from "@/engine/Sprite/imgInfo";
 import SpriteLoader from "@/engine/Sprite/SpriteLoader";
-import Hitbox from "./HitboxClass";
+import Hitbox from "./Hitbox";
 import type Sprite from "@/engine/Sprite/Sprite";
 import type Tile from "./Tile";
 
@@ -68,11 +68,13 @@ class Entity {
     this.ignoreDepth = imgInfoEntry.nodepth ?? false;
 
     if (options.hitbox && !imgInfoEntry.nocollision) {
-      const { relativeCenterPoint: spriteRcp, boundingDistance: spriteBd } =
-        this.sprite.getSpriteHitboxInfoWithBoundingDistances();
-      this.relativeCenterPoint = options.relativeCenterPoint ?? spriteRcp;
-      const bd = options.boundingDistance ?? spriteBd;
-      this.hitbox = new Hitbox(this, bd, options.hitbox);
+      const {
+        relativeCenterPoint: spriteRelativeCenterPoint,
+        boundingDistance: spriteBoundingDistance,
+      } = this.sprite.getSpriteHitboxInfoWithBoundingDistances();
+      this.relativeCenterPoint = options.relativeCenterPoint ?? spriteRelativeCenterPoint;
+      const boundingDistance = options.boundingDistance ?? spriteBoundingDistance;
+      this.hitbox = new Hitbox(this, boundingDistance, options.hitbox);
       this.hitbox.updateTilePresence();
       return;
     }
@@ -84,7 +86,7 @@ class Entity {
       // Entity does not have a hitbox, but it should have a centerPoint
       // for depth sorting
       this.relativeCenterPoint =
-        options.relativeCenterPoint ?? this.sprite.getSpriteHitboxInfoBaselineRcp();
+        options.relativeCenterPoint ?? this.sprite.getSpriteHitboxInfoBaselineCenterPoint();
     }
   }
 

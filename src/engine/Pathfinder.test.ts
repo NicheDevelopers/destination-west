@@ -106,8 +106,8 @@ describe("Pathfinder", () => {
 
   it("marks tiles with entities as not walkable", () => {
     const { pathfinder } = makePathfinder(enclosedEnd);
-    expect(pathfinder.pathArray[2][0].walkable).toBe(false);
-    expect(pathfinder.pathArray[1][0].walkable).toBe(true);
+    expect(pathfinder.nodes[2][0].walkable).toBe(false);
+    expect(pathfinder.nodes[1][0].walkable).toBe(true);
   });
 
   it("only returns neighbors inside the location", () => {
@@ -115,10 +115,10 @@ describe("Pathfinder", () => {
     const straight = makePathfinder(rows).pathfinder;
     const diagonal = makePathfinder(rows, true).pathfinder;
 
-    expect(straight.neighbors(straight.pathArray[0][0])).toHaveLength(2);
-    expect(straight.neighbors(straight.pathArray[1][1])).toHaveLength(4);
-    expect(diagonal.neighbors(diagonal.pathArray[0][0])).toHaveLength(3);
-    expect(diagonal.neighbors(diagonal.pathArray[1][1])).toHaveLength(8);
+    expect(straight.neighbors(straight.nodes[0][0])).toHaveLength(2);
+    expect(straight.neighbors(straight.nodes[1][1])).toHaveLength(4);
+    expect(diagonal.neighbors(diagonal.nodes[0][0])).toHaveLength(3);
+    expect(diagonal.neighbors(diagonal.nodes[1][1])).toHaveLength(8);
   });
 
   it("throws when the end tile is outside the location", () => {

@@ -5,7 +5,7 @@ import { createCanvas } from "@/lib/dom";
 import { distance, comparePositions, type Point } from "@/lib/utilities";
 import { seedRoll } from "@/lib/random";
 import { TILE_SIZE } from "@/engine/consts";
-import { PERCENTAGE_OF_GENERIC_DECORATION as pGD, FOCUS_PARAMETERS } from "@/game/consts";
+import { PERCENTAGE_OF_GENERIC_DECORATION, FOCUS_PARAMETERS } from "@/game/consts";
 import Building, { type BuildingType } from "./Building";
 import type { StreetPreset } from "./townPresets";
 import type Game from "@/game/Game";
@@ -55,7 +55,7 @@ const pathInfo = new Map<string, string[]>([
 
 class Location {
   game: Game;
-  array: Tile[][];
+  tiles: Tile[][];
   created: boolean;
   readonly width: number;
   readonly height: number;
@@ -81,7 +81,7 @@ class Location {
     this.height = height;
     this.widthPx = this.width * TILE_SIZE;
     this.heightPx = this.height * TILE_SIZE;
-    this.array = Array.from({ length: width }, (_, x) =>
+    this.tiles = Array.from({ length: width }, (_, x) =>
       Array.from({ length: height }, (_, y) => new Tile(background, { x, y })),
     );
     this.awaitAssets = 0;
@@ -94,10 +94,10 @@ class Location {
       setTimeout(() => this.prerender(), 0);
       return;
     }
-    const { canvas, context: offCtx } = createCanvas(this.widthPx, this.heightPx);
-    offCtx.clearRect(0, 0, this.widthPx, this.heightPx);
+    const { canvas, context: offscreenContext } = createCanvas(this.widthPx, this.heightPx);
+    offscreenContext.clearRect(0, 0, this.widthPx, this.heightPx);
 
-    this.drawRaw(0, 0, offCtx);
+    this.drawRaw(0, 0, offscreenContext);
     this.image = new Image(this.widthPx, this.heightPx);
     this.image.onload = () => {
       this.created = true;
@@ -105,13 +105,15 @@ class Location {
     this.image.src = canvas.toDataURL("image/png");
   }
 
-  // check if there's a builing in the 5x5 square surrounding a tile
-  nearToBuilding(xPos: number, yPos: number, maxDist: number = 2): boolean {
-    for (let i = -maxDist; i <= maxDist; i++)
-      for (let j = -maxDist; j <= maxDist; j++) {
-        if (xPos + i < 0 || xPos + i >= this.array.length) continue;
-        if (yPos + j < 0 || yPos + j >= this.array[0].length) continue;
-        if (this.array[xPos + i][yPos + j].hasEntityOfType(Building)) return true;
+  // check if there's a building in the 5x5 square surrounding a tile
+  nearToBuilding(tileX: number, tileY: number, maxDist: number = 2): boolean {
+    for (let offsetX = -maxDist; offsetX <= maxDist; offsetX++)
+      for (let offsetY = -maxDist; offsetY <= maxDist; offsetY++) {
+        const x = tileX + offsetX;
+        const y = tileY + offsetY;
+        if (x < 0 || x >= this.tiles.length) continue;
+        if (y < 0 || y >= this.tiles[0].length) continue;
+        if (this.tiles[x][y].hasEntityOfType(Building)) return true;
       }
     return false;
   }
@@ -123,39 +125,42 @@ class Location {
    * Tiles within a 5x5 square of a building are considered to be close to it.
    */
   placeGenericDecoration(): void {
-    let rural_generic_decorations = [["cactus-1x"], ["small-stones-1"], ["green-bush-1"]];
+    let ruralDecorations = [["cactus-1x"], ["small-stones-1"], ["green-bush-1"]];
 
-    let town_generic_decorations = [
+    let townDecorations = [
       //["roadsign", 1],
       //["stone-well", 1],
       ["big-bag-3x"],
     ];
 
-    for (let i = 0; i < this.array.length; i++)
-      for (let j = 0; j < this.array[0].length; j++) {
-        if (this.array[i][j].typeName !== "sand") continue;
-        if (this.array[i][j].hasEntityOfType(Building)) continue;
+    for (let x = 0; x < this.tiles.length; x++)
+      for (let y = 0; y < this.tiles[0].length; y++) {
+        if (this.tiles[x][y].typeName !== "sand") continue;
+        if (this.tiles[x][y].hasEntityOfType(Building)) continue;
 
-        let array = null;
+        let decorationChoices = null;
 
-        if (!this.nearToBuilding(i, j) && seedRoll(pGD.town_percentage))
-          array = town_generic_decorations;
-        else if (!this.nearToBuilding(i, j) && seedRoll(pGD.rural_percentage))
-          array = rural_generic_decorations;
+        if (!this.nearToBuilding(x, y) && seedRoll(PERCENTAGE_OF_GENERIC_DECORATION.townPercentage))
+          decorationChoices = townDecorations;
+        else if (
+          !this.nearToBuilding(x, y) &&
+          seedRoll(PERCENTAGE_OF_GENERIC_DECORATION.ruralPercentage)
+        )
+          decorationChoices = ruralDecorations;
 
-        if (array)
+        if (decorationChoices)
           this.decorations.push(
             new Entity(
-              "decoration-" + array.srandomElement()!,
-              { x: i * TILE_SIZE, y: j * TILE_SIZE },
-              { hitbox: this.array },
+              "decoration-" + decorationChoices.srandomElement()!,
+              { x: x * TILE_SIZE, y: y * TILE_SIZE },
+              { hitbox: this.tiles },
             ),
           );
       }
   }
 
   getNumOfTiles(): number {
-    return this.array.length * this.array[0].length;
+    return this.tiles.length * this.tiles[0].length;
   }
 
   placeBuilding(
@@ -167,20 +172,20 @@ class Location {
   ): void {
     for (let y = gridPos.y; y < gridPos.y + heightInTiles; ++y) {
       for (let x = gridPos.x; x < gridPos.x + widthInTiles; ++x) {
-        this.array[x][y] = new Tile("sand", { x, y });
+        this.tiles[x][y] = new Tile("sand", { x, y });
       }
     }
     let width = widthInTiles * TILE_SIZE;
     let height = heightInTiles * TILE_SIZE;
-    let rcp = {
+    let relativeCenterPoint = {
       x: ~~(width / 2),
       y: ~~(height / 2),
     };
-    let bd = {
-      left: width - rcp.x - 1,
-      right: width - rcp.x - 1,
-      up: height - rcp.y - 1 - TILE_SIZE / 2,
-      down: height - rcp.y - 1,
+    let boundingDistance = {
+      left: width - relativeCenterPoint.x - 1,
+      right: width - relativeCenterPoint.x - 1,
+      up: height - relativeCenterPoint.y - 1 - TILE_SIZE / 2,
+      down: height - relativeCenterPoint.y - 1,
     };
     this.buildings.push(
       new Building(
@@ -189,9 +194,9 @@ class Location {
         heightInTiles,
         buildingType,
         Object.assign(options, {
-          hitbox: this.array,
-          relativeCenterPoint: rcp,
-          boundingDistance: bd,
+          hitbox: this.tiles,
+          relativeCenterPoint,
+          boundingDistance,
         }),
       ),
     );
@@ -228,20 +233,20 @@ class Location {
     );
 
     preset.streets.forEach((street) => {
-      for (let i = street.start.x; i < street.start.x + street.width; ++i)
-        for (let j = street.start.y; j < street.start.y + street.height; ++j) {
-          streetArray[i][j] = true;
+      for (let x = street.start.x; x < street.start.x + street.width; ++x)
+        for (let y = street.start.y; y < street.start.y + street.height; ++y) {
+          streetArray[x][y] = true;
         }
     });
 
     preset.streets.forEach((street) => {
-      for (let i = street.start.x; i < street.start.x + street.width; ++i) {
-        for (let j = street.start.y; j < street.start.y + street.height; ++j) {
+      for (let x = street.start.x; x < street.start.x + street.width; ++x) {
+        for (let y = street.start.y; y < street.start.y + street.height; ++y) {
           this.awaitAssets++;
-          let nameAndDegree = this.chooseStreet(streetArray, i, j);
-          this.array[i][j] = new Tile(
+          let nameAndDegree = this.chooseStreet(streetArray, x, y);
+          this.tiles[x][y] = new Tile(
             nameAndDegree[0],
-            { x: i, y: j },
+            { x, y },
             {
               rotation: nameAndDegree[1],
               callback: () => {
@@ -271,23 +276,23 @@ class Location {
       this.focused.focus = false;
       this.focused = null;
     }
-    let minDist = FOCUS_PARAMETERS.minDist;
+    let bestFocusScore = FOCUS_PARAMETERS.minDist;
 
-    const playerCp = player.getCenterPoint();
+    const playerCenter = player.getCenterPoint();
 
     for (const item of this.getInteractibles()) {
-      const itemCp = item.getCenterPoint();
-      let d = distance(itemCp, playerCp);
+      const itemCenter = item.getCenterPoint();
+      let focusScore = distance(itemCenter, playerCenter);
 
       if (
-        (player.isFacingRight() && itemCp.x > playerCp.x) ||
-        (!player.isFacingRight() && itemCp.x < playerCp.x)
+        (player.isFacingRight() && itemCenter.x > playerCenter.x) ||
+        (!player.isFacingRight() && itemCenter.x < playerCenter.x)
       ) {
-        d += FOCUS_PARAMETERS.facingPenalty;
+        focusScore += FOCUS_PARAMETERS.facingPenalty;
       }
 
-      if (d < minDist) {
-        minDist = d;
+      if (focusScore < bestFocusScore) {
+        bestFocusScore = focusScore;
         this.focused = item;
       }
     }
@@ -308,16 +313,16 @@ class Location {
   }
 
   drawRaw(x0: number = 0, y0: number = 0, context: CanvasRenderingContext2D = ctx): void {
-    for (let x = 0; x < this.array.length; ++x)
-      for (let y = 0; y < this.array[0].length; ++y) {
-        let tile = this.array[x][y];
+    for (let x = 0; x < this.tiles.length; ++x)
+      for (let y = 0; y < this.tiles[0].length; ++y) {
+        let tile = this.tiles[x][y];
         tile.draw(x0 + tile.gridPos.x * TILE_SIZE, y0 + tile.gridPos.y * TILE_SIZE, context);
       }
   }
   drawDebugInfo(cameraX: number, cameraY: number): void {
-    for (let x = 0; x < this.array.length; ++x)
-      for (let y = 0; y < this.array[0].length; ++y) {
-        let tile = this.array[x][y];
+    for (let x = 0; x < this.tiles.length; ++x)
+      for (let y = 0; y < this.tiles[0].length; ++y) {
+        let tile = this.tiles[x][y];
         tile.drawDebugInfo(cameraX, cameraY);
       }
   }
@@ -326,7 +331,7 @@ class Location {
      1. Entities that should be drawn first and depth doesn't matter.
      2. Entities where depth matters, sorted in drawing order. */
   entitiesByDepth(location: Location, player: Player): [Drawable[], Drawable[]] {
-    let arr: Drawable[] = [
+    let drawables: Drawable[] = [
       location.droppedItems,
       location.containers,
       location.npcs,
@@ -336,11 +341,11 @@ class Location {
       player,
     ].flat();
 
-    let sorted = arr
+    let sorted = drawables
       .filter((e) => !e.ignoreDepth)
-      .sort((e1, e2) => e1.getCenterPoint().y - e2.getCenterPoint().y);
+      .sort((a, b) => a.getCenterPoint().y - b.getCenterPoint().y);
 
-    return [arr.filter((e) => e.ignoreDepth), sorted];
+    return [drawables.filter((e) => e.ignoreDepth), sorted];
   }
 
   update(player: Player): void {

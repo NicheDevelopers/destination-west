@@ -9,8 +9,8 @@ import type Game from "@/game/Game";
 
 let buildingChance = 0.1; // => to consts.js
 
-let newStreet = (x1: number, y1: number, width: number, height: number): StreetPreset => ({
-  start: { x: x1, y: y1 },
+let newStreet = (x: number, y: number, width: number, height: number): StreetPreset => ({
+  start: { x, y },
   width: width,
   height: height,
 });

@@ -28,13 +28,13 @@ export function htmlCreate(
   let tagName = requestedTagName;
 
   if (tagName === undefined) tagName = "div";
-  let d = document.createElement(tagName);
+  let newElement = document.createElement(tagName);
 
   if (appendTo) {
-    appendTo.appendChild(d);
+    appendTo.appendChild(newElement);
   }
-  const element = d as HTMLElement & Record<string, unknown>;
-  const style = d.style as unknown as Record<string, unknown>;
+  const element = newElement as HTMLElement & Record<string, unknown>;
+  const style = newElement.style as unknown as Record<string, unknown>;
   for (const property in properties) {
     if (element[property] === undefined) {
       if (style[property] === undefined) {
@@ -45,49 +45,50 @@ export function htmlCreate(
     }
     element[property] = properties[property];
   }
-  return d;
+  return newElement;
 }
 
 /**
  * Create HTML elements
- * @param element name of element
- * @param w - width
- * @param h - height
+ * @param tagName - name of element
+ * @param width - width
+ * @param height - height
  * @param classes - array of css classes
  * @param styles - object containing style properties
  * @param id - id of the element
  * @param text - inner text of element
  */
 export function createElement<K extends keyof HTMLElementTagNameMap>(
-  element: K,
-  w: number | null = null,
-  h: number | null = null,
+  tagName: K,
+  width: number | null = null,
+  height: number | null = null,
   classes: string[] = [],
   styles: Record<string, string> = {},
-  id?: string | null | undefined,
+  id?: string | null,
   text: string | null = null,
 ): HTMLElementTagNameMap[K] {
-  // needed test if element is equal to some given possibile outcomes
-  let r = document.createElement(element);
-  classes.forEach((styleClass) => r.classList.add(styleClass));
-  if (w != null && h != null) r.setAttribute("style", `width: ${w}px; height: ${h}px`);
-  Object.assign(r.style, styles);
-  r.innerText = text ?? "";
-  if (id === undefined || id === null) return r;
-  r.setAttribute("id", `${id}`);
-  return r;
+  // needed test if tagName is equal to some given possibile outcomes
+  let newElement = document.createElement(tagName);
+  classes.forEach((styleClass) => newElement.classList.add(styleClass));
+  if (width != null && height != null)
+    newElement.setAttribute("style", `width: ${width}px; height: ${height}px`);
+  Object.assign(newElement.style, styles);
+  newElement.innerText = text ?? "";
+  if (id === undefined || id === null) return newElement;
+  newElement.setAttribute("id", `${id}`);
+  return newElement;
 }
 
 export function createCanvas(
-  w: number,
-  h: number | null = null,
+  width: number,
+  height: number | null = null,
 ): { canvas: HTMLCanvasElement; context: CanvasRenderingContext2D } {
-  let r = document.createElement("canvas");
-  r.width = w;
-  r.height = h ?? w;
-  const context = r.getContext("2d");
+  let canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height ?? width;
+  const context = canvas.getContext("2d");
   if (!context) throw new Error("Canvas context not available");
-  return { canvas: r, context: context };
+  return { canvas, context };
 }
 
 export function makeErrorInfoHeader(error: Error, appendTo: HTMLElement): HTMLElement {

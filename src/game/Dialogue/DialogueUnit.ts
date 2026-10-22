@@ -61,7 +61,7 @@ export class DialogueLine extends DialogueUnit {
   /**
    * The number of currently displayed letters of `text`
    */
-  n = 0;
+  visibleLetters = 0;
   /**
    * The speaker of the line, eg. "Player" or "Ol' Benjamin"
    */
@@ -86,18 +86,18 @@ export class DialogueLine extends DialogueUnit {
   }
 
   override setupAnimation(changeCallback: () => void): Animation {
-    const animation = new Animation(this, "n", DIALOGUE_PARAMETERS.lettersPerSecond);
+    const animation = new Animation(this, "visibleLetters", DIALOGUE_PARAMETERS.lettersPerSecond);
     animation.goal = this.text.length;
     animation.setChangeCallback(changeCallback);
     return animation;
   }
 
   override updateContent(node: HTMLElement): void {
-    node.innerHTML = `${this.who}: ${this.text.substring(0, this.n)}`;
+    node.innerHTML = `${this.who}: ${this.text.substring(0, this.visibleLetters)}`;
   }
 
   override reset(): void {
-    this.n = 0;
+    this.visibleLetters = 0;
   }
 }
 
@@ -201,7 +201,7 @@ export class DialogueOperation extends DialogueUnit {
 export class Label {
   readonly name: string;
   readonly units: DialogueUnit[] = [];
-  private n = -1;
+  private currentIndex = -1;
 
   constructor(name: string) {
     this.name = name;
@@ -211,7 +211,7 @@ export class Label {
    * Is the currently displayed Unit skippable?
    */
   canStep(): boolean {
-    return this.n < 0 || this.units[this.n].skippable();
+    return this.currentIndex < 0 || this.units[this.currentIndex].skippable();
   }
 
   /**
@@ -221,7 +221,7 @@ export class Label {
   step(): DialogueUnit | undefined | typeof DialogueUnit.OPERATION {
     if (!this.canStep()) throw new Error(`Attempt to step through a non skippable dialogue unit`);
 
-    const unit = this.units[++this.n];
+    const unit = this.units[++this.currentIndex];
     if (unit instanceof DialogueOperation) {
       unit.call();
       return DialogueUnit.OPERATION;
@@ -252,7 +252,7 @@ export class Label {
    * The unit that will be used on the next call to `step()`.
    */
   get nextUnit(): DialogueUnit | undefined {
-    return this.units[this.n + 1];
+    return this.units[this.currentIndex + 1];
   }
 
   /**
@@ -265,7 +265,7 @@ export class Label {
   }
 
   reset(): void {
-    this.n = -1;
+    this.currentIndex = -1;
     for (const unit of this.units) {
       unit.reset();
     }

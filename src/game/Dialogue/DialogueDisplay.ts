@@ -1,4 +1,5 @@
 import { State } from "@/engine/state/State";
+import { gameContainer } from "@/engine/Browser";
 import { FOCUS_BACK_TO_PLAYER_TIME as focusTime } from "@/game/consts";
 import { htmlCreate } from "@/lib/dom";
 import type { KeyboardManager } from "@/engine/KeyboardManager";
@@ -19,7 +20,7 @@ class DialogueDisplay extends State {
     this.div = htmlCreate({
       id: "dialogue-div",
       classList: "hidden",
-      appendTo: document.getElementById("game-container"),
+      appendTo: gameContainer,
     });
     this.reset();
   }
@@ -35,8 +36,8 @@ class DialogueDisplay extends State {
     this.dialogue.setupDisplay(this, this.div, () => this.endState());
   }
 
-  override manageInputs(keyman: Pick<KeyboardManager, "manageInput">): void {
-    keyman.manageInput("Next Dialogue Line", () => {
+  override manageInputs(keyboardManager: Pick<KeyboardManager, "manageInput">): void {
+    keyboardManager.manageInput("Next Dialogue Line", () => {
       this.getDialogue().step();
     });
   }

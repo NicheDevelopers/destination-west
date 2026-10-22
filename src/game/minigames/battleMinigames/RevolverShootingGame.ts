@@ -1,4 +1,5 @@
 import { State } from "@/engine/state/State";
+import { gameContainer } from "@/engine/Browser";
 import { randIntInRange } from "@/lib/random";
 import { htmlCreate } from "@/lib/dom";
 import AudioPlayer from "@/engine/audio/AudioPlayer";
@@ -29,9 +30,6 @@ class RevolverShootingGame extends State {
     }
     this.game = game;
     this.bullets = Math.min(bullets, 3);
-
-    const gameContainer = document.querySelector("#game-container");
-    if (!gameContainer) throw new Error("Missing #game-container element");
     this.mainDiv = htmlCreate({
       backgroundImage: `url("${assetsPath}revolver-firing-board.png")`,
       id: "shooting-range",
@@ -69,8 +67,8 @@ class RevolverShootingGame extends State {
 
   update(): void {}
 
-  override manageInputs(keyman: Pick<KeyboardManager, "manageInput">): void {
-    keyman.manageInput("Shoot", () => this.checkShot());
+  override manageInputs(keyboardManager: Pick<KeyboardManager, "manageInput">): void {
+    keyboardManager.manageInput("Shoot", () => this.checkShot());
   }
 
   private checkShot(): void {
@@ -91,11 +89,11 @@ class RevolverShootingGame extends State {
 
   override startHook(): void {
     this.mainDiv.style.display = "flex";
-    const boardData = this.mainDiv.getBoundingClientRect();
+    const boardRect = this.mainDiv.getBoundingClientRect();
     // proposed, arbitrary values - for the given board, these borders
     // determine all bullet positions, in which the bullet touches the
     // success box (if the leftmost bullet is touching the box when the player presses a button - success)
-    this.borders = [boardData.width * 0.175 + boardData.x, boardData.width * 0.22 + boardData.x];
+    this.borders = [boardRect.width * 0.175 + boardRect.x, boardRect.width * 0.22 + boardRect.x];
     for (const bulletDiv of this.bulletDivs) {
       bulletDiv.classList.add("flying");
     }

@@ -14,6 +14,8 @@ import Town from "@/game/Location/Town";
 import { distance } from "@/lib/utilities";
 import seed from "@/lib/seed";
 import type App from "@/engine/App";
+import type { InputManager } from "@/engine/state/State";
+import type Dialogue from "@/game/Dialogue/Dialogue";
 
 class Game extends State {
   app: App;
@@ -57,9 +59,9 @@ class Game extends State {
     this.transferDisplay = new TransferDisplay(this);
   }
 
-  travel(id) {
+  travel(id: number) {
     if (this.currentTown instanceof Town) {
-      if (!this.currentTown.connectedLocations.includes(parseInt(id))) {
+      if (!this.currentTown.connectedLocations.includes(id)) {
         throw new Error("Attempt to travel to a location not connected to the current one");
       }
       let length = distance(this.currentTown.pos, this.worldMap.getByID(id).pos);
@@ -73,17 +75,23 @@ class Game extends State {
     }
 
     Object.assign(this.player.pos, this.currentTown.playerSpawn);
-    this.player.hitbox.changeLocation(this.currentTown.array);
+    this.player.hitbox.changeLocation(this.currentTown.tiles);
     this.worldMapDisplay.draw();
   }
 
-  override manageInputs(keyman) {
-    this.camera.manageInputs(keyman);
-    this.player.manageInputs(keyman);
-    keyman.manageInput("Open Pause Menu", (key) => stateManager.startState(this.pauseMenu, key));
-    keyman.manageInput("Open Designer", (key) => stateManager.startState(this.designer, key));
-    keyman.manageInput("Open Map", (key) => stateManager.startState(this.worldMapDisplay, key));
-    keyman.manageInput("Open Equipment", (key) =>
+  override manageInputs(keyboardManager: InputManager) {
+    this.camera.manageInputs(keyboardManager);
+    this.player.manageInputs(keyboardManager);
+    keyboardManager.manageInput("Open Pause Menu", (key) =>
+      stateManager.startState(this.pauseMenu, key),
+    );
+    keyboardManager.manageInput("Open Designer", (key) =>
+      stateManager.startState(this.designer, key),
+    );
+    keyboardManager.manageInput("Open Map", (key) =>
+      stateManager.startState(this.worldMapDisplay, key),
+    );
+    keyboardManager.manageInput("Open Equipment", (key) =>
       stateManager.startState(this.equipmentDisplay, key),
     );
   }
@@ -106,7 +114,7 @@ class Game extends State {
     this.paused = !this.paused;
   }
 
-  startDialogue(dialogue, stateChangeKey) {
+  startDialogue(dialogue: Dialogue, stateChangeKey: string | null = null) {
     this.dialogueDisplay.setDialogue(dialogue);
     stateManager.startState(this.dialogueDisplay, stateChangeKey);
   }

@@ -168,7 +168,7 @@ export class PixelImage {
    * The get handler of the PixelImage Proxy
    * @this {void}
    */
-  static get(self: PixelImage, prop: string | symbol, _receiver: unknown) {
+  static get(this: void, self: PixelImage, prop: string | symbol, _receiver: unknown) {
     if (typeof prop === "symbol" || !prop.isNumber())
       return Reflect.get(self, prop, _receiver as object);
     let col = prop.toNumber();
@@ -187,7 +187,13 @@ export class PixelImage {
    * The set handler of the PixelImage Proxy
    * @this {void}
    */
-  static set(_self: PixelImage, prop: string | symbol, _val: unknown, _receiver: unknown) {
+  static set(
+    this: void,
+    _self: PixelImage,
+    prop: string | symbol,
+    _val: unknown,
+    _receiver: unknown,
+  ) {
     if (typeof prop === "string" && prop.isNumber())
       throw new Error(`Direct assignment to PixelImage column is forbidden`);
 
@@ -219,6 +225,7 @@ export class PixelImage {
    * @this {void}
    */
   static colSet(
+    this: void,
     _self: PixelImage,
     _prop: string | symbol,
     _val: unknown,

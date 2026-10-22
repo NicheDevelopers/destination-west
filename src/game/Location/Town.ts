@@ -13,16 +13,16 @@ class Town extends Location {
   readonly ID: number;
   readonly name: string;
   readonly pos: Point;
-  private readonly numBldInTown: BuildingCounts;
+  private readonly buildingCounts: BuildingCounts;
   visited: boolean;
   connectedLocations: number[];
 
-  constructor(game: Game, pos: Point, numBldInTown: BuildingCounts = {}) {
+  constructor(game: Game, pos: Point, buildingCounts: BuildingCounts = {}) {
     super(game, DEFAULT_TOWN_WIDTH, DEFAULT_TOWN_HEIGHT);
     this.ID = generateID(Town);
     this.name = genTownName();
     this.pos = pos;
-    this.numBldInTown = numBldInTown;
+    this.buildingCounts = buildingCounts;
     this.visited = false;
     this.connectedLocations = [];
     this.playerSpawn = { x: 3 * TILE_SIZE, y: 5 * TILE_SIZE };
@@ -41,19 +41,22 @@ class Town extends Location {
     let buildings = preset.buildings;
     // `buildings` holds an array with objects describing
     // building positions and sizes
-    let numBlds = buildings.length;
-    let requiredNumBlds = 0;
-    if (this.numBldInTown.saloon !== undefined) requiredNumBlds += this.numBldInTown.saloon;
-    if (this.numBldInTown.sheriff !== undefined) requiredNumBlds += this.numBldInTown.sheriff;
-    if (this.numBldInTown.house !== undefined) requiredNumBlds += this.numBldInTown.house;
-    if (requiredNumBlds > numBlds) requiredNumBlds = numBlds;
+    let buildingCount = buildings.length;
+    let requiredBuildingCount = 0;
+    if (this.buildingCounts.saloon !== undefined)
+      requiredBuildingCount += this.buildingCounts.saloon;
+    if (this.buildingCounts.sheriff !== undefined)
+      requiredBuildingCount += this.buildingCounts.sheriff;
+    if (this.buildingCounts.house !== undefined) requiredBuildingCount += this.buildingCounts.house;
+    if (requiredBuildingCount > buildingCount) requiredBuildingCount = buildingCount;
     let counter = 0;
     let toPlace: number;
 
     (["saloon", "sheriff", "house"] as const).forEach((place) => {
-      if (!this.numBldInTown[place]) toPlace = 0;
-      else if (this.numBldInTown[place] + counter < numBlds) toPlace = this.numBldInTown[place];
-      else toPlace = numBlds - counter;
+      if (!this.buildingCounts[place]) toPlace = 0;
+      else if (this.buildingCounts[place] + counter < buildingCount)
+        toPlace = this.buildingCounts[place];
+      else toPlace = buildingCount - counter;
       for (let i = 0; i < toPlace; i++) {
         this.awaitAssets++;
         this.placeBuilding(

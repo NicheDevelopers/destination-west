@@ -1,14 +1,17 @@
 import { htmlCreate } from "@/lib/dom";
-import keyman from "@/engine/KeyboardManager";
+import keyboardManager from "@/engine/KeyboardManager";
 
 type VisualizerButton = {
   element: HTMLElement;
   listeners: { type: string; listener: () => void }[];
 };
 
-function kvForm(formOptions: string[] = []): { form: HTMLFormElement; select: HTMLSelectElement } {
+function createModeSelectForm(formOptions: string[] = []): {
+  form: HTMLFormElement;
+  select: HTMLSelectElement;
+} {
   let form = document.createElement("form");
-  form.classList.add("kvForm");
+  form.classList.add("mode-select-form");
 
   let label = document.createElement("label");
   label.style.color = "white";
@@ -33,7 +36,7 @@ function kvForm(formOptions: string[] = []): { form: HTMLFormElement; select: HT
 /**
  * Add an input method for a button
  @param button - The button to add input methods to
- @param action - The action from keyman to execute on triggers
+ @param action - The action from keyboardManager to execute on triggers
  @param triggerListenerType - The name of the event listener type to trigger the action
  @param cancelListenerType - The name of the event listener type to cancel the action
  */
@@ -44,21 +47,22 @@ function addInput(
   cancelListenerType?: string,
 ): void {
   let trigger = () => {
-    if (!keyman.requests.hasValue(action)) keyman.requests.set(`Simulated ${action}`, action);
+    if (!keyboardManager.requests.hasValue(action))
+      keyboardManager.requests.set(`Simulated ${action}`, action);
   };
   let cancel = () => {
-    keyman.requests.deleteByValue(action);
+    keyboardManager.requests.deleteByValue(action);
   };
 
   // If cancelListenerType is not provided
   // triggerListenerType is used as a toggle function
   if (!cancelListenerType) {
     trigger = () => {
-      if (keyman.requests.hasValue(action)) {
-        keyman.requests.deleteByValue(action);
+      if (keyboardManager.requests.hasValue(action)) {
+        keyboardManager.requests.deleteByValue(action);
         return;
       }
-      keyman.requests.set(`Simulated ${action}`, action);
+      keyboardManager.requests.set(`Simulated ${action}`, action);
     };
   }
 
@@ -87,7 +91,7 @@ class KeyboardVisualizer {
       ["None", () => {}],
     ]);
 
-    let { form, select } = kvForm(Array.from(this.inputModes.keys()));
+    let { form, select } = createModeSelectForm(Array.from(this.inputModes.keys()));
 
     form.onchange = () => {
       let mode = select.options[select.selectedIndex].value;
@@ -163,7 +167,7 @@ class KeyboardVisualizer {
     if (!this.isVisible()) return;
 
     this.buttons.forEach((button, action) => {
-      if (keyman.isActionRequested(action)) button.element.classList.add("active");
+      if (keyboardManager.isActionRequested(action)) button.element.classList.add("active");
       else button.element.classList.remove("active");
     });
   }

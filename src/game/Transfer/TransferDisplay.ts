@@ -1,4 +1,5 @@
 import { State } from "@/engine/state/State";
+import { gameContainer } from "@/engine/Browser";
 import Transfer from "./Transfer";
 import { createElement } from "@/lib/dom";
 import type Game from "@/game/Game";
@@ -9,22 +10,20 @@ class TransferDisplay extends State {
   readonly game: Game;
   private transfer: Transfer | null = null;
   private readonly div: HTMLDivElement;
-  private readonly divEqListPlayer: HTMLDivElement;
-  private readonly divEqListTransfer: HTMLDivElement;
+  private readonly playerListDiv: HTMLDivElement;
+  private readonly transferListDiv: HTMLDivElement;
 
   constructor(game: Game) {
     super();
     this.game = game;
     this.div = createElement("div", null, null, ["window"], {}, "transfer", null);
-    const gameContainer = document.querySelector("#game-container");
-    if (!gameContainer) throw new Error("Missing #game-container element");
 
-    this.divEqListPlayer = createElement("div", null, null, [], {}, "transfer-list", null);
+    this.playerListDiv = createElement("div", null, null, [], {}, "transfer-list", null);
 
-    this.divEqListTransfer = createElement("div", null, null, [], {}, "transfer-list", null);
+    this.transferListDiv = createElement("div", null, null, [], {}, "transfer-list", null);
 
-    this.div.appendChild(this.divEqListPlayer);
-    this.div.appendChild(this.divEqListTransfer);
+    this.div.appendChild(this.playerListDiv);
+    this.div.appendChild(this.transferListDiv);
 
     gameContainer.appendChild(this.div);
   }
@@ -35,14 +34,16 @@ class TransferDisplay extends State {
 
     const lists = [
       // [list div, isPlayerList]
-      [this.divEqListPlayer, true],
-      [this.divEqListTransfer, false],
+      [this.playerListDiv, true],
+      [this.transferListDiv, false],
     ] as const;
-    for (const [child, eqFlag] of lists) {
-      const givenEquipment = eqFlag ? transfer.playerEquipment : transfer.transferEquipment;
-      const transferEquipment = eqFlag ? transfer.transferEquipment : transfer.playerEquipment;
+    for (const [listDiv, isPlayerList] of lists) {
+      const givenEquipment = isPlayerList ? transfer.playerEquipment : transfer.transferEquipment;
+      const transferEquipment = isPlayerList
+        ? transfer.transferEquipment
+        : transfer.playerEquipment;
       // clear
-      child.replaceChildren();
+      listDiv.replaceChildren();
       // add divs
       const cashDiv = createElement(
         "div",
@@ -71,7 +72,7 @@ class TransferDisplay extends State {
         });
         cashDiv.appendChild(buttonGetCash);
       }
-      child.appendChild(cashDiv);
+      listDiv.appendChild(cashDiv);
       const sortDiv = createElement(
         "div",
         null,
@@ -102,11 +103,17 @@ class TransferDisplay extends State {
         sortDiv.appendChild(buttonSort);
       }
 
-      child.appendChild(sortDiv);
+      listDiv.appendChild(sortDiv);
 
       for (const record of givenEquipment.records) {
-        child.appendChild(
-          this.recordToListElement(transfer, record, eqFlag, givenEquipment, transferEquipment),
+        listDiv.appendChild(
+          this.recordToListElement(
+            transfer,
+            record,
+            isPlayerList,
+            givenEquipment,
+            transferEquipment,
+          ),
         );
       }
 
@@ -119,14 +126,14 @@ class TransferDisplay extends State {
         null,
         `Weight summary of all items: ${givenEquipment.sumWeight()} / ${givenEquipment.maxWeight}`,
       );
-      child.appendChild(sumWeight);
+      listDiv.appendChild(sumWeight);
     }
   }
 
   private recordToListElement(
     transfer: Transfer,
     record: EquipmentRecord,
-    eqFlag: boolean,
+    isPlayerList: boolean,
     givenEquipment: Equipment,
     transferEquipment: Equipment,
   ): HTMLDivElement {
@@ -153,8 +160,8 @@ class TransferDisplay extends State {
       String(record.quantity),
     );
     let label: string;
-    if (transfer.trading) label = eqFlag ? "Sell" : "Buy";
-    else label = eqFlag ? "Right" : "Left";
+    if (transfer.trading) label = isPlayerList ? "Sell" : "Buy";
+    else label = isPlayerList ? "Right" : "Left";
     const transferButton = createElement(
       "button",
       null,
@@ -176,7 +183,7 @@ class TransferDisplay extends State {
     this.transfer = new Transfer(playerEq, transferEq, trading);
   }
 
-  override manageInputs(_keyman: Parameters<State["manageInputs"]>[0]): void {}
+  override manageInputs(_keyboardManager: Parameters<State["manageInputs"]>[0]): void {}
 
   update(): void {}
 

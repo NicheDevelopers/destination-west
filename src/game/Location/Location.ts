@@ -19,9 +19,6 @@ import type { EntityOptions } from "@/engine/Entity";
 
 export type LocationInteractible = Interactible;
 
-// Members added at runtime by centerPointTrait (traits.js is not typed yet)
-type CenterPointed = { getCenterPoint(): Point; relativeCenterPoint?: Point };
-
 type Drawable = Entity | LocationInteractible | Player;
 
 /* pathInfo keys describe the presence of paths on adjacent squares.
@@ -276,10 +273,10 @@ class Location {
     }
     let minDist = FOCUS_PARAMETERS.minDist;
 
-    const playerCp = (player as Player & CenterPointed).getCenterPoint();
+    const playerCp = player.getCenterPoint();
 
     for (const item of this.getInteractibles()) {
-      const itemCp = (item as LocationInteractible & CenterPointed).getCenterPoint();
+      const itemCp = item.getCenterPoint();
       let d = distance(itemCp, playerCp);
 
       if (
@@ -329,7 +326,7 @@ class Location {
      1. Entities that should be drawn first and depth doesn't matter.
      2. Entities where depth matters, sorted in drawing order. */
   entitiesByDepth(location: Location, player: Player): [Drawable[], Drawable[]] {
-    let arr: (Drawable & Partial<CenterPointed> & { ignoreDepth?: boolean })[] = [
+    let arr: Drawable[] = [
       location.droppedItems,
       location.containers,
       location.npcs,
@@ -341,14 +338,7 @@ class Location {
 
     let sorted = arr
       .filter((e) => !e.ignoreDepth)
-      .sort((e1, e2) => {
-        const y1 =
-          (e1.relativeCenterPoint ? e1.pos.y + e1.relativeCenterPoint.y : 0) || e1.pos.y + 64;
-        const y2 =
-          (e2.relativeCenterPoint ? e2.pos.y + e2.relativeCenterPoint.y : 0) || e2.pos.y + 64;
-
-        return y1 - y2;
-      });
+      .sort((e1, e2) => e1.getCenterPoint().y - e2.getCenterPoint().y);
 
     return [arr.filter((e) => e.ignoreDepth), sorted];
   }

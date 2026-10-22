@@ -1,20 +1,24 @@
 import Entity from "@/engine/Entity";
 
-import { PLAYER_PARAMETERS as pp } from "@/game/consts";
-
-import { addTraits } from "@/engine/traits";
-import { InventoryTrait } from "@/game/Equipment/InventoryTrait";
+import Movement from "@/engine/Movement";
+import { DEFAULT_EQUIPMENT_SIZE, PLAYER_PARAMETERS as pp } from "@/game/consts";
+import Equipment, { type EquipmentRecord } from "@/game/Equipment/Equipment";
 
 import { ctx } from "@/engine/Browser";
 import type { Point } from "@/lib/utilities";
 import type Game from "@/game/Game";
+import type Hitbox from "@/engine/HitboxClass";
+import type AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
 
 class Player extends Entity {
   game: Game;
+  movement: Movement;
+  equipment: Equipment;
+  declare hitbox: Hitbox;
+  declare sprite: AnimatedSprite;
 
   constructor(game: Game, pos: Point) {
     super("player", pos, {
-      movement: { playerControlled: true, speed: pp.defaultPlayerSpeed },
       animated: true,
       hitbox: game.currentTown.array,
       relativeCenterPoint: pp.playerRcp,
@@ -22,7 +26,10 @@ class Player extends Entity {
     });
 
     this.name = "Player";
-    addTraits(this, InventoryTrait(pp.defaultStartCash));
+    this.movement = new Movement(this, pp.defaultPlayerSpeed, undefined, undefined, {
+      playerControlled: true,
+    });
+    this.equipment = new Equipment(DEFAULT_EQUIPMENT_SIZE, pp.defaultStartCash);
     this.game = game;
 
     // register all actions that the player can do and bind
@@ -49,6 +56,12 @@ class Player extends Entity {
     keyman.manageInput("Interact", (key) => this.interact(key));
 
     this.movement.manageInputs(keyman);
+  }
+
+  dropItem(record: EquipmentRecord): void {
+    let item = this.equipment.drop(record);
+    this.game.currentTown.dropItem(item, this.getCenterPoint());
+    this.game.currentTown.updateFocus(this.game.player);
   }
 
   isFacingRight() {

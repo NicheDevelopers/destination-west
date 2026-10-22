@@ -9,8 +9,6 @@ import type { Point } from "@/lib/utilities";
 
 const backgroundPrefixes = ["building-", "decoration-", "path-"];
 
-type EntityWithHitbox = Entity & { hitbox: Hitbox };
-
 /**
  * Class for creating tiles - the base of the game world structure
  */
@@ -22,7 +20,7 @@ class Tile {
   gridPos: Point;
   width: number;
   height: number;
-  entities: EntityWithHitbox[];
+  entities: Entity[];
   hitbox?: Hitbox;
 
   /**
@@ -54,7 +52,7 @@ class Tile {
     return this.entities.some((e) => e.constructor === entityClass);
   }
 
-  addEntity(entity: EntityWithHitbox): void {
+  addEntity(entity: Entity): void {
     this.entities.push(entity);
   }
 

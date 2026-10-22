@@ -8,16 +8,11 @@ import type Tile from "./Tile";
 
 vi.mock("./Browser", () => ({ ctx: {} }));
 
-type FakeEntity = Tile["entities"][number];
+type FakeEntity = Entity & { hitbox: Hitbox };
 
-function makeEntity(center: Point, size: number): FakeEntity {
+function makeEntity(center: Point, size: number, tiles: Tile[][] = []): FakeEntity {
   const entity = { getCenterPoint: () => center } as unknown as FakeEntity;
-  entity.hitbox = new Hitbox(entity as Entity, {
-    up: size,
-    left: size,
-    right: size,
-    down: size,
-  });
+  entity.hitbox = new Hitbox(entity, { up: size, left: size, right: size, down: size }, tiles);
   return entity;
 }
 
@@ -26,7 +21,16 @@ function makeTiles(width: number, height: number): Tile[][] {
   for (let x = 0; x < width; x++) {
     tiles.push([]);
     for (let y = 0; y < height; y++) {
-      tiles[x].push({ entities: [] as FakeEntity[] } as Tile);
+      const tile = {
+        entities: [] as Entity[],
+        addEntity(entity: Entity) {
+          this.entities.push(entity);
+        },
+        removeEntity(entity: Entity) {
+          this.entities = this.entities.filter((e) => e !== entity);
+        },
+      };
+      tiles[x].push(tile as unknown as Tile);
     }
   }
   return tiles;
@@ -82,7 +86,7 @@ describe("Hitbox", () => {
 
   it("includes the tiles between the corners of a hitbox larger than a tile", () => {
     const entity = makeEntity({ x: 160, y: 32 }, 0);
-    entity.hitbox = new Hitbox(entity as Entity, { up: 10, down: 10, left: 100, right: 100 });
+    entity.hitbox = new Hitbox(entity, { up: 10, down: 10, left: 100, right: 100 }, []);
 
     expect(entity.hitbox.getIntersectingTileCoordinates()).toEqual([
       { x: 0, y: 0 },
@@ -91,6 +95,29 @@ describe("Hitbox", () => {
       { x: 3, y: 0 },
       { x: 4, y: 0 },
     ]);
+  });
+
+  it("registers its entity on the tiles it intersects", () => {
+    const tiles = makeTiles(3, 3);
+    const entity = makeEntity({ x: 64, y: 32 }, 10, tiles);
+
+    entity.hitbox.updateTilePresence();
+    expect(tiles[0][0].entities).toEqual([entity]);
+    expect(tiles[1][0].entities).toEqual([entity]);
+    expect(tiles[2][0].entities).toEqual([]);
+    expect(entity.hitbox.isAtTile(1, 0)).toBe(true);
+  });
+
+  it("moves its entity to the tiles of a new location", () => {
+    const oldTiles = makeTiles(2, 2);
+    const newTiles = makeTiles(2, 2);
+    const entity = makeEntity({ x: 32, y: 32 }, 10, oldTiles);
+    entity.hitbox.updateTilePresence();
+
+    entity.hitbox.changeLocation(newTiles);
+    expect(oldTiles[0][0].entities).toEqual([]);
+    expect(newTiles[0][0].entities).toEqual([entity]);
+    expect(entity.hitbox.locationArray).toBe(newTiles);
   });
 
   describe("collisions with tiles", () => {

@@ -73,7 +73,7 @@ class Game extends State {
     }
 
     Object.assign(this.player.pos, this.currentTown.playerSpawn);
-    this.player.changeLocation(this.currentTown.array);
+    this.player.hitbox.changeLocation(this.currentTown.array);
     this.worldMapDisplay.draw();
   }
 

@@ -1,7 +1,8 @@
 import { ctx } from "./Browser";
 import type Entity from "./Entity";
 import { TILE_SIZE, DIRECTIONS, type DirectionValue } from "./consts";
-import { generateID, type Point } from "@/lib/utilities";
+import "@/lib/utilities"; // adds Array.prototype.minBy, maxBy and lastIndex
+import type { Point } from "@/lib/utilities";
 import { ObjectSet } from "@/lib/ObjectSet";
 import Direction from "./Direction";
 import { pointToTileCoord } from "./tileCoords";
@@ -86,7 +87,8 @@ export class Box {
 
 export default class Hitbox {
   private entity: Entity;
-  private id: number;
+  locationArray: Tile[][];
+  private tiles = new ObjectSet<Point>();
   private visualizationFunction: (drawFun: (cx: number, cy: number) => void) => void;
   private up: number;
   private left: number;
@@ -103,9 +105,10 @@ export default class Hitbox {
       right,
       down,
     }: { up: Hitbox["up"]; left: Hitbox["left"]; right: Hitbox["right"]; down: Hitbox["down"] },
+    locationArray: Tile[][],
   ) {
     this.entity = entity;
-    this.id = generateID(Hitbox);
+    this.locationArray = locationArray;
     this.visualizationFunction = () => {};
     this.up = up;
     this.left = left;
@@ -144,6 +147,56 @@ export default class Hitbox {
     return fillTileArea(coordArray);
   }
 
+  enterTile(tileX: number, tileY: number): void {
+    if (this.isAtTile(tileX, tileY))
+      throw new Error(
+        `attempt to add an entity (${this.entity.constructor.name}) ` +
+          `to the same tile twice (coords: (${tileX}, ${tileY}))`,
+      );
+    if (!this.locationArray[tileX][tileY]) return; // omit tiles out of bounds
+    this.tiles.add({ x: tileX, y: tileY });
+    this.locationArray[tileX][tileY].addEntity(this.entity);
+  }
+
+  /**
+     Remove this entity from entities list of the tile at given coordinates.
+     If nodelete argument is falsy, also remove this tile from the hitbox's
+     tile set (this should always be done unless it is planned to clear
+     the object set after leaving all tiles).
+   */
+  leaveTile(tileX: number, tileY: number, nodelete: boolean = false): void {
+    if (!this.isAtTile(tileX, tileY))
+      throw new Error("Attempt to remove an entity from a tile it was not on");
+
+    this.locationArray[tileX][tileY].removeEntity(this.entity);
+
+    if (!nodelete) this.tiles.delete({ x: tileX, y: tileY });
+  }
+
+  leaveAllTiles(): void {
+    for (const tileCoords of this.tiles.entries()) {
+      this.leaveTile(tileCoords.x, tileCoords.y, true);
+    }
+    this.tiles.clear();
+  }
+
+  updateTilePresence(): void {
+    this.leaveAllTiles();
+    for (const tileCoord of this.getIntersectingTileCoordinates()) {
+      this.enterTile(tileCoord.x, tileCoord.y);
+    }
+  }
+
+  changeLocation(locationArray: Tile[][]): void {
+    this.leaveAllTiles();
+    this.locationArray = locationArray;
+    this.updateTilePresence();
+  }
+
+  isAtTile(tileX: number, tileY: number): boolean {
+    return this.tiles.has({ x: tileX, y: tileY });
+  }
+
   getPossiblyCollidingTileCoordinates(dx: number = 0, dy: number = 0): Point[] {
     let tileCoordinates = new ObjectSet<Point>();
     this.getBoundingBox(dx, dy)
@@ -167,9 +220,10 @@ export default class Hitbox {
     for (const tile of tiles) {
       if (!tile) continue;
       for (const e of tile.entities) {
-        if (e.hitbox.id === this.entity.hitbox.id) continue;
-        this.visualizationFunction((cx, cy) => e.hitbox.draw(cx, cy, ctx, { color: "#ff000066" }));
-        if (this.willCollide(dx, dy, e.hitbox)) return true;
+        const other = e.hitbox;
+        if (!other || other === this) continue;
+        this.visualizationFunction((cx, cy) => other.draw(cx, cy, ctx, { color: "#ff000066" }));
+        if (this.willCollide(dx, dy, other)) return true;
       }
     }
     return false;
@@ -224,18 +278,18 @@ export default class Hitbox {
       this.height,
     );
 
-    const corners = [
-      [-this.left, 0],
-      [this.right, 0],
-      [0, -this.up],
-      [0, this.down],
+    const corners: Point[] = [
+      { x: -this.left, y: 0 },
+      { x: this.right, y: 0 },
+      { x: 0, y: -this.up },
+      { x: 0, y: this.down },
     ];
 
     context.fillStyle = "black";
     for (const corner of corners) {
       context.fillRect(
-        centerPoint.x + corner.first - cameraX,
-        centerPoint.y + corner.last - cameraY,
+        centerPoint.x + corner.x - cameraX,
+        centerPoint.y + corner.y - cameraY,
         1,
         1,
       );

@@ -1,6 +1,6 @@
 # Destination West
 
-A western adventure game that runs in the browser. Everything is drawn on one `<canvas>`, there's no framework and no runtime dependencies. It starts in `index.js`, which runs `src/game/main.ts`.
+A western adventure game that runs in the browser. Everything is drawn on one `<canvas>`, there's no framework and no runtime dependencies. It starts in `index.ts`, which runs `src/game/main.ts`.
 
 ## Commands
 

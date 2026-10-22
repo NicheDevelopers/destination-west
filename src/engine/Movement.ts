@@ -8,7 +8,7 @@ import time from "./time";
 import Pathfinder from "./Pathfinder";
 import type { KeyboardManager } from "./KeyboardManager";
 import type AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
-import type Tile from "./Tile";
+import type Hitbox from "./HitboxClass";
 
 const movementOptions = new Map([
   [
@@ -23,14 +23,11 @@ type MovementOptions = {
 };
 
 interface MovingEntity {
-  locationArray: Tile[][];
   pos: Point;
   sprite: AnimatedSprite;
+  hitbox: Hitbox;
   getCenterPoint(): Point;
   moveTo(x: number, y: number): void;
-  willCollide?(speedX: number, speedY: number): boolean;
-  moveTillCollision(speedX: number, speedY: number): void;
-  updateTilePresence(): void;
 }
 
 type PathStep = {
@@ -235,7 +232,7 @@ export default class Movement {
     this.moveY = new Animation(this.entity.pos, "y", baseSpeed);
 
     this.playerControlled = options.playerControlled;
-    this.pathfinder = new Pathfinder(this.entity.locationArray, this.entity, false);
+    this.pathfinder = new Pathfinder(this.entity.hitbox.locationArray, this.entity, false);
   }
 
   get direction(): Direction {
@@ -310,37 +307,29 @@ export default class Movement {
   updateMovement(): void {
     let { speed: currentSpeed, direction } = this.momentum;
     // Collisions
-    if (currentSpeed.y < 0 && direction.facesUp() && this.entity.willCollide?.(0, currentSpeed.y)) {
-      this.entity.moveTillCollision(0, currentSpeed.y);
+    if (currentSpeed.y < 0 && direction.facesUp() && this.willCollide(0, currentSpeed.y)) {
+      this.moveTillCollision(0, currentSpeed.y);
       direction.moveDown();
       currentSpeed.x *= mp.defaultDiagonalOffset;
       currentSpeed.y = 0;
-    } else if (
-      currentSpeed.y > 0 &&
-      direction.facesDown() &&
-      this.entity.willCollide?.(0, currentSpeed.y)
-    ) {
-      this.entity.moveTillCollision(0, currentSpeed.y);
+    } else if (currentSpeed.y > 0 && direction.facesDown() && this.willCollide(0, currentSpeed.y)) {
+      this.moveTillCollision(0, currentSpeed.y);
       direction.moveUp();
       currentSpeed.x *= mp.defaultDiagonalOffset;
       currentSpeed.y = 0;
     }
 
-    if (
-      currentSpeed.x < 0 &&
-      direction.facesLeft() &&
-      this.entity.willCollide?.(currentSpeed.x, 0)
-    ) {
-      this.entity.moveTillCollision(currentSpeed.x, 0);
+    if (currentSpeed.x < 0 && direction.facesLeft() && this.willCollide(currentSpeed.x, 0)) {
+      this.moveTillCollision(currentSpeed.x, 0);
       direction.moveRight();
       currentSpeed.x = 0;
       currentSpeed.y *= mp.defaultDiagonalOffset;
     } else if (
       currentSpeed.x > 0 &&
       direction.facesRight() &&
-      this.entity.willCollide?.(currentSpeed.x, 0)
+      this.willCollide(currentSpeed.x, 0)
     ) {
-      this.entity.moveTillCollision(currentSpeed.x, 0);
+      this.moveTillCollision(currentSpeed.x, 0);
       direction.moveLeft();
       currentSpeed.x = 0;
       currentSpeed.y *= mp.defaultDiagonalOffset;
@@ -356,6 +345,85 @@ export default class Movement {
     this.move();
   }
 
+  /**
+   * Tests whether the entity would collide if it
+   * moved this tick at speeds `speedX` and `speedY`.
+   */
+  private willCollide(speedX: number, speedY: number): boolean {
+    const hitbox = this.entity.hitbox;
+    return hitbox.willCollideWithTiles(
+      this.getChangeX(speedX),
+      this.getChangeY(speedY),
+      hitbox.locationArray,
+    );
+  }
+
+  /**
+     Move the entity in the direction specified by the speeds
+     as many pixels as it is possible without collision. If
+     it is possible to move the whole distance in this tick
+     without any collisions, then this whole move is executed.
+
+     At the beginning (even if no move is possible) this function
+     clears the changeStack of the move Animation on the axis
+     which given speed was 0. This is to ensure that movement
+     caused by this function is in one axis only.
+
+     On successful move both changeStacks are cleared (the snap
+     puts the entity in a halt, so this fixes potential inaccuracies).
+
+     This function was introduced to solve an issue with entities
+     stopping a few (commonly 1) pixels before a colliding hitbox.
+     This happens when moving the whole distance the Animation
+     would move the entity in a particular tick would create
+     a collision
+     
+     Example: Imagine playing on a very low framerate. In every tick
+     the player moves by 10 pixels. If he approaches a building that is
+     8 pixels away the move will not be executed. It will be stopped
+     due to collision detection (a 10 pixel move is not possible).
+     This function essentialy tries doing smaller moves and checks
+     if they are possible. In this example it would result in an 8
+     pixel move.
+     
+     @param speedX - The speed on the X-axis
+     @param speedY - The speed on the Y-axis
+  */
+  private moveTillCollision(speedX: number, speedY: number): void {
+    if (speedX * speedY !== 0)
+      throw new Error(
+        `moveTillCollision only supports one axis movement. ` +
+          `One speed has to be 0. Speeds provided: X=${speedX}, Y=${speedY}.`,
+      );
+
+    let dx = this.getChangeX(speedX);
+    let dy = this.getChangeY(speedY);
+
+    // change in this tick if no collisions were detected
+    // (assumes one of dx and dy numbers is 0)
+    let maxChange = Math.abs(dx + dy);
+
+    let direction = new Direction().fromChangeInXAndY(dx, dy);
+
+    const hitbox = this.entity.hitbox;
+    let snappedPixelCount = hitbox.distanceTillTileCollision(
+      direction,
+      maxChange,
+      hitbox.locationArray,
+    );
+
+    if (snappedPixelCount === 0) return;
+
+    // Snapped a non-zero distance
+    if (Math.sign(dx)) {
+      this.entity.pos.x += Math.sign(dx) * snappedPixelCount;
+      this.moveX.clearChangeStack();
+    } else {
+      this.entity.pos.y += Math.sign(dy) * snappedPixelCount;
+      this.moveY.clearChangeStack();
+    }
+  }
+
   move(): void {
     // Change x and y coordinates using Animations.
     this.moveX.next();
@@ -363,7 +431,7 @@ export default class Movement {
 
     if (this.moveX.speed === 0 && this.moveY.speed === 0) return;
 
-    this.entity.updateTilePresence();
+    this.entity.hitbox.updateTilePresence();
   }
 
   /**

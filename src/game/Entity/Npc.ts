@@ -2,36 +2,37 @@
 // import Entity from "@/engine/Entity";
 // import {ANIMATION_SPEED} from "@/game/consts";
 import Interactible from "./Interactible";
-import { addTraits } from "@/engine/traits";
-import { InventoryTrait } from "@/game/Equipment/InventoryTrait";
 import { genNpcName } from "@/game/generators/nameGenerators";
 import Dialogue from "@/game/Dialogue/Dialogue";
 import testDialogue from "@/game/Dialogue/test_dialogue.dwd?raw";
-import { NPC_PARAMETERS } from "@/game/consts";
+import { DEFAULT_EQUIPMENT_SIZE, NPC_PARAMETERS } from "@/game/consts";
+import Equipment from "@/game/Equipment/Equipment";
+import Movement from "@/engine/Movement";
 import Stats, { type StatLevel, type StatName } from "./Stats";
 import type { Point } from "@/lib/utilities";
 import type Game from "@/game/Game";
 import type AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
-import type Movement from "@/engine/Movement";
+import type Hitbox from "@/engine/HitboxClass";
 class Npc extends Interactible {
   private impaired: boolean;
   private stats: Stats;
   dialogue: Dialogue | null = null;
   name: string;
+  movement: Movement;
+  equipment: Equipment;
   declare sprite: AnimatedSprite;
-  declare movement: Movement;
+  declare hitbox: Hitbox;
 
   constructor(game: Game, pos: Point, name: string | null = null) {
     super(game, "player", pos, {
-      movement: { speed: NPC_PARAMETERS.defaultNpcSpeed },
       hitbox: game.currentTown.array,
       animated: true,
     });
     this.name = name ?? genNpcName(true, true);
     this.impaired = false;
     this.stats = new Stats();
-
-    addTraits(this, InventoryTrait(NPC_PARAMETERS.defaultNpcStartCash));
+    this.movement = new Movement(this, NPC_PARAMETERS.defaultNpcSpeed);
+    this.equipment = new Equipment(DEFAULT_EQUIPMENT_SIZE, NPC_PARAMETERS.defaultNpcStartCash);
   }
 
   changeStat(statName: StatName, changeValue: number): void {

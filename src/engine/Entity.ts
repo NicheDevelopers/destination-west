@@ -1,23 +1,14 @@
 import AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
-import { DEFAULT_ENTITY_HP } from "./consts";
+import { DEFAULT_ENTITY_HP, DEFAULT_RCP } from "./consts";
 import { generateID, validateOptions, type Point } from "@/lib/utilities";
-import { addTraits, centerPointTrait, HitboxTrait, MovementTrait } from "./traits";
 import { imgInfo } from "@/engine/Sprite/imgInfo";
 import SpriteLoader from "@/engine/Sprite/SpriteLoader";
-import type Hitbox from "./HitboxClass";
+import Hitbox from "./HitboxClass";
 import type Sprite from "@/engine/Sprite/Sprite";
 import type Tile from "./Tile";
 
 const entityOptions = new Map([
   ["animated", "Boolean. Determines whether the entity has an animated sprite"],
-  [
-    "movement",
-    "Boolean or {speed, sprintMultiplier, sneakMultiplier} object. " +
-      "Falsy value means the entity is stationary, any truthy value " +
-      "means the entity has movement. Movement construction arguments " +
-      "If an object is passed, it provides the arguments for the entity's " +
-      "Movement constructor.",
-  ],
   ["callback", "function(). Callback function passed to the created Sprite"],
   [
     "hitbox",
@@ -43,12 +34,6 @@ const entityOptions = new Map([
 
 export type EntityOptions = {
   animated?: boolean;
-  movement?: {
-    speed?: number;
-    sprintMultiplier?: number;
-    sneakMultiplier?: number;
-    playerControlled?: boolean;
-  };
   callback?: () => void;
   hitbox?: Tile[][];
   relativeCenterPoint?: Point;
@@ -62,6 +47,7 @@ class Entity {
   id: number;
   sprite: Sprite | AnimatedSprite;
   hitbox: Hitbox | null;
+  relativeCenterPoint: Point;
   ignoreDepth: boolean;
 
   constructor(typeName: Entity["typeName"], pos: Point, options: EntityOptions = {}) {
@@ -84,25 +70,37 @@ class Entity {
     if (options.hitbox && !imgInfoEntry.nocollision) {
       const { relativeCenterPoint: spriteRcp, boundingDistance: spriteBd } =
         this.sprite.getSpriteHitboxInfoWithBoundingDistances();
-      let rcp = options.relativeCenterPoint ?? spriteRcp;
-      let bd = options.boundingDistance ?? spriteBd;
-      addTraits(this, HitboxTrait(this, options.hitbox, rcp, bd));
-    } else if (!this.ignoreDepth) {
-      // Entity does not have a hitbox, but it should have a centerPoint
-      // for depth sorting
-      let rcp = options.relativeCenterPoint ?? this.sprite.getSpriteHitboxInfoBaselineRcp();
-      addTraits(this, centerPointTrait(rcp));
+      this.relativeCenterPoint = options.relativeCenterPoint ?? spriteRcp;
+      const bd = options.boundingDistance ?? spriteBd;
+      this.hitbox = new Hitbox(this, bd, options.hitbox);
+      this.hitbox.updateTilePresence();
+      return;
     }
 
-    if (!options.movement) return;
+    this.hitbox = null;
+    if (this.ignoreDepth) {
+      this.relativeCenterPoint = DEFAULT_RCP;
+    } else {
+      // Entity does not have a hitbox, but it should have a centerPoint
+      // for depth sorting
+      this.relativeCenterPoint =
+        options.relativeCenterPoint ?? this.sprite.getSpriteHitboxInfoBaselineRcp();
+    }
+  }
 
-    let mOpts = options.movement;
-    addTraits(
-      this,
-      MovementTrait(this, mOpts?.speed, mOpts?.sprintMultiplier, mOpts?.sneakMultiplier, {
-        playerControlled: mOpts?.playerControlled,
-      }),
-    );
+  getCenterPoint(): Point {
+    return {
+      x: this.pos.x + this.relativeCenterPoint.x,
+      y: this.pos.y + this.relativeCenterPoint.y,
+    };
+  }
+
+  /**
+     Move the entity to match its center point to the given coordinates
+  */
+  moveTo(x: number, y: number): void {
+    this.pos.x = x - this.relativeCenterPoint.x;
+    this.pos.y = y - this.relativeCenterPoint.y;
   }
 
   drawDebugInfo(_cameraX: number, _cameraY: number): void {}

@@ -9,3 +9,7 @@ An adventure western game. Work in progress.
 You can play Destination West anytime in your browser! Press the button below!
 
 ### [`Play`](https://niche-devs.gitlab.io/destination-west/)
+
+# Development
+
+To set up the project locally, see [docs/setup.md](docs/setup.md).

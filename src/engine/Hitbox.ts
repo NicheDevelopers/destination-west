@@ -119,12 +119,12 @@ export default class Hitbox {
   }
 
   getBoundingBox(dx: number = 0, dy: number = 0): Box {
-    let cp = this.entity.getCenterPoint();
+    let centerPoint = this.entity.getCenterPoint();
     return new Box(
-      cp.x + dx - this.left,
-      cp.x + dx + this.right,
-      cp.y + dy - this.up,
-      cp.y + dy + this.down,
+      centerPoint.x + dx - this.left,
+      centerPoint.x + dx + this.right,
+      centerPoint.y + dy - this.up,
+      centerPoint.y + dy + this.down,
     );
   }
 
@@ -235,15 +235,15 @@ export default class Hitbox {
 
      If no collisions are found, `maxDist` is returned.
   */
-  distanceTillTileCollision(direction: Direction, maxDist: number, arr: Tile[][]): number {
+  distanceTillTileCollision(direction: Direction, maxDist: number, tiles: Tile[][]): number {
     if (maxDist < 1) throw new Error(`maxDist has to be at least 1. Got: ${maxDist}.`);
 
-    let xm = direction.xAxisMultiplier();
-    let ym = direction.yAxisMultiplier();
+    let xMultiplier = direction.xAxisMultiplier();
+    let yMultiplier = direction.yAxisMultiplier();
 
-    for (let d = 1; d <= maxDist; ++d) {
-      if (this.willCollideWithTiles(d * xm, d * ym, arr)) {
-        return d - 1;
+    for (let distance = 1; distance <= maxDist; ++distance) {
+      if (this.willCollideWithTiles(distance * xMultiplier, distance * yMultiplier, tiles)) {
+        return distance - 1;
       }
     }
     return maxDist;
@@ -253,8 +253,8 @@ export default class Hitbox {
     return this.getBoundingBox(dx, dy).intersects(other.getBoundingBox());
   }
 
-  visualizeCollisions(fun: (drawFun: (cx: number, cy: number) => void) => void): void {
-    this.visualizationFunction = fun;
+  visualizeCollisions(visualize: (drawFun: (cx: number, cy: number) => void) => void): void {
+    this.visualizationFunction = visualize;
   }
 
   drawExpected(cameraX: number, cameraY: number, moveX: number, moveY: number, context = ctx) {

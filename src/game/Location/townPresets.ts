@@ -8,13 +8,13 @@ export type StreetPreset = { start: Point; width: number; height: number };
 export type TownPreset = { buildings: BuildingPreset[]; streets: StreetPreset[] };
 type Palette = Record<string, Partial<RGBA>>;
 
-let newBuilding = (x1: number, y1: number, x2: number, y2: number): BuildingPreset => ({
-  gridPos: { x: x1, y: y1 },
-  xTiles: x2,
-  yTiles: y2,
+let newBuilding = (x: number, y: number, xTiles: number, yTiles: number): BuildingPreset => ({
+  gridPos: { x, y },
+  xTiles,
+  yTiles,
 });
-let newStreet = (x1: number, y1: number, width: number, height: number): StreetPreset => ({
-  start: { x: x1, y: y1 },
+let newStreet = (x: number, y: number, width: number, height: number): StreetPreset => ({
+  start: { x, y },
   width: width,
   height: height,
 });
@@ -275,17 +275,17 @@ export class LocationInfo {
     for (const color of Object.keys(palette)) {
       if (!image[x][y].isColor(palette[color])) continue;
 
-      let objWidth = 0;
-      let objHeight = 0;
+      let areaWidth = 0;
+      let areaHeight = 0;
 
-      while (image[x + objWidth][y].isColor(palette[color]) && x + objWidth < image.width - 1)
-        objWidth++;
-      while (image[x][y + objHeight].isColor(palette[color]) && y + objHeight < image.height - 1)
-        objHeight++;
+      while (image[x + areaWidth][y].isColor(palette[color]) && x + areaWidth < image.width - 1)
+        areaWidth++;
+      while (image[x][y + areaHeight].isColor(palette[color]) && y + areaHeight < image.height - 1)
+        areaHeight++;
 
-      this.markAsChecked(x, y, objWidth, objHeight, matrix);
-      if (color === "street") this.preset.streets.push(newStreet(x, y, objWidth, objHeight));
-      else this.preset.buildings.push(newBuilding(x, y, objWidth, objHeight));
+      this.markAsChecked(x, y, areaWidth, areaHeight, matrix);
+      if (color === "street") this.preset.streets.push(newStreet(x, y, areaWidth, areaHeight));
+      else this.preset.buildings.push(newBuilding(x, y, areaWidth, areaHeight));
     }
   }
 
@@ -315,12 +315,12 @@ export class LocationInfo {
     let presetImg = new Image();
     presetImg.src = src;
     presetImg.onload = () => {
-      const { context: offContext } = createCanvas(presetImg.width, presetImg.height);
-      offContext.drawImage(presetImg, 0, 0);
+      const { context: offscreenContext } = createCanvas(presetImg.width, presetImg.height);
+      offscreenContext.drawImage(presetImg, 0, 0);
       const checkMatrix = Array.from({ length: presetImg.width }, () =>
         Array.from({ length: presetImg.height }, () => 0),
       );
-      let image = PixelImage.fromContext(offContext);
+      let image = PixelImage.fromContext(offscreenContext);
       this.createLocation(image, checkMatrix, TOWN_PALETTE);
     };
   }

@@ -1,5 +1,5 @@
 import time from "@/engine/time";
-import keyman from "@/engine/KeyboardManager";
+import keyboardManager from "@/engine/KeyboardManager";
 import type { State } from "./State";
 
 class StateManager {
@@ -37,13 +37,13 @@ class StateManager {
     const stateBeforeUpdate = this.currentState;
     this.previousState = stateBeforeUpdate;
 
-    keyman.manageGeneralInputs();
+    keyboardManager.manageGeneralInputs();
     for (const state of this.stateStack.slice().reverse()) {
-      if (state.id === this.currentState.id) state.manageInputs(keyman);
+      if (state.id === this.currentState.id) state.manageInputs(keyboardManager);
       state.update();
       if (this.stateChanged()) {
-        keyman.clearInputs();
-        stateBeforeUpdate.manageInputs(keyman);
+        keyboardManager.clearInputs();
+        stateBeforeUpdate.manageInputs(keyboardManager);
         break;
       }
       if (state.fundamental) break;

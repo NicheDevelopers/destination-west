@@ -11,7 +11,7 @@ class Container extends Interactible {
   equipment: Equipment;
 
   constructor(game: Game, typeName: string, pos: Point, options = {}) {
-    super(game, typeName, pos, Object.assign(options, { hitbox: game.currentTown.array }));
+    super(game, typeName, pos, Object.assign(options, { hitbox: game.currentTown.tiles }));
     const startCash = randIntInRange(cashParam.minCash, cashParam.maxCash);
     this.equipment = new Equipment(DEFAULT_EQUIPMENT_SIZE, startCash);
   }

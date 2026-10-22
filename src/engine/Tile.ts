@@ -3,7 +3,7 @@ import Sprite, { type SpriteOptions } from "@/engine/Sprite/Sprite";
 import { ctx } from "./Browser";
 import { TILE_SIZE } from "./consts";
 
-import Hitbox, { Box } from "./HitboxClass";
+import Hitbox, { Box } from "./Hitbox";
 import type Entity from "./Entity";
 import type { Point } from "@/lib/utilities";
 

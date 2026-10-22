@@ -36,8 +36,8 @@ class DialogueDisplay extends State {
     this.dialogue.setupDisplay(this, this.div, () => this.endState());
   }
 
-  override manageInputs(keyman: Pick<KeyboardManager, "manageInput">): void {
-    keyman.manageInput("Next Dialogue Line", () => {
+  override manageInputs(keyboardManager: Pick<KeyboardManager, "manageInput">): void {
+    keyboardManager.manageInput("Next Dialogue Line", () => {
       this.getDialogue().step();
     });
   }

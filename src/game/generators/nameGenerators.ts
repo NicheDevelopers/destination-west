@@ -17,35 +17,36 @@ function drawPart(parts: string[]): string {
  */
 function genNpcName(sex: boolean, important: boolean): string {
   // selecting part of arrays by drawing indexes
-  let part1;
-  if (sex) part1 = drawPart(maleNames);
-  else part1 = drawPart(femaleNames);
-  let part2 = drawPart(nicknames);
-  let part3 = drawPart(surnames);
+  let firstName;
+  if (sex) firstName = drawPart(maleNames);
+  else firstName = drawPart(femaleNames);
+  let nickname = drawPart(nicknames);
+  let surname = drawPart(surnames);
 
-  let npcname;
-  if (important) npcname = part1 + " " + "'" + part2 + "'" + " " + part3;
-  else npcname = part1 + " " + part3;
-  return npcname;
+  let npcName;
+  if (important) npcName = firstName + " " + "'" + nickname + "'" + " " + surname;
+  else npcName = firstName + " " + surname;
+  return npcName;
 }
 
 function genTownName(): string {
-  let part1 = drawPart(townNamePrefixes);
-  let part2 = drawPart(townNameSuffixes);
+  let prefix = drawPart(townNamePrefixes);
+  let suffix = drawPart(townNameSuffixes);
 
-  // if part1 is like: "Devil's" or "Bull's" get capital letter in part2
-  if (part1[part1.length - 2] == "'") part2 = part2.charAt(0).toUpperCase() + part2.slice(1); //getting capital letter
+  // if prefix is like: "Devil's" or "Bull's" get capital letter in suffix
+  if (prefix[prefix.length - 2] == "'") suffix = suffix.charAt(0).toUpperCase() + suffix.slice(1); //getting capital letter
 
-  // chance of getting capital letter in part2 depending on given PERCENTAGE_OF_TWO_NAME_TOWN
-  if (seedRoll(PERCENTAGE_OF_TWO_NAME_TOWN)) part2 = part2.charAt(0).toUpperCase() + part2.slice(1); //getting capital letter
+  // chance of getting capital letter in suffix depending on given PERCENTAGE_OF_TWO_NAME_TOWN
+  if (seedRoll(PERCENTAGE_OF_TWO_NAME_TOWN))
+    suffix = suffix.charAt(0).toUpperCase() + suffix.slice(1); //getting capital letter
   // else nothing will change
 
-  let townname = "";
-  // case1 - if part2 begin with capital letter - add space
-  if (part2[0] >= "A" && part2[0] <= "Z") townname = part1 + " " + part2;
-  //otherwise - if part2 begin with lower letter - without space
-  else townname = part1 + part2;
-  return townname;
+  let townName = "";
+  // case1 - if suffix begin with capital letter - add space
+  if (suffix[0] >= "A" && suffix[0] <= "Z") townName = prefix + " " + suffix;
+  //otherwise - if suffix begin with lower letter - without space
+  else townName = prefix + suffix;
+  return townName;
 }
 
 export { genNpcName, genTownName };

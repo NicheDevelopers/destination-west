@@ -1,7 +1,7 @@
 import { createCanvas, createElement } from "@/lib/dom";
 import { State } from "@/engine/state/State";
 import { gameContainer } from "@/engine/Browser";
-import { MAP_PARAMETERS, TOWN_SIZES, WORLD_MAP_DISPLAY as wmd } from "@/game/consts";
+import { MAP_PARAMETERS, TOWN_SIZES, WORLD_MAP_DISPLAY } from "@/game/consts";
 import Town from "@/game/Location/Town";
 import type Game from "@/game/Game";
 
@@ -53,10 +53,12 @@ class WorldMapDisplay extends State {
     ctx.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
     // Remove clickable town divs from the previous draw, keeping only the canvas
     this.div.replaceChildren(this.mapCanvas);
-    const visitedTowns = map.locations.filter((t) => t.visited);
+    const visitedTowns = map.locations.filter((town) => town.visited);
     const visibleTowns = [
       ...new Set(
-        visitedTowns.flatMap((m) => m.connectedLocations).concat(visitedTowns.map((x) => x.ID)),
+        visitedTowns
+          .flatMap((town) => town.connectedLocations)
+          .concat(visitedTowns.map((town) => town.ID)),
       ),
     ];
 
@@ -74,9 +76,12 @@ class WorldMapDisplay extends State {
       const size = this.computeTownSize(town);
 
       // if the town has been visited, is the current town or can be reached from the current town, draw it
-      if (town.visited || visitedTowns.some((t) => t.connectedLocations.includes(town.ID))) {
+      if (
+        town.visited ||
+        visitedTowns.some((visitedTown) => visitedTown.connectedLocations.includes(town.ID))
+      ) {
         if (currentTown?.connectedLocations.includes(town.ID) && town.ID !== currentTown.ID) {
-          const d = createElement("div", null, null, ["town-div"], {
+          const townDiv = createElement("div", null, null, ["town-div"], {
             display: "block",
             position: "absolute",
             height: `${size * 2}px`,
@@ -85,10 +90,10 @@ class WorldMapDisplay extends State {
             top: `${town.pos.y - size}px`,
             "border-radius": "100%",
           });
-          d.addEventListener("click", () => {
+          townDiv.addEventListener("click", () => {
             this.game.travel(town.ID);
           });
-          this.div.appendChild(d);
+          this.div.appendChild(townDiv);
         }
         let townColor = "black";
         if (currentId === town.ID) townColor = "green";
@@ -96,17 +101,22 @@ class WorldMapDisplay extends State {
         drawCircle(ctx, town.pos.x, town.pos.y, size, 2, townColor);
       }
     }
-    for (const t of visibleTowns.map((r) => map.getByID(r))) {
+    for (const town of visibleTowns.map((townId) => map.getByID(townId))) {
       ctx.fillStyle = "white";
-      ctx.fillText(t.name, t.pos.x + wmd.townNameOffsetX, t.pos.y + wmd.townNameOffsetY);
+      ctx.fillText(
+        town.name,
+        town.pos.x + WORLD_MAP_DISPLAY.townNameOffsetX,
+        town.pos.y + WORLD_MAP_DISPLAY.townNameOffsetY,
+      );
     }
   }
 
   computeTownSize(town: Town): number {
     // make the last town large
     if (town.ID === this.game.worldMap.locations.last?.ID) return TOWN_SIZES.large;
-    if (town.connectedLocations.length < wmd.lowConnection) return TOWN_SIZES.small;
-    if (town.connectedLocations.length < wmd.mediumConnection) return TOWN_SIZES.medium;
+    if (town.connectedLocations.length < WORLD_MAP_DISPLAY.lowConnection) return TOWN_SIZES.small;
+    if (town.connectedLocations.length < WORLD_MAP_DISPLAY.mediumConnection)
+      return TOWN_SIZES.medium;
     return TOWN_SIZES.large;
   }
 

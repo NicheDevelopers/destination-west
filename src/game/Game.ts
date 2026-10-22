@@ -75,17 +75,23 @@ class Game extends State {
     }
 
     Object.assign(this.player.pos, this.currentTown.playerSpawn);
-    this.player.hitbox.changeLocation(this.currentTown.array);
+    this.player.hitbox.changeLocation(this.currentTown.tiles);
     this.worldMapDisplay.draw();
   }
 
-  override manageInputs(keyman: InputManager) {
-    this.camera.manageInputs(keyman);
-    this.player.manageInputs(keyman);
-    keyman.manageInput("Open Pause Menu", (key) => stateManager.startState(this.pauseMenu, key));
-    keyman.manageInput("Open Designer", (key) => stateManager.startState(this.designer, key));
-    keyman.manageInput("Open Map", (key) => stateManager.startState(this.worldMapDisplay, key));
-    keyman.manageInput("Open Equipment", (key) =>
+  override manageInputs(keyboardManager: InputManager) {
+    this.camera.manageInputs(keyboardManager);
+    this.player.manageInputs(keyboardManager);
+    keyboardManager.manageInput("Open Pause Menu", (key) =>
+      stateManager.startState(this.pauseMenu, key),
+    );
+    keyboardManager.manageInput("Open Designer", (key) =>
+      stateManager.startState(this.designer, key),
+    );
+    keyboardManager.manageInput("Open Map", (key) =>
+      stateManager.startState(this.worldMapDisplay, key),
+    );
+    keyboardManager.manageInput("Open Equipment", (key) =>
       stateManager.startState(this.equipmentDisplay, key),
     );
   }

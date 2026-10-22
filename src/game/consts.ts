@@ -5,13 +5,13 @@ export const PERCENTAGE_OF_TWO_NAME_TOWN = 0.4;
 
 export const PLAYER_PARAMETERS = {
   defaultPlayerSpeed: 80,
-  playerBd: {
+  playerBoundingDistance: {
     up: 2,
     left: 8,
     right: 8,
     down: 2,
   },
-  playerRcp: { x: 31, y: 61 },
+  playerRelativeCenterPoint: { x: 31, y: 61 },
   defaultStartCash: 100,
 };
 
@@ -56,8 +56,8 @@ export const TOWN_SIZES = {
 export const FOCUS_BACK_TO_PLAYER_TIME = 0.5;
 
 export const PERCENTAGE_OF_GENERIC_DECORATION = {
-  rural_percentage: 0.2,
-  town_percentage: 0.05,
+  ruralPercentage: 0.2,
+  townPercentage: 0.05,
 };
 
 export const WORLD_MAP_DISPLAY = {

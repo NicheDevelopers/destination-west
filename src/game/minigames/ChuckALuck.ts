@@ -3,7 +3,7 @@ import { gameContainer } from "@/engine/Browser";
 import { stateManager } from "@/engine/state/StateManager";
 import { createElement } from "@/lib/dom";
 import { randIntInRange } from "@/lib/random";
-import { CHUCK_A_LUCK_PARAMETERS as cal } from "@/game/consts";
+import { CHUCK_A_LUCK_PARAMETERS } from "@/game/consts";
 import type Game from "@/game/Game";
 
 const diceSprites = [
@@ -59,7 +59,7 @@ class ChuckALuck extends State {
         null,
         ["dice"],
         {
-          top: `${i * (cal.diceSize + cal.diceGap)}px`,
+          top: `${i * (CHUCK_A_LUCK_PARAMETERS.diceSize + CHUCK_A_LUCK_PARAMETERS.diceGap)}px`,
           backgroundImage: diceSprites[this.diceState[i] - 1],
         },
         `dice-${i + 1}`,
@@ -75,9 +75,9 @@ class ChuckALuck extends State {
     const bettingAreaDiv = createElement("div", null, null, [], {}, "betting-area", null);
     for (let i = 0; i < 6; ++i) {
       //move the next div N spaces (space width = 63) and N - 1 betting spaces (betting space width = 128) to the left, loop every three iterations
-      const top = `${cal.verticalOffset + (cal.bettingSpotSize + cal.verticalGap) * Math.floor(i / 3)}px`;
+      const top = `${CHUCK_A_LUCK_PARAMETERS.verticalOffset + (CHUCK_A_LUCK_PARAMETERS.bettingSpotSize + CHUCK_A_LUCK_PARAMETERS.verticalGap) * Math.floor(i / 3)}px`;
       //move the div two betting space heights lower(height of one = 128), increase by two betting spaces every 3 iterations (one row)
-      const left = `${cal.horizontalGap * ((i % 3) + 1) + cal.bettingSpotSize * (i % 3)}px`;
+      const left = `${CHUCK_A_LUCK_PARAMETERS.horizontalGap * ((i % 3) + 1) + CHUCK_A_LUCK_PARAMETERS.bettingSpotSize * (i % 3)}px`;
       const div = createElement(
         "div",
         null,

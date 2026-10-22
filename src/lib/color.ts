@@ -14,12 +14,12 @@ export function hexToRgb(colorHex: string): RGB {
 
 export function rgbToHex(colorRgb: RGB): string {
   let hex = "#";
-  for (const element of Object.values(colorRgb)) {
-    let intElement = element;
-    if (Object.getPrototypeOf("") === Object.getPrototypeOf(element))
-      intElement = parseInt(element, 10);
-    if (intElement < 15) hex += "0";
-    hex += intElement.toString(16);
+  for (const channel of Object.values(colorRgb)) {
+    let channelValue = channel;
+    if (Object.getPrototypeOf("") === Object.getPrototypeOf(channel))
+      channelValue = parseInt(channel, 10);
+    if (channelValue < 15) hex += "0";
+    hex += channelValue.toString(16);
   }
   return hex.toUpperCase();
 }

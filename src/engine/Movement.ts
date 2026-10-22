@@ -1,4 +1,4 @@
-import { TILE_SIZE, PIXEL_SCALE, MOVEMENT_PARAMETERS as mp, type InputMode } from "./consts";
+import { TILE_SIZE, PIXEL_SCALE, MOVEMENT_PARAMETERS, type InputMode } from "./consts";
 import { randIntInRange } from "@/lib/random";
 import { validateOptions, type Point } from "@/lib/utilities";
 import Direction from "./Direction";
@@ -8,7 +8,7 @@ import time from "./time";
 import Pathfinder from "./Pathfinder";
 import type { InputManager } from "@/engine/state/State";
 import type AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
-import type Hitbox from "./HitboxClass";
+import type Hitbox from "./Hitbox";
 
 const movementOptions = new Map([
   [
@@ -63,8 +63,8 @@ class Momentum {
     this.direction = new Direction();
     this.speed = { x: 0, y: 0 };
 
-    this.sprintMode = mp.defaultSprintMode;
-    this.sneakMode = mp.defaultSneakMode;
+    this.sprintMode = MOVEMENT_PARAMETERS.defaultSprintMode;
+    this.sneakMode = MOVEMENT_PARAMETERS.defaultSneakMode;
     this.sprintMultiplier = sprintMultiplier;
     this.sneakMultiplier = sneakMultiplier;
 
@@ -102,9 +102,9 @@ class Momentum {
   /**
    * Update this.sprinting and this.sneaking properties.
    * Set the X and Y speeds and the direction
-   * according to keyboard input registered in `keyman`.
+   * according to keyboard input registered in `keyboardManager`.
    */
-  manageInputs(keyman: InputManager): void {
+  manageInputs(keyboardManager: InputManager): void {
     this.reset();
 
     if (this.sprintMode === "hold") {
@@ -113,11 +113,11 @@ class Momentum {
     if (this.sneakMode === "hold") {
       this.sneaking = false;
     }
-    keyman.manageInput("Toggle Sprint", () => this.toggleSprint(), {
+    keyboardManager.manageInput("Toggle Sprint", () => this.toggleSprint(), {
       once: this.sprintMode === "toggle",
     });
 
-    keyman.manageInput("Toggle Sneak", () => this.toggleSneak(), {
+    keyboardManager.manageInput("Toggle Sneak", () => this.toggleSneak(), {
       once: this.sneakMode === "toggle",
     });
 
@@ -127,7 +127,7 @@ class Momentum {
     }
 
     this.movementActions.forEach((moveFn, action) => {
-      if (keyman.isActionRequested(action)) {
+      if (keyboardManager.isActionRequested(action)) {
         this[moveFn]();
       }
     });
@@ -218,9 +218,9 @@ export default class Movement {
 
   constructor(
     entity: MovingEntity,
-    baseSpeed: number = mp.defaultSpeed,
-    sprintMultiplier: number = mp.defaultSprintMultiplier,
-    sneakMultiplier: number = mp.defaultSneakMultiplier,
+    baseSpeed: number = MOVEMENT_PARAMETERS.defaultSpeed,
+    sprintMultiplier: number = MOVEMENT_PARAMETERS.defaultSprintMultiplier,
+    sneakMultiplier: number = MOVEMENT_PARAMETERS.defaultSneakMultiplier,
     options: MovementOptions = {},
   ) {
     validateOptions(options, movementOptions, "Movement");
@@ -259,8 +259,8 @@ export default class Movement {
     this.updateSprite();
   }
 
-  manageInputs(keyman: InputManager): void {
-    this.momentum.manageInputs(keyman);
+  manageInputs(keyboardManager: InputManager): void {
+    this.momentum.manageInputs(keyboardManager);
   }
 
   /**
@@ -295,7 +295,7 @@ export default class Movement {
    * Sprinting leaves the entity out of breath for a while after it stops
    */
   updateBreath(sprinting: boolean): void {
-    if (sprinting) this.outOfBreathTime = mp.outOfBreathSeconds * 1000;
+    if (sprinting) this.outOfBreathTime = MOVEMENT_PARAMETERS.outOfBreathSeconds * 1000;
     else this.outOfBreathTime = Math.max(0, this.outOfBreathTime - time.delta);
   }
 
@@ -310,12 +310,12 @@ export default class Movement {
     if (currentSpeed.y < 0 && direction.facesUp() && this.willCollide(0, currentSpeed.y)) {
       this.moveTillCollision(0, currentSpeed.y);
       direction.moveDown();
-      currentSpeed.x *= mp.defaultDiagonalOffset;
+      currentSpeed.x *= MOVEMENT_PARAMETERS.defaultDiagonalOffset;
       currentSpeed.y = 0;
     } else if (currentSpeed.y > 0 && direction.facesDown() && this.willCollide(0, currentSpeed.y)) {
       this.moveTillCollision(0, currentSpeed.y);
       direction.moveUp();
-      currentSpeed.x *= mp.defaultDiagonalOffset;
+      currentSpeed.x *= MOVEMENT_PARAMETERS.defaultDiagonalOffset;
       currentSpeed.y = 0;
     }
 
@@ -323,7 +323,7 @@ export default class Movement {
       this.moveTillCollision(currentSpeed.x, 0);
       direction.moveRight();
       currentSpeed.x = 0;
-      currentSpeed.y *= mp.defaultDiagonalOffset;
+      currentSpeed.y *= MOVEMENT_PARAMETERS.defaultDiagonalOffset;
     } else if (
       currentSpeed.x > 0 &&
       direction.facesRight() &&
@@ -332,12 +332,12 @@ export default class Movement {
       this.moveTillCollision(currentSpeed.x, 0);
       direction.moveLeft();
       currentSpeed.x = 0;
-      currentSpeed.y *= mp.defaultDiagonalOffset;
+      currentSpeed.y *= MOVEMENT_PARAMETERS.defaultDiagonalOffset;
     }
 
     if (direction.isDiagonal()) {
-      currentSpeed.x *= mp.defaultDiagonalOffset;
-      currentSpeed.y *= mp.defaultDiagonalOffset;
+      currentSpeed.x *= MOVEMENT_PARAMETERS.defaultDiagonalOffset;
+      currentSpeed.y *= MOVEMENT_PARAMETERS.defaultDiagonalOffset;
     }
     this.moveX.speed = currentSpeed.x;
     this.moveY.speed = currentSpeed.y;

@@ -29,7 +29,7 @@ export abstract class State {
    * The member objects' `mangeInputs` functions work the same, creating
    * a recursive mechanism.
    */
-  manageInputs(_keyman: InputManager): void {}
+  manageInputs(_keyboardManager: InputManager): void {}
 
   abstract update(): void;
 

@@ -136,8 +136,8 @@ export default class CombatDisplay extends State {
   update(): void {
     this.dialogue?.update();
   }
-  override manageInputs(keyman: Pick<KeyboardManager, "manageInput">): void {
-    keyman.manageInput("Next Dialogue Line", () => {
+  override manageInputs(keyboardManager: Pick<KeyboardManager, "manageInput">): void {
+    keyboardManager.manageInput("Next Dialogue Line", () => {
       this.dialogue?.step();
     });
   }

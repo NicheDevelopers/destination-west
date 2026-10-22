@@ -1,7 +1,7 @@
 import { srandIntInRange } from "@/lib/random";
 import { resetIdFor, distance } from "@/lib/utilities";
 import type { Point } from "@/lib/utilities";
-import { MAP_PARAMETERS as mp } from "@/game/consts";
+import { MAP_PARAMETERS } from "@/game/consts";
 import Town from "@/game/Location/Town";
 import type Game from "@/game/Game";
 
@@ -12,7 +12,7 @@ class WorldMap {
   constructor(game: Game) {
     this.game = game;
     do {
-      this.generateLocations(mp.minLocations, mp.maxLocations);
+      this.generateLocations(MAP_PARAMETERS.minLocations, MAP_PARAMETERS.maxLocations);
       this.connectLocations();
     } while (!this.locationsConnected());
   }
@@ -42,7 +42,9 @@ class WorldMap {
     for (const location of this.locations) {
       const nearby = this.locations
         .filter(
-          (l) => l !== location && distance(l.pos, location.pos) < mp.minDistanceForConnection,
+          (l) =>
+            l !== location &&
+            distance(l.pos, location.pos) < MAP_PARAMETERS.minDistanceForConnection,
         )
         .map((l) => l.ID);
       location.connectedLocations = nearby;
@@ -62,27 +64,37 @@ class WorldMap {
   }
 
   private dfs(): number[] {
-    const g = this.intoNeighborList();
+    const neighbors = this.intoNeighborList();
     const visited: number[] = [];
-    const dfsUtil = (start: number) => {
-      visited.push(start);
-      for (const v of g.get(start) ?? []) {
-        if (!visited.includes(v)) {
-          dfsUtil(v);
+    const visit = (locationId: number) => {
+      visited.push(locationId);
+      for (const neighborId of neighbors.get(locationId) ?? []) {
+        if (!visited.includes(neighborId)) {
+          visit(neighborId);
         }
       }
     };
-    dfsUtil(0);
+    visit(0);
     return visited;
   }
 
   private getValidCoordinates(existingLocations: Town[]): Point {
     while (true) {
       const pos: Point = {
-        x: srandIntInRange(mp.paddingX, mp.displayWidth - mp.paddingX),
-        y: srandIntInRange(mp.paddingY, mp.displayHeight - mp.paddingY),
+        x: srandIntInRange(
+          MAP_PARAMETERS.paddingX,
+          MAP_PARAMETERS.displayWidth - MAP_PARAMETERS.paddingX,
+        ),
+        y: srandIntInRange(
+          MAP_PARAMETERS.paddingY,
+          MAP_PARAMETERS.displayHeight - MAP_PARAMETERS.paddingY,
+        ),
       };
-      if (existingLocations.none((t) => distance(t.pos, pos) < mp.minDistanceBetweenLocations)) {
+      if (
+        existingLocations.none(
+          (t) => distance(t.pos, pos) < MAP_PARAMETERS.minDistanceBetweenLocations,
+        )
+      ) {
         return pos;
       }
     }

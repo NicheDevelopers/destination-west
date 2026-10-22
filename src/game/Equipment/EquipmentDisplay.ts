@@ -9,7 +9,7 @@ class EquipmentDisplay extends State {
   private readonly equipment: Equipment;
   private readonly game: Game;
   private readonly div: HTMLDivElement;
-  private readonly divEqList: HTMLDivElement;
+  private readonly listDiv: HTMLDivElement;
   readonly actions: string[];
 
   constructor(game: Game, equipment: Equipment) {
@@ -18,14 +18,14 @@ class EquipmentDisplay extends State {
     this.game = game;
     this.actions = ["Toggle Equipment Display"];
     this.div = createElement("div", null, null, ["window"], {}, "equipment", null);
-    this.divEqList = createElement("div", null, null, [], {}, "eq-list", null);
-    this.div.appendChild(this.divEqList);
+    this.listDiv = createElement("div", null, null, [], {}, "eq-list", null);
+    this.div.appendChild(this.listDiv);
     gameContainer.appendChild(this.div);
   }
 
   refresh(): void {
-    this.divEqList.replaceChildren();
-    this.divEqList.appendChild(
+    this.listDiv.replaceChildren();
+    this.listDiv.appendChild(
       createElement("div", null, null, ["list-info"], {}, null, `Cash: ${this.equipment.cash}`),
     );
 
@@ -49,12 +49,12 @@ class EquipmentDisplay extends State {
       });
       sortDiv.appendChild(button);
     }
-    this.divEqList.appendChild(sortDiv);
+    this.listDiv.appendChild(sortDiv);
 
     for (const record of this.equipment.records) {
-      this.divEqList.appendChild(this.recordToListElement(record));
+      this.listDiv.appendChild(this.recordToListElement(record));
     }
-    this.divEqList.appendChild(
+    this.listDiv.appendChild(
       createElement(
         "div",
         null,
@@ -122,7 +122,7 @@ class EquipmentDisplay extends State {
     return div;
   }
 
-  override manageInputs(_keyman: Parameters<State["manageInputs"]>[0]): void {}
+  override manageInputs(_keyboardManager: Parameters<State["manageInputs"]>[0]): void {}
   update(): void {}
 }
 

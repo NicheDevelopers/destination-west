@@ -1,4 +1,4 @@
-import { TILE_SIZE as tS, DIRECTIONS, type DirectionValue } from "./consts";
+import { TILE_SIZE, DIRECTIONS, type DirectionValue } from "./consts";
 import type { Point } from "@/lib/utilities";
 import Direction from "./Direction";
 import { roundToTile, pointToTileCoord } from "./tileCoords";
@@ -54,10 +54,10 @@ interface PathfinderEntity {
 
 class Pathfinder {
   entity: PathfinderEntity;
-  townArray: Tile[][];
+  tiles: Tile[][];
   diagonalMovement: boolean;
   strategy: PathfindingStrategy;
-  pathArray: PathNode[][];
+  nodes: PathNode[][];
   start: PathNode | null;
   end: PathNode | null;
   path: PathNode[] | null;
@@ -69,17 +69,17 @@ class Pathfinder {
    * @param strategy - algorithm used by genNewPath()
    */
   constructor(
-    townArray: Tile[][],
+    tiles: Tile[][],
     entity: PathfinderEntity,
     diagonalMovement: boolean = false,
     strategy: PathfindingStrategy = "greedy",
   ) {
     this.entity = entity;
-    this.townArray = townArray;
+    this.tiles = tiles;
     this.diagonalMovement = diagonalMovement;
     this.strategy = strategy;
-    this.pathArray = [];
-    this.updatePathArray();
+    this.nodes = [];
+    this.updateNodes();
     this.start = null;
     this.end = null;
     this.path = null;
@@ -97,7 +97,7 @@ class Pathfinder {
   genNewPath(): void {
     this.path = null;
     this.trace = [];
-    this.updatePathArray();
+    this.updateNodes();
     this.changeStartTile();
 
     // if it is not possible to reach new endTile - search for new reachable one
@@ -115,10 +115,10 @@ class Pathfinder {
     if (this.end) {
       context.fillStyle = this.path ? DEBUG_COLORS.reachableEnd : DEBUG_COLORS.unreachableEnd;
       context.fillRect(
-        this.end.gridPos.x * tS - cameraX,
-        this.end.gridPos.y * tS - cameraY,
-        tS,
-        tS,
+        this.end.gridPos.x * TILE_SIZE - cameraX,
+        this.end.gridPos.y * TILE_SIZE - cameraY,
+        TILE_SIZE,
+        TILE_SIZE,
       );
     }
     if (this.trace.length < 2) return;
@@ -127,8 +127,8 @@ class Pathfinder {
     const remaining = this.path?.length ?? 0;
     const target = Math.max(0, this.trace.length - remaining - 1);
     const toScreen = ({ gridPos }: PathNode): Point => ({
-      x: gridPos.x * tS + tS / 2 - cameraX,
-      y: gridPos.y * tS + tS / 2 - cameraY,
+      x: gridPos.x * TILE_SIZE + TILE_SIZE / 2 - cameraX,
+      y: gridPos.y * TILE_SIZE + TILE_SIZE / 2 - cameraY,
     });
 
     context.save();
@@ -155,20 +155,20 @@ class Pathfinder {
 
   changeStartTile(): void {
     const { x, y } = pointToTileCoord(this.entity.getCenterPoint());
-    this.start = this.pathArray[x]?.[y] ?? null;
+    this.start = this.nodes[x]?.[y] ?? null;
   }
 
   changeEndTile(
-    x: number = randIntInRange(0, this.townArray.length) * tS,
-    y: number = randIntInRange(0, this.townArray[0].length) * tS,
+    x: number = randIntInRange(0, this.tiles.length) * TILE_SIZE,
+    y: number = randIntInRange(0, this.tiles[0].length) * TILE_SIZE,
   ) {
     x = roundToTile(x);
     y = roundToTile(y);
-    const node = this.pathArray[x]?.[y];
+    const node = this.nodes[x]?.[y];
     if (!node) {
       throw new Error(
         `Attempt to create endTile on (${x}, ${y}) for pathfinder\n` +
-          `given range x: <${0}, ${this.pathArray.length}); y: <${0}, ${this.pathArray[0]?.length ?? 0})`,
+          `given range x: <${0}, ${this.nodes.length}); y: <${0}, ${this.nodes[0]?.length ?? 0})`,
       );
     }
     this.end = node;
@@ -179,8 +179,8 @@ class Pathfinder {
    * Such tiles are unable to be walked through.
    * Tiles with no hitbox-Entity on it can be passed and will be considered in path creation process.
    */
-  updatePathArray(): void {
-    this.pathArray = this.townArray.map((column) =>
+  updateNodes(): void {
+    this.nodes = this.tiles.map((column) =>
       column.map((tile) => ({
         gridPos: tile.gridPos,
         walkable: tile.entities.length === 0,
@@ -204,7 +204,7 @@ class Pathfinder {
     const { x, y } = node.gridPos;
     const neighbors: Neighbor[] = [];
     for (const { dx, dy, direction } of offsets) {
-      const neighbor = this.pathArray[x + dx]?.[y + dy];
+      const neighbor = this.nodes[x + dx]?.[y + dy];
       if (neighbor) neighbors.push({ node: neighbor, direction });
     }
     return neighbors;
@@ -318,10 +318,10 @@ class Pathfinder {
 
   private reconstructPath(endNode: PathNode): PathNode[] {
     const path: PathNode[] = [];
-    let curr = endNode;
-    while (curr.parent) {
-      path.push(curr);
-      curr = curr.parent;
+    let node = endNode;
+    while (node.parent) {
+      path.push(node);
+      node = node.parent;
     }
     return path.reverse();
   }

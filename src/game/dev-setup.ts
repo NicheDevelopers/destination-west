@@ -23,8 +23,8 @@ export function devSetup(game: Game): void {
   const town = game.currentTown;
 
   const testMinigame = new ChuckALuck(game);
-  const testMinigamer = new Interactible(game, "chuck-a-luck-table", { x: 200, y: 200 });
-  testMinigamer.interact = () => {
+  const testChuckALuckTable = new Interactible(game, "chuck-a-luck-table", { x: 200, y: 200 });
+  testChuckALuckTable.interact = () => {
     testMinigame.start();
   };
 
@@ -54,7 +54,7 @@ export function devSetup(game: Game): void {
     new Portal(game, "decoration-roadsign", { x: 64 * 4, y: 64 * 5 }, PortalType.openMap()),
   );
   town.containers.push(testContainer);
-  town.npcs.push(testMinigamer);
+  town.npcs.push(testChuckALuckTable);
   const olBenjamin = new Npc(game, { x: 382, y: 350 }, "Ol' Benjamin");
   town.npcs.push(olBenjamin);
   olBenjamin.canMove = false;

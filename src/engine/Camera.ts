@@ -111,12 +111,12 @@ class Camera {
     this.state = CAM_STATES.ANIMATING;
   }
 
-  addDebugDraw(fun: DebugDraw, options: { once?: boolean } = {}): void {
+  addDebugDraw(debugDraw: DebugDraw, options: { once?: boolean } = {}): void {
     if (options.once) {
-      this.singleDebugDraws.push(fun);
+      this.singleDebugDraws.push(debugDraw);
       return;
     }
-    this.debugDraws.push(fun);
+    this.debugDraws.push(debugDraw);
   }
 
   removeDebugDraw(index: number): void {
@@ -131,8 +131,8 @@ class Camera {
     this.height = getGameCanvasSizeY();
   }
 
-  manageInputs(keyman: Pick<KeyboardManager, "manageInput">): void {
-    keyman.manageInput(
+  manageInputs(keyboardManager: Pick<KeyboardManager, "manageInput">): void {
+    keyboardManager.manageInput(
       "Camera zoom in",
       () => {
         if (this.zoom < this.zoomMax) {
@@ -141,7 +141,7 @@ class Camera {
       },
       { once: false },
     );
-    keyman.manageInput(
+    keyboardManager.manageInput(
       "Camera zoom out",
       () => {
         if (this.zoom > this.zoomMin) {

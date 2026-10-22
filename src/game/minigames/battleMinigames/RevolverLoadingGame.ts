@@ -54,9 +54,9 @@ class RevolverLoadingGame extends State {
 
   update(): void {}
 
-  override manageInputs(keyman: Pick<KeyboardManager, "manageInput">): void {
-    keyman.manageInput("Load Left", () => this.checkLoad("left"));
-    keyman.manageInput("Load Right", () => this.checkLoad("right"));
+  override manageInputs(keyboardManager: Pick<KeyboardManager, "manageInput">): void {
+    keyboardManager.manageInput("Load Left", () => this.checkLoad("left"));
+    keyboardManager.manageInput("Load Right", () => this.checkLoad("right"));
   }
 
   private checkLoad(playerDirection: LoadDirection): void {

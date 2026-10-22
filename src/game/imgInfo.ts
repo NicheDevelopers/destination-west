@@ -85,32 +85,32 @@ class Spritesheet {
     this.options = options;
   }
   saveToMap(map: Map<string, ImageInfoType>): void {
-    let x = 0,
-      y = 0;
-    for (let e of this.elements) {
+    let col = 0,
+      row = 0;
+    for (const element of this.elements) {
       let args = Array.from(spriteSheetOptions.keys())
-        .map((arg) => ({ argument: arg, position: e.indexOf(`_${arg}`) }))
+        .map((arg) => ({ argument: arg, position: element.indexOf(`_${arg}`) }))
         .filter((arg) => arg.position !== -1);
 
       let argumentStartIndex = args.minBy("position")?.position ?? Infinity;
 
-      e = e.substring(0, argumentStartIndex);
-      map.set(e, {
+      const spriteName = element.substring(0, argumentStartIndex);
+      map.set(spriteName, {
         src: this.path,
         width: this.spriteWidth,
         height: this.spriteHeight,
-        row: y,
-        col: x,
+        row,
+        col,
         defaultAnimation: this.options.defaultAnimation,
         animations: this.options.animations,
         random: this.options.random,
         nocollision: args.some((arg) => arg.argument === "nc"),
         nodepth: args.some((arg) => arg.argument === "nd"),
       });
-      x++;
-      if (x === this.width) {
-        x = 0;
-        y++;
+      col++;
+      if (col === this.width) {
+        col = 0;
+        row++;
       }
     }
   }

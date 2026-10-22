@@ -13,7 +13,7 @@ import type { Point, Size } from "@/lib/utilities";
 import { imgInfo } from "./imgInfo";
 
 function toKey(name: string, rotation: number | undefined, outline: boolean | undefined): string {
-  return name + "/" + (rotation === undefined ? "n" : rotation) + "/" + (outline ? "y" : "n");
+  return name + "/" + (rotation ?? "unrotated") + "/" + (outline ? "outlined" : "plain");
 }
 
 const cachedSprites: Map<string, HTMLImageElement> = new Map(); // String -> Image
@@ -175,10 +175,10 @@ class Sprite {
     if (!this.img?.complete) {
       throw new Error(`Attempt to getSpriteHitboxInfo of an unloaded sprite: ${this.typeName}`);
     }
-    const { context: offContext } = createCanvas(options.width, options.height);
-    this.draw(0, 0, offContext);
+    const { context: offscreenContext } = createCanvas(options.width, options.height);
+    this.draw(0, 0, offscreenContext);
 
-    let image = PixelImage.fromContext(offContext);
+    let image = PixelImage.fromContext(offscreenContext);
 
     /*
       startX and endX are respectively the smallest
@@ -249,7 +249,7 @@ class Sprite {
      bounds (i.e. finding the first/last rows/columns where
      non-transparent pixels are located).
   */
-  getSpriteHitboxInfoBaselineRcp(options?: Size): Point {
+  getSpriteHitboxInfoBaselineCenterPoint(options?: Size): Point {
     const { centerPixel, endY } = this.getSpriteHitboxInfo(options);
     return { x: centerPixel, y: endY };
   }
@@ -261,7 +261,7 @@ class Sprite {
     /**
        Detected relative center point of the sprite
     */
-    let rcp = { x: centerPixel, y: endY - boundingDistanceHeight };
+    let relativeCenterPoint = { x: centerPixel, y: endY - boundingDistanceHeight };
 
     let hitboxWidth = endX - startX + 1;
 
@@ -273,23 +273,23 @@ class Sprite {
     let looseness = ~~((AUTO_BOUNDARY_X_LOOSENESS * hitboxWidth) / 2);
 
     return {
-      relativeCenterPoint: rcp,
+      relativeCenterPoint,
       boundingDistance: {
         up: boundingDistanceHeight,
         down: boundingDistanceHeight,
-        left: rcp.x - startX - looseness,
-        right: endX - rcp.x - looseness,
+        left: relativeCenterPoint.x - startX - looseness,
+        right: endX - relativeCenterPoint.x - looseness,
       },
     };
   }
 
   rotate(image: HTMLImageElement, angle: number, callback: () => void): void {
-    const { canvas, context: offCtx } = createCanvas(this.width, this.height);
-    offCtx.translate(this.width / 2, this.height / 2);
-    offCtx.rotate(angle);
-    offCtx.translate(-this.width / 2, -this.height / 2);
+    const { canvas, context: offscreenContext } = createCanvas(this.width, this.height);
+    offscreenContext.translate(this.width / 2, this.height / 2);
+    offscreenContext.rotate(angle);
+    offscreenContext.translate(-this.width / 2, -this.height / 2);
 
-    offCtx.drawImage(
+    offscreenContext.drawImage(
       image,
       this.spriteSheetCol * this.width,
       this.spriteSheetRow * this.height,
@@ -324,8 +324,8 @@ class Sprite {
       ]);
     }
     let color = { r: 255, g: 255, b: 255, a: 255 };
-    const { canvas, context: offCtx } = createCanvas(this.width, this.height);
-    offCtx.drawImage(
+    const { canvas, context: offscreenContext } = createCanvas(this.width, this.height);
+    offscreenContext.drawImage(
       image,
       this.spriteSheetCol * this.width,
       this.spriteSheetRow * this.height,
@@ -340,21 +340,21 @@ class Sprite {
     this.spriteSheetCol = 0;
     this.spriteSheetRow = 0;
 
-    let imgRef = PixelImage.fromContext(offCtx);
-    let imgData = PixelImage.fromContext(offCtx);
+    let original = PixelImage.fromContext(offscreenContext);
+    let outlined = PixelImage.fromContext(offscreenContext);
 
     for (let y = 1; y < this.height - 1; ++y) {
       for (let x = 1; x < this.width - 1; ++x) {
-        if (imgRef[x][y].isTransparent()) continue;
+        if (original[x][y].isTransparent()) continue;
 
         borderCoordinates.forEach(({ x: dx, y: dy }) => {
-          if (imgRef[x + dx][y + dy].isTransparent()) {
-            imgData[x + dx][y + dy].setColor(color);
+          if (original[x + dx][y + dy].isTransparent()) {
+            outlined[x + dx][y + dy].setColor(color);
           }
         });
       }
     }
-    imgData.drawToContext(offCtx);
+    outlined.drawToContext(offscreenContext);
 
     this.img.onload = callback;
     this.img.src = canvas.toDataURL("image/png");

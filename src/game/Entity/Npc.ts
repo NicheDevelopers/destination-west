@@ -12,7 +12,7 @@ import Stats, { type StatLevel, type StatName } from "./Stats";
 import type { Point } from "@/lib/utilities";
 import type Game from "@/game/Game";
 import type AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
-import type Hitbox from "@/engine/HitboxClass";
+import type Hitbox from "@/engine/Hitbox";
 import type Player from "./Player";
 class Npc extends Interactible {
   canMove: boolean;
@@ -26,7 +26,7 @@ class Npc extends Interactible {
 
   constructor(game: Game, pos: Point, name: string | null = null) {
     super(game, "player", pos, {
-      hitbox: game.currentTown.array,
+      hitbox: game.currentTown.tiles,
       animated: true,
     });
     this.name = name ?? genNpcName(true, true);

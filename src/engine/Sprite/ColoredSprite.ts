@@ -10,7 +10,7 @@ import { PixelImage } from "@/lib/PixelImage";
 class ColoredSprite extends Sprite {
   color: string;
   canvas: HTMLCanvasElement;
-  offCtx: CanvasRenderingContext2D;
+  offscreenContext: CanvasRenderingContext2D;
   image: PixelImage;
   brightness: Uint8ClampedArray;
   alpha: Uint8ClampedArray;
@@ -20,9 +20,9 @@ class ColoredSprite extends Sprite {
     this.color = "#000000";
     const createdCanvas = createCanvas(this.width, this.height);
     this.canvas = createdCanvas.canvas;
-    this.offCtx = createdCanvas.context;
+    this.offscreenContext = createdCanvas.context;
 
-    this.offCtx.drawImage(
+    this.offscreenContext.drawImage(
       this.img,
       this.spriteSheetCol * this.width,
       this.spriteSheetRow * this.height,
@@ -34,7 +34,7 @@ class ColoredSprite extends Sprite {
       this.height * this.scaleY,
     );
 
-    this.image = PixelImage.fromContext(this.offCtx);
+    this.image = PixelImage.fromContext(this.offscreenContext);
 
     /*
       Brightness and alpha of pixels needs to be stores as the colors
@@ -43,9 +43,9 @@ class ColoredSprite extends Sprite {
     this.brightness = new Uint8ClampedArray(this.image.pixelCount());
     this.alpha = new Uint8ClampedArray(this.image.pixelCount());
 
-    for (let x = 0; x < this.image.pixelCount(); ++x) {
-      this.brightness[x] = 255 - this.image.getDataAt(x * 4);
-      this.alpha[x] = this.image.getDataAt(x * 4 + 3);
+    for (let pixelIndex = 0; pixelIndex < this.image.pixelCount(); ++pixelIndex) {
+      this.brightness[pixelIndex] = 255 - this.image.getDataAt(pixelIndex * 4);
+      this.alpha[pixelIndex] = this.image.getDataAt(pixelIndex * 4 + 3);
     }
     this.img = new Image();
     this.img.onload = updateCallback;
@@ -54,21 +54,21 @@ class ColoredSprite extends Sprite {
   setColor(colorHex: string, _areaID: number = 0) {
     let rgb = hexToRgb(colorHex);
 
-    for (let x = 0; x < this.image.pixelCount(); ++x) {
-      if (this.image.pixel(x).a === 0) continue;
+    for (let pixelIndex = 0; pixelIndex < this.image.pixelCount(); ++pixelIndex) {
+      if (this.image.pixel(pixelIndex).a === 0) continue;
 
-      let br = this.brightness[x];
+      let brightness = this.brightness[pixelIndex];
 
-      this.image.pixel(x).setColor({
-        r: rgb.r - br,
-        g: rgb.g - br,
-        b: rgb.b - br,
-        a: this.alpha[x],
+      this.image.pixel(pixelIndex).setColor({
+        r: rgb.r - brightness,
+        g: rgb.g - brightness,
+        b: rgb.b - brightness,
+        a: this.alpha[pixelIndex],
       });
     }
-    this.offCtx.clearRect(0, 0, this.width, this.height);
+    this.offscreenContext.clearRect(0, 0, this.width, this.height);
 
-    this.image.drawToContext(this.offCtx);
+    this.image.drawToContext(this.offscreenContext);
     this.img.src = this.canvas.toDataURL("image/png");
   }
   override draw(x: number, y: number, context = ctx) {

@@ -3,7 +3,7 @@ import type { Point } from "@/lib/utilities";
 import { DIRECTIONS } from "./consts";
 import Direction from "./Direction";
 import type Entity from "./Entity";
-import Hitbox, { Box } from "./HitboxClass";
+import Hitbox, { Box } from "./Hitbox";
 import type Tile from "./Tile";
 
 vi.mock("./Browser", () => ({ ctx: {} }));

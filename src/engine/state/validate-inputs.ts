@@ -1,4 +1,4 @@
-import keyman from "@/engine/KeyboardManager";
+import keyboardManager from "@/engine/KeyboardManager";
 import { actions as specialActions } from "@/engine/keybinds";
 import type { InputManager, State } from "./State";
 
@@ -11,7 +11,7 @@ import type { InputManager, State } from "./State";
  */
 export function validateInputs(state: State): void {
   const managedInputs: string[] = [];
-  const keymanMock: InputManager = {
+  const keyboardManagerMock: InputManager = {
     manageInput: (input) => {
       managedInputs.push(input);
     },
@@ -20,9 +20,9 @@ export function validateInputs(state: State): void {
       return false;
     },
   };
-  state.manageInputs(keymanMock);
+  state.manageInputs(keyboardManagerMock);
 
-  const stateKeybinds = keyman.keybinds[state.name]?.map((bind) => bind[1]) ?? [];
+  const stateKeybinds = keyboardManager.keybinds[state.name]?.map((bind) => bind[1]) ?? [];
 
   for (const input of managedInputs) {
     if (!stateKeybinds.includes(input))

@@ -1,14 +1,17 @@
 import Interactible from "./Interactible";
 import { stateManager } from "@/engine/state/StateManager";
+import type Game from "@/game/Game";
+import type { Point } from "@/lib/utilities";
+import type Player from "./Player";
 
 export const PortalType = {
   openMap: () => {
-    return (who) => {
+    return (who: Player) => {
       stateManager.toggleState(who.game.worldMapDisplay);
     };
   },
-  teleport: (where) => {
-    return (who) => {
+  teleport: (where: number) => {
+    return (who: Player) => {
       who.game.travel(where);
     };
   },
@@ -17,7 +20,7 @@ export const PortalType = {
 /* Portal is an Interactible that teleports the Player or
    opens the map display upon interaction. */
 class Portal extends Interactible {
-  constructor(game, typeName, pos, portalTypeFn) {
+  constructor(game: Game, typeName: string, pos: Point, portalTypeFn: (who: Player) => void) {
     super(game, typeName, pos);
     this.interact = portalTypeFn;
   }

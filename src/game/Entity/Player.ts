@@ -9,8 +9,10 @@ import type { Point } from "@/lib/utilities";
 import type Game from "@/game/Game";
 import type Hitbox from "@/engine/HitboxClass";
 import type AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
+import type { InputManager } from "@/engine/state/State";
 
 class Player extends Entity {
+  name: string;
   game: Game;
   movement: Movement;
   equipment: Equipment;
@@ -32,17 +34,6 @@ class Player extends Entity {
     this.equipment = new Equipment(DEFAULT_EQUIPMENT_SIZE, pp.defaultStartCash);
     this.game = game;
 
-    // register all actions that the player can do and bind
-    // them to correct keys
-    this.actions = [
-      "Move Right",
-      "Move Left",
-      "Move Up",
-      "Move Down",
-      "Toggle Sprint",
-      "Toggle Sneak",
-    ];
-
     this.hitbox.visualizeCollisions((f) => this.game.camera.addDebugDraw(f, { once: true }));
   }
 
@@ -52,7 +43,7 @@ class Player extends Entity {
     this.sprite.next();
   }
 
-  manageInputs(keyman) {
+  manageInputs(keyman: InputManager) {
     keyman.manageInput("Interact", (key) => this.interact(key));
 
     this.movement.manageInputs(keyman);
@@ -68,14 +59,14 @@ class Player extends Entity {
     return this.sprite.mirrored;
   }
 
-  interact(key) {
+  interact(key: string) {
     this.game.updateFocus();
     let focused = this.game.getFocusedItem();
     focused?.interact(this, key);
     this.game.updateFocus();
   }
 
-  override drawDebugInfo(cameraX, cameraY) {
+  override drawDebugInfo(cameraX: number, cameraY: number) {
     let x = this.movement.getChangeX();
     let y = this.movement.getChangeY();
 

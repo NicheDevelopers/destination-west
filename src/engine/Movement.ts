@@ -6,7 +6,7 @@ import { roundToTile } from "./tileCoords";
 import Animation from "./Animation";
 import time from "./time";
 import Pathfinder from "./Pathfinder";
-import type { KeyboardManager } from "./KeyboardManager";
+import type { InputManager } from "@/engine/state/State";
 import type AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
 import type Hitbox from "./HitboxClass";
 
@@ -104,7 +104,7 @@ class Momentum {
    * Set the X and Y speeds and the direction
    * according to keyboard input registered in `keyman`.
    */
-  manageInputs(keyman: KeyboardManager): void {
+  manageInputs(keyman: InputManager): void {
     this.reset();
 
     if (this.sprintMode === "hold") {
@@ -259,7 +259,7 @@ export default class Movement {
     this.updateSprite();
   }
 
-  manageInputs(keyman: KeyboardManager): void {
+  manageInputs(keyman: InputManager): void {
     this.momentum.manageInputs(keyman);
   }
 

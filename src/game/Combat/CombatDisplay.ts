@@ -2,7 +2,7 @@ import { State } from "@/engine/state/State";
 import { AttackType, CombatAction, type Combat } from "./Combat";
 import { ButtonList } from "@/lib/ButtonList";
 import { htmlCreate } from "@/lib/dom";
-import { ctx } from "@/engine/Browser";
+import { ctx, gameContainer } from "@/engine/Browser";
 import type { KeyboardManager } from "@/engine/KeyboardManager";
 import { Dialogue } from "@/game/Dialogue/Dialogue";
 import { items } from "@/game/items";
@@ -25,9 +25,6 @@ export default class CombatDisplay extends State {
     this.combat = combat;
     this.player = this.combat.player;
     this.mainEnemy = this.combat.mainEnemy;
-
-    const gameContainer = document.querySelector("#game-container");
-    if (!gameContainer) throw new Error("Missing #game-container element");
     this.menuDiv = htmlCreate({
       id: "combat-menu",
       classList: "combat",

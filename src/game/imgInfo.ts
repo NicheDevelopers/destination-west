@@ -50,7 +50,6 @@ export interface SpritesheetOptions {
 class Spritesheet {
   private path: string;
   private width: number;
-  private height: number;
   private spriteWidth: number;
   private spriteHeight: number;
   private elements: string[];
@@ -72,7 +71,6 @@ class Spritesheet {
       );
     this.path = path;
     this.width = width;
-    this.height = height;
     this.spriteWidth = options.spriteWidth ?? TILE_SIZE;
     this.spriteHeight = options.spriteHeight ?? TILE_SIZE;
     /**

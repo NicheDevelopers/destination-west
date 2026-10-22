@@ -14,6 +14,8 @@ import Town from "@/game/Location/Town";
 import { distance } from "@/lib/utilities";
 import seed from "@/lib/seed";
 import type App from "@/engine/App";
+import type { InputManager } from "@/engine/state/State";
+import type Dialogue from "@/game/Dialogue/Dialogue";
 
 class Game extends State {
   app: App;
@@ -57,9 +59,9 @@ class Game extends State {
     this.transferDisplay = new TransferDisplay(this);
   }
 
-  travel(id) {
+  travel(id: number) {
     if (this.currentTown instanceof Town) {
-      if (!this.currentTown.connectedLocations.includes(parseInt(id))) {
+      if (!this.currentTown.connectedLocations.includes(id)) {
         throw new Error("Attempt to travel to a location not connected to the current one");
       }
       let length = distance(this.currentTown.pos, this.worldMap.getByID(id).pos);
@@ -77,7 +79,7 @@ class Game extends State {
     this.worldMapDisplay.draw();
   }
 
-  override manageInputs(keyman) {
+  override manageInputs(keyman: InputManager) {
     this.camera.manageInputs(keyman);
     this.player.manageInputs(keyman);
     keyman.manageInput("Open Pause Menu", (key) => stateManager.startState(this.pauseMenu, key));
@@ -106,7 +108,7 @@ class Game extends State {
     this.paused = !this.paused;
   }
 
-  startDialogue(dialogue, stateChangeKey) {
+  startDialogue(dialogue: Dialogue, stateChangeKey: string | null = null) {
     this.dialogueDisplay.setDialogue(dialogue);
     stateManager.startState(this.dialogueDisplay, stateChangeKey);
   }

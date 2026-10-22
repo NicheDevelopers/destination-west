@@ -1,5 +1,6 @@
 import Sprite from "@/engine/Sprite/Sprite";
 import { DEFAULT_NOTIFICATION_TIMEOUT } from "./consts";
+import { gameContainer } from "./Browser";
 
 class Queue {
   items: Notification[];
@@ -84,7 +85,6 @@ class Notifier {
     //div.style.display = 'flex';
     slideToggle(div);
 
-    const gameContainer = document.getElementById("game-container") ?? document.body;
     gameContainer.appendChild(div);
 
     this.busy = true;

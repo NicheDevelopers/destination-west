@@ -1,4 +1,4 @@
-import { ctx, getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser";
+import { ctx, gameCanvas, gameContainer, getGameCanvasSizeX, getGameCanvasSizeY } from "./Browser";
 import { CAM_SETTINGS, CAM_STATES } from "./consts";
 import { makeEven, type Point } from "@/lib/utilities";
 import Animation, { MultiAnimation } from "./Animation";
@@ -124,12 +124,6 @@ class Camera {
   }
 
   updateSize(): void {
-    const gameContainer = document.querySelector("#game-container");
-    const gameCanvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
-    if (!gameContainer || !gameCanvas) {
-      throw new Error("Missing #game-container or #game-canvas element");
-    }
-
     gameCanvas.width = makeEven(Math.ceil(gameContainer.scrollWidth / this.zoom));
     gameCanvas.height = makeEven(Math.ceil(gameContainer.scrollHeight / this.zoom));
     gameCanvas.style.transform = `scale(${this.zoomSafetyMultiplier * this.zoom})`;

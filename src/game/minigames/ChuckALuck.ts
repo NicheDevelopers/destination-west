@@ -1,4 +1,5 @@
 import { State } from "@/engine/state/State";
+import { gameContainer } from "@/engine/Browser";
 import { stateManager } from "@/engine/state/StateManager";
 import { createElement } from "@/lib/dom";
 import { randIntInRange } from "@/lib/random";
@@ -42,9 +43,6 @@ class ChuckALuck extends State {
 
     this.mainDiv.appendChild(this.createDiceArea());
     this.mainDiv.appendChild(this.createBettingArea());
-
-    const gameContainer = document.querySelector("#game-container");
-    if (!gameContainer) throw new Error("Missing #game-container element");
     gameContainer.appendChild(this.mainDiv);
   }
 

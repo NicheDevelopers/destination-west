@@ -1,4 +1,5 @@
 import { State } from "@/engine/state/State";
+import { gameContainer } from "@/engine/Browser";
 import { randIntInRange } from "@/lib/random";
 import { htmlCreate } from "@/lib/dom";
 import AudioPlayer from "@/engine/audio/AudioPlayer";
@@ -28,9 +29,6 @@ class RevolverLoadingGame extends State {
     }
     this.game = game;
     this.bullets = bullets;
-
-    const gameContainer = document.querySelector("#game-container");
-    if (!gameContainer) throw new Error("Missing #game-container element");
     this.mainDiv = htmlCreate({
       backgroundImage: `url("${assetsPath}revolver-firing-board.png")`,
       id: "shooting-range",

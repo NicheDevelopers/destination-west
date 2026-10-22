@@ -57,7 +57,7 @@ export function devSetup(game: Game): void {
   town.npcs.push(testMinigamer);
   const olBenjamin = new Npc(game, { x: 382, y: 350 }, "Ol' Benjamin");
   town.npcs.push(olBenjamin);
-  olBenjamin.impaired = true;
+  olBenjamin.canMove = false;
 
   const testTrader = new Trader(game, { x: 300, y: 250 }, "Sawyer McCleary");
   testTrader.equipment.fillRecords([

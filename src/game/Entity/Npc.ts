@@ -13,8 +13,9 @@ import type { Point } from "@/lib/utilities";
 import type Game from "@/game/Game";
 import type AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
 import type Hitbox from "@/engine/HitboxClass";
+import type Player from "./Player";
 class Npc extends Interactible {
-  private impaired: boolean;
+  canMove: boolean;
   private stats: Stats;
   dialogue: Dialogue | null = null;
   name: string;
@@ -29,7 +30,7 @@ class Npc extends Interactible {
       animated: true,
     });
     this.name = name ?? genNpcName(true, true);
-    this.impaired = false;
+    this.canMove = true;
     this.stats = new Stats();
     this.movement = new Movement(this, NPC_PARAMETERS.defaultNpcSpeed);
     this.equipment = new Equipment(DEFAULT_EQUIPMENT_SIZE, NPC_PARAMETERS.defaultNpcStartCash);
@@ -44,14 +45,14 @@ class Npc extends Interactible {
   }
 
   override update(): void {
-    if (!this.impaired) this.movement.update();
+    if (this.canMove) this.movement.update();
     this.sprite.next();
   }
 
   override drawDebugInfo(cameraX: number, cameraY: number): void {
     this.movement.pathfinder.drawDebugInfo(cameraX, cameraY);
   }
-  override interact(who) {
+  override interact(who: Player) {
     this.sprite.mirrored = who.pos.x < this.pos.x;
     this.dialogue = new Dialogue(who, this).fromText(testDialogue);
 

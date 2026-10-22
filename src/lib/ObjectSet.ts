@@ -6,7 +6,7 @@
 export class ObjectSet<T> {
   elements: T[];
 
-  constructor(initialObjectsArray: T[] | undefined = undefined) {
+  constructor(initialObjectsArray?: T[]) {
     this.elements = [];
     if (initialObjectsArray === undefined) return;
     for (const obj of initialObjectsArray) {

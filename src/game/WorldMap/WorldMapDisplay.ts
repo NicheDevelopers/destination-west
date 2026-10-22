@@ -1,5 +1,6 @@
 import { createCanvas, createElement } from "@/lib/dom";
 import { State } from "@/engine/state/State";
+import { gameContainer } from "@/engine/Browser";
 import { MAP_PARAMETERS, TOWN_SIZES, WORLD_MAP_DISPLAY as wmd } from "@/game/consts";
 import Town from "@/game/Location/Town";
 import type Game from "@/game/Game";
@@ -34,8 +35,6 @@ class WorldMapDisplay extends State {
     this.mapCanvas.id = "map-canvas";
     //this.mapCanvas.style.background = 'rgba(150,130,100, 0.8)';
     this.div.appendChild(this.mapCanvas);
-    const gameContainer = document.getElementById("game-container");
-    if (!gameContainer) throw new Error("Missing #game-container element");
     gameContainer.appendChild(this.div);
   }
 

@@ -68,8 +68,7 @@ class Sprite {
   rotation?: number;
   outline?: boolean;
   // outline?: boolean; // TODO: not boolean, outline.corners (?) never used + innerOutline ?
-  img: HTMLImageElement;
-  imageToProcess?: HTMLImageElement;
+  img!: HTMLImageElement;
   processingImage?: boolean;
 
   constructor(typeName: string, options: SpriteOptions = {}, isColored: boolean = false) {
@@ -150,11 +149,11 @@ class Sprite {
       return;
     }
 
-    this.imageToProcess = new Image();
+    const imageToProcess = new Image();
 
-    this.imageToProcess.onload = () => {
+    imageToProcess.onload = () => {
       if (this.rotation !== undefined) {
-        this.rotate((this.rotation * Math.PI) / 180, () => {
+        this.rotate(imageToProcess, (this.rotation * Math.PI) / 180, () => {
           if (this.outline) {
             this.drawOutline(this.img, () => {
               cacheCallbacks.get(spriteKey)?.forEach((f) => f());
@@ -162,12 +161,12 @@ class Sprite {
           } else cacheCallbacks.get(spriteKey)?.forEach((f) => f());
         });
       } else if (this.outline) {
-        this.drawOutline(this.imageToProcess, () => {
+        this.drawOutline(imageToProcess, () => {
           cacheCallbacks.get(spriteKey)?.forEach((f) => f());
         });
       }
     };
-    this.imageToProcess.src = this.sheetInfo.src;
+    imageToProcess.src = this.sheetInfo.src;
   }
 
   getSpriteHitboxInfo(
@@ -186,7 +185,8 @@ class Sprite {
       and the biggest X coordinates on which a non-transparent
       pixel can be found within the image
     */
-    let startX, endX;
+    let startX: number | undefined;
+    let endX: number | undefined;
     for (let x = 0; x < options.width; ++x) {
       for (let y = 0; y < options.height; ++y) {
         if (!image[x][y].isTransparent()) {
@@ -214,7 +214,7 @@ class Sprite {
       We do not look for startY because it does not have an important
       meaning when it comes to hitbox dimensions
     */
-    let endY;
+    let endY: number | undefined;
     for (let y = options.height - 1; y >= 0; --y) {
       for (let x = 0; x < options.width; ++x) {
         if (!image[x][y].isTransparent()) {
@@ -223,6 +223,10 @@ class Sprite {
         }
       }
       if (endY !== undefined) break;
+    }
+
+    if (startX === undefined || endX === undefined || endY === undefined) {
+      throw new Error(`Sprite has no non-transparent pixels: ${this.typeName}`);
     }
 
     /**
@@ -279,14 +283,14 @@ class Sprite {
     };
   }
 
-  rotate(angle: number, callback: () => void): void {
+  rotate(image: HTMLImageElement, angle: number, callback: () => void): void {
     const { canvas, context: offCtx } = createCanvas(this.width, this.height);
     offCtx.translate(this.width / 2, this.height / 2);
     offCtx.rotate(angle);
     offCtx.translate(-this.width / 2, -this.height / 2);
 
     offCtx.drawImage(
-      this.imageToProcess,
+      image,
       this.spriteSheetCol * this.width,
       this.spriteSheetRow * this.height,
       this.width,
@@ -418,10 +422,7 @@ class Sprite {
    * Returns a string of the given arguments which can be used
    * to see if some sprite has the same recipe as the given one.
    */
-  static createRecipe(...args): string {
-    const typeName = args[0];
-    const options = args[1];
-
+  static createRecipe(typeName: string, options: SpriteOptions): string {
     const scale = options.scale ?? SPRITE_SCALE;
     const scaleX = options.scaleX ?? scale;
     const scaleY = options.scaleY ?? scale;

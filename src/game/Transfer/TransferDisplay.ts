@@ -1,4 +1,5 @@
 import { State } from "@/engine/state/State";
+import { gameContainer } from "@/engine/Browser";
 import Transfer from "./Transfer";
 import { createElement } from "@/lib/dom";
 import type Game from "@/game/Game";
@@ -16,8 +17,6 @@ class TransferDisplay extends State {
     super();
     this.game = game;
     this.div = createElement("div", null, null, ["window"], {}, "transfer", null);
-    const gameContainer = document.querySelector("#game-container");
-    if (!gameContainer) throw new Error("Missing #game-container element");
 
     this.divEqListPlayer = createElement("div", null, null, [], {}, "transfer-list", null);
 

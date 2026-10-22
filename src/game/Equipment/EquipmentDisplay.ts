@@ -1,5 +1,6 @@
 import { createElement } from "@/lib/dom";
 import { State } from "@/engine/state/State";
+import { gameContainer } from "@/engine/Browser";
 import type Game from "@/game/Game";
 import type Equipment from "./Equipment";
 import type { EquipmentRecord } from "./Equipment";
@@ -17,8 +18,6 @@ class EquipmentDisplay extends State {
     this.game = game;
     this.actions = ["Toggle Equipment Display"];
     this.div = createElement("div", null, null, ["window"], {}, "equipment", null);
-    const gameContainer = document.querySelector("#game-container");
-    if (!gameContainer) throw new Error("Missing #game-container element");
     this.divEqList = createElement("div", null, null, [], {}, "eq-list", null);
     this.div.appendChild(this.divEqList);
     gameContainer.appendChild(this.div);

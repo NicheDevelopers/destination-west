@@ -64,7 +64,7 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(
   h: number | null = null,
   classes: string[] = [],
   styles: Record<string, string> = {},
-  id?: string | null | undefined,
+  id?: string | null,
   text: string | null = null,
 ): HTMLElementTagNameMap[K] {
   // needed test if element is equal to some given possibile outcomes

@@ -26,25 +26,23 @@ export const CASH_MIN_MAX_PARAMETERS = {
 };
 
 export const MAP_PARAMETERS = {
-  minLocations: 20,
-  maxLocations: 25,
+  minLocations: 15,
+  maxLocations: 20,
   displayWidth: 1800,
   displayHeight: 900,
   paddingX: 50,
   paddingY: 50,
-  /*
-   minDistanceForConnection must be significantly greater than minDistanceBetweenLocations,
-    WorldMap.js creating coords of locations first search for locations which distance
-    to any other location is smaller than minDistanceBetweenLocations;
-    Doing connections nearby locations is location which distance to any other location
-    is smaller than minDistanceForConnection;
-    Therefore, if location will be generated on coords which distance to any location is greater
-    than minimum distance needed for connection there would generate multiple locations without connections
-    DFS method will never return true, so on contructor of WorldMap will never end.
-    For a slight difference between these two values time required to generate WorldMap will singificantly increase.
-  */
+  minMiddleLayers: 4,
+  maxMiddleLayers: 5,
+  townAreaInLayer: 0.5,
+  extraRoadChance: 0.5,
+  maxExtraRoadLength: 450,
+  maxSameLayerRoadLength: 250,
+  minRoadDistanceFromTown: 40,
+  minRoadsForMediumTown: 4,
+  minRoadsForLargeTown: 5,
+  maxLargeTowns: 3,
   minDistanceBetweenLocations: 150,
-  minDistanceForConnection: 300,
 };
 
 export const TOWN_SIZES = {
@@ -63,9 +61,6 @@ export const PERCENTAGE_OF_GENERIC_DECORATION = {
 export const WORLD_MAP_DISPLAY = {
   townNameOffsetX: -50,
   townNameOffsetY: 40,
-  lowConnection: 3,
-  mediumConnection: 5,
-  highConnection: 10,
 };
 
 export const CHUCK_A_LUCK_PARAMETERS = {

@@ -3,7 +3,19 @@ import { State } from "@/engine/state/State";
 import { gameContainer } from "@/engine/Browser";
 import { MAP_PARAMETERS, TOWN_SIZES, WORLD_MAP_DISPLAY } from "@/game/consts";
 import Town from "@/game/Location/Town";
+import { passesCloseToOtherTown } from "./WorldMap";
 import type Game from "@/game/Game";
+
+const DEBUG_COLORS = {
+  evenLayer: "#ffffff14",
+  oddLayer: "#ffffff28",
+  text: "#ffffffcc",
+  hiddenRoad: "#00000066",
+  hiddenTown: "#00000066",
+  roadCloseToTown: "#ff3030",
+  visitedRing: "#ffd700",
+  notVisitedRing: "#9e9e9e",
+} as const;
 
 class WorldMapDisplay extends State {
   private readonly game: Game;
@@ -11,6 +23,7 @@ class WorldMapDisplay extends State {
   private readonly mapCanvas: HTMLCanvasElement;
   private readonly mapCtx: CanvasRenderingContext2D;
   readonly actions = ["Toggle Map Display"];
+  private drawnInDebugMode = false;
 
   constructor(game: Game) {
     super();
@@ -103,24 +116,123 @@ class WorldMapDisplay extends State {
     }
     for (const town of visibleTowns.map((townId) => map.getByID(townId))) {
       ctx.fillStyle = "white";
-      ctx.fillText(
+      this.fillTextInsideCanvas(
         town.name,
         town.pos.x + WORLD_MAP_DISPLAY.townNameOffsetX,
         town.pos.y + WORLD_MAP_DISPLAY.townNameOffsetY,
       );
     }
+
+    this.drawnInDebugMode = this.game.app.debugging;
+    if (this.drawnInDebugMode) this.drawDebugInfo(visibleTowns);
+  }
+
+  private drawDebugInfo(visibleTownIds: number[]): void {
+    const map = this.game.worldMap;
+    const ctx = this.mapCtx;
+    ctx.save();
+    ctx.font = "14px Verdana";
+
+    const layerCount = map.middleLayerCount + 2;
+    for (let layer = 0; layer < layerCount; layer++) {
+      const { minX, maxX } = map.getLayerXRange(layer);
+      ctx.fillStyle = layer % 2 === 0 ? DEBUG_COLORS.evenLayer : DEBUG_COLORS.oddLayer;
+      ctx.fillRect(minX, 0, maxX - minX, this.mapCanvas.height);
+
+      let townCount = 0;
+      for (const townLayer of map.layerByTownId) {
+        if (townLayer === layer) townCount++;
+      }
+      ctx.fillStyle = DEBUG_COLORS.text;
+      this.fillTextInsideCanvas(`Layer ${layer}, ${townCount} towns`, minX + 5, 20);
+    }
+
+    for (const town of map.locations) {
+      for (const connection of town.connectedLocations) {
+        const other = map.getByID(connection);
+        if (!town.visited && !other.visited) {
+          drawLine(
+            ctx,
+            town.pos.x,
+            town.pos.y,
+            other.pos.x,
+            other.pos.y,
+            DEBUG_COLORS.hiddenRoad,
+            2,
+          );
+        }
+      }
+    }
+
+    for (const town of map.locations) {
+      for (const connection of town.connectedLocations) {
+        const other = map.getByID(connection);
+        if (passesCloseToOtherTown(town, other, map.locations)) {
+          drawLine(
+            ctx,
+            town.pos.x,
+            town.pos.y,
+            other.pos.x,
+            other.pos.y,
+            DEBUG_COLORS.roadCloseToTown,
+            3,
+          );
+        }
+      }
+    }
+
+    for (const town of map.locations) {
+      const size = this.computeTownSize(town);
+      if (!visibleTownIds.includes(town.ID)) {
+        drawCircle(ctx, town.pos.x, town.pos.y, size, 2, DEBUG_COLORS.hiddenTown);
+        ctx.fillStyle = DEBUG_COLORS.text;
+        this.fillTextInsideCanvas(
+          town.name,
+          town.pos.x + WORLD_MAP_DISPLAY.townNameOffsetX,
+          town.pos.y + WORLD_MAP_DISPLAY.townNameOffsetY,
+        );
+      }
+
+      ctx.beginPath();
+      ctx.arc(town.pos.x, town.pos.y, size + 4, 0, 2 * Math.PI);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = town.visited ? DEBUG_COLORS.visitedRing : DEBUG_COLORS.notVisitedRing;
+      ctx.stroke();
+
+      const stats =
+        `#${town.ID}, L${map.layerByTownId[town.ID]}, ` +
+        `roads ${town.connectedLocations.length}, ${map.sizeByTownId[town.ID]}`;
+      ctx.fillStyle = DEBUG_COLORS.text;
+      this.fillTextInsideCanvas(
+        stats,
+        town.pos.x + WORLD_MAP_DISPLAY.townNameOffsetX,
+        town.pos.y + WORLD_MAP_DISPLAY.townNameOffsetY + 18,
+      );
+    }
+
+    const summary =
+      `Towns: ${map.locations.length}, Middle layers: ${map.middleLayerCount}, ` +
+      `Ring: gold = visited, gray = not visited`;
+    ctx.fillStyle = DEBUG_COLORS.text;
+    this.fillTextInsideCanvas(summary, 5, this.mapCanvas.height - 8);
+    ctx.restore();
+  }
+
+  // Keeps text from running off the canvas, e.g. the last town's name at the right edge
+  private fillTextInsideCanvas(text: string, x: number, y: number): void {
+    const maxX = this.mapCanvas.width - this.mapCtx.measureText(text).width;
+    if (x < 0) x = 0;
+    if (x > maxX) x = maxX;
+    this.mapCtx.fillText(text, x, y);
   }
 
   computeTownSize(town: Town): number {
-    // make the last town large
-    if (town.ID === this.game.worldMap.locations.last?.ID) return TOWN_SIZES.large;
-    if (town.connectedLocations.length < WORLD_MAP_DISPLAY.lowConnection) return TOWN_SIZES.small;
-    if (town.connectedLocations.length < WORLD_MAP_DISPLAY.mediumConnection)
-      return TOWN_SIZES.medium;
-    return TOWN_SIZES.large;
+    return TOWN_SIZES[this.game.worldMap.sizeByTownId[town.ID]];
   }
 
-  update(): void {}
+  update(): void {
+    if (this.game.app.debugging !== this.drawnInDebugMode) this.draw();
+  }
 
   override startHook(): void {
     this.draw();

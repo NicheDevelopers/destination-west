@@ -13,6 +13,7 @@ class DroppedItem extends Interactible {
     // dropped items can be walked over, so they have no hitbox
     super(
       game,
+      game.currentTown,
       "decoration-big-bag-3x",
       { x: pos.x - TILE_SIZE / 2, y: pos.y - TILE_SIZE / 2 },
       { hitbox: undefined },

@@ -14,6 +14,7 @@ import type Game from "@/game/Game";
 import type AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
 import type Hitbox from "@/engine/Hitbox";
 import type Player from "./Player";
+import type Location from "../Location/Location";
 class Npc extends Interactible {
   canMove: boolean;
   private stats: Stats;
@@ -24,9 +25,8 @@ class Npc extends Interactible {
   declare sprite: AnimatedSprite;
   declare hitbox: Hitbox;
 
-  constructor(game: Game, pos: Point, name: string | null = null) {
-    super(game, "player", pos, {
-      hitbox: game.currentTown.tiles,
+  constructor(game: Game, location: Location, pos: Point, name: string | null = null) {
+    super(game, location, "player", pos, {
       animated: true,
     });
     this.name = name ?? genNpcName(true, true);

@@ -4,12 +4,13 @@ import type Game from "@/game/Game";
 import type { Point } from "@/lib/utilities";
 import Npc from "./Npc";
 import type Player from "./Player";
+import type Location from "../Location/Location";
 
 class Trader extends Npc {
   override dialogue: Dialogue | null = null;
 
-  constructor(game: Game, pos: Point, name: string) {
-    super(game, pos, name);
+  constructor(game: Game, location: Location, pos: Point, name: string) {
+    super(game, location, pos, name);
   }
 
   override update(): void {

@@ -23,26 +23,29 @@ export function devSetup(game: Game): void {
   const town = game.currentTown;
 
   const testMinigame = new ChuckALuck(game);
-  const testChuckALuckTable = new Interactible(game, "chuck-a-luck-table", { x: 200, y: 200 });
+  const testChuckALuckTable = new Interactible(game, town, "chuck-a-luck-table", {
+    x: 200,
+    y: 200,
+  });
   testChuckALuckTable.interact = () => {
     testMinigame.start();
   };
 
   const testShooting = new revolverShoot(game, 6);
-  const testTarget = new Interactible(game, "torso", { x: 100, y: 100 });
+  const testTarget = new Interactible(game, town, "torso", { x: 100, y: 100 });
   testTarget.interact = () => {
     stateManager.toggleState(testShooting);
   };
   town.npcs.push(testTarget);
 
   const testLoading = new revolverLoad(game, 6);
-  const testLoader = new Interactible(game, "torso", { x: 164, y: 100 });
+  const testLoader = new Interactible(game, town, "torso", { x: 164, y: 100 });
   testLoader.interact = () => {
     stateManager.toggleState(testLoading);
   };
   town.npcs.push(testLoader);
 
-  const testContainer = new Container(game, "barrel", { x: 250, y: 250 });
+  const testContainer = new Container(game, town, "barrel", { x: 250, y: 250 });
   testContainer.equipment.fillRecords([
     { recipe: items.whisky, quantity: 3 },
     { recipe: items.apple, quantity: 3 },
@@ -51,15 +54,15 @@ export function devSetup(game: Game): void {
   ]);
 
   town.portals.push(
-    new Portal(game, "decoration-roadsign", { x: 64 * 4, y: 64 * 5 }, PortalType.openMap()),
+    new Portal(game, town, "decoration-roadsign", { x: 64 * 4, y: 64 * 5 }, PortalType.openMap()),
   );
   town.containers.push(testContainer);
   town.npcs.push(testChuckALuckTable);
-  const olBenjamin = new Npc(game, { x: 382, y: 350 }, "Ol' Benjamin");
+  const olBenjamin = new Npc(game, town, { x: 382, y: 350 }, "Ol' Benjamin");
   town.npcs.push(olBenjamin);
   olBenjamin.canMove = false;
 
-  const testTrader = new Trader(game, { x: 300, y: 250 }, "Sawyer McCleary");
+  const testTrader = new Trader(game, town, { x: 300, y: 250 }, "Sawyer McCleary");
   testTrader.equipment.fillRecords([
     { recipe: items.apple, quantity: 3 },
     { recipe: items.revolver1, quantity: 5 },
@@ -84,7 +87,7 @@ export function devSetup(game: Game): void {
     { recipe: items.brokenBottle, quantity: 1 },
   ]);
 
-  const milas = new Npc(game, { x: 370, y: 290 }, "Milas");
+  const milas = new Npc(game, town, { x: 370, y: 290 }, "Milas");
   town.npcs.push(milas);
 
   const initType = CombatInitiationType.Normal;

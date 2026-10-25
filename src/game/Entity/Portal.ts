@@ -3,6 +3,7 @@ import { stateManager } from "@/engine/state/StateManager";
 import type Game from "@/game/Game";
 import type { Point } from "@/lib/utilities";
 import type Player from "./Player";
+import Location from "../Location/Location";
 
 export const PortalType = {
   openMap: () => {
@@ -20,8 +21,14 @@ export const PortalType = {
 /* Portal is an Interactible that teleports the Player or
    opens the map display upon interaction. */
 class Portal extends Interactible {
-  constructor(game: Game, typeName: string, pos: Point, portalTypeFn: (who: Player) => void) {
-    super(game, typeName, pos);
+  constructor(
+    game: Game,
+    location: Location,
+    typeName: string,
+    pos: Point,
+    portalTypeFn: (who: Player) => void,
+  ) {
+    super(game, location, typeName, pos);
     this.interact = portalTypeFn;
   }
 }

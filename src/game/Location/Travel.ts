@@ -60,6 +60,7 @@ class Travel extends Location {
     this.portals.push(
       new Portal(
         this.game,
+        this,
         "decoration-roadsign",
         //(this.width-3)*TILE_SIZE, (this.height-4)*TILE_SIZE,
         { x: 4 * TILE_SIZE, y: (this.height - 4) * TILE_SIZE },
@@ -69,6 +70,7 @@ class Travel extends Location {
     this.portals.push(
       new Portal(
         this.game,
+        this,
         "decoration-roadsign",
         { x: 3 * TILE_SIZE, y: (this.height - 4) * TILE_SIZE },
         PortalType.teleport(this.toId),

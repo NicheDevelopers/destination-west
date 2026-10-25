@@ -6,12 +6,19 @@ import { randIntInRange } from "@/lib/random";
 import type { Point } from "@/lib/utilities";
 import type Game from "@/game/Game";
 import type Player from "./Player";
+import type Location from "../Location/Location";
 
 class Container extends Interactible {
   equipment: Equipment;
 
-  constructor(game: Game, typeName: string, pos: Point, options = {}) {
-    super(game, typeName, pos, Object.assign(options, { hitbox: game.currentTown.tiles }));
+  constructor(game: Game, location: Location, typeName: string, pos: Point, options = {}) {
+    super(
+      game,
+      location,
+      typeName,
+      pos,
+      Object.assign(options, { hitbox: game.currentTown.tiles }),
+    );
     const startCash = randIntInRange(cashParam.minCash, cashParam.maxCash);
     this.equipment = new Equipment(DEFAULT_EQUIPMENT_SIZE, startCash);
   }

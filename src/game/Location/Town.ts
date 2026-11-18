@@ -38,37 +38,26 @@ class Town extends Location {
   }
 
   private placeBuildings(preset: TownPreset): void {
-    let buildings = preset.buildings;
-    // `buildings` holds an array with objects describing
-    // building positions and sizes
-    let buildingCount = buildings.length;
-    let requiredBuildingCount = 0;
-    if (this.buildingCounts.saloon !== undefined)
-      requiredBuildingCount += this.buildingCounts.saloon;
-    if (this.buildingCounts.sheriff !== undefined)
-      requiredBuildingCount += this.buildingCounts.sheriff;
-    if (this.buildingCounts.house !== undefined) requiredBuildingCount += this.buildingCounts.house;
-    if (requiredBuildingCount > buildingCount) requiredBuildingCount = buildingCount;
-    let counter = 0;
-    let toPlace: number;
-
-    (["saloon", "sheriff", "house"] as const).forEach((place) => {
-      if (!this.buildingCounts[place]) toPlace = 0;
-      else if (this.buildingCounts[place] + counter < buildingCount)
-        toPlace = this.buildingCounts[place];
-      else toPlace = buildingCount - counter;
-      for (let i = 0; i < toPlace; i++) {
-        this.awaitAssets++;
-        this.placeBuilding(
-          buildings[counter].gridPos,
-          buildings[counter].xTiles,
-          buildings[counter].yTiles,
-          place,
-          { callback: () => this.awaitAssets-- },
-        );
-        counter++;
+    const typesLeft: BuildingType[] = [];
+    for (const type of ["saloon", "sheriff", "house"] as const) {
+      const count = this.buildingCounts[type] ?? 0;
+      for (let i = 0; i < count; i++) {
+        typesLeft.push(type);
       }
-    });
+    }
+    while (typesLeft.length < preset.buildings.length) {
+      typesLeft.push("house");
+    }
+
+    for (const spot of preset.buildings) {
+      const type = typesLeft.srandomElement()!;
+      typesLeft.popFirst(type);
+
+      this.awaitAssets++;
+      this.placeBuilding(spot.gridPos, spot.xTiles, spot.yTiles, type, {
+        callback: () => this.awaitAssets--,
+      });
+    }
   }
 }
 

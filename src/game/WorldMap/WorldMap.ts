@@ -63,7 +63,7 @@ class WorldMap {
   }
 
   private createTown(pos: Point): Town {
-    return new Town(this.game, pos, { sheriff: 1, house: 2, saloon: 11 });
+    return new Town(this.game, pos, { sheriff: 1, house: 2, saloon: 1 });
   }
 
   private connectLocations(): void {

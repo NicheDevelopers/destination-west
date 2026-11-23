@@ -83,6 +83,7 @@ class Travel extends Location {
     );
     this.placeStreets(preset);
     this.placeGenericDecoration();
+    this.placePlantPatches();
     this.prerender();
   }
 }

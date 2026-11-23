@@ -45,6 +45,7 @@ class Town extends Location {
     this.placeStreets(preset);
     this.placeBuildings(preset);
     this.placeGenericDecoration();
+    this.placePlantPatches();
     this.placeResidents(preset);
     this.prerender();
   }

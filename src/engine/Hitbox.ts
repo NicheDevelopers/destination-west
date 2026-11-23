@@ -153,7 +153,7 @@ export default class Hitbox {
         `attempt to add an entity (${this.entity.constructor.name}) ` +
           `to the same tile twice (coords: (${tileX}, ${tileY}))`,
       );
-    if (!this.locationArray[tileX][tileY]) return; // omit tiles out of bounds
+    if (!this.locationArray[tileX]?.[tileY]) return; // omit tiles out of bounds
     this.tiles.add({ x: tileX, y: tileY });
     this.locationArray[tileX][tileY].addEntity(this.entity);
   }

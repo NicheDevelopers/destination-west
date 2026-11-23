@@ -19,7 +19,8 @@ class Building extends Entity {
     buildingType: BuildingType,
     options: EntityOptions = {},
   ) {
-    super(`bank-${xTiles}x${yTiles}`, pos, options);
+    const buildingImage = buildingType === "house" ? "bank" : buildingType;
+    super(`${buildingImage}-${xTiles}x${yTiles}`, pos, options);
     this.xTiles = xTiles;
     this.yTiles = yTiles;
     this.buildingType = buildingType;

@@ -64,6 +64,15 @@ export const PERCENTAGE_OF_GENERIC_DECORATION = {
   townPercentage: 0.05,
 };
 
+export const PLANT_PATCHES = {
+  tilesPerPatch: 45,
+  blobsPerPatch: 4,
+  minBlobRadius: 2,
+  maxBlobRadius: 6,
+  density: 1,
+  maxNudge: 20,
+};
+
 export const WORLD_MAP_DISPLAY = {
   townNameOffsetX: -50,
   townNameOffsetY: 40,

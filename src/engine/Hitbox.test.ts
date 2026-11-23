@@ -108,6 +108,17 @@ describe("Hitbox", () => {
     expect(entity.hitbox.isAtTile(1, 0)).toBe(true);
   });
 
+  it("skips tiles outside the location when registering", () => {
+    const tiles = makeTiles(2, 2);
+    const pastLeftEdge = makeEntity({ x: 4, y: 32 }, 10, tiles);
+    const pastRightEdge = makeEntity({ x: 124, y: 96 }, 10, tiles);
+
+    expect(() => pastLeftEdge.hitbox.updateTilePresence()).not.toThrow();
+    expect(() => pastRightEdge.hitbox.updateTilePresence()).not.toThrow();
+    expect(tiles[0][0].entities).toEqual([pastLeftEdge]);
+    expect(tiles[1][1].entities).toEqual([pastRightEdge]);
+  });
+
   it("moves its entity to the tiles of a new location", () => {
     const oldTiles = makeTiles(2, 2);
     const newTiles = makeTiles(2, 2);

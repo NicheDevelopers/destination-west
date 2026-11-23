@@ -19,6 +19,7 @@ import type Dialogue from "@/game/Dialogue/Dialogue";
 
 class Game extends State {
   app: App;
+  readonly worldSeed: number;
   pauseMenu: PauseMenu;
   paused: boolean;
   designer: Designer;
@@ -34,6 +35,7 @@ class Game extends State {
   constructor(app: App, worldSeed: number) {
     super(true);
     this.app = app;
+    this.worldSeed = worldSeed;
     seed.set(worldSeed);
     app.debugView.showSeed(worldSeed);
 

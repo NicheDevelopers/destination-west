@@ -1,5 +1,6 @@
 import Location from "./Location";
 import { srandIntInRange, seedRoll } from "@/lib/random";
+import seed, { deriveSeed } from "@/lib/seed";
 import { TILE_SIZE } from "@/engine/consts";
 import Portal, { PortalType } from "@/game/Entity/Portal";
 import type { StreetPreset } from "./townPresets";
@@ -37,6 +38,10 @@ class Travel extends Location {
   }
 
   private createLocation(): void {
+    const firstTownId = Math.min(this.fromId, this.toId);
+    const secondTownId = Math.max(this.fromId, this.toId);
+    seed.set(deriveSeed(this.game.worldSeed, firstTownId, secondTownId));
+
     const preset: { streets: StreetPreset[] } = { streets: [] };
     preset.streets.push(newStreet(0, this.height - 3, this.width, 1));
 

@@ -1,6 +1,3 @@
-// import AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
-// import Entity from "@/engine/Entity";
-// import {ANIMATION_SPEED} from "@/game/consts";
 import Interactible from "./Interactible";
 import { genNpcName } from "@/game/generators/nameGenerators";
 import Dialogue from "@/game/Dialogue/Dialogue";
@@ -14,22 +11,31 @@ import type Game from "@/game/Game";
 import type AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
 import type Hitbox from "@/engine/Hitbox";
 import type Player from "./Player";
-import type Location from "../Location/Location";
+import type Location from "@/game/Location/Location";
+
 class Npc extends Interactible {
   canMove: boolean;
   private stats: Stats;
   dialogue: Dialogue | null = null;
   name: string;
+  private dialogueText: string;
   movement: Movement;
   equipment: Equipment;
   declare sprite: AnimatedSprite;
   declare hitbox: Hitbox;
 
-  constructor(game: Game, location: Location, pos: Point, name: string | null = null) {
+  constructor(
+    game: Game,
+    location: Location,
+    pos: Point,
+    name: string | null = null,
+    dialogueText: string = testDialogue,
+  ) {
     super(game, location, "player", pos, {
       animated: true,
     });
     this.name = name ?? genNpcName(true, true);
+    this.dialogueText = dialogueText;
     this.canMove = true;
     this.stats = new Stats();
     this.movement = new Movement(this, NPC_PARAMETERS.defaultNpcSpeed);
@@ -52,9 +58,10 @@ class Npc extends Interactible {
   override drawDebugInfo(cameraX: number, cameraY: number): void {
     this.movement.pathfinder.drawDebugInfo(cameraX, cameraY);
   }
+
   override interact(who: Player) {
     this.sprite.mirrored = who.pos.x < this.pos.x;
-    this.dialogue = new Dialogue(who, this).fromText(testDialogue);
+    this.dialogue = new Dialogue(who, this).fromText(this.dialogueText);
 
     this.game.startDialogue(this.dialogue);
   }

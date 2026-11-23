@@ -51,6 +51,12 @@ export const TOWN_SIZES = {
   large: 20,
 };
 
+export const TOWNSFOLK_COUNT_BY_TOWN_SIZE: Record<keyof typeof TOWN_SIZES, number> = {
+  small: 2,
+  medium: 4,
+  large: 6,
+};
+
 export const FOCUS_BACK_TO_PLAYER_TIME = 0.5;
 
 export const PERCENTAGE_OF_GENERIC_DECORATION = {

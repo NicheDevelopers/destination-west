@@ -1,5 +1,6 @@
-import { TILE_SIZE } from "@/engine/consts";
+import { SAND_VARIANTS, TILE_SIZE } from "@/engine/consts";
 import type { AnimationInfo, AnimationName, ImageInfoType } from "@/engine/Sprite/imgInfo";
+import { pathShapes, pathTileName } from "@/game/Location/path-tiles";
 
 function uniformDurations(frameCount: number, duration: number): number[] {
   return Array.from({ length: frameCount }, () => duration);
@@ -127,126 +128,6 @@ const imgInfo: Map<string, ImageInfoType> = new Map([
   ["32_kaktus4", createImage("img/32_kaktus4.png")],
   ["torso", createImage("img/torso.png")],
   [
-    "bank-3x2",
-    createImage(
-      "img/bank-3x2.png",
-      TILE_SIZE * 2,
-      TILE_SIZE * 3,
-      0,
-      0,
-      TILE_SIZE * 2,
-      TILE_SIZE * 3,
-    ),
-  ],
-  [
-    "bank-4x2",
-    createImage(
-      "img/bank-4x2.png",
-      TILE_SIZE * 2,
-      TILE_SIZE * 4,
-      0,
-      0,
-      TILE_SIZE * 2,
-      TILE_SIZE * 4,
-    ),
-  ],
-  [
-    "bank-3x3",
-    createImage(
-      "img/bank-3x3.png",
-      TILE_SIZE * 3,
-      TILE_SIZE * 3,
-      0,
-      0,
-      TILE_SIZE * 3,
-      TILE_SIZE * 3,
-    ),
-  ],
-  [
-    "bank-4x3",
-    createImage(
-      "img/bank-4x3.png",
-      TILE_SIZE * 3,
-      TILE_SIZE * 4,
-      0,
-      0,
-      TILE_SIZE * 3,
-      TILE_SIZE * 4,
-    ),
-  ],
-  [
-    "bank-5x3",
-    createImage(
-      "img/bank-5x3.png",
-      TILE_SIZE * 3,
-      TILE_SIZE * 5,
-      0,
-      0,
-      TILE_SIZE * 3,
-      TILE_SIZE * 5,
-    ),
-  ],
-  [
-    "bank-3x2",
-    createImage(
-      "img/bank-3x2.png",
-      TILE_SIZE * 2,
-      TILE_SIZE * 3,
-      0,
-      0,
-      TILE_SIZE * 2,
-      TILE_SIZE * 3,
-    ),
-  ],
-  [
-    "bank-4x2",
-    createImage(
-      "img/bank-4x2.png",
-      TILE_SIZE * 2,
-      TILE_SIZE * 4,
-      0,
-      0,
-      TILE_SIZE * 2,
-      TILE_SIZE * 4,
-    ),
-  ],
-  [
-    "bank-3x3",
-    createImage(
-      "img/bank-3x3.png",
-      TILE_SIZE * 3,
-      TILE_SIZE * 3,
-      0,
-      0,
-      TILE_SIZE * 3,
-      TILE_SIZE * 3,
-    ),
-  ],
-  [
-    "bank-4x3",
-    createImage(
-      "img/bank-4x3.png",
-      TILE_SIZE * 3,
-      TILE_SIZE * 4,
-      0,
-      0,
-      TILE_SIZE * 3,
-      TILE_SIZE * 4,
-    ),
-  ],
-  [
-    "bank-5x3",
-    createImage(
-      "img/bank-5x3.png",
-      TILE_SIZE * 3,
-      TILE_SIZE * 5,
-      0,
-      0,
-      TILE_SIZE * 3,
-      TILE_SIZE * 5,
-    ),
-  ],
-  [
     // Sheets exported from docs/art-pipeline/Gunslinger_order; the art faces right
     "player",
     {
@@ -315,31 +196,73 @@ const townPropSheet = new Spritesheet("img/town-props.png", 3, 3, townPropList);
 const itemsList = ["apple", "cigar", "revolver-1", "revolver-2", "broken-bottle", "whisky"];
 const itemsSheet = new Spritesheet("img/items.png", 6, 1, itemsList);
 
-const pathTypeList = [
-  "path-narrow-side-1",
-  "path-narrow-side-2",
-  "path-narrow-side-3",
-  "path-narrrow-corner-1",
-  "path-narrrow-corner-2",
-  "path-narrow-end-1",
-  "path-narrow-end-2",
-  "path-narrow-fork-1",
-  "path-narrow-fork-2",
-  "path-narrow-crossroad-1",
-  "path-narrow-crossroad-2",
-  "path-wide-full-1",
-  "path-wide-inner-corner-1",
-  "path-wide-inner-corner-2",
-  "path-wide-side-1",
-  "path-wide-side-2",
-  "path-wide-corner-1",
-  "path-wide-corner-2",
+const rockList = [
+  "decoration-pebbles-1_nc_nd",
+  "decoration-rock-small-1",
+  "decoration-rock-banded-1",
+  "decoration-rock-ledge-1",
+  "decoration-hoodoo-1",
+  "decoration-rock-split-1",
+  "decoration-rock-rubble-1",
+  "decoration-rock-slab-1_nc_nd",
+  "decoration-rock-boulders-1",
 ];
-const pathSheet = new Spritesheet("img/path.png", 18, 1, pathTypeList);
+const rockSheet = new Spritesheet("img/rocks.png", 9, 1, rockList);
+
+const sandList: string[] = [];
+for (let variant = 1; variant <= SAND_VARIANTS; variant++) sandList.push(`sand-${variant}`);
+const sandSheet = new Spritesheet("img/sand.png", SAND_VARIANTS, 1, sandList);
+
+const plantList = [
+  "decoration-grass-1_nc_nd",
+  "decoration-grass-2_nc_nd",
+  "decoration-sagebrush-1_nc",
+  "decoration-creosote-1_nc",
+  "decoration-dead-brush-1_nc_nd",
+  "decoration-yucca-1",
+  "decoration-prickly-pear-1",
+  "decoration-marigolds-1_nc_nd",
+  "decoration-ocotillo-1_nc",
+  "decoration-barrel-cactus-1",
+  "decoration-cholla-1",
+  "decoration-brittlebush-1_nc",
+  "decoration-agave-1",
+  "decoration-tall-grass-1_nc",
+  "decoration-saguaro-1",
+  "decoration-hedgehog-cactus-1",
+];
+const plantSheet = new Spritesheet("img/plants.png", 16, 1, plantList);
+
+const pathTypeList: string[] = [];
+for (const [shape, variantCount] of pathShapes) {
+  for (let variant = 1; variant <= variantCount; variant++) {
+    pathTypeList.push(pathTileName(shape, variant));
+  }
+}
+const pathSheet = new Spritesheet("img/path.png", pathTypeList.length, 1, pathTypeList);
+
+const buildingSizes = [
+  { xTiles: 3, yTiles: 2 },
+  { xTiles: 4, yTiles: 2 },
+  { xTiles: 3, yTiles: 3 },
+  { xTiles: 4, yTiles: 3 },
+  { xTiles: 5, yTiles: 3 },
+];
+for (const buildingImage of ["bank", "sheriff", "saloon"]) {
+  for (const { xTiles, yTiles } of buildingSizes) {
+    const name = `${buildingImage}-${xTiles}x${yTiles}`;
+    const height = TILE_SIZE * yTiles;
+    const width = TILE_SIZE * xTiles;
+    imgInfo.set(name, createImage(`img/${name}.png`, height, width, 0, 0, height, width));
+  }
+}
 
 townPropSheet.saveToMap(imgInfo);
+sandSheet.saveToMap(imgInfo);
 pathSheet.saveToMap(imgInfo);
 itemsSheet.saveToMap(imgInfo);
+rockSheet.saveToMap(imgInfo);
+plantSheet.saveToMap(imgInfo);
 
 export interface BuildingPart {
   name: string;
@@ -381,7 +304,7 @@ let buildings = ["sheriff", "house", "saloon"];
 buildings.forEach((building) => {
   buildingParts.forEach((buildingPart) => {
     imgInfo.set("building-" + building + "-" + buildingPart.name, {
-      src: "img/bank.png",
+      src: building === "house" ? "img/bank.png" : `img/${building}.png`,
       height: TILE_SIZE,
       width: TILE_SIZE,
       row: buildingPart.row,

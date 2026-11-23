@@ -3,10 +3,11 @@ import Entity from "@/engine/Entity";
 import { ctx } from "@/engine/Browser";
 import { createCanvas } from "@/lib/dom";
 import { distance, comparePositions, type Point } from "@/lib/utilities";
-import { seedRoll } from "@/lib/random";
+import { seedRoll, srandIntInRange } from "@/lib/random";
 import { TILE_SIZE } from "@/engine/consts";
-import { PERCENTAGE_OF_GENERIC_DECORATION, FOCUS_PARAMETERS } from "@/game/consts";
+import { PERCENTAGE_OF_GENERIC_DECORATION, FOCUS_PARAMETERS, PLANT_PATCHES } from "@/game/consts";
 import Building, { type BuildingType } from "./Building";
+import { pathShapes, pathTileName } from "./path-tiles";
 import type { StreetPreset } from "./townPresets";
 import type Game from "@/game/Game";
 import type Player from "@/game/Entity/Player";
@@ -20,38 +21,6 @@ import type { EntityOptions } from "@/engine/Entity";
 export type LocationInteractible = Interactible;
 
 type Drawable = Entity | LocationInteractible | Player;
-
-/* pathInfo keys describe the presence of paths on adjacent squares.
-   The first digit describes the top-left adjacent tile. If that tile
-   is a path then we represet is as a 1, otherwise as 0.
-   The next digit describes the tile over the top edge and so on.
-   After checking a whole row we move to the next one.
-*/
-
-const defaultStreet = "street";
-
-const pathInfo = new Map<string, string[]>([
-  ["00100010", ["path-narrow-side-1", "path-narrow-side-2", "path-narrow-side-3"]],
-  ["00100011", ["path-narrow-side-1", "path-narrow-side-2", "path-narrow-side-3"]],
-  ["01100010", ["path-narrow-side-1", "path-narrow-side-2", "path-narrow-side-3"]],
-  ["01110010", ["path-narrow-side-1", "path-narrow-side-2", "path-narrow-side-3"]],
-  ["00001010", ["path-narrrow-corner-1", "path-narrrow-corner-2"]],
-  ["00000010", ["path-narrow-end-1", "path-narrow-end-2"]],
-  ["10001010", ["path-narrow-fork-1", "path-narrow-fork-2"]],
-  ["10101010", ["path-narrow-crossroad-1", "path-narrow-crossroad-2"]],
-  ["11111111", ["path-wide-full-1"]],
-  ["11111110", ["path-wide-inner-corner-1", "path-wide-inner-corner-2"]],
-  ["00111110", ["path-wide-side-1", "path-wide-side-2"]],
-  ["01111110", ["path-wide-side-1", "path-wide-side-2"]],
-  ["00111111", ["path-wide-side-1", "path-wide-side-2"]],
-  ["00001110", ["path-wide-corner-1", "path-wide-corner-2"]],
-  //path-wide-fork
-  //["11111010","path-wide-corner-1"],
-  //path-wider-fork-left
-  //["11100010","path-wide-corner-1"],
-  //path-wider-fork-right
-  //["10100011","path-wide-corner-1"],
-]);
 
 class Location {
   game: Game;
@@ -81,12 +50,17 @@ class Location {
     this.height = height;
     this.widthPx = this.width * TILE_SIZE;
     this.heightPx = this.height * TILE_SIZE;
-    this.tiles = Array.from({ length: width }, (_, x) =>
-      Array.from({ length: height }, (_, y) => new Tile(background, { x, y })),
-    );
     this.awaitAssets = 0;
+    this.tiles = Array.from({ length: width }, (_, x) =>
+      Array.from({ length: height }, (_, y) => this.createAwaitedTile(background, { x, y })),
+    );
     this.playerSpawn = { x: 0, y: 0 };
     this.focused = null;
+  }
+
+  private createAwaitedTile(typeName: string, gridPos: Point): Tile {
+    this.awaitAssets++;
+    return new Tile(typeName, gridPos, { callback: () => this.awaitAssets-- });
   }
 
   prerender(): void {
@@ -125,13 +99,23 @@ class Location {
    * Tiles within a 5x5 square of a building are considered to be close to it.
    */
   placeGenericDecoration(): void {
-    let ruralDecorations = [["cactus-1x"], ["small-stones-1"], ["green-bush-1"]];
-
-    let townDecorations = [
-      //["roadsign", 1],
-      //["stone-well", 1],
-      ["big-bag-3x"],
+    const ruralDecorations = [
+      "saguaro-1",
+      "saguaro-1",
+      "barrel-cactus-1",
+      "barrel-cactus-1",
+      "green-bush-1",
+      "pebbles-1",
+      "rock-small-1",
+      "rock-banded-1",
+      "rock-ledge-1",
+      "hoodoo-1",
+      "rock-split-1",
+      "rock-rubble-1",
+      "rock-slab-1",
+      "rock-boulders-1",
     ];
+    const townDecorations = ["big-bag-3x"];
 
     for (let x = 0; x < this.tiles.length; x++)
       for (let y = 0; y < this.tiles[0].length; y++) {
@@ -139,14 +123,12 @@ class Location {
         if (this.tiles[x][y].hasEntityOfType(Building)) continue;
 
         let decorationChoices = null;
-
-        if (!this.nearToBuilding(x, y) && seedRoll(PERCENTAGE_OF_GENERIC_DECORATION.townPercentage))
-          decorationChoices = townDecorations;
-        else if (
-          !this.nearToBuilding(x, y) &&
-          seedRoll(PERCENTAGE_OF_GENERIC_DECORATION.ruralPercentage)
-        )
+        if (this.nearToBuilding(x, y)) {
+          if (seedRoll(PERCENTAGE_OF_GENERIC_DECORATION.townPercentage))
+            decorationChoices = townDecorations;
+        } else if (seedRoll(PERCENTAGE_OF_GENERIC_DECORATION.ruralPercentage)) {
           decorationChoices = ruralDecorations;
+        }
 
         if (decorationChoices)
           this.decorations.push(
@@ -157,6 +139,92 @@ class Location {
             ),
           );
       }
+  }
+
+  /**
+   * Grow plants in large irregular patches. Each patch is a few overlapping
+   * blobs, densest in the middle of each blob and thinning out toward its edge.
+   */
+  placePlantPatches(): void {
+    // grass and small plants are listed more than once so they show up more often
+    const plants = [
+      "grass-1",
+      "grass-1",
+      "grass-1",
+      "grass-2",
+      "grass-2",
+      "marigolds-1",
+      "marigolds-1",
+      "sagebrush-1",
+      "sagebrush-1",
+      "creosote-1",
+      "creosote-1",
+      "dead-brush-1",
+      "yucca-1",
+      "prickly-pear-1",
+      "tall-grass-1",
+      "tall-grass-1",
+      "brittlebush-1",
+      "brittlebush-1",
+      "ocotillo-1",
+      "barrel-cactus-1",
+      "barrel-cactus-1",
+      "cholla-1",
+      "cholla-1",
+      "prickly-pear-1",
+      "saguaro-1",
+      "saguaro-1",
+      "hedgehog-cactus-1",
+      "hedgehog-cactus-1",
+      "agave-1",
+    ];
+    const occupied = new Set<string>();
+    for (const decoration of this.decorations) {
+      occupied.add(`${decoration.pos.x / TILE_SIZE},${decoration.pos.y / TILE_SIZE}`);
+    }
+
+    const patchCount = Math.ceil((this.width * this.height) / PLANT_PATCHES.tilesPerPatch);
+    for (let patch = 0; patch < patchCount; patch++) {
+      const patchCenter = {
+        x: srandIntInRange(0, this.width),
+        y: srandIntInRange(0, this.height),
+      };
+      for (let blob = 0; blob < PLANT_PATCHES.blobsPerPatch; blob++) {
+        const radius = srandIntInRange(
+          PLANT_PATCHES.minBlobRadius,
+          PLANT_PATCHES.maxBlobRadius + 1,
+        );
+        const blobCenter = {
+          x: patchCenter.x + srandIntInRange(-radius, radius + 1),
+          y: patchCenter.y + srandIntInRange(-radius, radius + 1),
+        };
+        for (let x = blobCenter.x - radius; x <= blobCenter.x + radius; x++) {
+          for (let y = blobCenter.y - radius; y <= blobCenter.y + radius; y++) {
+            if (x < 0 || y < 0 || x >= this.width || y >= this.height) continue;
+            const tile = this.tiles[x][y];
+            if (tile.typeName !== "sand" || tile.entities.length > 0) continue;
+            if (occupied.has(`${x},${y}`) || this.nearToBuilding(x, y, 1)) continue;
+
+            const closeness = 1 - distance(blobCenter, { x, y }) / radius;
+            if (closeness <= 0) continue;
+            if (!seedRoll(Math.min(1, PLANT_PATCHES.density * closeness * 1.6))) continue;
+
+            occupied.add(`${x},${y}`);
+            // nudge each plant off the tile grid so a patch doesn't look like rows
+            const maxNudge = PLANT_PATCHES.maxNudge;
+            const nudgedX = x * TILE_SIZE + srandIntInRange(-maxNudge, maxNudge + 1);
+            const nudgedY = y * TILE_SIZE + srandIntInRange(-maxNudge, maxNudge + 1);
+            const pos = {
+              x: Math.min(Math.max(nudgedX, 0), this.widthPx - TILE_SIZE),
+              y: Math.min(Math.max(nudgedY, 0), this.heightPx - TILE_SIZE),
+            };
+            this.decorations.push(
+              new Entity("decoration-" + plants.srandomElement()!, pos, { hitbox: this.tiles }),
+            );
+          }
+        }
+      }
+    }
   }
 
   getNumOfTiles(): number {
@@ -172,7 +240,7 @@ class Location {
   ): void {
     for (let y = gridPos.y; y < gridPos.y + heightInTiles; ++y) {
       for (let x = gridPos.x; x < gridPos.x + widthInTiles; ++x) {
-        this.tiles[x][y] = new Tile("sand", { x, y });
+        this.tiles[x][y] = this.createAwaitedTile("sand", { x, y });
       }
     }
     let width = widthInTiles * TILE_SIZE;
@@ -203,7 +271,6 @@ class Location {
   }
 
   chooseStreet(streetArray: boolean[][], x: number, y: number): [string, number] {
-    let string = "";
     const surrounding = [
       [0, -1],
       [1, -1],
@@ -214,17 +281,20 @@ class Location {
       [-1, 0],
       [-1, -1],
     ];
-    surrounding.forEach(([dx, dy]) => {
-      string += (streetArray[x + dx]?.[y + dy] ?? true) ? "1" : "0";
-    });
-
-    for (const element of [0, 90, 180, 270]) {
-      const variants = pathInfo.get(string);
-      if (variants) return [variants.srandomElement()!, element];
-      string = string.substring(2, 8) + string.substring(0, 2);
+    const isPath = surrounding.map(([dx, dy]) => streetArray[x + dx]?.[y + dy] ?? true);
+    // a diagonal only changes the shape when both tiles beside it are path too
+    for (let i = 1; i < 8; i += 2) {
+      if (!isPath[i - 1] || !isPath[(i + 1) % 8]) isPath[i] = false;
     }
 
-    return [defaultStreet, 0];
+    let shape = isPath.map((path) => (path ? "1" : "0")).join("");
+    for (const rotation of [0, 90, 180, 270]) {
+      const variantCount = pathShapes.get(shape);
+      if (variantCount)
+        return [pathTileName(shape, srandIntInRange(1, variantCount + 1)), rotation];
+      shape = shape.substring(2, 8) + shape.substring(0, 2);
+    }
+    throw new Error(`No path tile for neighbours ${shape}`);
   }
 
   placeStreets(preset: { streets: StreetPreset[] }): void {

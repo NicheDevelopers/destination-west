@@ -52,7 +52,7 @@ class Town extends Location {
 
   private placeBuildings(preset: TownPreset): void {
     const typesLeft: BuildingType[] = [];
-    for (const type of ["saloon", "sheriff", "house"] as const) {
+    for (const type of ["saloon", "sheriff", "bank", "house"] as const) {
       const count = this.buildingCounts[type] ?? 0;
       for (let i = 0; i < count; i++) {
         typesLeft.push(type);

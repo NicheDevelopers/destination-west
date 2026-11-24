@@ -4,7 +4,6 @@ export const TILE_SIZE = 64;
 // World pixels per art pixel: art is drawn on a 32 px tile grid, the world uses 64 px tiles
 export const PIXEL_SCALE = 2;
 export const SPRITE_SCALE = 1;
-// Sand tiles pick one of the sprites "sand-1" .. "sand-<SAND_VARIANTS>"
 export const SAND_VARIANTS = 6;
 type Distances = { left: number; right: number; up: number; down: number };
 export function distances(left: number, right: number, up: number, down: number): Distances {

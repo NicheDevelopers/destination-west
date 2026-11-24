@@ -248,7 +248,7 @@ const buildingSizes = [
   { xTiles: 4, yTiles: 3 },
   { xTiles: 5, yTiles: 3 },
 ];
-for (const buildingImage of ["bank", "sheriff", "saloon"]) {
+for (const buildingImage of ["house", "bank", "sheriff", "saloon"]) {
   for (const { xTiles, yTiles } of buildingSizes) {
     const name = `${buildingImage}-${xTiles}x${yTiles}`;
     const height = TILE_SIZE * yTiles;
@@ -299,12 +299,12 @@ let buildingParts = [
   newBuildingPart("pedestal", 3, 3),
   newBuildingPart("rightpedestal", 4, 3),
 ];
-let buildings = ["sheriff", "house", "saloon"];
+let buildings = ["sheriff", "house", "saloon", "bank"];
 
 buildings.forEach((building) => {
   buildingParts.forEach((buildingPart) => {
     imgInfo.set("building-" + building + "-" + buildingPart.name, {
-      src: building === "house" ? "img/bank.png" : `img/${building}.png`,
+      src: `img/${building}.png`,
       height: TILE_SIZE,
       width: TILE_SIZE,
       row: buildingPart.row,

@@ -10,7 +10,6 @@ import type { Point } from "@/lib/utilities";
 
 const backgroundPrefixes = ["building-", "decoration-", "path-"];
 
-// Picking a random variant and turning it a random way hides the repeating texture
 function randomSandSprite(callback: () => void): Sprite {
   return new Sprite(`sand-${randIntInRange(1, SAND_VARIANTS + 1)}`, {
     rotation: randIntInRange(0, 4) * 90,

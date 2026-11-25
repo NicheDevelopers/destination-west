@@ -1,6 +1,6 @@
 import Interactible from "./Interactible";
 import { stateManager } from "@/engine/state/StateManager";
-import { DEFAULT_EQUIPMENT_SIZE, CASH_MIN_MAX_PARAMETERS as cashParam } from "@/game/consts";
+import { CASH_MIN_MAX_PARAMETERS as cashParam } from "@/game/consts";
 import Equipment from "@/game/Equipment/Equipment";
 import { randIntInRange } from "@/lib/random";
 import type { Point } from "@/lib/utilities";
@@ -20,7 +20,7 @@ class Container extends Interactible {
       Object.assign(options, { hitbox: game.currentTown.tiles }),
     );
     const startCash = randIntInRange(cashParam.minCash, cashParam.maxCash);
-    this.equipment = new Equipment(DEFAULT_EQUIPMENT_SIZE, startCash);
+    this.equipment = new Equipment(startCash);
   }
   override interact(who: Player) {
     console.log("Interacted with a container!");

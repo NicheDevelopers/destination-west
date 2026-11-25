@@ -73,37 +73,6 @@ class TransferDisplay extends State {
         cashDiv.appendChild(buttonGetCash);
       }
       listDiv.appendChild(cashDiv);
-      const sortDiv = createElement(
-        "div",
-        null,
-        null,
-        ["list-info"],
-        {},
-        null,
-        "Sort by weight from",
-      );
-
-      for (const [label, heavyOnTop] of [
-        ["Heavy", true],
-        ["Light", false],
-      ] as const) {
-        const buttonSort = createElement(
-          "button",
-          null,
-          null,
-          ["button", "eq-button"],
-          {},
-          null,
-          label,
-        );
-        buttonSort.addEventListener("click", () => {
-          givenEquipment.sortByWeight(heavyOnTop);
-          this.refresh();
-        });
-        sortDiv.appendChild(buttonSort);
-      }
-
-      listDiv.appendChild(sortDiv);
 
       for (const record of givenEquipment.records) {
         listDiv.appendChild(
@@ -116,17 +85,6 @@ class TransferDisplay extends State {
           ),
         );
       }
-
-      const sumWeight = createElement(
-        "div",
-        null,
-        null,
-        ["list-info"],
-        {},
-        null,
-        `Weight summary of all items: ${givenEquipment.sumWeight()} / ${givenEquipment.maxWeight}`,
-      );
-      listDiv.appendChild(sumWeight);
     }
   }
 
@@ -138,17 +96,14 @@ class TransferDisplay extends State {
     transferEquipment: Equipment,
   ): HTMLDivElement {
     const div = createElement("div", null, null, ["list-element"], {}, null, null);
-    const nameDiv = createElement("div", null, null, ["list-obj"], {}, null, record.item.name);
-    const weightDiv = createElement(
+    const nameDiv = createElement(
       "div",
       null,
       null,
       ["list-obj"],
-      {
-        marginLeft: "5%",
-      },
+      { marginLeft: "5%" },
       null,
-      String(record.getWeight()),
+      record.item.name,
     );
     const quantityDiv = createElement(
       "div",
@@ -175,7 +130,7 @@ class TransferDisplay extends State {
       transfer.transferItem(record, givenEquipment, transferEquipment);
       this.refresh();
     });
-    div.append(record.item.sprite.img, nameDiv, weightDiv, quantityDiv, transferButton);
+    div.append(record.item.sprite.img, nameDiv, quantityDiv, transferButton);
     return div;
   }
 

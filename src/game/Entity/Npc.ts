@@ -2,7 +2,7 @@ import Interactible from "./Interactible";
 import { genNpcName } from "@/game/generators/nameGenerators";
 import Dialogue from "@/game/Dialogue/Dialogue";
 import testDialogue from "@/game/Dialogue/test_dialogue.dwd?raw";
-import { DEFAULT_EQUIPMENT_SIZE, NPC_PARAMETERS } from "@/game/consts";
+import { NPC_PARAMETERS } from "@/game/consts";
 import Equipment from "@/game/Equipment/Equipment";
 import Movement from "@/engine/Movement";
 import Stats, { type StatLevel, type StatName } from "./Stats";
@@ -39,7 +39,7 @@ class Npc extends Interactible {
     this.canMove = true;
     this.stats = new Stats();
     this.movement = new Movement(this, NPC_PARAMETERS.defaultNpcSpeed);
-    this.equipment = new Equipment(DEFAULT_EQUIPMENT_SIZE, NPC_PARAMETERS.defaultNpcStartCash);
+    this.equipment = new Equipment(NPC_PARAMETERS.defaultNpcStartCash);
   }
 
   changeStat(statName: StatName, changeValue: number): void {

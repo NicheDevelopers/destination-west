@@ -29,42 +29,9 @@ class EquipmentDisplay extends State {
       createElement("div", null, null, ["list-info"], {}, null, `Cash: ${this.equipment.cash}`),
     );
 
-    const sortDiv = createElement(
-      "div",
-      null,
-      null,
-      ["list-info"],
-      {},
-      null,
-      "Sort by weight from",
-    );
-    for (const [label, heavyOnTop] of [
-      ["Heavy", true],
-      ["Light", false],
-    ] as const) {
-      const button = createElement("button", null, null, ["button", "eq-button"], {}, null, label);
-      button.addEventListener("click", () => {
-        this.equipment.sortByWeight(heavyOnTop);
-        this.refresh();
-      });
-      sortDiv.appendChild(button);
-    }
-    this.listDiv.appendChild(sortDiv);
-
     for (const record of this.equipment.records) {
       this.listDiv.appendChild(this.recordToListElement(record));
     }
-    this.listDiv.appendChild(
-      createElement(
-        "div",
-        null,
-        null,
-        ["list-info"],
-        {},
-        null,
-        `Weight summary of all items: ${this.equipment.sumWeight()} / ${this.equipment.maxWeight}`,
-      ),
-    );
   }
 
   override startHook(): void {
@@ -86,15 +53,6 @@ class EquipmentDisplay extends State {
       { marginLeft: "5%" },
       null,
       record.item.name,
-    );
-    const weightDiv = createElement(
-      "div",
-      null,
-      null,
-      ["list-obj"],
-      {},
-      null,
-      String(record.getWeight()),
     );
     const quantityDiv = createElement(
       "div",
@@ -118,7 +76,7 @@ class EquipmentDisplay extends State {
       this.game.player.dropItem(record);
       this.refresh();
     });
-    div.append(record.item.sprite.img, nameDiv, weightDiv, quantityDiv, dropButton);
+    div.append(record.item.sprite.img, nameDiv, quantityDiv, dropButton);
     return div;
   }
 

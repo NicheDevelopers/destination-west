@@ -26,7 +26,7 @@ class Transfer {
    * @param equipmentTo inventory to which you want to transfer
    */
   transferItem(record: EquipmentRecord, equipmentFrom: Equipment, equipmentTo: Equipment): void {
-    if ((!this.trading || equipmentTo.canBuy(record.item)) && equipmentTo.canFit(record.item))
+    if (!this.trading || equipmentTo.canBuy(record.item))
       equipmentTo.put(equipmentFrom.transfer(record, this.trading), this.trading);
   }
 

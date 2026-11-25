@@ -163,7 +163,6 @@ const imgInfo: Map<string, ImageInfoType> = new Map([
   ["pants", createImage("img/clothes.png", TILE_SIZE, TILE_SIZE, 0, 1)],
   ["barrel", createImage("img/barrel.png")],
   ["chuck-a-luck-table", createImage("img/chuck-a-luck-table.png")],
-  ["32_kaktus4", createImage("img/32_kaktus4.png")],
   ["torso", createImage("img/torso.png")],
   [
     // Side sheets exported from docs/art-pipeline/Gunslinger_order, the art faces right.
@@ -288,17 +287,8 @@ const imgInfo: Map<string, ImageInfoType> = new Map([
   treadmillInfo("treadmill-vertical-wheel", 48, 64, 16, false),
 ]);
 
-const townPropList = [
-  "street",
-  "sand",
-  "decoration-small-stones-1_nc_nd",
-  "decoration-cactus-1x",
-  "decoration-roadsign",
-  "decoration-stone-well",
-  "decoration-big-bag-3x",
-  "decoration-green-bush-1_nc",
-];
-const townPropSheet = new Spritesheet("img/town-props.png", 3, 3, townPropList);
+const townPropList = ["decoration-roadsign", "decoration-stone-well", "decoration-big-bag-3x"];
+const townPropSheet = new Spritesheet("img/town-props.png", 3, 1, townPropList);
 
 const itemsList = ["apple", "cigar", "revolver-1", "revolver-2", "broken-bottle", "whisky"];
 const itemsSheet = new Spritesheet("img/items.png", 6, 1, itemsList);

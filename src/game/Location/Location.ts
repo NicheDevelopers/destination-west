@@ -104,7 +104,7 @@ class Location {
       "saguaro-1",
       "barrel-cactus-1",
       "barrel-cactus-1",
-      "green-bush-1",
+      "sagebrush-1",
       "pebbles-1",
       "rock-small-1",
       "rock-banded-1",

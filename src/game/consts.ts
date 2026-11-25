@@ -93,7 +93,7 @@ export const CHUCK_A_LUCK_PARAMETERS = {
   diceSize: 64,
   diceGap: 16,
   bettingSpotSize: 128,
-  horizontalGap: 63,
+  horizontalGap: 64,
   verticalGap: 128,
   horizontalOffset: 63,
   verticalOffset: 64,

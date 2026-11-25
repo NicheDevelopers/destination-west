@@ -2,6 +2,9 @@ import { SAND_VARIANTS, TILE_SIZE } from "@/engine/consts";
 import type { AnimationInfo, AnimationName, ImageInfoType } from "@/engine/Sprite/imgInfo";
 import { pathShapes, pathTileName } from "@/game/Location/path-tiles";
 
+// How often a run cycle lets the hat fly up once and land a frame late
+const HAT_JUMP_CHANCE = 0.15;
+
 function uniformDurations(frameCount: number, duration: number): number[] {
   return Array.from({ length: frameCount }, () => duration);
 }
@@ -128,7 +131,8 @@ const imgInfo: Map<string, ImageInfoType> = new Map([
   ["32_kaktus4", createImage("img/32_kaktus4.png")],
   ["torso", createImage("img/torso.png")],
   [
-    // Sheets exported from docs/art-pipeline/Gunslinger_order; the art faces right
+    // Side sheets exported from docs/art-pipeline/Gunslinger_order, the art faces right.
+    // North (back) and south (front) sheets come from docs/art-pipeline/directions.
     "player",
     {
       src: "img/gunslinger/idle.png",
@@ -165,6 +169,69 @@ const imgInfo: Map<string, ImageInfoType> = new Map([
             src: "img/gunslinger/run.png",
             frameDurations: uniformDurations(8, 100),
             groundSpeed: 65,
+            rareVariant: { src: "img/gunslinger/run-hat.png", chance: HAT_JUMP_CHANCE },
+          },
+        ],
+        [
+          "idle-north",
+          {
+            name: "idle-north",
+            src: "img/gunslinger/idle-north.png",
+            frameDurations: [400, 200, 200, 200, 200],
+            outOfBreathFrameDurations: uniformDurations(5, 200),
+            flipsWhenMirrored: false,
+          },
+        ],
+        [
+          "idle-south",
+          {
+            name: "idle-south",
+            src: "img/gunslinger/idle-south.png",
+            frameDurations: [400, 200, 200, 200, 200],
+            outOfBreathFrameDurations: uniformDurations(5, 200),
+            flipsWhenMirrored: false,
+          },
+        ],
+        [
+          "walk-north",
+          {
+            name: "walk-north",
+            src: "img/gunslinger/walk-north.png",
+            frameDurations: uniformDurations(8, 100),
+            groundSpeed: 30,
+            flipsWhenMirrored: false,
+          },
+        ],
+        [
+          "walk-south",
+          {
+            name: "walk-south",
+            src: "img/gunslinger/walk-south.png",
+            frameDurations: uniformDurations(8, 100),
+            groundSpeed: 30,
+            flipsWhenMirrored: false,
+          },
+        ],
+        [
+          "run-north",
+          {
+            name: "run-north",
+            src: "img/gunslinger/run-north.png",
+            frameDurations: uniformDurations(8, 100),
+            groundSpeed: 65,
+            rareVariant: { src: "img/gunslinger/run-north-hat.png", chance: HAT_JUMP_CHANCE },
+            flipsWhenMirrored: false,
+          },
+        ],
+        [
+          "run-south",
+          {
+            name: "run-south",
+            src: "img/gunslinger/run-south.png",
+            frameDurations: uniformDurations(8, 100),
+            groundSpeed: 65,
+            rareVariant: { src: "img/gunslinger/run-south-hat.png", chance: HAT_JUMP_CHANCE },
+            flipsWhenMirrored: false,
           },
         ],
         [

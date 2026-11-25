@@ -8,6 +8,7 @@ import time from "./time";
 import Pathfinder from "./Pathfinder";
 import type { InputManager } from "@/engine/state/State";
 import type AnimatedSprite from "@/engine/Sprite/AnimatedSprite";
+import type { AnimationName } from "@/engine/Sprite/imgInfo";
 import type Hitbox from "./Hitbox";
 
 const movementOptions = new Map([
@@ -215,6 +216,8 @@ export default class Movement {
   pathfinder: Pathfinder;
   /** Time in ms the entity stays out of breath, counting down once it stops sprinting */
   outOfBreathTime: number = 0;
+  /** Which view the sprite shows: the side (left or right), its back (north) or its front (south) */
+  facing: "side" | "north" | "south" = "side";
 
   constructor(
     entity: MovingEntity,
@@ -269,26 +272,56 @@ export default class Movement {
    */
   updateSprite(): void {
     const sprite = this.entity.sprite;
-    if (this.momentum.direction.facesLeft()) {
-      sprite.mirrored = true;
-    } else if (this.momentum.direction.facesRight()) {
-      sprite.mirrored = false;
-    }
+    this.updateFacing();
 
     const speed = Math.hypot(this.moveX.speed, this.moveY.speed);
     this.updateBreath(speed !== 0 && this.momentum.sprinting);
     sprite.outOfBreath = this.outOfBreathTime > 0;
 
     if (speed !== 0) {
-      const animationName = this.momentum.sprinting ? "run" : "walk";
-      if (sprite.animation?.name !== animationName) sprite.changeAnimation(animationName);
+      this.showAnimation(this.momentum.sprinting ? "run" : "walk");
       // Play the legs at the pace the entity actually moves, so the feet don't slide
       const groundSpeed = sprite.animation?.groundSpeed;
       sprite.tempo = groundSpeed ? speed / (groundSpeed * PIXEL_SCALE) : 1;
       return;
     }
-    if (sprite.animation?.name !== "idle") sprite.changeAnimation("idle");
+    this.showAnimation("idle");
     sprite.tempo = 1;
+  }
+
+  /**
+   * Moving left or right shows the side view, also on a diagonal; moving
+   * straight up or down shows the back or the front. Standing still keeps
+   * the last view.
+   */
+  updateFacing(): void {
+    const direction = this.momentum.direction;
+    const sprite = this.entity.sprite;
+    if (direction.facesLeft()) {
+      sprite.mirrored = true;
+      this.facing = "side";
+    } else if (direction.facesRight()) {
+      sprite.mirrored = false;
+      this.facing = "side";
+    } else if (direction.facesUp()) {
+      this.facing = "north";
+    } else if (direction.facesDown()) {
+      this.facing = "south";
+    }
+  }
+
+  /**
+   * Switch to the animation of this motion for the current view. A sprite
+   * without back and front animations always uses its side ones.
+   */
+  showAnimation(motion: "idle" | "walk" | "run"): void {
+    const sprite = this.entity.sprite;
+    let name: AnimationName = motion;
+    if (this.facing !== "side") {
+      const viewName: AnimationName = `${motion}-${this.facing}`;
+      if (sprite.animations.has(viewName)) name = viewName;
+    }
+    if (sprite.animation?.name !== name) sprite.changeAnimation(name);
   }
 
   /**

@@ -9,7 +9,7 @@ The PNGs in `public/img/` are the source of truth. Text is only how you read and
 
 - `png_to_txt.py <png> <txt>`: turns a PNG into a grid of palette characters, one per art pixel, and records its scale.
 - `txt_to_png.py <txt> <png>`: turns the grid back into a PNG.
-- `preview_on_ground.py <sprite.png> <ground.png> <out.png> [zoom]`: draws a sprite on a ground tile (`public/img/sand.png`, `street.png`) so you can see how it reads in the game.
+- `preview_on_ground.py <sprite.png> <ground.png> <out.png> [zoom]`: draws a sprite on a ground tile (`public/img/sand.png`, `path.png`) so you can see how it reads in the game.
 - `draw.py`: a toolkit for one-off scripts that generate art: `Grid`, `hash01`, `value_noise`, shading, dithered shadows and outlines.
 - `font.txt` and `font_build.py`: the pixel font.
 
@@ -33,7 +33,7 @@ Realistic and gritty, not cartoonish. Think of a dusty frontier town that has se
    - [techniques.md](techniques.md) explains how each kind of existing art was made. Reuse those recipes.
 3. **Preview and look.**
    - Render at scale 8–10 into `/tmp` and look at it with the Read tool.
-   - For anything that stands in the world, also check it with `preview_on_ground.py` on `sand.png` and `street.png`. Lit edges that are close to the ground color disappear.
+   - For anything that stands in the world, also check it with `preview_on_ground.py` on `sand.png` and `path.png`. Lit edges that are close to the ground color disappear.
    - Fix what looks wrong and look again. Expect at least one round of fixes. Thin parts come out too skinny, parts that should touch leave gaps, and small emblems turn into unintended shapes.
 4. **Write the final PNG** into `public/img/`, at the scale the art around it uses: 2 for game art, 4 for dialogue UI.
 5. **Wire it in and check it in the game.** New images have to be registered in `src/game/imgInfo.ts` or `src/game/items.ts`. Run the game (`vp dev`) and check the image next to the art around it. If you're only asked for a draft outside the repo, skip this step but still do the ground preview.
@@ -47,11 +47,11 @@ Realistic and gritty, not cartoonish. Think of a dusty frontier town that has se
 - `house-*.png`, `saloon-*.png`, `sheriff-*.png`
 - `gunslinger/*.png`
 - the `dialogue-*.png` images
+- `town-props.png`, `barrel.png`, `items.png`, `chuck-a-luck-table.png`
+- `minigame_assets/*.png`
 
 **Legacy (don't copy their look):**
 
-- `barrel.png`, `barrel32.png`, `32_kaktus*.png`
-- `town-props.png`, `house32.png`, `saloon32.png`
 - `bank-*.png`
 
 ## Decorations

@@ -14,7 +14,7 @@ class App {
   constructor() {
     this.animationFrameID = 0;
 
-    this.debugging = false;
+    this.debugging = new URLSearchParams(window.location.search).has("debug");
 
     this.browser = new Browser(this);
 
@@ -30,8 +30,16 @@ class App {
       fn: () => {
         this.debugging = !this.debugging;
         this.debugView.setVisibility(this.debugging);
+        this.saveDebuggingInUrl();
       },
     });
+  }
+
+  private saveDebuggingInUrl(): void {
+    const url = new URL(window.location.href);
+    if (this.debugging) url.searchParams.set("debug", "");
+    else url.searchParams.delete("debug");
+    window.history.replaceState(null, "", url);
   }
 
   loop(): void {

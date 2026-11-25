@@ -10,17 +10,10 @@
 #combat-menu {
   position: absolute;
   width: 95%;
-  height: 30%;
+  height: auto;
+  min-height: 30%;
   bottom: 5%;
-  background-color: whitesmoke;
   z-index: 3;
-  border-radius: 1cm;
-  border: solid 6px black;
-  font-size: 42px;
-}
-
-#combat-menu .button-list {
-  padding: 20px;
 }
 
 #combat-menu .button-list.dialogue {

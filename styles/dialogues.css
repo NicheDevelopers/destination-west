@@ -1,18 +1,77 @@
 #dialogue-div {
   position: absolute;
   width: 90%;
-  height: 20%;
+  min-height: 25%;
   bottom: 5%;
-  background-color: whitesmoke;
   z-index: 3;
-  border-radius: 1cm;
-  border: solid 6px black;
-  font-size: 42px;
-  padding: 42px;
+}
 
-  /* -webkit-animation: fadein 2s; /\* Safari, Chrome and Opera > 12.1 *\/ */
-  /* -moz-animation: fadein 2s; /\* Firefox < 16 *\/ */
-  /* -ms-animation: fadein 2s; /\* Internet Explorer *\/ */
-  /* -o-animation: fadein 2s; /\* Opera < 12.1 *\/ */
-  /* animation: fadein 2s; */
+#dialogue-div,
+#combat-menu {
+  box-sizing: border-box;
+  padding: 24px 32px;
+  border: 48px solid transparent;
+  border-image: url("/img/dialogue-frame.png") 48 fill / 48px round;
+  background: none;
+  image-rendering: pixelated;
+  color: #2e1c11;
+  font-family: "Destination West", Georgia, serif;
+  font-size: 48px;
+  line-height: 60px;
+  -webkit-font-smoothing: none;
+}
+
+#dialogue-div .speaker {
+  position: absolute;
+  top: -96px;
+  left: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 24px solid transparent;
+  border-image: url("/img/dialogue-sign.png") 24 fill / 24px round;
+  color: #efe2c0;
+  line-height: 32px;
+  text-transform: uppercase;
+  text-shadow: 4px 4px 0 #1e140c;
+}
+
+#dialogue-div .line {
+  margin: 0;
+}
+
+#dialogue-div .next-indicator {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  width: 36px;
+  height: 24px;
+  background: url("/img/dialogue-next.png");
+  animation: dialogue-next-bob 0.8s steps(2) infinite;
+}
+
+@keyframes dialogue-next-bob {
+  to {
+    transform: translateY(4px);
+  }
+}
+
+:is(#dialogue-div, #combat-menu) .button-list button {
+  color: inherit;
+}
+
+:is(#dialogue-div, #combat-menu) .button-list button::before {
+  content: "";
+  width: 52px;
+  height: 24px;
+  margin-right: 16px;
+  vertical-align: middle;
+  background: url("/img/dialogue-bullet.png");
+}
+
+:is(#dialogue-div, #combat-menu) .button-list button.selected::before {
+  visibility: visible;
+}
+
+:is(#dialogue-div, #combat-menu) .button-list button:is(.selected, :hover) {
+  color: #8a3f1d;
 }

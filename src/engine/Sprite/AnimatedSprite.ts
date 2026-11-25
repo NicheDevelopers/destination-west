@@ -3,6 +3,7 @@ import Sprite, { type SheetInfo, type SpriteOptions } from "./Sprite";
 import time from "@/engine/time";
 import { imgInfo, type AnimationInfo, type AnimationName } from "./imgInfo";
 import { allowProperty } from "@/lib/utilities";
+import { roll } from "@/lib/random";
 import { PIXEL_SCALE } from "@/engine/consts";
 
 export type AnimatedSheetInfo = SheetInfo & {
@@ -33,7 +34,9 @@ function animationImage(src: string): HTMLImageElement {
 export function preloadAnimationImages(): Promise<void[]> {
   const sources = new Set(
     [...imgInfo.values()].flatMap((info) =>
-      [...(info.animations?.values() ?? [])].map((animation) => animation.src),
+      [...(info.animations?.values() ?? [])].flatMap((animation) =>
+        animation.rareVariant ? [animation.src, animation.rareVariant.src] : [animation.src],
+      ),
     ),
   );
   return Promise.all([...sources].map((src) => animationImage(src).decode()));
@@ -53,6 +56,8 @@ class AnimatedSprite extends Sprite {
   frame: number = 0;
   /** Time in ms the current frame has already been shown (at tempo 1) */
   frameTime: number = 0;
+  /** Sheet the current cycle is drawn from: the animation's own, or now and then its rare variant */
+  cycleSrc: string = "";
   declare sheetInfo: AnimatedSheetInfo;
 
   constructor(spriteName: Sprite["typeName"], options: SpriteOptions = {}) {
@@ -87,6 +92,17 @@ class AnimatedSprite extends Sprite {
   reset(): void {
     this.frame = 0;
     this.frameTime = 0;
+    this.startCycle();
+  }
+
+  private startCycle(): void {
+    if (!this.animation) return;
+    const variant = this.animation.rareVariant;
+    if (variant && roll(variant.chance)) {
+      this.cycleSrc = variant.src;
+    } else {
+      this.cycleSrc = this.animation.src;
+    }
   }
 
   /**
@@ -104,7 +120,12 @@ class AnimatedSprite extends Sprite {
         return;
       }
       this.frameTime -= this.frameDuration(this.animation, this.frame);
-      this.frame = lastFrame ? 0 : this.frame + 1;
+      if (lastFrame) {
+        this.frame = 0;
+        this.startCycle();
+      } else {
+        this.frame++;
+      }
     }
   }
 
@@ -119,7 +140,7 @@ class AnimatedSprite extends Sprite {
   override draw(x: number, y: number, context = ctx): void {
     if (!context) throw new Error("AnimatedSprite: No context provided to draw on");
     if (!this.animation) throw new Error("AnimatedSprite: Attempted to draw without an animation");
-    const img = animationImage(this.animation.src);
+    const img = animationImage(this.cycleSrc);
     const columns = Math.max(1, Math.floor(img.naturalWidth / this.width));
     const sx = (this.frame % columns) * this.width;
     const sy = Math.floor(this.frame / columns) * this.height;
@@ -129,7 +150,7 @@ class AnimatedSprite extends Sprite {
     context.save();
     // Scaling pixel art up must not blend neighbouring pixels
     context.imageSmoothingEnabled = false;
-    if (this.mirrored) {
+    if (this.mirrored && this.animation.flipsWhenMirrored !== false) {
       // Flip around the mirror axis so the body stays in place when turning around
       context.translate(x + 2 * this.mirrorAxis * this.scaleX, y);
       context.scale(-1, 1);

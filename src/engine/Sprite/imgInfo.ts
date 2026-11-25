@@ -1,4 +1,17 @@
-export type AnimationName = "idle" | "walk" | "run" | "death";
+export const ANIMATION_NAMES = [
+  "idle",
+  "walk",
+  "run",
+  "death",
+  "idle-north",
+  "idle-south",
+  "walk-north",
+  "walk-south",
+  "run-north",
+  "run-south",
+] as const;
+
+export type AnimationName = (typeof ANIMATION_NAMES)[number];
 
 export interface AnimationInfo {
   name: AnimationName;
@@ -12,6 +25,10 @@ export interface AnimationInfo {
   loop?: boolean;
   /** Art pixels per second the feet move at normal tempo; used to keep feet from sliding */
   groundSpeed?: number;
+  /** Whether a mirrored sprite draws this animation flipped (default). Front and back views keep their sides. */
+  flipsWhenMirrored?: boolean;
+  /** Another sheet with the same timing, played instead of `src` for a whole cycle with this chance (0-1) */
+  rareVariant?: { src: string; chance: number };
 }
 
 export interface ImageInfoType {

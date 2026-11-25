@@ -1,0 +1,43 @@
+# Pixel font. Each band is 11 rows: 7 rows above the baseline row, the baseline row, 3 rows below.
+# Glyphs are separated by | columns, in the order listed below; anything after the last | is ignored.
+# Space is added by the builder.
+# glyphs: ABCDEFGHIJKLMNOPQRSTUVWXYZ
+# glyphs: abcdefghijklmnopqrstuvwxyz
+# glyphs: 0123456789.,!?'":;-()*/&$%+=_’—…
+. transparent
+K #1e140c
+| #c9b48a
+---
+|..KK..|KKKKK.|.KKKK.|KKKKK.|KKKKKK|KKKKKK|.KKKK.|KKK..KKK|KKKK|..KKKK|KKK.KKK|KKKK..|KK...KK|KK...KK|.KKKK.|KKKKK.|.KKKK.|KKKKK..|.KKKKK|KKKKKK|KKK..KKK|KK...KK|KK...KK|KK..KK|KK..KK|KKKKKK|
+|..KK..|.KK.KK|KK..KK|.KK.KK|.KK..K|.KK..K|KK..KK|.KK..KK.|.KK.|...KK.|.KK..K.|.KK...|KKK.KKK|KKK..KK|KK..KK|.KK.KK|KK..KK|.KK.KK.|KKK..K|K.KK.K|.KK..KK.|KK...KK|KK...KK|KK..KK|KK..KK|K...KK|
+|.KKKK.|.KK.KK|KK....|.KK.KK|.KK...|.KK...|KK....|.KK..KK.|.KK.|...KK.|.KK.K..|.KK...|KKKKKKK|KKKK.KK|KK..KK|.KK.KK|KK..KK|.KK.KK.|KKK...|..KK..|.KK..KK.|KK...KK|KK...KK|.KKKK.|KK..KK|...KK.|
+|.K..K.|.KKKK.|KK....|.KK.KK|.KKKK.|.KKKK.|KK....|.KKKKKK.|.KK.|...KK.|.KKKK..|.KK...|KK.K.KK|KK.KKKK|KK..KK|.KK.KK|KK..KK|.KK.KK.|.KKKK.|..KK..|.KK..KK.|KK...KK|KK.K.KK|..KK..|.KKKK.|..KK..|
+|KK..KK|.KK.KK|KK....|.KK.KK|.KK...|.KK...|KK.KKK|.KK..KK.|.KK.|...KK.|.KK.KK.|.KK...|KK...KK|KK..KKK|KK..KK|.KKKK.|KK..KK|.KKKK..|...KKK|..KK..|.KK..KK.|.KK.KK.|KKKKKKK|..KK..|..KK..|.KK...|
+|KKKKKK|.KK.KK|KK....|.KK.KK|.KK...|.KK...|KK..KK|.KK..KK.|.KK.|KK.KK.|.KK..KK|.KK...|KK...KK|KK...KK|KK..KK|.KK...|KK.KKK|.KK.KK.|...KKK|..KK..|.KK..KK.|.KK.KK.|KKK.KKK|.KKKK.|..KK..|KK....|
+|KK..KK|.KK.KK|KK..KK|.KK.KK|.KK..K|.KK...|KK..KK|.KK..KK.|.KK.|KK.KK.|.KK..KK|.KK..K|KK...KK|KK...KK|KK..KK|.KK...|KK..KK|.KK..KK|K..KKK|..KK..|.KK..KK.|..KKK..|KK...KK|KK..KK|..KK..|KK...K|
+|KK..KK|KKKKK.|.KKKK.|KKKKK.|KKKKKK|KKKK..|.KKKK.|KKK..KKK|KKKK|.KKK..|KKK.KKK|KKKKKK|KK...KK|KK...KK|.KKKK.|KKKK..|.KKKK.|KKK..KK|KKKKK.|.KKKK.|..KKKK..|...K...|K.....K|KK..KK|.KKKK.|KKKKKK|
+|......|......|......|......|......|......|......|........|....|......|.......|......|.......|.......|......|......|....KK|.......|......|......|........|.......|.......|......|......|......|
+|......|......|......|......|......|......|......|........|....|......|.......|......|.......|.......|......|......|......|.......|......|......|........|.......|.......|......|......|......|
+|......|......|......|......|......|......|......|........|....|......|.......|......|.......|.......|......|......|......|.......|......|......|........|.......|.......|......|......|......|
+|......|KK....|.....|....KK|......|..KKK|......|KK....|..|....|KK....|KK|.......|......|......|......|......|......|......|....|......|......|.......|......|......|......|....................
+|......|KK....|.....|....KK|......|.KK..|......|KK....|KK|..KK|KK....|KK|.......|......|......|......|......|......|......|.KK.|......|......|.......|......|......|......|....................
+|......|KK....|.....|....KK|......|.KK..|......|KK....|..|....|KK....|KK|.......|......|......|......|......|......|......|.KK.|......|......|.......|......|......|......|....................
+|.KKKK.|KKKKK.|.KKKK|.KKKKK|.KKKK.|KKKK.|.KKKKK|KKKKK.|KK|..KK|KK..KK|KK|KKKKKK.|KKKKK.|.KKKK.|KKKKK.|.KKKKK|KK.KKK|.KKKKK|KKKK|KK..KK|KK..KK|KK.K.KK|KK..KK|KK..KK|KKKKKK|....................
+|....KK|KK..KK|KK...|KK..KK|KK..KK|.KK..|KK..KK|KK..KK|KK|..KK|KK.KK.|KK|KK.K.KK|KK..KK|KK..KK|KK..KK|KK..KK|KKK...|KKK...|.KK.|KK..KK|KK..KK|KK.K.KK|.KKKK.|KK..KK|...KK.|....................
+|.KKKKK|KK..KK|KK...|KK..KK|KKKKKK|.KK..|KK..KK|KK..KK|KK|..KK|KKKK..|KK|KK.K.KK|KK..KK|KK..KK|KK..KK|KK..KK|KK....|.KKKK.|.KK.|KK..KK|KK..KK|KK.K.KK|..KK..|KK..KK|..KK..|....................
+|KK..KK|KK..KK|KK...|KK..KK|KK....|.KK..|KK..KK|KK..KK|KK|..KK|KK.KK.|KK|KK.K.KK|KK..KK|KK..KK|KK..KK|KK..KK|KK....|...KKK|.KK.|KK..KK|.KKKK.|KK.K.KK|.KKKK.|KK..KK|.KK...|....................
+|.KKKKK|KKKKK.|.KKKK|.KKKKK|.KKKK.|.KK..|.KKKKK|KK..KK|KK|..KK|KK..KK|KK|KK.K.KK|KK..KK|.KKKK.|KKKKK.|.KKKKK|KK....|KKKKK.|..KK|.KKKKK|..KK..|.KK.KK.|KK..KK|.KKKKK|KKKKKK|....................
+|......|......|.....|......|......|.....|....KK|......|..|..KK|......|..|.......|......|......|KK....|....KK|......|......|....|......|......|.......|......|....KK|......|....................
+|......|......|.....|......|......|.....|KKKKK.|......|..|KKK.|......|..|.......|......|......|KK....|....KK|......|......|....|......|......|.......|......|KKKKK.|......|....................
+|......|......|.....|......|......|.....|......|......|..|....|......|..|.......|......|......|......|......|......|......|....|......|......|.......|......|......|......|....................
+|.KKKK.|..KK..|.KKKK.|.KKKK.|...KKK|KKKKKK|.KKKK.|KKKKKK|.KKKK.|.KKKK.|..|..|KK|.KKKK.|KK|KK.KK|..|..|....|.KK|KK.|.....|....KK|.KKK..|..K...|KK...K|......|.....|......|KK|........|........|.
+|KK..KK|.KKK..|KK..KK|KK..KK|..KKKK|KK....|KK....|....KK|KK..KK|KK..KK|..|..|KK|KK..KK|KK|KK.KK|..|..|....|KK.|.KK|..K..|....KK|KK.KK.|.KKKKK|KK..KK|......|.....|......|KK|........|........|.
+|KK.KKK|KKKK..|....KK|....KK|.KK.KK|KK....|KK....|....KK|KK..KK|KK..KK|..|..|KK|....KK|K.|K..K.|KK|KK|....|KK.|.KK|K.K.K|...KK.|KK.KK.|KK.K..|...KK.|..KK..|.....|......|K.|........|........|.
+|KK.KKK|..KK..|...KK.|..KKK.|KK..KK|KKKKK.|KKKKK.|...KK.|.KKKK.|KK..KK|..|..|KK|...KK.|..|.....|KK|KK|....|KK.|.KK|.KKK.|..KK..|.KKK..|KK.K..|..KK..|..KK..|KKKKK|......|..|........|........|.
+|KKK.KK|..KK..|..KK..|....KK|KKKKKK|....KK|KK..KK|..KK..|KK..KK|.KKKKK|..|..|KK|..KK..|..|.....|..|..|KKKK|KK.|.KK|K.K.K|..KK..|KK.KKK|.KKKK.|.KK...|KKKKKK|.....|......|..|KKKKKKKK|........|.
+|KKK.KK|..KK..|.KK...|....KK|....KK|....KK|KK..KK|..KK..|KK..KK|....KK|..|..|..|......|..|.....|..|..|....|KK.|.KK|..K..|.KK...|KK..KK|..K.KK|KK..KK|..KK..|KKKKK|......|..|........|........|.
+|KK..KK|..KK..|KK....|KK..KK|....KK|KK..KK|KK..KK|..KK..|KK..KK|....KK|KK|KK|KK|..KK..|..|.....|KK|KK|....|KK.|.KK|.....|KK....|KK.KK.|KKKKK.|K...KK|..KK..|.....|......|..|........|KK.KK.KK|.
+|.KKKK.|KKKKKK|KKKKKK|.KKKK.|....KK|.KKKK.|.KKKK.|..KK..|.KKKK.|.KKKK.|KK|KK|KK|..KK..|..|.....|KK|KK|....|.KK|KK.|.....|KK....|.KK.KK|..K...|......|......|.....|......|..|........|KK.KK.KK|.
+|......|......|......|......|......|......|......|......|......|......|..|.K|..|......|..|.....|..|.K|....|...|...|.....|......|......|......|......|......|.....|KKKKKK|..|........|........|.
+|......|......|......|......|......|......|......|......|......|......|..|..|..|......|..|.....|..|..|....|...|...|.....|......|......|......|......|......|.....|......|..|........|........|.
+|......|......|......|......|......|......|......|......|......|......|..|..|..|......|..|.....|..|..|....|...|...|.....|......|......|......|......|......|.....|......|..|........|........|.

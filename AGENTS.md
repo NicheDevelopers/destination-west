@@ -25,6 +25,7 @@ CI and the pre-commit hook (`.vite-hooks/pre-commit`) run `vp lint --deny-warnin
 - `src/game/Dialogue/*.dwd`: dialogues in our own format, imported with `?raw`
 - `public/`: images and sounds
 - `styles/`: CSS, pulled in by `main.css`
+- `tools/pixel-art/`: scripts to edit the pixel art in `public/img/` as text and to generate new art (see its README and the `dw-pixel-art` skill). Never use AI-generated images.
 
 ## Writing code
 

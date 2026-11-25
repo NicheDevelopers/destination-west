@@ -93,7 +93,10 @@ export class DialogueLine extends DialogueUnit {
   }
 
   override updateContent(node: HTMLElement): void {
-    node.innerHTML = `${this.who}: ${this.text.substring(0, this.visibleLetters)}`;
+    const shownText = this.text.substring(0, this.visibleLetters);
+    let html = `<div class="speaker">${this.who}</div><p class="line">${shownText}</p>`;
+    if (this.visibleLetters >= this.text.length) html += `<div class="next-indicator"></div>`;
+    node.innerHTML = html;
   }
 
   override reset(): void {

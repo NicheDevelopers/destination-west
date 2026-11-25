@@ -9,6 +9,41 @@ function uniformDurations(frameCount: number, duration: number): number[] {
   return Array.from({ length: frameCount }, () => duration);
 }
 
+/**
+ * A dev treadmill sheet: "walk" moves the belt 1 art pixel per frame, left or down;
+ * the treadmill plays it backwards for the other way, and holds it still when idle.
+ * A flat sheet is walked over and drawn under everything; the standing wheel is
+ * drawn by depth and has a hitbox.
+ */
+function treadmillInfo(
+  name: string,
+  width: number,
+  height: number,
+  frameCount: number,
+  flat = true,
+): [string, ImageInfoType] {
+  const src = `img/${name}.png`;
+  return [
+    name,
+    {
+      src,
+      width,
+      height,
+      spriteWidth: width,
+      spriteHeight: height,
+      nocollision: flat,
+      nodepth: flat,
+      defaultAnimation: "walk",
+      animations: new Map<AnimationName, AnimationInfo>([
+        [
+          "walk",
+          { name: "walk", src, frameDurations: uniformDurations(frameCount, 100), groundSpeed: 10 },
+        ],
+      ]),
+    },
+  ];
+}
+
 function createImage(
   src: ImageInfoType["src"],
   height: ImageInfoType["height"] = TILE_SIZE,
@@ -246,6 +281,11 @@ const imgInfo: Map<string, ImageInfoType> = new Map([
       ]),
     },
   ],
+  // Dev treadmill (dev-setup.ts)
+  treadmillInfo("treadmill-horizontal", 80, 32, 16),
+  treadmillInfo("treadmill-vertical", 48, 64, 16),
+  treadmillInfo("treadmill-horizontal-wheel", 80, 32, 16, false),
+  treadmillInfo("treadmill-vertical-wheel", 48, 64, 16, false),
 ]);
 
 const townPropList = [

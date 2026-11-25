@@ -74,8 +74,19 @@ export const PLANT_PATCHES = {
 };
 
 export const WORLD_MAP_DISPLAY = {
-  townNameOffsetX: -50,
-  townNameOffsetY: 40,
+  margin: 120,
+  artPixel: 4,
+  iconSize: 128,
+  iconTopOffset: -80,
+  hatTopOffset: -112,
+  ringOffsetY: 40,
+  ringRadiusX: 60,
+  ringRadiusY: 16,
+  townNameOffsetY: 88,
+  townNameFont: '24px "Destination West", Georgia, serif',
+  roadWobble: 8,
+  compassInset: 104,
+  unvisitedTownAlpha: 0.45,
 };
 
 export const CHUCK_A_LUCK_PARAMETERS = {

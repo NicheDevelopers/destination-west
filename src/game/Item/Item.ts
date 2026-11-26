@@ -9,7 +9,6 @@ class Item {
   spriteName: string;
   sprite: Sprite;
   durability: number;
-  weight: number;
   price: number;
   priceRetention: number;
   isStackable: boolean;
@@ -21,7 +20,6 @@ class Item {
     this.spriteName = recipe.spriteName;
     this.sprite = new Sprite(recipe.spriteName, { crop: true, nocache: true });
     this.durability = recipe.durability;
-    this.weight = recipe.weight;
     this.price = recipe.price;
     this.priceRetention = recipe.priceRetention;
     this.isStackable = recipe.isStackable;
@@ -35,16 +33,6 @@ class Item {
    * Validate item recipe for this particular item type.
    */
   static validateRecipe(recipe: Recipe): void {
-    // if (!recipe.recipeType)
-    //   throw new Error(
-    //     `Item recipe must have a 'recipeType' property.\n` +
-    //       `Recipe received: ${toPrettyJson(recipe)}`,
-    //   );
-    // if (recipe.recipeType.name !== this.name)
-    //   throw new Error(
-    //     `Attempt to create an item of type ${this.name} ` +
-    //       `from a recipe indicating type ${recipe.recipeType.name}`,
-    //   );
     this.validateSpecialFields(recipe);
   }
 

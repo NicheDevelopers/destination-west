@@ -1,4 +1,3 @@
-export const DEFAULT_EQUIPMENT_SIZE = 100;
 export const DEFAULT_TOWN_WIDTH = 42;
 export const DEFAULT_TOWN_HEIGHT = 20;
 export const PERCENTAGE_OF_TWO_NAME_TOWN = 0.4;

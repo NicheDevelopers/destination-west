@@ -20,7 +20,6 @@ export interface RecipeType {
   name: Item["name"];
   spriteName: Item["spriteName"];
   durability: Item["durability"];
-  weight: Item["weight"];
   price: Item["price"];
   priceRetention: Item["priceRetention"];
   isStackable: Item["isStackable"];
@@ -49,7 +48,6 @@ export const items = {
     name: "Apple",
     spriteName: "apple",
     durability: 0,
-    weight: 5,
     price: 1,
     priceRetention: 0,
     isStackable: true,
@@ -60,7 +58,6 @@ export const items = {
     name: "Cigar",
     spriteName: "cigar",
     durability: 0,
-    weight: 1,
     price: 1,
     priceRetention: 0,
     isStackable: false,
@@ -74,7 +71,6 @@ export const items = {
     name: "Whisky",
     spriteName: "whisky",
     durability: 0,
-    weight: 3,
     price: 3,
     priceRetention: 0,
     isStackable: true,
@@ -88,7 +84,6 @@ export const items = {
     name: "Broken Bottle",
     spriteName: "broken-bottle",
     durability: 0,
-    weight: 1,
     price: 0.5,
     priceRetention: 0,
     isStackable: false,
@@ -98,7 +93,6 @@ export const items = {
     name: "Revolver",
     spriteName: "revolver-1",
     durability: 100,
-    weight: 7,
     price: 200,
     priceRetention: 0,
     isStackable: false,
@@ -113,7 +107,6 @@ export const items = {
     name: "Revolver",
     spriteName: "revolver-2",
     durability: 100,
-    weight: 5,
     price: 150,
     priceRetention: 0,
     isStackable: false,

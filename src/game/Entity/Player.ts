@@ -1,7 +1,7 @@
 import Entity from "@/engine/Entity";
 
 import Movement from "@/engine/Movement";
-import { DEFAULT_EQUIPMENT_SIZE, PLAYER_PARAMETERS } from "@/game/consts";
+import { PLAYER_PARAMETERS } from "@/game/consts";
 import Equipment, { type EquipmentRecord } from "@/game/Equipment/Equipment";
 
 import { ctx } from "@/engine/Browser";
@@ -31,7 +31,7 @@ class Player extends Entity {
     this.movement = new Movement(this, PLAYER_PARAMETERS.defaultPlayerSpeed, undefined, undefined, {
       playerControlled: true,
     });
-    this.equipment = new Equipment(DEFAULT_EQUIPMENT_SIZE, PLAYER_PARAMETERS.defaultStartCash);
+    this.equipment = new Equipment(PLAYER_PARAMETERS.defaultStartCash);
     this.game = game;
 
     this.hitbox.visualizeCollisions((f) => this.game.camera.addDebugDraw(f, { once: true }));
